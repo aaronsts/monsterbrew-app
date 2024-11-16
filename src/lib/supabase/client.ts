@@ -3,7 +3,7 @@ import { useMemo } from "react";
 import { SupabaseClient } from "@supabase/supabase-js";
 import { Database } from "@/types/database.types";
 
-type TypedSupabaseClient = SupabaseClient<Database>;
+export type TypedSupabaseClient = SupabaseClient<Database>;
 
 let client: TypedSupabaseClient | undefined;
 

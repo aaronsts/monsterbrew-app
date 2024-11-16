@@ -5,6 +5,7 @@ import "./globals.css";
 import "@fontsource/yatra-one";
 import MainNavigation from "@/components/main-navigation";
 import { ReactQueryClientProvider } from "@/components/providers/ReactQueryClientProvider";
+import { Toaster } from "@/components/ui/sonner";
 
 const geistSans = localFont({
 	src: "./fonts/GeistVF.woff",
@@ -34,8 +35,9 @@ export default function RootLayout({
 				<body
 					className={`${geistSans.variable} ${geistMono.variable} bg-background text-foreground antialiased`}
 				>
-					<MainNavigation />
-					{children}
+					{/* <MainNavigation /> */}
+					<main className="max-w-8xl px-6 mx-auto w-full">{children}</main>
+					<Toaster richColors position="top-right" />
 				</body>
 			</html>
 		</ReactQueryClientProvider>
