@@ -119,6 +119,45 @@ export type Database = {
         }
         Relationships: []
       }
+      challenge_ratings: {
+        Row: {
+          armor_class: number
+          attack_bonus: number
+          challenge_rating: string
+          created_at: string
+          damage_per_round: string
+          experience: number
+          hit_points_range: string
+          id: number
+          proficiency_bonus: number
+          save_dc: number
+        }
+        Insert: {
+          armor_class?: number
+          attack_bonus?: number
+          challenge_rating?: string
+          created_at?: string
+          damage_per_round: string
+          experience: number
+          hit_points_range?: string
+          id?: number
+          proficiency_bonus?: number
+          save_dc?: number
+        }
+        Update: {
+          armor_class?: number
+          attack_bonus?: number
+          challenge_rating?: string
+          created_at?: string
+          damage_per_round?: string
+          experience?: number
+          hit_points_range?: string
+          id?: number
+          proficiency_bonus?: number
+          save_dc?: number
+        }
+        Relationships: []
+      }
       creature_types: {
         Row: {
           created_at: string
@@ -145,6 +184,7 @@ export type Database = {
           actions: Json[]
           alignment: string | null
           armor_class: number | null
+          challenge_rating_id: number | null
           created_at: string
           damage_immunities:
             | Database["public"]["Enums"]["Damage Types"][]
@@ -167,6 +207,7 @@ export type Database = {
           nonmagical_attack_immunity: boolean
           nonmagical_attack_resistance: boolean
           passive_perception: number
+          saving_throws: Json | null
           size: number
           type: number
           user_id: string
@@ -175,6 +216,7 @@ export type Database = {
           actions?: Json[]
           alignment?: string | null
           armor_class?: number | null
+          challenge_rating_id?: number | null
           created_at?: string
           damage_immunities?:
             | Database["public"]["Enums"]["Damage Types"][]
@@ -197,6 +239,7 @@ export type Database = {
           nonmagical_attack_immunity?: boolean
           nonmagical_attack_resistance?: boolean
           passive_perception?: number
+          saving_throws?: Json | null
           size: number
           type: number
           user_id: string
@@ -205,6 +248,7 @@ export type Database = {
           actions?: Json[]
           alignment?: string | null
           armor_class?: number | null
+          challenge_rating_id?: number | null
           created_at?: string
           damage_immunities?:
             | Database["public"]["Enums"]["Damage Types"][]
@@ -227,11 +271,19 @@ export type Database = {
           nonmagical_attack_immunity?: boolean
           nonmagical_attack_resistance?: boolean
           passive_perception?: number
+          saving_throws?: Json | null
           size?: number
           type?: number
           user_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "creatures_challenge_rating_id_fkey"
+            columns: ["challenge_rating_id"]
+            isOneToOne: false
+            referencedRelation: "challenge_ratings"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "creatures_environment_id_fkey"
             columns: ["environment_id"]
@@ -435,6 +487,27 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      skills: {
+        Row: {
+          created_at: string
+          id: number
+          skill_modifier: string
+          skill_name: string
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          skill_modifier?: string
+          skill_name?: string
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          skill_modifier?: string
+          skill_name?: string
+        }
+        Relationships: []
       }
     }
     Views: {
