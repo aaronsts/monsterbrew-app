@@ -60,28 +60,32 @@ const config: Config = {
 					foreground: "hsl(45 22.2% 96.5%)",
 				},
 				secondary: {
-					DEFAULT: "hsl(var(--secondary))",
-					foreground: "hsl(var(--secondary-foreground))",
+					DEFAULT: "#608976",
+					foreground: "hsl(45 22.2% 96.5%)",
+				},
+				tertiary: {
+					DEFAULT: "hsl(186, 77%, 34%)",
+					foreground: "hsl(45 22.2% 96.5%)",
 				},
 				muted: {
-					DEFAULT: "hsl(var(--muted))",
+					DEFAULT: "hsl(210 40% 96.1%)",
 					foreground: "hsl(37.3 12.6% 55%)",
 				},
 				accent: {
-					DEFAULT: "hsl(var(--accent))",
-					foreground: "hsl(var(--accent-foreground))",
+					DEFAULT: "hsl(45 23.1% 90%)",
+					foreground: "hsl(25 16.9% 27.8%)",
 				},
 				success: {
 					DEFAULT: "hsl(75.6 80.4% 30.2%)",
-					foreground: "hsl(var(--destructive-foreground))",
+					foreground: "hsl(210 40% 98%)",
 				},
 				destructive: {
-					DEFAULT: "hsl(7.6 70.4% 60.2%)",
-					foreground: "hsl(var(--destructive-foreground))",
+					DEFAULT: "hsl(12, 66%, 54%)",
+					foreground: "hsl(210 40% 98%)",
 				},
-				border: "hsl(var(--border))",
-				input: "hsl(var(--input))",
-				ring: "hsl(var(--ring))",
+				border: "hsl(45 23.3% 83.1%)",
+				input: "hsl(45 23.3% 83.1%)",
+				ring: "hsl(25.7 18.9% 14.5%)",
 				chart: {
 					"1": "hsl(var(--chart-1))",
 					"2": "hsl(var(--chart-2))",
