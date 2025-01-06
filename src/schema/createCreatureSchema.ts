@@ -100,7 +100,7 @@ export const createCreatureSchema = z.object({
   languages: languagesSchema.optional(),
   saving_throws: jsonSchema.optional(),
   skill_bonuses: skillsBonusSchema,
-  damage_immunities: damageTypesSchema.optional().nullable(),
+  damage_immunities: z.array(z.string()).optional(),
   damage_resistances: damageTypesSchema.optional().nullable(),
   damage_vulnerabilities: damageTypesSchema.optional().nullable(),
   description: z.string().optional().nullable(),
@@ -129,4 +129,5 @@ export const defaultCreature: z.infer<typeof createCreatureSchema> = {
     intelligence: 10,
     charisma: 10,
   },
+  damage_immunities: [],
 };
