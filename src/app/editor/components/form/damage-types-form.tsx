@@ -26,13 +26,25 @@ function DamageTypesForm() {
     setSelectedDamageType(value);
   };
 
-  function addSkill(event: React.MouseEvent<HTMLElement>) {
+  function addType(event: React.MouseEvent<HTMLElement>) {
     const damageType = event.currentTarget.dataset.damageType;
     if (!selectedDamageType) return;
+    switch (damageType) {
+      case "vulnerable":
+        const damageExists = immunities.find(
+          (dmg) => dmg === selectedDamageType
+        );
+        console.log(!!damageExists);
+
+        break;
+
+      default:
+        break;
+    }
     setImmunities((prevState) => [...prevState, selectedDamageType]);
   }
 
-  function removeSkill(type: string, index: number) {
+  function removeType(type: string, index: number) {
     const newArray = immunities.filter((_, i) => i !== index);
     setImmunities(newArray);
   }
@@ -45,7 +57,7 @@ function DamageTypesForm() {
           <Button
             type="button"
             variant="secondary"
-            onClick={addSkill}
+            onClick={addType}
             data-damage-type="vulnerable"
           >
             Vulnerable
@@ -53,7 +65,7 @@ function DamageTypesForm() {
           <Button
             type="button"
             variant="tertiary"
-            onClick={addSkill}
+            onClick={addType}
             data-damage-type="resistant"
           >
             Resistant
@@ -61,7 +73,7 @@ function DamageTypesForm() {
           <Button
             type="button"
             variant="destructive"
-            onClick={addSkill}
+            onClick={addType}
             data-damage-type="immune"
           >
             Immune
@@ -95,7 +107,7 @@ function DamageTypesForm() {
             <span
               className="absolute right-1.5 top-1 hover:cursor-pointer"
               data-skill={LucideBookmarkMinus}
-              onClick={() => removeSkill("test", i)}
+              onClick={() => removeType("test", i)}
             >
               <X className="w-3 h-3" />
             </span>
