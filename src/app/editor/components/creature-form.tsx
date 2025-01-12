@@ -19,8 +19,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useGetCreatureTypes } from "@/queries/getCreatureTypes";
-import { useGetCreatureSizes } from "@/queries/getCreatureSizes";
 import {
   Tooltip,
   TooltipContent,
@@ -33,13 +31,14 @@ import { Label } from "@/components/ui/label";
 import { useEffect, useState } from "react";
 import { useGetChallengeRatings } from "@/queries/getChallengeRatings";
 import { Tables } from "@/types/database.types";
-import MovementForm from "./movements-form";
-import AbilityScoresForm from "./ability-scores-form";
-import SensesForm from "./senses-form";
-import SavingThrowsForm from "./saving-throws-form";
+import MovementForm from "./form/movements-form";
+import AbilityScoresForm from "./form/ability-scores-form";
+import SensesForm from "./form/senses-form";
+import SavingThrowsForm from "./form/saving-throws-form";
 import LanguagesForm from "./form/languages-form";
 import SkillBonusForm from "./form/skill-bonus-form";
 import DamageTypesForm from "./form/damage-types-form";
+import { CREATURE_SIZES, CREATURE_TYPES } from "@/lib/constants";
 
 type ChallengeRatingType = Tables<"challenge_ratings">;
 
@@ -49,8 +48,6 @@ function CreatureForm() {
 
   const form = useFormContext<z.infer<typeof createCreatureSchema>>();
 
-  const { data: types } = useGetCreatureTypes();
-  const { data: sizes } = useGetCreatureSizes();
   const { data: challengeRatings } = useGetChallengeRatings();
 
   const challengeRatingId = form.watch("challenge_rating_id");
@@ -100,9 +97,9 @@ function CreatureForm() {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {types?.data?.map((type) => (
-                      <SelectItem key={type.id} value={type.id.toString()}>
-                        {type.name}
+                    {CREATURE_TYPES.map((type) => (
+                      <SelectItem key={type.value} value={type.value}>
+                        {type.label}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -115,7 +112,7 @@ function CreatureForm() {
         <div className="grid grid-cols-3 gap-3">
           <FormField
             control={form.control}
-            name="type"
+            name="size"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Creature Size</FormLabel>
@@ -129,13 +126,13 @@ function CreatureForm() {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {sizes?.data?.map((size) => (
+                    {CREATURE_SIZES.map((size) => (
                       <SelectItem
                         key={size.id}
                         className="capitalize"
-                        value={size.id.toString()}
+                        value={size.value}
                       >
-                        {size.name} -{" "}
+                        {size.label} -{" "}
                         <span className="text-muted-foreground">
                           D{size.hit_dice}
                         </span>
@@ -175,7 +172,7 @@ function CreatureForm() {
           />
           <FormField
             control={form.control}
-            name="armor_class"
+            name="armor_description"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>AC Description</FormLabel>

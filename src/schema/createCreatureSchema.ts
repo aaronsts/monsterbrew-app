@@ -52,13 +52,13 @@ export enum Languages {
 export const languagesSchema = z.nativeEnum(Languages);
 
 export const movementSchema = z.object({
-  burrow: z.number().optional(),
-  climb: z.number().optional(),
-  crawl: z.number().optional(),
-  fly: z.number().optional(),
+  burrow: z.coerce.number().optional(),
+  climb: z.coerce.number().optional(),
+  crawl: z.coerce.number().optional(),
+  fly: z.coerce.number().optional(),
   hover: z.boolean().optional(),
-  swim: z.number().optional(),
-  walk: z.number().optional(),
+  swim: z.coerce.number().optional(),
+  walk: z.coerce.number().optional(),
 });
 
 export const abilityScoresSchema = z.object({
@@ -90,11 +90,13 @@ export const skillsBonusSchema = z.array(
 export const createCreatureSchema = z.object({
   name: z.string(),
   type: z.string(),
+  size: z.string(),
   alignment: z.string().optional(),
-  armor_class: z.coerce.number().optional(),
+  armor_class: z.coerce.number(),
+  armor_description: z.string().optional(),
   challenge_rating_id: z.string(),
   actions: z.array(jsonSchema).optional(),
-  movements: movementSchema.optional(),
+  movements: movementSchema,
   ability_scores: abilityScoresSchema.optional(),
   senses: sensesSchema.optional(),
   languages: languagesSchema.optional(),
@@ -113,13 +115,13 @@ export const createCreatureSchema = z.object({
   nonmagical_attack_immunity: z.boolean().optional(),
   nonmagical_attack_resistance: z.boolean().optional(),
   passive_perception: z.number().optional(),
-  size: z.number(),
   user_id: z.string(),
 });
 
 export const defaultCreature: z.infer<typeof createCreatureSchema> = {
   name: "",
   alignment: "",
+  size: "",
   type: "",
   ability_scores: {
     strength: 10,
@@ -128,6 +130,14 @@ export const defaultCreature: z.infer<typeof createCreatureSchema> = {
     wisdom: 10,
     intelligence: 10,
     charisma: 10,
+  },
+  movements: {
+    walk: 0,
+    swim: 0,
+    burrow: 0,
+    climb: 0,
+    fly: 0,
+    hover: false,
   },
   damage_immunities: [],
 };

@@ -8,38 +8,38 @@ import { ReactQueryClientProvider } from "@/components/providers/ReactQueryClien
 import { Toaster } from "@/components/ui/sonner";
 
 const geistSans = localFont({
-	src: "./fonts/GeistVF.woff",
-	variable: "--font-geist-sans",
-	weight: "100 900",
+  src: "./fonts/GeistVF.woff",
+  variable: "--font-geist-sans",
+  weight: "100 900",
 });
 const geistMono = localFont({
-	src: "./fonts/GeistMonoVF.woff",
-	variable: "--font-geist-mono",
-	weight: "100 900",
+  src: "./fonts/GeistMonoVF.woff",
+  variable: "--font-geist-mono",
+  weight: "100 900",
 });
 
 export const metadata: Metadata = {
-	title: "Monsterbrew | Homebrewing creatures with ease",
-	description:
-		"Create custom 5e Dungeons & Dragons creatures effortlessly with an intuitive D&D homebrew tool!",
+  title: "Monsterbrew | Homebrewing creatures with ease",
+  description:
+    "Create custom 5e Dungeons & Dragons creatures effortlessly with an intuitive D&D homebrew tool!",
 };
 
 export default function RootLayout({
-	children,
+  children,
 }: Readonly<{
-	children: React.ReactNode;
+  children: React.ReactNode;
 }>) {
-	return (
-		<ReactQueryClientProvider>
-			<html lang="en">
-				<body
-					className={`${geistSans.variable} ${geistMono.variable} bg-background text-foreground antialiased`}
-				>
-					{/* <MainNavigation /> */}
-					<main className="max-w-8xl px-6 mx-auto w-full">{children}</main>
-					<Toaster richColors position="top-right" />
-				</body>
-			</html>
-		</ReactQueryClientProvider>
-	);
+  return (
+    <ReactQueryClientProvider>
+      <html lang="en">
+        <body
+          className={`${geistSans.variable} ${geistMono.variable} bg-background text-foreground antialiased`}
+        >
+          {/* <MainNavigation /> */}
+          <main className="max-w-8xl mx-auto w-full">{children}</main>
+          <Toaster richColors position="top-right" />
+        </body>
+      </html>
+    </ReactQueryClientProvider>
+  );
 }
