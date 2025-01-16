@@ -62,12 +62,12 @@ export const movementSchema = z.object({
 });
 
 export const abilityScoresSchema = z.object({
-  strength: z.coerce.number().optional(),
-  dexterity: z.coerce.number().optional(),
-  constitution: z.coerce.number().optional(),
-  intelligence: z.coerce.number().optional(),
-  wisdom: z.coerce.number().optional(),
-  charisma: z.coerce.number().optional(),
+  strength: z.coerce.number(),
+  dexterity: z.coerce.number(),
+  constitution: z.coerce.number(),
+  intelligence: z.coerce.number(),
+  wisdom: z.coerce.number(),
+  charisma: z.coerce.number(),
 });
 
 export const sensesSchema = z.object({
@@ -94,10 +94,10 @@ export const createCreatureSchema = z.object({
   alignment: z.string().optional(),
   armor_class: z.coerce.number(),
   armor_description: z.string().optional(),
-  challenge_rating_id: z.string(),
+  challenge_rating: z.string(),
   actions: z.array(jsonSchema).optional(),
   movements: movementSchema,
-  ability_scores: abilityScoresSchema.optional(),
+  ability_scores: abilityScoresSchema,
   senses: sensesSchema.optional(),
   languages: languagesSchema.optional(),
   saving_throws: jsonSchema.optional(),

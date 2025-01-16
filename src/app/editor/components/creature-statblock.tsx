@@ -1,9 +1,11 @@
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { createCreatureSchema } from "@/schema/createCreatureSchema";
 import { useFormContext } from "react-hook-form";
 import { z } from "zod";
 import { Movements } from "./statblock/movements";
 import { Divider } from "@/components/ui/divider";
+import { AbilityScores } from "./statblock/ability-scores";
+import { Traits } from "./statblock/traits";
 
 function CreatureStatblock() {
   const { watch } = useFormContext<z.infer<typeof createCreatureSchema>>();
@@ -40,6 +42,9 @@ function CreatureStatblock() {
           <Movements />
         </div>
         <Divider />
+        <AbilityScores />
+        <Divider />
+        <Traits />
       </CardContent>
     </Card>
   );

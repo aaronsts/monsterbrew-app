@@ -29,8 +29,6 @@ import { Info } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { useEffect, useState } from "react";
-import { useGetChallengeRatings } from "@/queries/getChallengeRatings";
-import { Tables } from "@/types/database.types";
 import MovementForm from "./form/movements-form";
 import AbilityScoresForm from "./form/ability-scores-form";
 import SensesForm from "./form/senses-form";
@@ -38,28 +36,27 @@ import SavingThrowsForm from "./form/saving-throws-form";
 import LanguagesForm from "./form/languages-form";
 import SkillBonusForm from "./form/skill-bonus-form";
 import DamageTypesForm from "./form/damage-types-form";
-import { CREATURE_SIZES, CREATURE_TYPES } from "@/lib/constants";
-
-type ChallengeRatingType = Tables<"challenge_ratings">;
+import {
+  CHALLENGE_RATINGS,
+  CREATURE_SIZES,
+  CREATURE_TYPES,
+} from "@/lib/constants";
 
 function CreatureForm() {
   const [customHP, setCustomHP] = useState(false);
-  const [selectedCR, setSelectedCR] = useState<ChallengeRatingType>();
+  const [selectedCR, setSelectedCR] = useState<
+    (typeof CHALLENGE_RATINGS)[number] | undefined
+  >(undefined);
 
   const form = useFormContext<z.infer<typeof createCreatureSchema>>();
-
-  const { data: challengeRatings } = useGetChallengeRatings();
-
-  const challengeRatingId = form.watch("challenge_rating_id");
+  const challengeRating = form.watch("challenge_rating");
 
   useEffect(() => {
-    if (!challengeRatingId || !challengeRatings?.data) return;
-    setSelectedCR(
-      challengeRatings?.data?.find(
-        (cr) => cr.id.toString() === challengeRatingId
-      )
+    const found = CHALLENGE_RATINGS.find(
+      (r) => r.challenge_rating === challengeRating
     );
-  }, [challengeRatingId, challengeRatings?.data]);
+    setSelectedCR(found);
+  }, [challengeRating]);
 
   return (
     <Card>
@@ -230,7 +227,7 @@ function CreatureForm() {
         <div className="grid grid-cols-3 gap-3">
           <FormField
             control={form.control}
-            name="challenge_rating_id"
+            name="challenge_rating"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Challenge Rating</FormLabel>
@@ -244,11 +241,11 @@ function CreatureForm() {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {challengeRatings?.data?.map((rating) => (
+                    {CHALLENGE_RATINGS.map((rating) => (
                       <SelectItem
-                        key={rating.id}
-                        value={rating.id.toString()}
-                        className=" justify-between"
+                        key={rating.experience}
+                        value={rating.challenge_rating.toString()}
+                        className="justify-between"
                       >
                         {rating.challenge_rating}
                         <span className="absolute right-8 text-primary">
@@ -262,11 +259,13 @@ function CreatureForm() {
               </FormItem>
             )}
           />
-          <div className="space-y-0.5">
+          <div className="space-y-0.5 col-span-2">
             <span className="h-9 block"></span>
             <p>
               Proficiency Bonus:{" "}
-              {selectedCR ? `+${selectedCR?.proficiency_bonus}` : 0}
+              {selectedCR?.challenge_rating
+                ? `+${selectedCR.proficiency_bonus}`
+                : 0}
             </p>
           </div>
         </div>
