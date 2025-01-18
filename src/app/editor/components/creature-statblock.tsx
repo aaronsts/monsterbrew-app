@@ -6,10 +6,18 @@ import { Movements } from "./statblock/movements";
 import { Divider } from "@/components/ui/divider";
 import { AbilityScores } from "./statblock/ability-scores";
 import { Traits } from "./statblock/traits";
+import { CREATURE_SIZES } from "@/lib/constants";
 
 function CreatureStatblock() {
   const { watch } = useFormContext<z.infer<typeof createCreatureSchema>>();
   const creature = watch();
+
+  const size = CREATURE_SIZES.find((s) => s.value === creature.size);
+  const hpModifier = Math.floor(creature.ability_scores.con / 2) - 5;
+  const extraHP = hpModifier * parseInt(creature.hit_dice);
+  const hitPoints = `${creature.hit_dice || 21}d${size?.hit_dice || 20} + ${
+    extraHP || 147
+  }`;
 
   return (
     <Card>
@@ -35,8 +43,7 @@ function CreatureStatblock() {
           <div className="flex gap-2">
             <h4>Hit points </h4>
             <p>
-              {creature.hit_points || "367"} (
-              {creature.armor_description || "21d20 + 147"})
+              {creature.hit_points || "367"} ({hitPoints})
             </p>
           </div>
           <Movements />

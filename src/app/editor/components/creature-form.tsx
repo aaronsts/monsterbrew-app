@@ -180,34 +180,65 @@ function CreatureForm() {
               </FormItem>
             )}
           />
-          <FormField
-            control={form.control}
-            name="hit_dice"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="flex gap-2 items-center">
-                  <TooltipProvider delayDuration={300}>
-                    Hit Dice{" "}
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Info className="w-4 text-cararra-700" />
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>
-                          Hit Dice is based <br /> on a creatures&apos; <br />{" "}
-                          Size and Constitution
-                        </p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                </FormLabel>
-                <FormControl>
-                  <Input placeholder="ex. 21" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          {customHP ? (
+            <FormField
+              control={form.control}
+              name="hit_dice"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="flex gap-2 items-center">
+                    <TooltipProvider delayDuration={300}>
+                      Custom HP{" "}
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Info className="w-4 text-cararra-700" />
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>
+                            Hit Dice is based <br /> on a creatures&apos; <br />{" "}
+                            Size and Constitution
+                          </p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </FormLabel>
+                  <FormControl>
+                    <Input placeholder="ex. 21d20 + 147" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          ) : (
+            <FormField
+              control={form.control}
+              name="hit_dice"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="flex gap-2 items-center">
+                    <TooltipProvider delayDuration={300}>
+                      Hit Dice{" "}
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Info className="w-4 text-cararra-700" />
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>
+                            Hit Dice is based <br /> on a creatures&apos; <br />{" "}
+                            Size and Constitution
+                          </p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </FormLabel>
+                  <FormControl>
+                    <Input placeholder="ex. 21" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
           <div className="space-y-0.5">
             <span className="h-10 block"></span>
             <div className="flex items-center space-x-2">
