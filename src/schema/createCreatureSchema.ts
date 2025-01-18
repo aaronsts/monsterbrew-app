@@ -62,12 +62,12 @@ export const movementSchema = z.object({
 });
 
 export const abilityScoresSchema = z.object({
-  strength: z.coerce.number(),
-  dexterity: z.coerce.number(),
-  constitution: z.coerce.number(),
-  intelligence: z.coerce.number(),
-  wisdom: z.coerce.number(),
-  charisma: z.coerce.number(),
+  str: z.coerce.number(),
+  dex: z.coerce.number(),
+  con: z.coerce.number(),
+  int: z.coerce.number(),
+  wis: z.coerce.number(),
+  cha: z.coerce.number(),
 });
 
 export const sensesSchema = z.object({
@@ -82,7 +82,7 @@ export const skillsBonusSchema = z.array(
   z.object({
     is_expert: z.boolean().optional(),
     is_proficient: z.boolean().optional(),
-    skill_modifier: z.coerce.number(),
+    skill_modifier: z.string(),
     skill_name: z.string(),
   })
 );
@@ -124,12 +124,12 @@ export const defaultCreature: z.infer<typeof createCreatureSchema> = {
   size: "",
   type: "",
   ability_scores: {
-    strength: 10,
-    dexterity: 10,
-    constitution: 10,
-    wisdom: 10,
-    intelligence: 10,
-    charisma: 10,
+    str: 10,
+    dex: 10,
+    con: 10,
+    wis: 10,
+    int: 10,
+    cha: 10,
   },
   movements: {
     walk: 0,

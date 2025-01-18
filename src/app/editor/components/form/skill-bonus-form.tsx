@@ -20,7 +20,7 @@ import { z } from "zod";
 type SkillBonusType = {
   is_expert?: boolean;
   is_proficient?: boolean;
-  skill_modifier: number;
+  skill_modifier: string;
   skill_name: string;
 };
 
@@ -46,7 +46,7 @@ function SkillBonusForm() {
     if (!skill) return;
     setSelectedSkill({
       ...skill,
-      skill_modifier: parseInt(skill.skill_modifier),
+      skill_modifier: skill.skill_modifier,
     });
   };
 
