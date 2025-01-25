@@ -188,7 +188,7 @@ function CreatureForm() {
                 <FormItem>
                   <FormLabel className="flex gap-2 items-center">
                     <TooltipProvider delayDuration={300}>
-                      Custom HP{" "}
+                      Custom HP
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <Info className="w-4 text-cararra-700" />
@@ -217,7 +217,7 @@ function CreatureForm() {
                 <FormItem>
                   <FormLabel className="flex gap-2 items-center">
                     <TooltipProvider delayDuration={300}>
-                      Hit Dice{" "}
+                      Hit Dice
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <Info className="w-4 text-cararra-700" />

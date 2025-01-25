@@ -52,6 +52,7 @@ function CreatureStatblock() {
         <AbilityScores />
         <Divider />
         <Traits />
+        <Divider />
       </CardContent>
     </Card>
   );

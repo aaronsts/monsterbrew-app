@@ -44,6 +44,26 @@ export function Traits() {
       })
     : [];
 
+  const senses: string[] = [];
+  if (creature.senses) {
+    Object.entries(creature.senses).forEach((m) => {
+      const isBlindBeyond = watch("senses.is_blind_beyond");
+      if (!!m[1]) {
+        switch (m[0]) {
+          case "blindsight":
+            return !!isBlindBeyond
+              ? senses.push(`${m[0]} ${m[1]} ft. (blind beyond this radius)`)
+              : senses.push(`${m[0]} ${m[1]} ft.`);
+          case "is_blind_beyond":
+            break;
+          default:
+            senses.push(`${m[0]} ${m[1]} ft.`);
+            break;
+        }
+      }
+    });
+  }
+
   return (
     <div>
       <div className="flex gap-3">
@@ -60,6 +80,16 @@ export function Traits() {
           {skillSaves.length > 0
             ? skillSaves.join(", ")
             : "Perception +16, Stealth +9"}
+        </p>
+      </div>
+      <div className="flex gap-3">
+        <h4>Senses</h4>
+        <p className="capitalize">{senses?.join(", ") || "Common, Draconic"}</p>
+      </div>
+      <div className="flex gap-3">
+        <h4>Languages</h4>
+        <p className="capitalize">
+          {creature.languages?.join(", ") || "Common, Draconic"}
         </p>
       </div>
       <div className="flex items-center justify-between">

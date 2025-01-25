@@ -74,8 +74,8 @@ export const sensesSchema = z.object({
   blindsight: z.number().optional(),
   darkvision: z.number().optional(),
   is_blind_beyond: z.boolean().optional(),
-  tremor_sense: z.number().optional(),
-  true_sight: z.number().optional(),
+  tremorsense: z.number().optional(),
+  truesight: z.number().optional(),
 });
 
 export const skillsBonusSchema = z.array(
@@ -99,7 +99,7 @@ export const createCreatureSchema = z.object({
   movements: movementSchema,
   ability_scores: abilityScoresSchema,
   senses: sensesSchema.optional(),
-  languages: languagesSchema.optional(),
+  languages: z.array(languagesSchema.optional()),
   saving_throws: jsonSchema.optional(),
   skill_bonuses: skillsBonusSchema,
   damage_immunities: z.array(z.string()).optional(),
@@ -138,6 +138,13 @@ export const defaultCreature: z.infer<typeof createCreatureSchema> = {
     climb: 0,
     fly: 0,
     hover: false,
+  },
+  senses: {
+    blindsight: 0,
+    darkvision: 0,
+    tremorsense: 0,
+    truesight: 0,
+    is_blind_beyond: false,
   },
   damage_immunities: [],
 };
