@@ -11,43 +11,53 @@ import {
 import { titleCase } from "@/lib/utils";
 import { createCreatureSchema } from "@/schema/createCreatureSchema";
 import { DAMAGE_TYPES } from "@/types/types";
-import { LucideBookmarkMinus, X } from "lucide-react";
-import { useState } from "react";
-import { useFieldArray, useFormContext } from "react-hook-form";
+import { X } from "lucide-react";
+import { useCallback, useState } from "react";
+import { useFormContext } from "react-hook-form";
 import { z } from "zod";
 
 function DamageTypesForm() {
   const [selectedDamageType, setSelectedDamageType] = useState<string>();
-  const [immunities, setImmunities] = useState<string[]>([]);
+  const [damages, setDamages] = useState<{ name: string; type: string }[]>([]);
+  const { setValue, getValues, watch } =
+    useFormContext<z.infer<typeof createCreatureSchema>>();
 
-  const form = useFormContext<z.infer<typeof createCreatureSchema>>();
+  const addDamageType = (entry, arrayName) => {
+    const otherArrays = [
+      "damage_immunities",
+      "damage_vulnerabilities",
+      "damage_resistances",
+    ].filter((name) => name !== arrayName);
+
+    // Remove from other arrays
+    otherArrays.forEach((otherArray) => {
+      const current = getValues(otherArray) || [];
+      console.log(entry, current);
+      setValue(
+        otherArray,
+        current.filter((item) => item !== entry)
+      );
+    });
+
+    const currentTarget = getValues(arrayName) || [];
+    if (!currentTarget.some((item) => item === entry)) {
+      setValue(arrayName, [...currentTarget, entry]);
+    }
+  };
+
+  console.log(
+    watch("damage_immunities"),
+    watch("damage_vulnerabilities"),
+    watch("damage_resistances")
+  );
+
+  const removeDamageType = useCallback((name: string) => {
+    setDamages((prev) => prev.filter((item) => item.name !== name));
+  }, []);
 
   const handleSelectChange = (value: string) => {
     setSelectedDamageType(value);
   };
-
-  function addType(event: React.MouseEvent<HTMLElement>) {
-    const damageType = event.currentTarget.dataset.damageType;
-    if (!selectedDamageType) return;
-    switch (damageType) {
-      case "vulnerable":
-        const damageExists = immunities.find(
-          (dmg) => dmg === selectedDamageType
-        );
-        console.log(!!damageExists);
-
-        break;
-
-      default:
-        break;
-    }
-    setImmunities((prevState) => [...prevState, selectedDamageType]);
-  }
-
-  function removeType(type: string, index: number) {
-    const newArray = immunities.filter((_, i) => i !== index);
-    setImmunities(newArray);
-  }
 
   return (
     <div className="space-y-2">
@@ -57,24 +67,27 @@ function DamageTypesForm() {
           <Button
             type="button"
             variant="secondary"
-            onClick={addType}
-            data-damage-type="vulnerable"
+            onClick={() =>
+              addDamageType(selectedDamageType, "damage_vulnerabilities")
+            }
           >
             Vulnerable
           </Button>
           <Button
             type="button"
             variant="tertiary"
-            onClick={addType}
-            data-damage-type="resistant"
+            onClick={() =>
+              addDamageType(selectedDamageType, "damage_resistances")
+            }
           >
             Resistant
           </Button>
           <Button
             type="button"
             variant="destructive"
-            onClick={addType}
-            data-damage-type="immune"
+            onClick={() =>
+              addDamageType(selectedDamageType, "damage_immunities")
+            }
           >
             Immune
           </Button>
@@ -97,17 +110,22 @@ function DamageTypesForm() {
         </div>
       </div>
       <div className="flex flex-wrap gap-3 py-3">
-        {immunities.map((bonus, i) => (
+        {damages.map((bonus) => (
           <Badge
             className="relative pr-6"
-            variant={bonus ? "proficient" : "expert"}
-            key={bonus + i}
+            variant={
+              bonus.type === "immune"
+                ? "destructive"
+                : bonus.type === "resistant"
+                ? "proficient"
+                : "expert"
+            }
+            key={bonus.name}
           >
-            {bonus}
+            {bonus.name}
             <span
               className="absolute right-1.5 top-1 hover:cursor-pointer"
-              data-skill={LucideBookmarkMinus}
-              onClick={() => removeType("test", i)}
+              onClick={() => removeDamageType(bonus.name)}
             >
               <X className="w-3 h-3" />
             </span>
