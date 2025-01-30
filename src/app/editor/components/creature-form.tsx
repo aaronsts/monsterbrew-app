@@ -41,6 +41,7 @@ import {
   CREATURE_SIZES,
   CREATURE_TYPES,
 } from "@/lib/constants";
+import { FeatureForm } from "./form/features-form";
 
 function CreatureForm() {
   const [customHP, setCustomHP] = useState(false);
@@ -307,6 +308,7 @@ function CreatureForm() {
         <SavingThrowsForm />
         <SkillBonusForm />
         <DamageTypesForm />
+        <FeatureForm />
       </CardContent>
     </Card>
   );
