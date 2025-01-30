@@ -29,9 +29,10 @@ function CreatureForm() {
           type="multiple"
           defaultValue={[
             "general-info",
-            "languages-skills-features",
+            "languages-skills",
             "movement-senses",
             "damages-conditions",
+            "features",
           ]}
         >
           <AccordionItem value="general-info" defaultChecked>
@@ -48,7 +49,7 @@ function CreatureForm() {
               <SensesForm />
             </AccordionContent>
           </AccordionItem>
-          <AccordionItem value="languages-skills-features">
+          <AccordionItem value="languages-skills">
             <AccordionTrigger>Languages & Skills</AccordionTrigger>
             <AccordionContent className="space-y-3">
               <LanguagesForm />
@@ -62,7 +63,12 @@ function CreatureForm() {
               <DamageTypesForm />
             </AccordionContent>
           </AccordionItem>
-          <FeatureForm />
+          <AccordionItem value="features">
+            <AccordionTrigger>Features</AccordionTrigger>
+            <AccordionContent className="space-y-3">
+              <FeatureForm />
+            </AccordionContent>
+          </AccordionItem>
         </Accordion>
       </CardContent>
     </Card>
