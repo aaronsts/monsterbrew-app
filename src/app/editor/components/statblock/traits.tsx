@@ -83,6 +83,24 @@ export function Traits() {
         </p>
       </div>
       <div className="flex gap-3">
+        <h4>Damage Immunities</h4>
+        <p className="capitalize">
+          {creature.damage_immunities?.join(", ") || "Acid"}
+        </p>
+      </div>
+      <div className="flex gap-3">
+        <h4>Damage Resistances</h4>
+        <p className="capitalize">
+          {creature.damage_resistances?.join(", ") || ""}
+        </p>
+      </div>
+      <div className="flex gap-3">
+        <h4>Damage Vulnerabilities</h4>
+        <p className="capitalize">
+          {creature.damage_vulnerabilities?.join(", ") || ""}
+        </p>
+      </div>
+      <div className="flex gap-3">
         <h4>Senses</h4>
         <p className="capitalize">{senses?.join(", ") || "Common, Draconic"}</p>
       </div>

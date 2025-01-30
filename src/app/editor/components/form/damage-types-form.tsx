@@ -12,48 +12,66 @@ import { titleCase } from "@/lib/utils";
 import { createCreatureSchema } from "@/schema/createCreatureSchema";
 import { DAMAGE_TYPES } from "@/types/types";
 import { X } from "lucide-react";
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import { useFormContext } from "react-hook-form";
 import { z } from "zod";
 
+type DamageType =
+  | "damage_immunities"
+  | "damage_resistances"
+  | "damage_vulnerabilities";
+
 function DamageTypesForm() {
   const [selectedDamageType, setSelectedDamageType] = useState<string>();
-  const [damages, setDamages] = useState<{ name: string; type: string }[]>([]);
   const { setValue, getValues, watch } =
     useFormContext<z.infer<typeof createCreatureSchema>>();
 
-  const addDamageType = (entry, arrayName) => {
+  const addDamageType = (dmg: string | undefined, type: DamageType) => {
+    if (!dmg) return;
     const otherArrays = [
       "damage_immunities",
       "damage_vulnerabilities",
       "damage_resistances",
-    ].filter((name) => name !== arrayName);
+    ].filter((name) => name !== type) as DamageType[];
 
     // Remove from other arrays
     otherArrays.forEach((otherArray) => {
       const current = getValues(otherArray) || [];
-      console.log(entry, current);
       setValue(
         otherArray,
-        current.filter((item) => item !== entry)
+        current.filter((item) => item !== dmg)
       );
     });
 
-    const currentTarget = getValues(arrayName) || [];
-    if (!currentTarget.some((item) => item === entry)) {
-      setValue(arrayName, [...currentTarget, entry]);
+    const currentTarget = getValues(type) || [];
+    if (!currentTarget.some((item) => item === dmg)) {
+      setValue(type, [...currentTarget, dmg]);
     }
   };
 
-  console.log(
-    watch("damage_immunities"),
-    watch("damage_vulnerabilities"),
-    watch("damage_resistances")
-  );
+  const damages = [
+    ...(watch("damage_immunities")?.map((i) => `${i}_immune`) as string[]),
+    ...(watch("damage_resistances")?.map((i) => `${i}_resistant`) as string[]),
+    ...(watch("damage_vulnerabilities")?.map(
+      (i) => `${i}_vulnerable`
+    ) as string[]),
+  ];
 
-  const removeDamageType = useCallback((name: string) => {
-    setDamages((prev) => prev.filter((item) => item.name !== name));
-  }, []);
+  const removeDamageType = (dmg: string) => {
+    const arrays = [
+      "damage_immunities",
+      "damage_resistances",
+      "damage_vulnerabilities",
+    ] as DamageType[];
+    arrays.forEach((arrayName) => {
+      const current = getValues(arrayName) || [];
+      console.log(dmg, current, arrayName);
+      setValue(
+        arrayName,
+        current.filter((item) => item !== dmg)
+      );
+    });
+  };
 
   const handleSelectChange = (value: string) => {
     setSelectedDamageType(value);
@@ -114,18 +132,18 @@ function DamageTypesForm() {
           <Badge
             className="relative pr-6"
             variant={
-              bonus.type === "immune"
+              bonus?.includes("immune")
                 ? "destructive"
-                : bonus.type === "resistant"
+                : bonus?.includes("resistant")
                 ? "proficient"
                 : "expert"
             }
-            key={bonus.name}
+            key={bonus}
           >
-            {bonus.name}
+            {bonus}
             <span
               className="absolute right-1.5 top-1 hover:cursor-pointer"
-              onClick={() => removeDamageType(bonus.name)}
+              onClick={() => removeDamageType(bonus.split("_")[0])}
             >
               <X className="w-3 h-3" />
             </span>

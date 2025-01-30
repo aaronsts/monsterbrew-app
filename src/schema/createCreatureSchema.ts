@@ -147,4 +147,6 @@ export const defaultCreature: z.infer<typeof createCreatureSchema> = {
     is_blind_beyond: false,
   },
   damage_immunities: [],
+  damage_resistances: [],
+  damage_vulnerabilities: [],
 };
