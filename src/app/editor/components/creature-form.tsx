@@ -17,6 +17,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { GeneralInfoForm } from "./form/general-info-form";
+import { ActionsForm } from "./form/actions-form";
 
 function CreatureForm() {
   return (
@@ -63,10 +64,11 @@ function CreatureForm() {
               <DamageTypesForm />
             </AccordionContent>
           </AccordionItem>
-          <AccordionItem value="features">
-            <AccordionTrigger>Features</AccordionTrigger>
+          <AccordionItem value="features-actions">
+            <AccordionTrigger>Features & Actions</AccordionTrigger>
             <AccordionContent className="space-y-3">
               <FeatureForm />
+              <ActionsForm />
             </AccordionContent>
           </AccordionItem>
         </Accordion>

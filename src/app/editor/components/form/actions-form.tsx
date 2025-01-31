@@ -13,7 +13,7 @@ import { Trash2 } from "lucide-react";
 import { useFieldArray, useFormContext } from "react-hook-form";
 import { z } from "zod";
 
-export function FeatureForm() {
+export function ActionsForm() {
   const form = useFormContext<z.infer<typeof createCreatureSchema>>();
 
   const { fields, append, remove, swap } = useFieldArray({
@@ -36,7 +36,7 @@ export function FeatureForm() {
         type="button"
         onClick={() => append({ name: "", description: "" })}
       >
-        Add Feature
+        Add Actions
       </Button>
       {fields.map((field, index) => (
         <div key={field.id} className=" border p-3 rounded">
@@ -77,7 +77,7 @@ export function FeatureForm() {
           <div className="grid gap-y-2">
             <FormField
               control={form.control}
-              name={`features.${index}.name`}
+              name={`actions.${index}.name`}
               render={({ field }) => (
                 <FormItem className="col-span-2">
                   <FormLabel>Name</FormLabel>
@@ -90,7 +90,7 @@ export function FeatureForm() {
             />
             <FormField
               control={form.control}
-              name={`features.${index}.description`}
+              name={`actions.${index}.description`}
               render={({ field }) => (
                 <FormItem className="col-span-2">
                   <FormLabel>Description</FormLabel>

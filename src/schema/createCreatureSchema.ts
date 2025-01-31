@@ -95,7 +95,12 @@ export const createCreatureSchema = z.object({
   armor_class: z.coerce.number(),
   armor_description: z.string().optional(),
   challenge_rating: z.string(),
-  actions: z.array(jsonSchema).optional(),
+  features: z
+    .array(z.object({ name: z.string(), description: z.string() }))
+    .optional(),
+  actions: z
+    .array(z.object({ name: z.string(), description: z.string() }))
+    .optional(),
   movements: movementSchema,
   ability_scores: abilityScoresSchema,
   senses: sensesSchema.optional(),
@@ -149,4 +154,6 @@ export const defaultCreature: z.infer<typeof createCreatureSchema> = {
   damage_immunities: [],
   damage_resistances: [],
   damage_vulnerabilities: [],
+  features: [],
+  actions: [],
 };
