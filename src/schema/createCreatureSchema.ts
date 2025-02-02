@@ -124,10 +124,20 @@ export const createCreatureSchema = z.object({
 });
 
 export const defaultCreature: z.infer<typeof createCreatureSchema> = {
+  skill_bonuses: [],
+  armor_description: "",
+  armor_class: 0,
+  id: "",
+  is_public: false,
+  challenge_rating: "0",
+  key: "",
+  user_id: "",
   name: "",
   alignment: "",
   size: "",
   type: "",
+  hit_dice: "",
+  hit_points: 0,
   ability_scores: {
     str: 10,
     dex: 10,
@@ -151,9 +161,14 @@ export const defaultCreature: z.infer<typeof createCreatureSchema> = {
     truesight: 0,
     is_blind_beyond: false,
   },
+  nonmagical_attack_immunity: false,
+  nonmagical_attack_resistance: false,
   damage_immunities: [],
   damage_resistances: [],
   damage_vulnerabilities: [],
+  passive_perception: 0,
   features: [],
   actions: [],
+  languages: [],
+  environment_id: "",
 };
