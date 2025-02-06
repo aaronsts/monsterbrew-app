@@ -18,12 +18,16 @@ import {
 } from "@/components/ui/accordion";
 import { GeneralInfoForm } from "./form/general-info-form";
 import { ActionsForm } from "./form/actions-form";
+import { Button } from "@/components/ui/button";
 
 function CreatureForm() {
   return (
     <Card>
       <CardHeader className="pb-3">
         <CardTitle>Create creature</CardTitle>
+        <div className="w-full mt-3 flex  justify-end">
+          <Button>Submit</Button>
+        </div>
       </CardHeader>
       <CardContent>
         <Accordion
@@ -72,6 +76,9 @@ function CreatureForm() {
             </AccordionContent>
           </AccordionItem>
         </Accordion>
+        <div className="w-full mt-3 flex  justify-end">
+          <Button>Submit</Button>
+        </div>
       </CardContent>
     </Card>
   );

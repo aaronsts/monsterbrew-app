@@ -10,6 +10,7 @@ import {
 } from "@/schema/createCreatureSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form } from "@/components/ui/form";
+import { createMarkdownPage } from "@/services/converters/markdown";
 
 export default function Editor() {
   const form = useForm<z.infer<typeof createCreatureSchema>>({
@@ -19,6 +20,7 @@ export default function Editor() {
 
   const onSubmit = (values: z.infer<typeof createCreatureSchema>) => {
     console.log(values);
+    createMarkdownPage(values);
   };
 
   return (
