@@ -163,79 +163,53 @@ function generateMarkdown(creature: z.infer<typeof createCreatureSchema>) {
     "___"
   );
 
-  // creature.special_abilities?.forEach((ability, i) => {
-  //   i === creature.special_abilities!.length - 1
-  //     ? markdownLines.push(`${capitalize(ability.name)}. ${ability.desc}`)
-  //     : markdownLines.push(`${capitalize(ability.name)}. ${ability.desc}`, ":");
-  // });
+  if (creature.features && creature.features.length > 0) {
+    creature.features.forEach((feature, i) => {
+      if (creature.features?.length && i === creature.features.length - 1)
+        markdownLines.push(
+          `***${titleCase(feature.name)}.*** ${feature.description}`
+        );
+      else {
+        markdownLines.push(
+          `***${titleCase(feature.name)}.*** ${feature.description}`,
+          ":"
+        );
+      }
+    });
+  }
 
-  // if (creature.actions && creature.actions.length > 0) {
-  //   markdownLines.push("### Actions");
-  //   creature.actions.forEach((action, i) => {
-  //     i === creature.actions!.length - 1
-  //       ? markdownLines.push(`${capitalize(action.name)}. ${action.desc}`)
-  //       : markdownLines.push(`${capitalize(action.name)}. ${action.desc}`, ":");
-  //   });
-  // }
+  if (creature.actions && creature.actions.length > 0) {
+    markdownLines.push("### Actions");
+    creature.actions.forEach((action, i) => {
+      if (creature.actions?.length && i === creature.actions.length - 1)
+        markdownLines.push(
+          `***${titleCase(action.name)}.*** ${action.description}`
+        );
+      else {
+        markdownLines.push(
+          `***${titleCase(action.name)}.*** ${action.description}`,
+          ":"
+        );
+      }
+    });
+  }
 
-  // if (creature.reactions && creature.reactions.length > 0) {
-  //   markdownLines.push("### Reactions");
-  //   creature.reactions.forEach((action, i) => {
-  //     i === creature.reactions!.length - 1
-  //       ? markdownLines.push(`${capitalize(action.name)}. ${action.desc}`)
-  //       : markdownLines.push(`${capitalize(action.name)}. ${action.desc}`, ":");
-  //   });
-  // }
+  if (creature.reactions && creature.reactions.length > 0) {
+    markdownLines.push("### Reaction");
+    creature.reactions.forEach((reaction, i) => {
+      if (creature.reactions?.length && i === creature.reactions.length - 1)
+        markdownLines.push(
+          `***${titleCase(reaction.name)}.*** ${reaction.description}`
+        );
+      else {
+        markdownLines.push(
+          `***${titleCase(reaction.name)}.*** ${reaction.description}`,
+          ":"
+        );
+      }
+    });
+  }
 
-  // if (creature.legendary_actions && creature.legendary_actions.length > 0) {
-  //   markdownLines.push(
-  //     "### Legendary Actions",
-  //     creature.legendary_desc ? creature.legendary_desc : "",
-  //     ":"
-  //   );
-  //   creature.legendary_actions.forEach((action, i) => {
-  //     i === creature.legendary_actions!.length - 1
-  //       ? markdownLines.push(`${capitalize(action.name)}. ${action.desc}`)
-  //       : markdownLines.push(`${capitalize(action.name)}. ${action.desc}`, ":");
-  //   });
-  // }
-
-  // if (creature.lair_actions && creature.lair_actions.length > 0) {
-  //   markdownLines.push(
-  //     "### Lair Actions",
-  //     creature.lair_desc ? creature.lair_desc : "",
-  //     ":"
-  //   );
-  //   creature.lair_actions.forEach((action, i) => {
-  //     i === creature.lair_actions!.length - 1
-  //       ? markdownLines.push(`${capitalize(action.name)}. ${action.desc}`)
-  //       : markdownLines.push(`${capitalize(action.name)}. ${action.desc}`, ":");
-  //   });
-  // }
-  // if (creature.mythic_actions && creature.mythic_actions.length > 0) {
-  //   markdownLines.push(
-  //     "### Mythic Actions",
-  //     creature.lair_desc ? creature.lair_desc : "",
-  //     ":"
-  //   );
-  //   creature.mythic_actions.forEach((action, i) => {
-  //     i === creature.mythic_actions!.length - 1
-  //       ? markdownLines.push(`${capitalize(action.name)}. ${action.desc}`)
-  //       : markdownLines.push(`${capitalize(action.name)}. ${action.desc}`, ":");
-  //   });
-  // }
-  // if (creature.regional_actions && creature.regional_actions.length > 0) {
-  //   markdownLines.push(
-  //     "### Regional Effects",
-  //     creature.lair_desc ? creature.lair_desc : "",
-  //     ":"
-  //   );
-  //   creature.regional_actions.forEach((action, i) => {
-  //     i === creature.regional_actions!.length - 1
-  //       ? markdownLines.push(`${capitalize(action.name)}. ${action.desc}`)
-  //       : markdownLines.push(`${capitalize(action.name)}. ${action.desc}`, ":");
-  //   });
-  // }
   markdownLines.push("}}");
   return markdownToHtml(markdownLines);
 }

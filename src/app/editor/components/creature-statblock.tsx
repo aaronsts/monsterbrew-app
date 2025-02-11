@@ -9,6 +9,7 @@ import { Traits } from "./statblock/traits";
 import { CREATURE_SIZES } from "@/lib/constants";
 import { Features } from "./statblock/features";
 import { Actions } from "./statblock/actions";
+import { Reactions } from "./statblock/reactions";
 
 function CreatureStatblock() {
   const { watch } = useFormContext<z.infer<typeof createCreatureSchema>>();
@@ -57,6 +58,7 @@ function CreatureStatblock() {
         <Divider />
         <Features />
         <Actions />
+        <Reactions />
       </CardContent>
     </Card>
   );

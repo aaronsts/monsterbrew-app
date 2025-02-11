@@ -2,14 +2,14 @@ import { createCreatureSchema } from "@/schema/createCreatureSchema";
 import { useFormContext } from "react-hook-form";
 import { z } from "zod";
 
-export function Actions() {
+export function Reactions() {
   const { watch } = useFormContext<z.infer<typeof createCreatureSchema>>();
   const creature = watch();
-  const hasActions = creature.actions && creature.actions?.length > 0;
+  const hasReactions = creature.reactions && creature.reactions?.length > 0;
   return (
     <div>
-      {hasActions && <h3 className="border-b border-black">Actions</h3>}
-      {creature.actions?.map((action, i) => (
+      {hasReactions && <h3 className="border-b border-black">Reactions</h3>}
+      {creature.reactions?.map((action, i) => (
         <div key={action.name + i} className="flex gap-3">
           <h4 className="italic">{action.name}</h4>
           <p>{action.description}</p>

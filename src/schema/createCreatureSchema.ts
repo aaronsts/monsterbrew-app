@@ -101,6 +101,9 @@ export const createCreatureSchema = z.object({
   actions: z
     .array(z.object({ name: z.string(), description: z.string() }))
     .optional(),
+  reactions: z
+    .array(z.object({ name: z.string(), description: z.string() }))
+    .optional(),
   movements: movementSchema,
   ability_scores: abilityScoresSchema,
   senses: sensesSchema.optional(),
@@ -167,8 +170,9 @@ export const defaultCreature: z.infer<typeof createCreatureSchema> = {
   damage_resistances: [],
   damage_vulnerabilities: [],
   passive_perception: 0,
-  features: [],
-  actions: [],
   languages: [],
   environment_id: "",
+  features: [],
+  actions: [],
+  reactions: [],
 };

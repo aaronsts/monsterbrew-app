@@ -19,6 +19,7 @@ import {
 import { GeneralInfoForm } from "./form/general-info-form";
 import { ActionsForm } from "./form/actions-form";
 import { Button } from "@/components/ui/button";
+import { ReactionsForm } from "./form/reactions-form";
 
 function CreatureForm() {
   return (
@@ -73,6 +74,7 @@ function CreatureForm() {
             <AccordionContent className="space-y-3">
               <FeatureForm />
               <ActionsForm />
+              <ReactionsForm />
             </AccordionContent>
           </AccordionItem>
         </Accordion>

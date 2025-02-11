@@ -36,7 +36,7 @@ export function ActionsForm() {
         type="button"
         onClick={() => append({ name: "", description: "" })}
       >
-        Add Actions
+        Add Action
       </Button>
       {fields.map((field, index) => (
         <div key={field.id} className=" border p-3 rounded">
