@@ -1,0 +1,82 @@
+name: Release to Production
+concurrency: release-to-prod-pipeline
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  create-release:
+    permissions:
+      contents: write # to be able to publish a GitHub release
+      issues: write # to be able to comment on released issues
+      pull-requests: write # to be able to comment on released pull requests
+    runs-on: ubuntu-24.04
+    name: Create Release
+    outputs:
+      released: ${{ env.RELEASED }}
+      newVersion: ${{ env.NEW_VERSION }}
+    steps:
+      - uses: actions/checkout@v3
+        name: Checkout code
+        id: checkout
+        with:
+          # This is needed for semantic-release to work
+          fetch-depth: 0
+
+      - name: Install Package Dependencies
+        # needed for both commitlint and semantic-release to work
+        run: npm ci
+
+      - name: Lint commits on main since last version tag
+        run: |
+
+          # Find latest version tag 
+          # Starts with 'v' followed by a digit.
+          # Prevent non-zero exit code from git describe
+          # if a version tag is not found by appending an
+          # `|| echo "..."` to the git describe statement.
+          lasttag=$(git describe --tags --abbrev=0 --match="v[0-9]*" 2>/dev/null) \
+            || echo "no version tag found, will only lint commit message of HEAD commit"
+
+
+          # Compute arguments to commitlint
+          if [ "$lasttag" == "" ]; then
+
+          # A version tag was not found (i.e. semantic-release has yet
+          # to run successfully for the first time on current branch).
+          # So only parse the last/latest commit.
+            clargs="--last"
+
+          else
+
+          # latest version tag (that was found) should be mapped to
+          # SHA of the commit bearing the tag. This should be --from
+          # argument to commitlint (this is excluded when commitlint
+          # run) and HEAD should be the --to argument (this would
+          # be included when commitlint runs)
+            echo "latest version tag is $lasttag, will lint messages of all commits forward of this up to HEAD..."
+            clargs="--from=$(git rev-parse $lasttag) --to=HEAD"
+
+          fi
+
+          # Run commitlint with computed arguments
+          npx -- commitlint --verbose $clargs
+      - name: Create GitHub release
+        id: semanticrelease
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: |
+          echo "RELEASED=0" >> $GITHUB_ENV
+          npm audit signatures
+          npm run release
+
+      # Instead of a separate job, you can have steps to
+      # deploy in the same job.
+      # However, each would need to be made conditional on
+      # env.RELEASED variable (set during npm run release)
+      # being 1. For example:
+      #
+      # - name: Deploy Step 1
+      #   id: deploystep1
+      #   if: ${{ env.RELEASED == 1 }}
