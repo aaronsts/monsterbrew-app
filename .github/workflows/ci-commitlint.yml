@@ -1,0 +1,48 @@
+name: Commitlint Workflow
+concurrency:
+  group: ci-${{ github.ref }}-commitlint
+  cancel-in-progress: true
+
+on:
+  pull_request:
+    types: [edited, synchronize, opened, reopened]
+    branches:
+      - main
+
+jobs:
+  lint-commit-messages:
+    name: Run commitlint
+    runs-on: ubuntu-24.04
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          # this is needed to get one of the
+          # commitlint invocations below (that
+          # analyzes commits from --from to --to)
+          # to work
+          fetch-depth: 0
+
+      - name: Install dependencies
+        # If we don't do this, commitlint throws
+        # errors aboutnot not finding rules package
+        # for commit message conventions
+        run: npm ci
+
+      # Using env in steps below below to pass
+      # required values from github context rather
+      # than accessing properties from github context
+      # directly. GitHub Docs recommend
+      # that this is better for security as it
+      # mitigates against script injection attacks
+      - name: Run commitlint on PR source branch commit messages
+        env:
+          basesha: ${{ github.event.pull_request.base.sha }}
+          headsha: ${{ github.event.pull_request.head.sha }}
+        run: npx commitlint --from $basesha --to $headsha --verbose
+
+      - name: Run commitlint on PR Title and Description
+        env:
+          prtitle: ${{ github.event.pull_request.title }}
+          prdescription: ${{ github.event.pull_request.body }}
+        run: printf "$prtitle\n\n$prdescription" | npx commitlint
