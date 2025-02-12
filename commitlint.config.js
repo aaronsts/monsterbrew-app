@@ -1,5 +1,5 @@
 /* eslint-env node */
-module.exports = {
+const commitlintConfig = {
   extends: ["@commitlint/config-angular"],
   parserPreset: "conventional-changelog-angular",
   rules: {
@@ -9,3 +9,5 @@ module.exports = {
     "body-leading-blank": [2, "always"],
   },
 };
+
+export default commitlintConfig;
