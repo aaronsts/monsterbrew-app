@@ -20,8 +20,13 @@ import { ActionsForm } from "./form/actions-form";
 import { Button } from "@/components/ui/button";
 import { ReactionsForm } from "./form/reactions-form";
 import { TraitsForm } from "./form/traits-form";
+import { LegendaryActionsForm } from "./form/legendary-actions-form";
+import { useState } from "react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 
 function CreatureForm() {
+  const [isLegendary, setIsLegendary] = useState<string | boolean>(false);
   return (
     <Card>
       <CardHeader className="pb-3">
@@ -69,11 +74,25 @@ function CreatureForm() {
               <DamageTypesForm />
             </AccordionContent>
           </AccordionItem>
-          <AccordionItem value="features-actions">
+          <AccordionItem value="features-actions" className="relative">
+            <div className="flex gap-1.5 items-center w-fit absolute left-28 top-[18px]">
+              <Checkbox
+                id="isLegendary"
+                onCheckedChange={(e) => setIsLegendary(e.valueOf())}
+              />
+              <Label
+                htmlFor="isLegendary"
+                className="text-xs font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              >
+                Is Legendary
+              </Label>
+            </div>
             <AccordionTrigger>Traits & Actions</AccordionTrigger>
             <AccordionContent className="space-y-3">
               <TraitsForm />
               <ActionsForm />
+
+              {isLegendary && <LegendaryActionsForm />}
               <ReactionsForm />
             </AccordionContent>
           </AccordionItem>

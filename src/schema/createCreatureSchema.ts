@@ -101,6 +101,10 @@ export const createCreatureSchema = z.object({
   actions: z
     .array(z.object({ name: z.string(), description: z.string() }))
     .optional(),
+  legendary_actions: z
+    .array(z.object({ name: z.string(), description: z.string() }))
+    .optional(),
+  legendary_description: z.string(),
   reactions: z
     .array(z.object({ name: z.string(), description: z.string() }))
     .optional(),
@@ -176,4 +180,6 @@ export const defaultCreature: z.infer<typeof createCreatureSchema> = {
   traits: [],
   actions: [],
   reactions: [],
+  legendary_description: "",
+  legendary_actions: [],
 };
