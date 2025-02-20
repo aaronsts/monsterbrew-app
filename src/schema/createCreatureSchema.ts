@@ -95,7 +95,7 @@ export const createCreatureSchema = z.object({
   armor_class: z.coerce.number(),
   armor_description: z.string().optional(),
   challenge_rating: z.string(),
-  features: z
+  traits: z
     .array(z.object({ name: z.string(), description: z.string() }))
     .optional(),
   actions: z
@@ -142,12 +142,12 @@ export const defaultCreature: z.infer<typeof createCreatureSchema> = {
   hit_dice: "",
   hit_points: 0,
   ability_scores: {
-    str: 10,
+    str: 30,
+    int: 18,
     dex: 10,
-    con: 10,
-    wis: 10,
-    int: 10,
-    cha: 10,
+    wis: 15,
+    con: 29,
+    cha: 27,
   },
   movements: {
     walk: 0,
@@ -164,6 +164,7 @@ export const defaultCreature: z.infer<typeof createCreatureSchema> = {
     truesight: 0,
     is_blind_beyond: false,
   },
+  saving_throws: [],
   nonmagical_attack_immunity: false,
   nonmagical_attack_resistance: false,
   damage_immunities: [],
@@ -172,7 +173,7 @@ export const defaultCreature: z.infer<typeof createCreatureSchema> = {
   passive_perception: 0,
   languages: [],
   environment_id: "",
-  features: [],
+  traits: [],
   actions: [],
   reactions: [],
 };

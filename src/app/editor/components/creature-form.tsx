@@ -9,7 +9,6 @@ import SavingThrowsForm from "./form/saving-throws-form";
 import LanguagesForm from "./form/languages-form";
 import SkillBonusForm from "./form/skill-bonus-form";
 import DamageTypesForm from "./form/damage-types-form";
-import { FeatureForm } from "./form/features-form";
 import {
   Accordion,
   AccordionContent,
@@ -20,6 +19,7 @@ import { GeneralInfoForm } from "./form/general-info-form";
 import { ActionsForm } from "./form/actions-form";
 import { Button } from "@/components/ui/button";
 import { ReactionsForm } from "./form/reactions-form";
+import { TraitsForm } from "./form/traits-form";
 
 function CreatureForm() {
   return (
@@ -70,9 +70,9 @@ function CreatureForm() {
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value="features-actions">
-            <AccordionTrigger>Features & Actions</AccordionTrigger>
+            <AccordionTrigger>Traits & Actions</AccordionTrigger>
             <AccordionContent className="space-y-3">
-              <FeatureForm />
+              <TraitsForm />
               <ActionsForm />
               <ReactionsForm />
             </AccordionContent>

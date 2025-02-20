@@ -3,13 +3,12 @@ import { createCreatureSchema } from "@/schema/createCreatureSchema";
 import { useFormContext } from "react-hook-form";
 import { z } from "zod";
 import { Movements } from "./statblock/movements";
-import { Divider } from "@/components/ui/divider";
 import { AbilityScores } from "./statblock/ability-scores";
-import { Traits } from "./statblock/traits";
-import { CREATURE_SIZES } from "@/lib/constants";
-import { Features } from "./statblock/features";
+import { CHALLENGE_RATINGS, CREATURE_SIZES } from "@/lib/constants";
 import { Actions } from "./statblock/actions";
 import { Reactions } from "./statblock/reactions";
+import { Traits } from "./statblock/traits";
+import { Features } from "./statblock/features";
 
 function CreatureStatblock() {
   const { watch } = useFormContext<z.infer<typeof createCreatureSchema>>();
@@ -22,41 +21,42 @@ function CreatureStatblock() {
     extraHP || 147
   }`;
 
+  const cr = CHALLENGE_RATINGS.find(
+    (r) => r.challenge_rating === creature.challenge_rating
+  );
+
   return (
     <Card>
-      <CardContent className="pt-6 space-y-3">
-        <div>
-          <h1 className="text-3xl leading-none font-bold small-caps">
+      <CardContent className="pt-6 grid gap-1.5">
+        <div className="grid gap-1.5">
+          <h1 className="text-3xl font-bold small-caps border-b leading-normal">
             {watch("name") || "Ancient Red Dragon"}
           </h1>
-          <p className="capitalize text-sm italic">
+          <p className="capitalize italic font-medium text-black/50">
             {creature.size || "Gargantuan"} {creature.type || "Dragon"},{" "}
             {creature.alignment || "Chaotic Evil"}
           </p>
         </div>
-        <Divider />
-        <div>
-          <div className="flex gap-2">
-            <h4>Armor Class </h4>
-            <p>
-              {creature.armor_class || "22"} (
-              {creature.armor_description || "natural armor"})
-            </p>
+        <div className="flex gap-6">
+          <div className="flex gap-1">
+            <h4>AC</h4>
+            <p>{creature.armor_class || "22"}</p>
           </div>
-          <div className="flex gap-2">
-            <h4>Hit points </h4>
-            <p>
-              {creature.hit_points || "367"} ({hitPoints})
-            </p>
+          <div className="flex gap-1">
+            <h4>Initiative</h4>
+            <p>+{cr?.proficiency_bonus || "14 (24)"}</p>
           </div>
-          <Movements />
         </div>
-        <Divider />
+        <div className="flex gap-1">
+          <h4>HP </h4>
+          <p>
+            {creature.hit_points || "367"} ({hitPoints})
+          </p>
+        </div>
+        <Movements />
         <AbilityScores />
-        <Divider />
-        <Traits />
-        <Divider />
         <Features />
+        <Traits />
         <Actions />
         <Reactions />
       </CardContent>
