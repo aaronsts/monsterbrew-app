@@ -73,7 +73,7 @@
   }
 
   h3 {
-    @apply font-semibold border-b text-xl small-caps my-3;
+    @apply font-semibold border-b text-xl small-caps;
   }
   h4 {
     @apply font-bold;

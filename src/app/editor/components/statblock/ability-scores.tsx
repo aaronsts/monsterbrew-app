@@ -13,10 +13,6 @@ export function AbilityScores() {
   const { watch } = useFormContext<z.infer<typeof createCreatureSchema>>();
   const creature = watch();
 
-  const cr = CHALLENGE_RATINGS.find(
-    (r) => r.challenge_rating === creature.challenge_rating
-  );
-
   const abilityScores = creature.ability_scores
     ? Object.entries(creature.ability_scores).map((score) => ({
         label: score[0].slice(0, 3).toUpperCase(),
@@ -29,14 +25,16 @@ export function AbilityScores() {
       score.label.toLowerCase()
     );
     return hasSavingThrow
-      ? `+${calculateStatBonus(score.value) + (cr?.proficiency_bonus || 0)}`
+      ? `+${
+          calculateStatBonus(score.value) + (creature.cr.proficiency_bonus || 0)
+        }`
       : calculateStatBonus(score.value) >= 0
       ? `+${calculateStatBonus(score.value)}`
       : `-${calculateStatBonus(score.value)}`;
   }
 
   return (
-    <div className="grid grid-cols-2 w-fit gap-px border bg-black/10 my-2">
+    <div className="grid grid-cols-2 w-full gap-px border bg-black/10 my-2">
       <div className="grid col-span-2 bg-card grid-cols-2 text-xs font-semibold">
         <div className="grid px-4 grid-cols-4  gap-3 ">
           <span className="col-start-3">MOD</span>

@@ -28,26 +28,15 @@ import {
 } from "@/lib/constants";
 import { createCreatureSchema } from "@/schema/createCreatureSchema";
 import { Info } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useFormContext } from "react-hook-form";
 import { z } from "zod";
 
 export function GeneralInfoForm() {
-  const [customHP, setCustomHP] = useState(false);
-
-  const [selectedCR, setSelectedCR] = useState<
-    (typeof CHALLENGE_RATINGS)[number] | undefined
-  >(undefined);
-
   const form = useFormContext<z.infer<typeof createCreatureSchema>>();
-  const challengeRating = form.watch("challenge_rating");
+  const cr = form.watch("cr");
+  const customHP = form.watch("custom_hp");
 
-  useEffect(() => {
-    const found = CHALLENGE_RATINGS.find(
-      (r) => r.challenge_rating === challengeRating
-    );
-    setSelectedCR(found);
-  }, [challengeRating]);
   return (
     <div className="space-y-3">
       <div className="grid grid-cols-3 gap-3">
@@ -163,7 +152,7 @@ export function GeneralInfoForm() {
         {customHP ? (
           <FormField
             control={form.control}
-            name="hit_dice"
+            name="hit_points"
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="flex gap-2 items-center">
@@ -183,7 +172,7 @@ export function GeneralInfoForm() {
                   </TooltipProvider>
                 </FormLabel>
                 <FormControl>
-                  <Input placeholder="ex. 21d20 + 147" {...field} />
+                  <Input placeholder="ex. 507 (21d20 + 147)" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -224,7 +213,7 @@ export function GeneralInfoForm() {
           <div className="flex items-center space-x-2">
             <Checkbox
               id="customHp"
-              onCheckedChange={(e: boolean) => setCustomHP(e)}
+              onCheckedChange={(e: boolean) => form.setValue("custom_hp", e)}
             />
             <Label
               htmlFor="customHp"
@@ -238,11 +227,11 @@ export function GeneralInfoForm() {
       <div className="grid grid-cols-3 gap-3">
         <FormField
           control={form.control}
-          name="challenge_rating"
+          name="cr"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Challenge Rating</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <Select onValueChange={(v) => field.onChange(JSON.parse(v))}>
                 <FormControl className="relative">
                   <SelectTrigger>
                     <SelectValue placeholder="Select a rating" />
@@ -252,7 +241,7 @@ export function GeneralInfoForm() {
                   {CHALLENGE_RATINGS.map((rating) => (
                     <SelectItem
                       key={rating.experience}
-                      value={rating.challenge_rating.toString()}
+                      value={JSON.stringify(rating)}
                       className="justify-between"
                     >
                       {rating.challenge_rating}
@@ -269,12 +258,7 @@ export function GeneralInfoForm() {
         />
         <div className="space-y-0.5 col-span-2">
           <span className="h-9 block"></span>
-          <p>
-            Proficiency Bonus:{" "}
-            {selectedCR?.challenge_rating
-              ? `+${selectedCR.proficiency_bonus}`
-              : 0}
-          </p>
+          <p>Proficiency Bonus: +{cr.proficiency_bonus}</p>
         </div>
       </div>
     </div>

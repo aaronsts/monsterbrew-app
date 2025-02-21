@@ -1,3 +1,4 @@
+import { Description } from "@/components/ui/description";
 import { createCreatureSchema } from "@/schema/createCreatureSchema";
 import { useFormContext } from "react-hook-form";
 import { z } from "zod";
@@ -25,10 +26,5 @@ export function Movements() {
       }
     }
   });
-  return (
-    <div className="flex gap-2">
-      <h4>Speed </h4>
-      <p>{movements.join(", ") || "40 ft., fly 80 ft., swim 40 ft."}</p>
-    </div>
-  );
+  return <Description title="Speed" description={movements.join(", ")} />;
 }

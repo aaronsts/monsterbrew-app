@@ -60,7 +60,6 @@ export function SignUpForm() {
   const validateLength = password.length >= 8;
 
   const onSubmit = async (values: z.infer<typeof signUpSchema>) => {
-    console.log(values);
     router.push("/signup/email-confirm");
   };
 

@@ -1,4 +1,4 @@
-import { CHALLENGE_RATINGS } from "@/lib/constants";
+import { Description } from "@/components/ui/description";
 import { titleCase } from "@/lib/utils";
 import { createCreatureSchema } from "@/schema/createCreatureSchema";
 import { useFormContext } from "react-hook-form";
@@ -7,10 +7,6 @@ import { z } from "zod";
 export function Features() {
   const { watch } = useFormContext<z.infer<typeof createCreatureSchema>>();
   const creature = watch();
-
-  const cr = CHALLENGE_RATINGS.find(
-    (r) => r.challenge_rating === creature.challenge_rating
-  );
 
   const skillSaves = creature.skill_bonuses
     ? creature.skill_bonuses.map((skl) => {
@@ -22,8 +18,8 @@ export function Features() {
             5
         );
         const profBonus = skl.is_expert
-          ? (cr?.proficiency_bonus || 1) * 2
-          : cr?.proficiency_bonus || 0;
+          ? (creature.cr.proficiency_bonus || 1) * 2
+          : creature.cr.proficiency_bonus || 0;
         return `${titleCase(skl.skill_name)} +${profBonus + bonus}`;
       })
     : [];
@@ -50,50 +46,44 @@ export function Features() {
 
   return (
     <div>
-      <div className="flex gap-1.5">
-        <h4>Skills</h4>
-        <p>
-          {skillSaves.length > 0
-            ? skillSaves.join(", ")
-            : "Perception +16, Stealth +9"}
-        </p>
-      </div>
-      <div className="flex gap-1.5">
-        <h4>Immunities</h4>
-        <p className="capitalize">
-          {creature.damage_immunities?.join(", ") || "Fire"}
-        </p>
-      </div>
-      <div className="flex gap-1.5">
-        <h4>Resistances</h4>
-        <p className="capitalize">
-          {creature.damage_resistances?.join(", ") || ""}
-        </p>
-      </div>
-      <div className="flex gap-1.5">
-        <h4>Vulnerabilities</h4>
-        <p className="capitalize">
-          {creature.damage_vulnerabilities?.join(", ") || ""}
-        </p>
-      </div>
-      <div className="flex gap-1.5">
-        <h4>Senses</h4>
-        <p className="capitalize">{senses?.join(", ") || "Common, Draconic"}</p>
-      </div>
-      <div className="flex gap-1.5">
-        <h4>Languages</h4>
-        <p className="capitalize">
-          {creature.languages?.join(", ") || "Common, Draconic"}
-        </p>
-      </div>
-      <div className="flex gap-1.5 mt-1.5">
-        <h4>CR</h4>
-        <p>
-          {cr?.challenge_rating || 24} (XP{" "}
-          {new Intl.NumberFormat().format(cr?.experience || 62000)}; PB +{" "}
-          {cr?.proficiency_bonus || 7})
-        </p>
-      </div>
+      <Description
+        title="Skills"
+        description={skillSaves?.join(", ")}
+        show={skillSaves?.length > 0}
+      />
+      <Description
+        title="Immunities"
+        description={creature.damage_immunities?.join(", ")}
+        show={creature.damage_immunities?.length > 0}
+      />
+      <Description
+        title="Resistances"
+        description={creature.damage_resistances?.join(", ")}
+        show={creature.damage_resistances?.length > 0}
+      />
+      <Description
+        title="Vulnerabilities"
+        description={creature.damage_vulnerabilities?.join(", ")}
+        show={creature.damage_vulnerabilities?.length > 0}
+      />
+      <Description
+        title="Senses"
+        description={`${senses.join(", ")} Passive perception ${
+          creature.passive_perception
+        }`}
+      />
+      <Description
+        title="Languages"
+        description={creature.languages.join(", ")}
+        show={creature.languages?.length > 0}
+      />
+      <Description
+        title="CR"
+        description={`${creature.cr.challenge_rating} (XP
+          ${new Intl.NumberFormat().format(creature.cr.experience)}; PB +
+          ${creature.cr.proficiency_bonus})`}
+        className="mt-1.5"
+      />
     </div>
   );
 }

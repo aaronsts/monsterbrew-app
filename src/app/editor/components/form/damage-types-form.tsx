@@ -65,7 +65,6 @@ function DamageTypesForm() {
     ] as DamageType[];
     arrays.forEach((arrayName) => {
       const current = getValues(arrayName) || [];
-      console.log(dmg, current, arrayName);
       setValue(
         arrayName,
         current.filter((item) => item !== dmg)
