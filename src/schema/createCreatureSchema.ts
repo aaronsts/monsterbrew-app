@@ -130,7 +130,7 @@ export const createCreatureSchema = z.object({
   is_public: z.boolean().optional(),
   nonmagical_attack_immunity: z.boolean().optional(),
   nonmagical_attack_resistance: z.boolean().optional(),
-  passive_perception: z.number().optional(),
+  passive_perception: z.number(),
   user_id: z.string(),
 });
 

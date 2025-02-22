@@ -25,15 +25,51 @@ import { useState } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import ConditionTypesForm from "./form/condition-types-form";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { useFormContext } from "react-hook-form";
+import { createMarkdownPage } from "@/services/converters/markdown";
+import { createCreatureSchema } from "@/schema/createCreatureSchema";
+import { z } from "zod";
 
 function CreatureForm() {
   const [isLegendary, setIsLegendary] = useState<string | boolean>(false);
+
+  const formContext = useFormContext<z.infer<typeof createCreatureSchema>>();
+
   return (
     <Card>
-      <CardHeader className="pb-3">
-        <CardTitle>Create creature</CardTitle>
-        <div className="w-full mt-3 flex  justify-end">
-          <Button>Submit</Button>
+      <CardHeader className="flex flex-row items-center justify-between">
+        <CardTitle className="w-fit">Create creature</CardTitle>
+        <div>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button>Export</Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuItem asChild>
+                <Button
+                  onClick={formContext.handleSubmit(
+                    (v: z.infer<typeof createCreatureSchema>) =>
+                      createMarkdownPage(v)
+                  )}
+                >
+                  Homebrewery V3
+                </Button>
+                <Button
+                  onClick={formContext.handleSubmit(
+                    (v: z.infer<typeof createCreatureSchema>) => console.log(v)
+                  )}
+                >
+                  Improved Initiative
+                </Button>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </CardHeader>
       <CardContent>
