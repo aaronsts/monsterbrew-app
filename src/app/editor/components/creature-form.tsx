@@ -35,6 +35,16 @@ import { useFormContext } from "react-hook-form";
 import { createMarkdownPage } from "@/services/converters/markdown";
 import { createCreatureSchema } from "@/schema/createCreatureSchema";
 import { z } from "zod";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { ImportDialog } from "@/components/import-dialog";
 
 function CreatureForm() {
   const [isLegendary, setIsLegendary] = useState<string | boolean>(false);
@@ -45,7 +55,8 @@ function CreatureForm() {
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle className="w-fit">Create creature</CardTitle>
-        <div>
+        <div className="flex gap-2">
+          <ImportDialog />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button>Export</Button>
