@@ -129,7 +129,7 @@ function DamageTypesForm() {
       <div className="flex flex-wrap gap-3 py-3">
         {damages.map((bonus) => (
           <Badge
-            className="relative pr-6"
+            className="relative pr-6 capitalize"
             variant={
               bonus?.includes("immune")
                 ? "destructive"
@@ -139,7 +139,7 @@ function DamageTypesForm() {
             }
             key={bonus}
           >
-            {bonus}
+            {bonus.split("_")[0]}
             <span
               className="absolute right-1.5 top-1 hover:cursor-pointer"
               onClick={() => removeDamageType(bonus.split("_")[0])}

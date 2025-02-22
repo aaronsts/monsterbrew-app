@@ -44,6 +44,14 @@ export function Features() {
     });
   }
 
+  const immunities = [
+    ...creature.damage_immunities,
+    ...creature.condition_immunities,
+  ];
+  const showImmunities =
+    creature.damage_immunities.length > 0 ||
+    creature.condition_immunities.length > 0;
+
   return (
     <div>
       <Description
@@ -52,14 +60,15 @@ export function Features() {
         show={skillSaves?.length > 0}
       />
       <Description
-        title="Immunities"
-        description={creature.damage_immunities?.join(", ")}
-        show={creature.damage_immunities?.length > 0}
-      />
-      <Description
         title="Resistances"
         description={creature.damage_resistances?.join(", ")}
         show={creature.damage_resistances?.length > 0}
+      />
+      <Description
+        className="capitalize"
+        title="Immunities"
+        description={immunities?.join(", ")}
+        show={showImmunities}
       />
       <Description
         title="Vulnerabilities"
@@ -69,7 +78,7 @@ export function Features() {
       <Description
         title="Senses"
         description={`${senses.join(", ")} Passive perception ${
-          creature.passive_perception
+          creature.passive_perception || 10
         }`}
       />
       <Description
@@ -80,8 +89,9 @@ export function Features() {
       <Description
         title="CR"
         description={`${creature.cr.challenge_rating} (XP
-          ${new Intl.NumberFormat().format(creature.cr.experience)}; PB +
-          ${creature.cr.proficiency_bonus})`}
+          ${new Intl.NumberFormat().format(creature.cr.experience)}; PB +${
+          creature.cr.proficiency_bonus
+        })`}
         className="mt-1.5"
       />
     </div>

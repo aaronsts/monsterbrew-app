@@ -18,7 +18,7 @@ function CreatureStatblock() {
     <Card className="h-fit">
       <CardContent className="pt-6 grid gap-1.5">
         <h1 className="text-3xl font-bold small-caps border-b leading-normal">
-          {creature.name || "Ancient Red Dragon"}
+          {creature.name || "Example Creature"}
         </h1>
         <BasicInfo />
         <AbilityScores />

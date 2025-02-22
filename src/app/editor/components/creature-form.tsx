@@ -24,6 +24,7 @@ import { LegendaryActionsForm } from "./form/legendary-actions-form";
 import { useState } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import ConditionTypesForm from "./form/condition-types-form";
 
 function CreatureForm() {
   const [isLegendary, setIsLegendary] = useState<string | boolean>(false);
@@ -72,6 +73,7 @@ function CreatureForm() {
             <AccordionTrigger>Damages & Conditions</AccordionTrigger>
             <AccordionContent className="space-y-3">
               <DamageTypesForm />
+              <ConditionTypesForm />
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value="features-actions" className="relative">

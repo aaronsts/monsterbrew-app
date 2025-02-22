@@ -53,30 +53,26 @@ export function BasicInfo() {
   return (
     <div>
       <p className="capitalize italic font-medium text-black/50 mb-3">
-        {creature.size || "Gargantuan"} {creature.type || "Dragon"},{" "}
-        {creature.alignment || "Chaotic Evil"}
+        {creature.size || "Size"} {creature.type || "Type"},{" "}
+        {creature.alignment || "Alignment"}
       </p>
       <div className="flex gap-1.5">
         <Description
           title="AC"
           description={creature.armor_class.toString()}
-          placeholder="22"
+          placeholder="10"
         />
         <Description
           title="Initiative"
           description={`+${creature.cr.proficiency_bonus.toString()}`}
-          placeholder="+14 (24)"
+          placeholder="+3"
         />
       </div>
-      <Description
-        title="HP"
-        description={hp}
-        placeholder="507 (26d20 + 234)"
-      />
+      <Description title="HP" description={hp} placeholder="15 (2d8 + 6)" />
       <Description
         title="Speed"
         description={movements.join(", ")}
-        placeholder="40 ft., climb 40 ft., fly 80 ft."
+        placeholder="20 ft., climb 20 ft., fly 40 ft."
       />
     </div>
   );

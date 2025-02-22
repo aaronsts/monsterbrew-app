@@ -105,24 +105,19 @@ export const createCreatureSchema = z.object({
     experience: z.coerce.number(),
     armor_class: z.coerce.number(),
   }),
-  traits: z
-    .array(z.object({ name: z.string(), description: z.string() }))
-    .optional(),
-  actions: z
-    .array(z.object({ name: z.string(), description: z.string() }))
-    .optional(),
-  legendary_actions: z
-    .array(z.object({ name: z.string(), description: z.string() }))
-    .optional(),
+  traits: z.array(z.object({ name: z.string(), description: z.string() })),
+  actions: z.array(z.object({ name: z.string(), description: z.string() })),
+  legendary_actions: z.array(
+    z.object({ name: z.string(), description: z.string() })
+  ),
   legendary_description: z.string(),
-  reactions: z
-    .array(z.object({ name: z.string(), description: z.string() }))
-    .optional(),
+  reactions: z.array(z.object({ name: z.string(), description: z.string() })),
   movements: movementSchema,
   ability_scores: abilityScoresSchema,
   senses: sensesSchema.optional(),
   languages: z.array(languagesSchema.optional()),
   saving_throws: jsonSchema.optional(),
+  condition_immunities: z.array(z.string()),
   skill_bonuses: skillsBonusSchema,
   damage_immunities: z.array(z.string()),
   damage_resistances: z.array(z.string()),
@@ -133,7 +128,6 @@ export const createCreatureSchema = z.object({
   hit_points: z.string(),
   id: z.string().optional(),
   is_public: z.boolean().optional(),
-  key: z.string(),
   nonmagical_attack_immunity: z.boolean().optional(),
   nonmagical_attack_resistance: z.boolean().optional(),
   passive_perception: z.number().optional(),
@@ -142,37 +136,16 @@ export const createCreatureSchema = z.object({
 
 export const defaultCreature: z.infer<typeof createCreatureSchema> = {
   name: "",
-  armor_class: "",
-  armor_description: "",
-  skill_bonuses: [],
-  id: "",
-  is_public: false,
-  cr: {
-    challenge_rating: "24",
-    proficiency_bonus: 7,
-    hit_points_range: "536 - 580",
-    attack_bonus: 12,
-    damage_per_round: "195 - 212",
-    save_dc: 21,
-    experience: 62000,
-    armor_class: 19,
-  },
-  key: "",
-  user_id: "",
-  alignment: "",
   size: "",
   type: "",
+  alignment: "",
+
+  armor_class: "",
+  armor_description: "",
   hit_dice: "",
   hit_points: "",
   custom_hp: false,
-  ability_scores: {
-    str: 30,
-    int: 18,
-    dex: 10,
-    wis: 15,
-    con: 29,
-    cha: 27,
-  },
+
   movements: {
     walk: 0,
     swim: 0,
@@ -181,79 +154,55 @@ export const defaultCreature: z.infer<typeof createCreatureSchema> = {
     fly: 0,
     hover: false,
   },
+
+  ability_scores: {
+    str: 10,
+    int: 10,
+    dex: 10,
+    wis: 10,
+    con: 10,
+    cha: 10,
+  },
+  saving_throws: [],
+
+  nonmagical_attack_immunity: false,
+  nonmagical_attack_resistance: false,
+  damage_immunities: [],
+  condition_immunities: [],
+  damage_resistances: [],
+  damage_vulnerabilities: [],
+  skill_bonuses: [],
+  languages: [],
+  passive_perception: 0,
   senses: {
-    blindsight: 60,
-    darkvision: 120,
+    blindsight: 0,
+    darkvision: 0,
     tremorsense: 0,
     truesight: 0,
     is_blind_beyond: false,
   },
-  passive_perception: 26,
-  saving_throws: [],
-  nonmagical_attack_immunity: false,
-  nonmagical_attack_resistance: false,
-  damage_immunities: ["Fire"],
-  damage_resistances: [],
-  damage_vulnerabilities: [],
-  languages: [],
-  environment_id: "",
 
-  traits: [
-    {
-      name: "Legendary Resistance (4/Day, or 5/Day in Lair).",
-      description:
-        "If the dragon fails a saving throw, it can choose to succeed instead.",
-    },
-  ],
-  actions: [
-    {
-      name: "Multiattack.",
-      description:
-        "The dragon makes three Rend attacks. It can replace one attack with a use of Spellcasting to cast Scorching Ray (level 3 version).",
-    },
-    {
-      name: "Rend.",
-      description:
-        "Melee Attack Roll: +17, reach 15 ft. Hit: 19 (2d8 + 10) Slashing damage plus 10 (3d6) Fire damage.",
-    },
-    {
-      name: "Fire Breath (Recharge 5–6).",
-      description:
-        "Dexterity Saving Throw: DC 24, each creature in a 90-foot Cone. Failure: 91 (26d6) Fire damage. Success: Half damage.",
-    },
-    {
-      name: "Spellcasting.",
-      description:
-        "The dragon casts one of the following spells, requiring no Material components and using Charisma as the spellcasting ability (spell save DC 23, +15 to hit with spell attacks):",
-    },
-    {
-      name: "At Will:",
-      description:
-        "Command (level 2 version), Detect Magic, Scorching Ray (level 3 version)",
-    },
-    {
-      name: "1/Day Each:",
-      description: "Fireball (level 6 version), Scrying",
-    },
-  ],
+  cr: {
+    challenge_rating: "0",
+    proficiency_bonus: 3,
+    hit_points_range: "1 - 6",
+    attack_bonus: 3,
+    damage_per_round: "0 - 1 ",
+    save_dc: 13,
+    experience: 10,
+    armor_class: 13,
+  },
+
+  traits: [],
+
+  actions: [],
   reactions: [],
-  legendary_description:
-    "Legendary Action Uses: 3 (4 in Lair). Immediately after another creature’s turn, the dragon can expend a use to take one of the following actions. The dragon regains all expended uses at the start of each of its turns.",
-  legendary_actions: [
-    {
-      name: "Commanding Presence.",
-      description:
-        "The dragon uses Spellcasting to cast Command (level 2 version). The dragon can’t take this action again until the start of its next turn.",
-    },
-    {
-      name: "Fiery Rays.",
-      description:
-        "The dragon uses Spellcasting to cast Scorching Ray (level 3 version). The dragon can’t take this action again until the start of its next turn.",
-    },
-    {
-      name: "Pounce.",
-      description:
-        "The dragon moves up to half its Speed, and it makes one Rend attack.",
-    },
-  ],
+
+  legendary_description: "",
+  legendary_actions: [],
+
+  id: "",
+  user_id: "",
+  is_public: false,
+  environment_id: "",
 };
