@@ -73,7 +73,7 @@
   }
 
   h3 {
-    @apply font-bold text-xl small-caps;
+    @apply font-semibold border-b text-xl small-caps;
   }
   h4 {
     @apply font-bold;

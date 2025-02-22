@@ -75,10 +75,6 @@ function generateMarkdown(creature: z.infer<typeof createCreatureSchema>) {
   );
   markdownLines.push("___");
 
-  const cr = CHALLENGE_RATINGS.find(
-    (r) => r.challenge_rating === creature.challenge_rating
-  );
-
   const savingThrows: string[] = creature.saving_throws
     ? creature.saving_throws?.map(
         (save: keyof typeof creature.ability_scores) => {
@@ -89,7 +85,7 @@ function generateMarkdown(creature: z.infer<typeof createCreatureSchema>) {
               ] / 2
             ) -
             5 +
-            (cr?.proficiency_bonus || 0);
+            creature.cr.proficiency_bonus;
           return `${titleCase(save.slice(0, 3))} +${bonus <= 0 ? 0 : bonus}`;
         }
       )
@@ -107,8 +103,8 @@ function generateMarkdown(creature: z.infer<typeof createCreatureSchema>) {
         5
     );
     const profBonus = skl.is_expert
-      ? (cr?.proficiency_bonus || 1) * 2
-      : cr?.proficiency_bonus || 0;
+      ? (creature.cr.proficiency_bonus || 1) * 2
+      : creature.cr.proficiency_bonus || 0;
     return `${titleCase(skl.skill_name)} +${profBonus + bonus}`;
   });
 
@@ -159,13 +155,13 @@ function generateMarkdown(creature: z.infer<typeof createCreatureSchema>) {
     markdownLines.push(`**Languages** :: ${creature.languages?.join(", ")}`);
 
   markdownLines.push(
-    `**Challenge** :: ${cr?.challenge_rating} (${cr?.experience} XP)`,
+    `**Challenge** :: ${creature.cr.challenge_rating} (${creature.cr.experience} XP)`,
     "___"
   );
 
-  if (creature.features && creature.features.length > 0) {
-    creature.features.forEach((feature, i) => {
-      if (creature.features?.length && i === creature.features.length - 1)
+  if (creature.traits && creature.traits.length > 0) {
+    creature.traits.forEach((feature, i) => {
+      if (creature.traits?.length && i === creature.traits.length - 1)
         markdownLines.push(
           `***${titleCase(feature.name)}.*** ${feature.description}`
         );

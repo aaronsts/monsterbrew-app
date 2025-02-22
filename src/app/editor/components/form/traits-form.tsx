@@ -13,12 +13,12 @@ import { Trash2 } from "lucide-react";
 import { useFieldArray, useFormContext } from "react-hook-form";
 import { z } from "zod";
 
-export function FeatureForm() {
+export function TraitsForm() {
   const form = useFormContext<z.infer<typeof createCreatureSchema>>();
 
   const { fields, append, remove, swap } = useFieldArray({
     control: form.control,
-    name: "features",
+    name: "traits",
   });
 
   const moveUp = (index: number) => {
@@ -36,12 +36,12 @@ export function FeatureForm() {
         type="button"
         onClick={() => append({ name: "", description: "" })}
       >
-        Add Feature
+        Add Trait
       </Button>
       {fields.map((field, index) => (
         <div key={field.id} className=" border p-3 rounded">
           <div className="flex justify-between">
-            <h4>Feature {index + 1}</h4>
+            <h4>Trait {index + 1}</h4>
             <div className="flex gap-1 items-centers">
               <Button
                 type="button"
@@ -69,7 +69,7 @@ export function FeatureForm() {
                 size="icon"
                 onClick={() => remove(index)}
               >
-                <span className="sr-only">Remove Feature</span>
+                <span className="sr-only">Remove Trait</span>
                 <Trash2 />
               </Button>
             </div>
@@ -77,7 +77,7 @@ export function FeatureForm() {
           <div className="grid gap-y-2">
             <FormField
               control={form.control}
-              name={`features.${index}.name`}
+              name={`traits.${index}.name`}
               render={({ field }) => (
                 <FormItem className="col-span-2">
                   <FormLabel>Name</FormLabel>
@@ -90,7 +90,7 @@ export function FeatureForm() {
             />
             <FormField
               control={form.control}
-              name={`features.${index}.description`}
+              name={`traits.${index}.description`}
               render={({ field }) => (
                 <FormItem className="col-span-2">
                   <FormLabel>Description</FormLabel>

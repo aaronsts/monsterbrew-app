@@ -71,11 +71,11 @@ export const abilityScoresSchema = z.object({
 });
 
 export const sensesSchema = z.object({
-  blindsight: z.number().optional(),
-  darkvision: z.number().optional(),
+  blindsight: z.coerce.number().optional(),
+  darkvision: z.coerce.number().optional(),
   is_blind_beyond: z.boolean().optional(),
-  tremorsense: z.number().optional(),
-  truesight: z.number().optional(),
+  tremorsense: z.coerce.number().optional(),
+  truesight: z.coerce.number().optional(),
 });
 
 export const skillsBonusSchema = z.array(
@@ -92,34 +92,42 @@ export const createCreatureSchema = z.object({
   type: z.string(),
   size: z.string(),
   alignment: z.string().optional(),
-  armor_class: z.coerce.number(),
+  armor_class: z.string(),
   armor_description: z.string().optional(),
-  challenge_rating: z.string(),
-  features: z
-    .array(z.object({ name: z.string(), description: z.string() }))
-    .optional(),
-  actions: z
-    .array(z.object({ name: z.string(), description: z.string() }))
-    .optional(),
-  reactions: z
-    .array(z.object({ name: z.string(), description: z.string() }))
-    .optional(),
+  custom_hp: z.boolean(),
+  cr: z.object({
+    challenge_rating: z.string(),
+    proficiency_bonus: z.coerce.number(),
+    hit_points_range: z.string(),
+    attack_bonus: z.coerce.number(),
+    damage_per_round: z.string(),
+    save_dc: z.coerce.number(),
+    experience: z.coerce.number(),
+    armor_class: z.coerce.number(),
+  }),
+  traits: z.array(z.object({ name: z.string(), description: z.string() })),
+  actions: z.array(z.object({ name: z.string(), description: z.string() })),
+  legendary_actions: z.array(
+    z.object({ name: z.string(), description: z.string() })
+  ),
+  legendary_description: z.string(),
+  reactions: z.array(z.object({ name: z.string(), description: z.string() })),
   movements: movementSchema,
   ability_scores: abilityScoresSchema,
   senses: sensesSchema.optional(),
   languages: z.array(languagesSchema.optional()),
   saving_throws: jsonSchema.optional(),
+  condition_immunities: z.array(z.string()),
   skill_bonuses: skillsBonusSchema,
-  damage_immunities: z.array(z.string()).optional(),
-  damage_resistances: z.array(z.string()).optional(),
-  damage_vulnerabilities: z.array(z.string()).optional(),
+  damage_immunities: z.array(z.string()),
+  damage_resistances: z.array(z.string()),
+  damage_vulnerabilities: z.array(z.string()),
   description: z.string().optional().nullable(),
   environment_id: z.string().optional().nullable(),
   hit_dice: z.string(),
-  hit_points: z.number().optional().nullable(),
+  hit_points: z.string(),
   id: z.string().optional(),
   is_public: z.boolean().optional(),
-  key: z.string(),
   nonmagical_attack_immunity: z.boolean().optional(),
   nonmagical_attack_resistance: z.boolean().optional(),
   passive_perception: z.number().optional(),
@@ -127,28 +135,17 @@ export const createCreatureSchema = z.object({
 });
 
 export const defaultCreature: z.infer<typeof createCreatureSchema> = {
-  skill_bonuses: [],
-  armor_description: "",
-  armor_class: 0,
-  id: "",
-  is_public: false,
-  challenge_rating: "0",
-  key: "",
-  user_id: "",
   name: "",
-  alignment: "",
   size: "",
   type: "",
+  alignment: "",
+
+  armor_class: "",
+  armor_description: "",
   hit_dice: "",
-  hit_points: 0,
-  ability_scores: {
-    str: 10,
-    dex: 10,
-    con: 10,
-    wis: 10,
-    int: 10,
-    cha: 10,
-  },
+  hit_points: "",
+  custom_hp: false,
+
   movements: {
     walk: 0,
     swim: 0,
@@ -157,6 +154,26 @@ export const defaultCreature: z.infer<typeof createCreatureSchema> = {
     fly: 0,
     hover: false,
   },
+
+  ability_scores: {
+    str: 10,
+    int: 10,
+    dex: 10,
+    wis: 10,
+    con: 10,
+    cha: 10,
+  },
+  saving_throws: [],
+
+  nonmagical_attack_immunity: false,
+  nonmagical_attack_resistance: false,
+  damage_immunities: [],
+  condition_immunities: [],
+  damage_resistances: [],
+  damage_vulnerabilities: [],
+  skill_bonuses: [],
+  languages: [],
+  passive_perception: 0,
   senses: {
     blindsight: 0,
     darkvision: 0,
@@ -164,15 +181,28 @@ export const defaultCreature: z.infer<typeof createCreatureSchema> = {
     truesight: 0,
     is_blind_beyond: false,
   },
-  nonmagical_attack_immunity: false,
-  nonmagical_attack_resistance: false,
-  damage_immunities: [],
-  damage_resistances: [],
-  damage_vulnerabilities: [],
-  passive_perception: 0,
-  languages: [],
-  environment_id: "",
-  features: [],
+
+  cr: {
+    challenge_rating: "0",
+    proficiency_bonus: 3,
+    hit_points_range: "1 - 6",
+    attack_bonus: 3,
+    damage_per_round: "0 - 1 ",
+    save_dc: 13,
+    experience: 10,
+    armor_class: 13,
+  },
+
+  traits: [],
+
   actions: [],
   reactions: [],
+
+  legendary_description: "",
+  legendary_actions: [],
+
+  id: "",
+  user_id: "",
+  is_public: false,
+  environment_id: "",
 };

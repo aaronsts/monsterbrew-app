@@ -9,7 +9,6 @@ import SavingThrowsForm from "./form/saving-throws-form";
 import LanguagesForm from "./form/languages-form";
 import SkillBonusForm from "./form/skill-bonus-form";
 import DamageTypesForm from "./form/damage-types-form";
-import { FeatureForm } from "./form/features-form";
 import {
   Accordion,
   AccordionContent,
@@ -20,8 +19,15 @@ import { GeneralInfoForm } from "./form/general-info-form";
 import { ActionsForm } from "./form/actions-form";
 import { Button } from "@/components/ui/button";
 import { ReactionsForm } from "./form/reactions-form";
+import { TraitsForm } from "./form/traits-form";
+import { LegendaryActionsForm } from "./form/legendary-actions-form";
+import { useState } from "react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
+import ConditionTypesForm from "./form/condition-types-form";
 
 function CreatureForm() {
+  const [isLegendary, setIsLegendary] = useState<string | boolean>(false);
   return (
     <Card>
       <CardHeader className="pb-3">
@@ -67,13 +73,28 @@ function CreatureForm() {
             <AccordionTrigger>Damages & Conditions</AccordionTrigger>
             <AccordionContent className="space-y-3">
               <DamageTypesForm />
+              <ConditionTypesForm />
             </AccordionContent>
           </AccordionItem>
-          <AccordionItem value="features-actions">
-            <AccordionTrigger>Features & Actions</AccordionTrigger>
+          <AccordionItem value="features-actions" className="relative">
+            <div className="flex gap-1.5 items-center w-fit absolute left-28 top-[18px]">
+              <Checkbox
+                id="isLegendary"
+                onCheckedChange={(e) => setIsLegendary(e.valueOf())}
+              />
+              <Label
+                htmlFor="isLegendary"
+                className="text-xs font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              >
+                Is Legendary
+              </Label>
+            </div>
+            <AccordionTrigger>Traits & Actions</AccordionTrigger>
             <AccordionContent className="space-y-3">
-              <FeatureForm />
+              <TraitsForm />
               <ActionsForm />
+
+              {isLegendary && <LegendaryActionsForm />}
               <ReactionsForm />
             </AccordionContent>
           </AccordionItem>
