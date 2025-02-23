@@ -59,7 +59,11 @@ export function GeneralInfoForm() {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Creature Type</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <Select
+                onValueChange={field.onChange}
+                defaultValue={field.value}
+                value={field.value}
+              >
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Select a type" />
@@ -85,7 +89,11 @@ export function GeneralInfoForm() {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Creature Size</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <Select
+                onValueChange={field.onChange}
+                defaultValue={field.value}
+                value={field.value}
+              >
                 <FormControl className="capitalize">
                   <SelectTrigger>
                     <SelectValue placeholder="Select a size" />
@@ -213,6 +221,7 @@ export function GeneralInfoForm() {
           <div className="flex items-center space-x-2">
             <Checkbox
               id="customHp"
+              checked={form.watch("custom_hp")}
               onCheckedChange={(e: boolean) => form.setValue("custom_hp", e)}
             />
             <Label

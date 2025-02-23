@@ -1,4 +1,4 @@
-import { CHALLENGE_RATINGS } from "@/lib/constants";
+import { CHALLENGE_RATINGS, CREATURE_TYPES, SKILLS } from "@/lib/constants";
 import { defaultCreature } from "@/schema/createCreatureSchema";
 
 export function fromImprovedInitiative(
@@ -56,16 +56,27 @@ export function fromImprovedInitiative(
   }
 
   const skills = source.Skills.map((skl) => {
+    const foundSkill = SKILLS.find(
+      (s) => s.name.toLowerCase() === skl.Name.toLowerCase()
+    );
+
+    if (!foundSkill) {
+      conversionIssues.push({ name: "No skill found" });
+      return null;
+    }
+
     const isExpert = skl.Modifier >= cr.proficiency_bonus * 2;
     return {
       is_expert: isExpert,
       is_proficient: !isExpert,
-      skill_modifier: skl.Modifier.toString(),
-      skill_name: skl.Name,
+      skill_modifier: foundSkill.modifier,
+      skill_name: foundSkill.name,
     };
-  });
+  }).filter((skl) => skl !== null);
 
-  let passivePerception = parseInt(source.Senses[-1].split(" ")[-1]);
+  let passivePerception = parseInt(
+    source.Senses[source.Senses.length - 1].split(" ")[2]
+  );
 
   if (Number.isNaN(passivePerception)) {
     passivePerception = 10 + source.Abilities.Wis;
@@ -73,16 +84,16 @@ export function fromImprovedInitiative(
   }
 
   return {
-    name: source.Description || "",
-    size: basicInfo[0].split(" ")[0],
-    type: basicInfo[0].split(" ")[1],
+    name: "Imrpoved Initiative Creature",
+    size: basicInfo[0].split(" ")[0].toLowerCase(),
+    type: basicInfo[0].split(" ")[1].toLowerCase(),
     alignment: basicInfo[1],
 
     armor_class: source.AC.Value.toString(),
     armor_description: source.AC.Notes,
     hit_dice: source.HP.Notes.replace(/[()]/g, ""),
     hit_points: source.HP.Value.toString(),
-    custom_hp: false, // Assuming default value
+    custom_hp: true,
 
     movements,
 
@@ -114,6 +125,7 @@ export function fromImprovedInitiative(
     ],
     reactions: convertToNameAndDescription(source.Reactions),
 
+    is_legendary: source.LegendaryActions.length > 0,
     legendary_description: "",
     legendary_actions: convertToNameAndDescription(source.LegendaryActions),
 

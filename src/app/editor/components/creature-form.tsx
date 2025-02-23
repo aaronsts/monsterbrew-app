@@ -21,7 +21,7 @@ import { Button } from "@/components/ui/button";
 import { ReactionsForm } from "./form/reactions-form";
 import { TraitsForm } from "./form/traits-form";
 import { LegendaryActionsForm } from "./form/legendary-actions-form";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import ConditionTypesForm from "./form/condition-types-form";
@@ -35,21 +35,12 @@ import { useFormContext } from "react-hook-form";
 import { createMarkdownPage } from "@/services/converters/markdown";
 import { createCreatureSchema } from "@/schema/createCreatureSchema";
 import { z } from "zod";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import { ImportDialog } from "@/components/import-dialog";
 
 function CreatureForm() {
-  const [isLegendary, setIsLegendary] = useState<string | boolean>(false);
-
   const formContext = useFormContext<z.infer<typeof createCreatureSchema>>();
+
+  const isLegendary = formContext.watch("is_legendary");
 
   return (
     <Card>
@@ -127,7 +118,10 @@ function CreatureForm() {
             <div className="flex gap-1.5 items-center w-fit absolute left-28 top-[18px]">
               <Checkbox
                 id="isLegendary"
-                onCheckedChange={(e) => setIsLegendary(e.valueOf())}
+                checked={isLegendary}
+                onCheckedChange={(e) =>
+                  formContext.setValue("is_legendary", e as boolean)
+                }
               />
               <Label
                 htmlFor="isLegendary"
