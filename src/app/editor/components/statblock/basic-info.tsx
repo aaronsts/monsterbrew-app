@@ -24,7 +24,6 @@ export function BasicInfo() {
     creature.hit_dice,
     creature.ability_scores.con
   );
-  console.log(creature.hit_dice);
   const hp = creature.custom_hp ? creature.hit_points : medianHP;
 
   const movements: string[] = [];

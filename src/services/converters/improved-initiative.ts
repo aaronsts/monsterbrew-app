@@ -1,4 +1,4 @@
-import { CHALLENGE_RATINGS, CREATURE_TYPES, SKILLS } from "@/lib/constants";
+import { CHALLENGE_RATINGS, SKILLS } from "@/lib/constants";
 import { defaultCreature } from "@/schema/createCreatureSchema";
 
 export function fromImprovedInitiative(
@@ -91,8 +91,8 @@ export function fromImprovedInitiative(
 
     armor_class: source.AC.Value.toString(),
     armor_description: source.AC.Notes,
-    hit_dice: source.HP.Notes.replace(/[()]/g, ""),
-    hit_points: source.HP.Value.toString(),
+    hit_dice: "",
+    hit_points: `${source.HP.Value} ${source.HP.Notes}`,
     custom_hp: true,
 
     movements,
