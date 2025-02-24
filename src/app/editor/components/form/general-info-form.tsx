@@ -28,7 +28,6 @@ import {
 } from "@/lib/constants";
 import { createCreatureSchema } from "@/schema/createCreatureSchema";
 import { Info } from "lucide-react";
-import { useState } from "react";
 import { useFormContext } from "react-hook-form";
 import { z } from "zod";
 
@@ -231,7 +230,10 @@ export function GeneralInfoForm() {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Challenge Rating</FormLabel>
-              <Select onValueChange={(v) => field.onChange(JSON.parse(v))}>
+              <Select
+                value={JSON.stringify(field.value)}
+                onValueChange={(v) => field.onChange(JSON.parse(v))}
+              >
                 <FormControl className="relative">
                   <SelectTrigger>
                     <SelectValue placeholder="Select a rating" />

@@ -30,7 +30,7 @@ export function AbilityScores() {
         }`
       : calculateStatBonus(score.value) >= 0
       ? `+${calculateStatBonus(score.value)}`
-      : `-${calculateStatBonus(score.value)}`;
+      : `${calculateStatBonus(score.value)}`;
   }
 
   return (
@@ -55,7 +55,7 @@ export function AbilityScores() {
           <p>
             {calculateStatBonus(score.value) >= 0
               ? `+${calculateStatBonus(score.value)}`
-              : `-${calculateStatBonus(score.value)}`}
+              : `${calculateStatBonus(score.value)}`}
           </p>
           <p>{calculateSavingThrow(score)}</p>
         </div>

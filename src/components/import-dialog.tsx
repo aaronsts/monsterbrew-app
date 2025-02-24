@@ -28,6 +28,8 @@ import {
   SelectValue,
 } from "./ui/select";
 import { fromImprovedInitiative } from "@/services/converters/improved-initiative";
+import { fromTetacube } from "@/services/converters/tetra-cube";
+import { Alert } from "./ui/alert";
 
 export function ImportDialog() {
   const [importedStatblock, setImportedStatblock] = useState<string>();
@@ -60,16 +62,27 @@ export function ImportDialog() {
   function handleImportCreature() {
     if (!importedStatblock) return;
     const parsedImport = JSON.parse(importedStatblock);
+    let monsterbrewCreature: z.infer<typeof createCreatureSchema>;
 
     switch (format) {
       case "improved-initiative":
-        const monsterbrewCreature = fromImprovedInitiative(parsedImport);
+        try {
+          monsterbrewCreature = fromImprovedInitiative(parsedImport);
+          formContext.reset(monsterbrewCreature);
+        } catch (error) {
+          toast.error("An Error occured during conversion");
+        }
+        setShowModal(false);
+        break;
+      case "tetra-cube":
+        monsterbrewCreature = fromTetacube(parsedImport);
         formContext.reset(monsterbrewCreature);
         setShowModal(false);
         break;
       default:
         break;
     }
+    setFormat(undefined);
   }
 
   return (
@@ -96,6 +109,15 @@ export function ImportDialog() {
             onChange={(e) => readFileOnUpload(e)}
           />
         </div>
+        <div>
+          {format === "tetra-cube" && (
+            <Alert
+              title="Tetracube"
+              description="Lair and Mythical actions are not supported"
+              variant="info"
+            />
+          )}
+        </div>
 
         <DialogFooter className="items-end">
           <Select onValueChange={(v) => setFormat(v)}>
@@ -106,6 +128,7 @@ export function ImportDialog() {
               <SelectItem value="improved-initiative">
                 Improved Initiative
               </SelectItem>
+              <SelectItem value="tetra-cube">Tetra Cube</SelectItem>
             </SelectContent>
           </Select>
           <DialogClose asChild>
