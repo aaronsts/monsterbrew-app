@@ -16,10 +16,7 @@ import { toast } from "sonner";
 import { ScrollArea } from "./ui/scroll-area";
 import { useFormContext } from "react-hook-form";
 import { z } from "zod";
-import {
-  createCreatureSchema,
-  defaultCreature,
-} from "@/schema/createCreatureSchema";
+import { createCreatureSchema } from "@/schema/createCreatureSchema";
 import {
   Select,
   SelectContent,
@@ -30,6 +27,8 @@ import {
 import { fromImprovedInitiative } from "@/services/converters/improved-initiative";
 import { fromTetacube } from "@/services/converters/tetra-cube";
 import { Alert } from "./ui/alert";
+import { ImportTypes } from "@/lib/constants";
+import { fromOpen5e } from "@/services/converters/open5e";
 
 export function ImportDialog() {
   const [importedStatblock, setImportedStatblock] = useState<string>();
@@ -65,7 +64,7 @@ export function ImportDialog() {
     let monsterbrewCreature: z.infer<typeof createCreatureSchema>;
 
     switch (format) {
-      case "improved-initiative":
+      case ImportTypes.ImprovedInitiative:
         try {
           monsterbrewCreature = fromImprovedInitiative(parsedImport);
           formContext.reset(monsterbrewCreature);
@@ -74,8 +73,13 @@ export function ImportDialog() {
         }
         setShowModal(false);
         break;
-      case "tetra-cube":
+      case ImportTypes.TetraCube:
         monsterbrewCreature = fromTetacube(parsedImport);
+        formContext.reset(monsterbrewCreature);
+        setShowModal(false);
+        break;
+      case ImportTypes.Open5e:
+        monsterbrewCreature = fromOpen5e(parsedImport);
         formContext.reset(monsterbrewCreature);
         setShowModal(false);
         break;
@@ -110,7 +114,7 @@ export function ImportDialog() {
           />
         </div>
         <div>
-          {format === "tetra-cube" && (
+          {format === ImportTypes.TetraCube && (
             <Alert
               title="Tetracube"
               description="Lair and Mythical actions are not supported"
@@ -125,10 +129,11 @@ export function ImportDialog() {
               <SelectValue id="file-format" placeholder="Select a format" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="improved-initiative">
-                Improved Initiative
-              </SelectItem>
-              <SelectItem value="tetra-cube">Tetra Cube</SelectItem>
+              {Object.values(ImportTypes).map((type) => (
+                <SelectItem key={type} value={type} className="capitalize">
+                  {type}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
           <DialogClose asChild>

@@ -1,3 +1,9 @@
+export const ImportTypes = {
+  TetraCube: "tetra-cube",
+  ImprovedInitiative: "improved-initiative",
+  Open5e: "open-5e",
+} as const;
+
 export const CREATURE_TYPES = [
   {
     label: "Aberration",

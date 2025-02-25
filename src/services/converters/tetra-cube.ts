@@ -1,4 +1,4 @@
-import { CHALLENGE_RATINGS, SKILLS } from "@/lib/constants";
+import { CHALLENGE_RATINGS } from "@/lib/constants";
 import { defaultCreature, Languages } from "@/schema/createCreatureSchema";
 import { TetraCubeCreature } from "@/types/tetra-cube";
 
