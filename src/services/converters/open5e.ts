@@ -5,9 +5,18 @@ import { Open5eCreature } from "@/types/open5e";
 export function fromOpen5e(source: Open5eCreature): typeof defaultCreature {
   const conversionIssues = [];
 
-  let cr = CHALLENGE_RATINGS.find(
-    (rating) => rating.challenge_rating === source.cr.toString()
-  );
+  let cr = CHALLENGE_RATINGS.find((rating) => {
+    return rating.challenge_rating === source.cr.toString();
+  });
+
+  switch (source.cr) {
+    case 0.125:
+      cr = CHALLENGE_RATINGS[1];
+    case 0.25:
+      cr = CHALLENGE_RATINGS[2];
+    case 0.5:
+      cr = CHALLENGE_RATINGS[3];
+  }
 
   if (!cr) {
     cr = CHALLENGE_RATINGS[0];
@@ -44,6 +53,23 @@ export function fromOpen5e(source: Open5eCreature): typeof defaultCreature {
     })
     .filter((skl) => skl !== null);
 
+  // Parse senses
+  const senses = {
+    blindsight: 0,
+    darkvision: 0,
+    tremorsense: 0,
+    truesight: 0,
+    is_blind_beyond: source.senses.includes("blind beyond"),
+  };
+
+  source.senses.split(", ").forEach((sense: string) => {
+    const value = parseInt(sense.match(/\d+/)?.[0] || "0");
+    if (sense.toLowerCase().includes("blindsight")) senses.blindsight = value;
+    if (sense.toLowerCase().includes("darkvision")) senses.darkvision = value;
+    if (sense.toLowerCase().includes("tremorsense")) senses.tremorsense = value;
+    if (sense.toLowerCase().includes("truesight")) senses.truesight = value;
+  });
+
   return {
     name: source.name,
     size: source.size.toLowerCase(),
@@ -74,13 +100,26 @@ export function fromOpen5e(source: Open5eCreature): typeof defaultCreature {
       cha: source.charisma,
     },
     saving_throws: savingThrows,
+    senses,
 
     nonmagical_attack_immunity: false,
     nonmagical_attack_resistance: false,
-    damage_immunities: source.damage_immunities.split(", "),
-    condition_immunities: source.condition_immunities.split(","),
-    damage_resistances: source.damage_resistances.split(","),
-    damage_vulnerabilities: source.damage_vulnerabilities.split(","),
+    damage_immunities:
+      source.damage_immunities.length !== 0
+        ? source.damage_immunities.split(", ")
+        : [],
+    condition_immunities:
+      source.condition_immunities.length !== 0
+        ? source.condition_immunities.split(", ")
+        : [],
+    damage_resistances:
+      source.damage_resistances.length !== 0
+        ? source.damage_resistances.split(", ")
+        : [],
+    damage_vulnerabilities:
+      source.damage_vulnerabilities.length !== 0
+        ? source.damage_vulnerabilities.split(", ")
+        : [],
 
     skill_bonuses: skills,
     languages: source.languages.split(", ") as Languages[],

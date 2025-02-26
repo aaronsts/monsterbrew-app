@@ -20,7 +20,9 @@ export function Features() {
         const profBonus = skl.is_expert
           ? (creature.cr.proficiency_bonus || 1) * 2
           : creature.cr.proficiency_bonus || 0;
-        return `${titleCase(skl.skill_name)} +${profBonus + bonus}`;
+        return `${titleCase(skl.skill_name)} +${
+          profBonus + (bonus >= 0 ? bonus : 0)
+        }`;
       })
     : [];
 
