@@ -19,7 +19,6 @@ export default function Editor() {
   });
 
   const onSubmit = (values: z.infer<typeof createCreatureSchema>) => {
-    console.log(values);
     createMarkdownPage(values);
   };
 
