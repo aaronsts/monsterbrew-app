@@ -128,9 +128,10 @@ export const createCreatureSchema = z.object({
   hit_points: z.string(),
   id: z.string().optional(),
   is_public: z.boolean().optional(),
+  is_legendary: z.boolean(),
   nonmagical_attack_immunity: z.boolean().optional(),
   nonmagical_attack_resistance: z.boolean().optional(),
-  passive_perception: z.number().optional(),
+  passive_perception: z.number(),
   user_id: z.string(),
 });
 
@@ -198,6 +199,7 @@ export const defaultCreature: z.infer<typeof createCreatureSchema> = {
   actions: [],
   reactions: [],
 
+  is_legendary: false,
   legendary_description: "",
   legendary_actions: [],
 

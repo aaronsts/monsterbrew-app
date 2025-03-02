@@ -11,7 +11,7 @@ export function BasicInfo() {
 
   function calculateHitPoints(amount: string, constitution?: number) {
     const size = CREATURE_SIZES.find((s) => creature.size === s.value);
-    const hit_dice = size?.hit_dice || 0;
+    const hit_dice = size?.hit_dice || 4;
     const modifier = calculateStatBonus(constitution);
     const extraHP = modifier * parseInt(amount);
     const hp = parseInt(amount) + Math.floor(hit_dice * parseInt(amount));
@@ -24,9 +24,6 @@ export function BasicInfo() {
     creature.hit_dice,
     creature.ability_scores.con
   );
-
-  console.log(medianHP);
-
   const hp = creature.custom_hp ? creature.hit_points : medianHP;
 
   const movements: string[] = [];

@@ -28,7 +28,6 @@ import {
 } from "@/lib/constants";
 import { createCreatureSchema } from "@/schema/createCreatureSchema";
 import { Info } from "lucide-react";
-import { useState } from "react";
 import { useFormContext } from "react-hook-form";
 import { z } from "zod";
 
@@ -36,6 +35,8 @@ export function GeneralInfoForm() {
   const form = useFormContext<z.infer<typeof createCreatureSchema>>();
   const cr = form.watch("cr");
   const customHP = form.watch("custom_hp");
+
+  console.log(form.watch("hit_points"));
 
   return (
     <div className="space-y-3">
@@ -59,7 +60,11 @@ export function GeneralInfoForm() {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Creature Type</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <Select
+                onValueChange={field.onChange}
+                defaultValue={field.value}
+                value={field.value}
+              >
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Select a type" />
@@ -85,7 +90,11 @@ export function GeneralInfoForm() {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Creature Size</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <Select
+                onValueChange={field.onChange}
+                defaultValue={field.value}
+                value={field.value}
+              >
                 <FormControl className="capitalize">
                   <SelectTrigger>
                     <SelectValue placeholder="Select a size" />
@@ -149,28 +158,13 @@ export function GeneralInfoForm() {
             </FormItem>
           )}
         />
-        {customHP ? (
+        {customHP && (
           <FormField
             control={form.control}
             name="hit_points"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="flex gap-2 items-center">
-                  <TooltipProvider delayDuration={300}>
-                    Custom HP
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Info className="w-4 text-cararra-700" />
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>
-                          Hit Dice is based <br /> on a creatures&apos; <br />{" "}
-                          Size and Constitution
-                        </p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                </FormLabel>
+                <FormLabel>Hit Points</FormLabel>
                 <FormControl>
                   <Input placeholder="ex. 507 (21d20 + 147)" {...field} />
                 </FormControl>
@@ -178,18 +172,19 @@ export function GeneralInfoForm() {
               </FormItem>
             )}
           />
-        ) : (
+        )}
+        {!customHP && (
           <FormField
             control={form.control}
             name="hit_dice"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="flex gap-2 items-center">
+                <FormLabel className="relative">
                   <TooltipProvider delayDuration={300}>
                     Hit Dice
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <Info className="w-4 text-cararra-700" />
+                        <Info className="absolute -right-6 -top-0.5 w-4 text-cararra-700" />
                       </TooltipTrigger>
                       <TooltipContent>
                         <p>
@@ -208,12 +203,16 @@ export function GeneralInfoForm() {
             )}
           />
         )}
+
         <div className="space-y-0.5">
           <span className="h-10 block"></span>
           <div className="flex items-center space-x-2">
             <Checkbox
               id="customHp"
-              onCheckedChange={(e: boolean) => form.setValue("custom_hp", e)}
+              checked={form.watch("custom_hp")}
+              onCheckedChange={(e: boolean) => {
+                form.setValue("custom_hp", e);
+              }}
             />
             <Label
               htmlFor="customHp"
@@ -231,7 +230,10 @@ export function GeneralInfoForm() {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Challenge Rating</FormLabel>
-              <Select onValueChange={(v) => field.onChange(JSON.parse(v))}>
+              <Select
+                value={JSON.stringify(field.value)}
+                onValueChange={(v) => field.onChange(JSON.parse(v))}
+              >
                 <FormControl className="relative">
                   <SelectTrigger>
                     <SelectValue placeholder="Select a rating" />

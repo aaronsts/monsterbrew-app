@@ -7,7 +7,6 @@ export function LegendaryActions() {
   const creature = watch();
 
   if (creature.legendary_actions.length === 0) return null;
-  if (!creature.legendary_description) return null;
 
   return (
     <div className="flex flex-col gap-3">

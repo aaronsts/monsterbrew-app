@@ -1,3 +1,9 @@
+export const ImportTypes = {
+  TetraCube: "tetra-cube",
+  ImprovedInitiative: "improved-initiative",
+  Open5e: "open-5e",
+} as const;
+
 export const CREATURE_TYPES = [
   {
     label: "Aberration",
@@ -88,44 +94,44 @@ export const CREATURE_TYPES = [
 export const CREATURE_SIZES = [
   {
     id: 1,
-    label: "tiny",
-    value: "Tiny",
+    label: "Tiny",
+    value: "tiny",
     hit_dice: 4,
   },
   {
     id: 2,
-    label: "small",
-    value: "Small",
+    label: "Small",
+    value: "small",
     hit_dice: 6,
   },
   {
     id: 3,
-    label: "medium",
-    value: "Medium",
+    label: "Medium",
+    value: "medium",
     hit_dice: 8,
   },
   {
     id: 4,
-    label: "large",
-    value: "Large",
+    label: "Large",
+    value: "large",
     hit_dice: 10,
   },
   {
     id: 5,
-    label: "huge",
-    value: "Huge",
+    label: "Huge",
+    value: "huge",
     hit_dice: 12,
   },
   {
     id: 6,
-    label: "gargantuan",
-    value: "Gargantuan",
+    label: "Gargantuan",
+    value: "gargantuan",
     hit_dice: 20,
   },
   {
     id: 7,
-    label: "titanic",
-    value: "Titanic",
+    label: "Titanic",
+    value: "titanic",
     hit_dice: 20,
   },
 ] as const;
@@ -471,4 +477,25 @@ export const CHALLENGE_RATINGS = [
     experience: 155000,
     armor_class: 19,
   },
+] as const;
+
+export const SKILLS = [
+  { name: "acrobatics", modifier: "dex" },
+  { name: "animal handling", modifier: "wis" },
+  { name: "arcana", modifier: "int" },
+  { name: "athletics", modifier: "str" },
+  { name: "deception", modifier: "cha" },
+  { name: "history", modifier: "int" },
+  { name: "insight", modifier: "wis" },
+  { name: "intimidation", modifier: "cha" },
+  { name: "investigation", modifier: "int" },
+  { name: "medicine", modifier: "wis" },
+  { name: "nature", modifier: "int" },
+  { name: "perception", modifier: "wis" },
+  { name: "performance", modifier: "cha" },
+  { name: "persuasion", modifier: "cha" },
+  { name: "religion", modifier: "int" },
+  { name: "sleight of hand", modifier: "dex" },
+  { name: "stealth", modifier: "dex" },
+  { name: "survival", modifier: "wis" },
 ] as const;

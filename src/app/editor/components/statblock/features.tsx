@@ -20,7 +20,9 @@ export function Features() {
         const profBonus = skl.is_expert
           ? (creature.cr.proficiency_bonus || 1) * 2
           : creature.cr.proficiency_bonus || 0;
-        return `${titleCase(skl.skill_name)} +${profBonus + bonus}`;
+        return `${titleCase(skl.skill_name)} +${
+          profBonus + (bonus >= 0 ? bonus : 0)
+        }`;
       })
     : [];
 
@@ -60,6 +62,7 @@ export function Features() {
         show={skillSaves?.length > 0}
       />
       <Description
+        className="capitalize"
         title="Resistances"
         description={creature.damage_resistances?.join(", ")}
         show={creature.damage_resistances?.length > 0}
@@ -71,6 +74,7 @@ export function Features() {
         show={showImmunities}
       />
       <Description
+        className="capitalize"
         title="Vulnerabilities"
         description={creature.damage_vulnerabilities?.join(", ")}
         show={creature.damage_vulnerabilities?.length > 0}

@@ -90,6 +90,21 @@ function MovementForm() {
       <div className="relative">
         <FormField
           control={form.control}
+          name="movements.hover"
+          render={({ field }) => (
+            <FormItem className="flex gap-2 space-y-0 items-center lg:absolute top-[3px] right-0">
+              <FormControl>
+                <Checkbox
+                  checked={field.value}
+                  onCheckedChange={field.onChange}
+                />
+              </FormControl>
+              <FormLabel className="text-xs leading-none">Hover</FormLabel>
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
           name="movements.fly"
           render={({ field }) => (
             <FormItem>
@@ -103,21 +118,6 @@ function MovementForm() {
                 </div>
               </FormControl>
               <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="movements.hover"
-          render={({ field }) => (
-            <FormItem className="flex gap-2 space-y-0 items-center absolute top-[3px] right-0">
-              <FormControl>
-                <Checkbox
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
-                />
-              </FormControl>
-              <FormLabel className="text-xs leading-none">Hover</FormLabel>
             </FormItem>
           )}
         />

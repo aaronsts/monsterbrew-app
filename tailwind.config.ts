@@ -69,6 +69,10 @@ const config: Config = {
           DEFAULT: "hsl(12, 66%, 54%)",
           foreground: "hsl(210 40% 98%)",
         },
+        info: {
+          DEFAULT: "hsl(168, 66%, 54%)",
+          foreground: "hsl(210 40% 98%)",
+        },
         border: "hsl(45 23.3% 83.1%)",
         input: "hsl(45 23.3% 83.1%)",
         ring: "hsl(25.7 18.9% 14.5%)",

@@ -25,12 +25,12 @@ export type TetraCubeCreature = {
   intPoints: number;
   wisPoints: number;
   chaPoints: number;
-  blindsight: number | string;
+  blindsight: number;
   blind: boolean;
-  darkvision: number | string;
-  tremorsense: number | string;
-  truesight: number | string;
-  telepathy: number | string;
+  darkvision: number;
+  tremorsense: number;
+  truesight: number;
+  telepathy: number;
   cr: string;
   customCr: string;
   customProf: number;
@@ -57,7 +57,7 @@ export type TetraCubeCreature = {
   skills: { name: string; stat: string; note?: string }[];
   damagetypes: { name: string; stat: string; type: string }[];
   specialdamage: [];
-  conditions: [];
+  conditions: { name: string }[];
   languages: { name: string; speaks: boolean }[];
   understandsBut: string;
   shortName: string;

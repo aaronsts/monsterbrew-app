@@ -1,4 +1,3 @@
-import { CHALLENGE_RATINGS } from "@/lib/constants";
 import { calculateStatBonus, titleCase } from "@/lib/utils";
 import { createCreatureSchema } from "@/schema/createCreatureSchema";
 import { z } from "zod";
@@ -108,27 +107,30 @@ function generateMarkdown(creature: z.infer<typeof createCreatureSchema>) {
     return `${titleCase(skl.skill_name)} +${profBonus + bonus}`;
   });
 
-  markdownLines.push(`**Skills** :: ${titleCase(skills.join(", "))}`);
+  if (skills.length > 0) {
+    markdownLines.push(`**Skills** :: ${titleCase(skills.join(", "))}`);
+  }
 
-  if (creature.damage_immunities)
+  if (creature.damage_immunities.length > 0)
     markdownLines.push(
       `**Damage Immunities** :: ${creature.damage_immunities}`
     );
 
-  if (creature.damage_resistances)
+  if (creature.damage_resistances.length > 0)
     markdownLines.push(
       `**Damage Resistances** :: ${creature.damage_resistances}`
     );
 
-  if (creature.damage_vulnerabilities)
+  if (creature.damage_vulnerabilities.length > 0)
     markdownLines.push(
       `**Damage Vulnerabilities** :: ${creature.damage_vulnerabilities}`
     );
 
-  // if (creature.condition_immunities)
-  //   markdownLines.push(
-  //     `**Condition Immunities** :: ${creature.condition_immunities}`
-  //   );
+  if (creature.condition_immunities.length > 0)
+    markdownLines.push(
+      `**Condition Immunities** :: ${creature.condition_immunities}`
+    );
+
   const senses: string[] = [];
   if (creature.senses) {
     Object.entries(creature.senses).forEach((m) => {
@@ -149,9 +151,11 @@ function generateMarkdown(creature: z.infer<typeof createCreatureSchema>) {
     });
   }
 
-  markdownLines.push(`**Senses** :: ${senses.join(", ")}`);
+  if (senses.length > 0) {
+    markdownLines.push(`**Senses** :: ${senses.join(", ")}`);
+  }
 
-  if (creature.languages)
+  if (creature.languages.length > 0)
     markdownLines.push(`**Languages** :: ${creature.languages?.join(", ")}`);
 
   markdownLines.push(

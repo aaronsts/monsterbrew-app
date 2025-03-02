@@ -21,19 +21,57 @@ import { Button } from "@/components/ui/button";
 import { ReactionsForm } from "./form/reactions-form";
 import { TraitsForm } from "./form/traits-form";
 import { LegendaryActionsForm } from "./form/legendary-actions-form";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import ConditionTypesForm from "./form/condition-types-form";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { useFormContext } from "react-hook-form";
+import { createMarkdownPage } from "@/services/converters/markdown";
+import { createCreatureSchema } from "@/schema/createCreatureSchema";
+import { z } from "zod";
+import { ImportDialog } from "@/components/import-dialog";
 
 function CreatureForm() {
-  const [isLegendary, setIsLegendary] = useState<string | boolean>(false);
+  const formContext = useFormContext<z.infer<typeof createCreatureSchema>>();
+
+  const isLegendary = formContext.watch("is_legendary");
+
   return (
     <Card>
-      <CardHeader className="pb-3">
-        <CardTitle>Create creature</CardTitle>
-        <div className="w-full mt-3 flex  justify-end">
-          <Button>Submit</Button>
+      <CardHeader className="flex flex-row items-center justify-between">
+        <CardTitle className="w-fit">Create creature</CardTitle>
+        <div className="flex gap-2">
+          <ImportDialog />
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button>Export</Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuItem asChild>
+                <Button
+                  onClick={formContext.handleSubmit(
+                    (v: z.infer<typeof createCreatureSchema>) =>
+                      createMarkdownPage(v)
+                  )}
+                >
+                  Homebrewery V3
+                </Button>
+                <Button
+                  onClick={formContext.handleSubmit(
+                    (v: z.infer<typeof createCreatureSchema>) => console.log(v)
+                  )}
+                >
+                  Improved Initiative
+                </Button>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </CardHeader>
       <CardContent>
@@ -80,7 +118,10 @@ function CreatureForm() {
             <div className="flex gap-1.5 items-center w-fit absolute left-28 top-[18px]">
               <Checkbox
                 id="isLegendary"
-                onCheckedChange={(e) => setIsLegendary(e.valueOf())}
+                checked={isLegendary}
+                onCheckedChange={(e) =>
+                  formContext.setValue("is_legendary", e as boolean)
+                }
               />
               <Label
                 htmlFor="isLegendary"

@@ -26,6 +26,8 @@
     --accent-foreground: 25 16.9% 27.8%;
     --destructive: 7.6 70.4% 60.2%;
     --destructive-foreground: 210 40% 98%;
+    --info: 7.6 70.4% 60.2%;
+    --info-foreground: 210 40% 98%;
     --border: 45 23.3% 83.1%;
     --input: 45 23.3% 83.1%;
     --ring: 25.7 18.9% 14.5%;
@@ -66,10 +68,10 @@
 
 @layer base {
   * {
-    @apply border-border;
+    @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground outline-ring/50;
   }
 
   h3 {
@@ -89,4 +91,13 @@
 /* Firefox */
 input[type="number"] {
   -moz-appearance: textfield;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
 }
