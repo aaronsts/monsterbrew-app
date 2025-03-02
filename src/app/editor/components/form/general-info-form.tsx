@@ -36,8 +36,6 @@ export function GeneralInfoForm() {
   const cr = form.watch("cr");
   const customHP = form.watch("custom_hp");
 
-  console.log(form.watch("hit_points"));
-
   return (
     <div className="space-y-3">
       <div className="grid grid-cols-3 gap-3">
