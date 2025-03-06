@@ -1,13 +1,7 @@
-import { CHALLENGE_RATINGS } from "@/lib/constants";
-import { calculateStatBonus } from "@/lib/utils";
+import { calculateSavingThrow, calculateStatBonus } from "@/lib/utils";
 import { createCreatureSchema } from "@/schema/createCreatureSchema";
 import { useFormContext } from "react-hook-form";
 import { z } from "zod";
-
-interface Option {
-  label: string;
-  value: number;
-}
 
 export function AbilityScores() {
   const { watch } = useFormContext<z.infer<typeof createCreatureSchema>>();
@@ -19,19 +13,6 @@ export function AbilityScores() {
         value: score[1],
       }))
     : [];
-
-  function calculateSavingThrow(score: Option) {
-    const hasSavingThrow = creature.saving_throws.includes(
-      score.label.toLowerCase()
-    );
-    return hasSavingThrow
-      ? `+${
-          calculateStatBonus(score.value) + (creature.cr.proficiency_bonus || 0)
-        }`
-      : calculateStatBonus(score.value) >= 0
-      ? `+${calculateStatBonus(score.value)}`
-      : `${calculateStatBonus(score.value)}`;
-  }
 
   return (
     <div className="grid grid-cols-2 w-full gap-px border bg-black/10 my-2">
@@ -57,7 +38,7 @@ export function AbilityScores() {
               ? `+${calculateStatBonus(score.value)}`
               : `${calculateStatBonus(score.value)}`}
           </p>
-          <p>{calculateSavingThrow(score)}</p>
+          <p>{calculateSavingThrow(score, creature)}</p>
         </div>
       ))}
     </div>

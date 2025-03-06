@@ -1,5 +1,6 @@
 import { CHALLENGE_RATINGS, SKILLS } from "@/lib/constants";
-import { defaultCreature } from "@/schema/createCreatureSchema";
+import { calculateStatBonus, titleCase } from "@/lib/utils";
+import { defaultCreature, Languages } from "@/schema/createCreatureSchema";
 
 export function fromImprovedInitiative(
   source: typeof ImprovedInitiativeCreature
@@ -13,6 +14,7 @@ export function fromImprovedInitiative(
     climb: 0,
     fly: 0,
     hover: source.Speed.some((s: string) => s.toLowerCase().includes("hover")),
+    crawl: 0,
   };
 
   source.Speed.forEach((entry: string) => {
@@ -112,7 +114,9 @@ export function fromImprovedInitiative(
     damage_resistances: source.DamageResistances,
     damage_vulnerabilities: source.DamageVulnerabilities,
     skill_bonuses: skills,
-    languages: source.Languages,
+    languages: source.Languages.map(
+      (l) => Languages[l as keyof typeof Languages]
+    ),
     passive_perception: passivePerception,
     senses,
 
@@ -133,6 +137,115 @@ export function fromImprovedInitiative(
     user_id: "",
     is_public: false,
     environment_id: "",
+  };
+}
+
+export function toImprovedInitiative(
+  source: typeof defaultCreature
+): typeof ImprovedInitiativeCreature {
+  // Convert movements to speed array
+  const speedEntries = [];
+  if (source.movements.walk > 0)
+    speedEntries.push(`walk ${source.movements.walk} ft.`);
+  if (source.movements.climb > 0)
+    speedEntries.push(`climb ${source.movements.climb} ft.`);
+  if (source.movements.fly > 0)
+    speedEntries.push(`fly ${source.movements.fly} ft.`);
+  if (source.movements.swim > 0)
+    speedEntries.push(`swim ${source.movements.swim} ft.`);
+  if (source.movements.burrow > 0)
+    speedEntries.push(`burrow ${source.movements.burrow} ft.`);
+
+  // Convert senses to array
+  const senses = [];
+  if (source.senses.blindsight > 0)
+    senses.push(`blindsight ${source.senses.blindsight} ft.`);
+  if (source.senses.darkvision > 0)
+    senses.push(`darkvision ${source.senses.darkvision} ft.`);
+  if (source.senses.tremorsense > 0)
+    senses.push(`tremorsense ${source.senses.tremorsense} ft.`);
+  if (source.senses.truesight > 0)
+    senses.push(`truesight ${source.senses.truesight} ft.`);
+  senses.push(`passive Perception ${source.passive_perception}`);
+
+  const savingThrows = source.saving_throws.map((score) => {
+    const ability =
+      source.ability_scores[score as keyof typeof source.ability_scores];
+    return {
+      Name: titleCase(score),
+      Modifier: calculateStatBonus(ability) + source.cr.proficiency_bonus,
+    };
+  });
+
+  const skillSaves = source.skill_bonuses.map((skl) => {
+    const bonus = Math.floor(
+      source.ability_scores[
+        skl.skill_modifier as keyof typeof source.ability_scores
+      ] /
+        2 -
+        5
+    );
+    const profBonus = skl.is_expert
+      ? (source.cr.proficiency_bonus || 1) * 2
+      : source.cr.proficiency_bonus || 0;
+    return {
+      Name: titleCase(skl.skill_name),
+      Modifier: profBonus + (bonus >= 0 ? bonus : 0),
+    };
+  });
+  return {
+    Source: "Monsterbrew",
+    Type: `${source.size} ${source.type}, ${source.alignment}`,
+    HP: {
+      Value: parseInt(source.hit_points) || 1,
+      Notes: source.hit_dice,
+    },
+    AC: {
+      Value: parseInt(source.armor_class) || 10,
+      Notes: source.armor_description ?? "",
+    },
+    InitiativeModifier: 0,
+    InitiativeAdvantage: false,
+    Speed: speedEntries,
+    Abilities: {
+      Str: source.ability_scores.str,
+      Dex: source.ability_scores.dex,
+      Con: source.ability_scores.con,
+      Int: source.ability_scores.int,
+      Wis: source.ability_scores.wis,
+      Cha: source.ability_scores.cha,
+    },
+    DamageVulnerabilities: source.damage_vulnerabilities,
+    DamageResistances: source.damage_resistances,
+    DamageImmunities: source.damage_immunities,
+    ConditionImmunities: source.condition_immunities,
+    Saves: savingThrows,
+    Skills: skillSaves,
+    Senses: senses,
+    Languages: source.languages.map((l) => l.toString()),
+    Challenge: source.cr.challenge_rating,
+    Traits: source.traits.map((t) => ({
+      Name: t.name,
+      Content: t.description,
+    })),
+    Actions: source.actions.map((a) => ({
+      Name: a.name,
+      Content: a.description,
+    })),
+    Reactions: source.reactions.map((r) => ({
+      Name: r.name,
+      Content: r.description,
+    })),
+    LegendaryActions: source.legendary_actions.map((la) => ({
+      Name: la.name,
+      Content: la.description,
+    })),
+    BonusActions: [],
+    MythicActions: [],
+    Description: source.name,
+    Player: source.user_id,
+    Version: "",
+    ImageURL: "",
   };
 }
 

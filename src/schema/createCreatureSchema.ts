@@ -52,13 +52,13 @@ export enum Languages {
 export const languagesSchema = z.nativeEnum(Languages);
 
 export const movementSchema = z.object({
-  burrow: z.coerce.number().optional(),
-  climb: z.coerce.number().optional(),
-  crawl: z.coerce.number().optional(),
-  fly: z.coerce.number().optional(),
-  hover: z.boolean().optional(),
-  swim: z.coerce.number().optional(),
-  walk: z.coerce.number().optional(),
+  burrow: z.coerce.number(),
+  climb: z.coerce.number(),
+  crawl: z.coerce.number(),
+  fly: z.coerce.number(),
+  hover: z.boolean(),
+  swim: z.coerce.number(),
+  walk: z.coerce.number(),
 });
 
 export const abilityScoresSchema = z.object({
@@ -71,11 +71,11 @@ export const abilityScoresSchema = z.object({
 });
 
 export const sensesSchema = z.object({
-  blindsight: z.coerce.number().optional(),
-  darkvision: z.coerce.number().optional(),
-  is_blind_beyond: z.boolean().optional(),
-  tremorsense: z.coerce.number().optional(),
-  truesight: z.coerce.number().optional(),
+  blindsight: z.coerce.number(),
+  darkvision: z.coerce.number(),
+  is_blind_beyond: z.boolean(),
+  tremorsense: z.coerce.number(),
+  truesight: z.coerce.number(),
 });
 
 export const skillsBonusSchema = z.array(
@@ -114,9 +114,9 @@ export const createCreatureSchema = z.object({
   reactions: z.array(z.object({ name: z.string(), description: z.string() })),
   movements: movementSchema,
   ability_scores: abilityScoresSchema,
-  senses: sensesSchema.optional(),
-  languages: z.array(languagesSchema.optional()),
-  saving_throws: jsonSchema.optional(),
+  senses: sensesSchema,
+  languages: z.array(languagesSchema),
+  saving_throws: z.array(z.string()),
   condition_immunities: z.array(z.string()),
   skill_bonuses: skillsBonusSchema,
   damage_immunities: z.array(z.string()),
@@ -154,6 +154,7 @@ export const defaultCreature: z.infer<typeof createCreatureSchema> = {
     climb: 0,
     fly: 0,
     hover: false,
+    crawl: 0,
   },
 
   ability_scores: {
