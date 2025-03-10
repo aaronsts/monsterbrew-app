@@ -36,11 +36,28 @@ import { createCreatureSchema } from "@/schema/createCreatureSchema";
 import { z } from "zod";
 import { ImportDialog } from "@/components/import-dialog";
 import { toImprovedInitiative } from "@/services/converters/improved-initiative";
+import { useReactToPrint } from "react-to-print";
+import { RefObject } from "react";
 
-function CreatureForm() {
+function CreatureForm({ pdfRef }: { pdfRef: RefObject<HTMLDivElement> }) {
   const formContext = useFormContext<z.infer<typeof createCreatureSchema>>();
 
   const isLegendary = formContext.watch("is_legendary");
+  const creature = formContext.watch();
+
+  const reactToPrintFn = useReactToPrint({ contentRef: pdfRef });
+
+  const exportData = (jsonOutput: typeof ImprovedInitiativeCreature) => {
+    const jsonString = `data:text/json;chatset=utf-8,${encodeURIComponent(
+      JSON.stringify(jsonOutput)
+    )}`;
+    const link = document.createElement("a");
+    link.href = jsonString;
+    link.download = `${
+      creature.name.replaceAll(" ", "-") ?? "monsterbrew-creature"
+    }.json`;
+    link.click();
+  };
 
   return (
     <Card>
@@ -64,10 +81,13 @@ function CreatureForm() {
               <DropdownMenuItem
                 onClick={formContext.handleSubmit(
                   (v: z.infer<typeof createCreatureSchema>) =>
-                    console.log(toImprovedInitiative(v))
+                    exportData(toImprovedInitiative(v))
                 )}
               >
                 Improved Initiative
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => reactToPrintFn()}>
+                PDF
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -139,9 +159,6 @@ function CreatureForm() {
             </AccordionContent>
           </AccordionItem>
         </Accordion>
-        <div className="w-full mt-3 flex  justify-end">
-          <Button>Submit</Button>
-        </div>
       </CardContent>
     </Card>
   );
