@@ -37,7 +37,7 @@ const ImprovedInitiativeCreature = {
     },
   ],
   Senses: [""],
-  Languages: [],
+  Languages: [""],
   Challenge: "",
   Traits: [
     {

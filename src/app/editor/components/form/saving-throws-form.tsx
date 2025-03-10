@@ -30,7 +30,7 @@ function SavingThrowsForm() {
           <FormControl>
             <SelectBox
               options={saves}
-              value={field.value as string}
+              value={field.value}
               onChange={field.onChange}
               placeholder="Select ability..."
               multiple

@@ -75,19 +75,17 @@ function generateMarkdown(creature: z.infer<typeof createCreatureSchema>) {
   markdownLines.push("___");
 
   const savingThrows: string[] = creature.saving_throws
-    ? creature.saving_throws?.map(
-        (save: keyof typeof creature.ability_scores) => {
-          const bonus =
-            Math.floor(
-              creature.ability_scores[
-                save as keyof typeof creature.ability_scores
-              ] / 2
-            ) -
-            5 +
-            creature.cr.proficiency_bonus;
-          return `${titleCase(save.slice(0, 3))} +${bonus <= 0 ? 0 : bonus}`;
-        }
-      )
+    ? creature.saving_throws?.map((save) => {
+        const bonus =
+          Math.floor(
+            creature.ability_scores[
+              save as keyof typeof creature.ability_scores
+            ] / 2
+          ) -
+          5 +
+          creature.cr.proficiency_bonus;
+        return `${titleCase(save.slice(0, 3))} +${bonus <= 0 ? 0 : bonus}`;
+      })
     : [];
 
   if (savingThrows.length > 0)

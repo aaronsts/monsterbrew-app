@@ -24,12 +24,12 @@ export function fromOpen5e(source: Open5eCreature): typeof defaultCreature {
   }
 
   const savingThrows = [
-    !!source.strength_save ? "str" : null,
-    !!source.dexterity_save ? "dex" : null,
-    !!source.constitution_save ? "con" : null,
-    !!source.intelligence_save ? "int" : null,
-    !!source.wisdom_save ? "wis" : null,
-    !!source.charisma_save ? "cha" : null,
+    !!source.strength_save ? "str" : "",
+    !!source.dexterity_save ? "dex" : "",
+    !!source.constitution_save ? "con" : "",
+    !!source.intelligence_save ? "int" : "",
+    !!source.wisdom_save ? "wis" : "",
+    !!source.charisma_save ? "cha" : "",
   ];
 
   const skills = Object.entries(source.skills)

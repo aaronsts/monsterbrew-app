@@ -21,7 +21,6 @@ import { Button } from "@/components/ui/button";
 import { ReactionsForm } from "./form/reactions-form";
 import { TraitsForm } from "./form/traits-form";
 import { LegendaryActionsForm } from "./form/legendary-actions-form";
-import { useEffect, useState } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import ConditionTypesForm from "./form/condition-types-form";
@@ -36,11 +35,29 @@ import { createMarkdownPage } from "@/services/converters/markdown";
 import { createCreatureSchema } from "@/schema/createCreatureSchema";
 import { z } from "zod";
 import { ImportDialog } from "@/components/import-dialog";
+import { toImprovedInitiative } from "@/services/converters/improved-initiative";
+import { useReactToPrint } from "react-to-print";
+import { RefObject } from "react";
 
-function CreatureForm() {
+function CreatureForm({ pdfRef }: { pdfRef: RefObject<HTMLDivElement> }) {
   const formContext = useFormContext<z.infer<typeof createCreatureSchema>>();
 
   const isLegendary = formContext.watch("is_legendary");
+  const creature = formContext.watch();
+
+  const reactToPrintFn = useReactToPrint({ contentRef: pdfRef });
+
+  const exportData = (jsonOutput: typeof ImprovedInitiativeCreature) => {
+    const jsonString = `data:text/json;chatset=utf-8,${encodeURIComponent(
+      JSON.stringify(jsonOutput)
+    )}`;
+    const link = document.createElement("a");
+    link.href = jsonString;
+    link.download = `${
+      creature.name.replaceAll(" ", "-") ?? "monsterbrew-creature"
+    }.json`;
+    link.click();
+  };
 
   return (
     <Card>
@@ -53,22 +70,24 @@ function CreatureForm() {
               <Button>Export</Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
-              <DropdownMenuItem asChild>
-                <Button
-                  onClick={formContext.handleSubmit(
-                    (v: z.infer<typeof createCreatureSchema>) =>
-                      createMarkdownPage(v)
-                  )}
-                >
-                  Homebrewery V3
-                </Button>
-                <Button
-                  onClick={formContext.handleSubmit(
-                    (v: z.infer<typeof createCreatureSchema>) => console.log(v)
-                  )}
-                >
-                  Improved Initiative
-                </Button>
+              <DropdownMenuItem
+                onClick={formContext.handleSubmit(
+                  (v: z.infer<typeof createCreatureSchema>) =>
+                    createMarkdownPage(v)
+                )}
+              >
+                Homebrewery V3
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={formContext.handleSubmit(
+                  (v: z.infer<typeof createCreatureSchema>) =>
+                    exportData(toImprovedInitiative(v))
+                )}
+              >
+                Improved Initiative
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => reactToPrintFn()}>
+                PDF
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -140,9 +159,6 @@ function CreatureForm() {
             </AccordionContent>
           </AccordionItem>
         </Accordion>
-        <div className="w-full mt-3 flex  justify-end">
-          <Button>Submit</Button>
-        </div>
       </CardContent>
     </Card>
   );

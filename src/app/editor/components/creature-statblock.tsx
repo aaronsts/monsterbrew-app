@@ -9,13 +9,14 @@ import { Traits } from "./statblock/traits";
 import { Features } from "./statblock/features";
 import { LegendaryActions } from "./statblock/legendary-actions";
 import { BasicInfo } from "./statblock/basic-info";
+import { RefObject } from "react";
 
-function CreatureStatblock() {
+function CreatureStatblock({ pdfRef }: { pdfRef: RefObject<HTMLDivElement> }) {
   const { watch } = useFormContext<z.infer<typeof createCreatureSchema>>();
   const creature = watch();
 
   return (
-    <Card className="h-fit">
+    <Card className="h-fit" ref={pdfRef}>
       <CardContent className="pt-6 grid gap-1.5">
         <h1 className="text-3xl font-bold small-caps border-b leading-normal">
           {creature.name || "Example Creature"}
