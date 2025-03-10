@@ -54,7 +54,6 @@ export const languagesSchema = z.nativeEnum(Languages);
 export const movementSchema = z.object({
   burrow: z.coerce.number(),
   climb: z.coerce.number(),
-  crawl: z.coerce.number(),
   fly: z.coerce.number(),
   hover: z.boolean(),
   swim: z.coerce.number(),
@@ -154,7 +153,6 @@ export const defaultCreature: z.infer<typeof createCreatureSchema> = {
     climb: 0,
     fly: 0,
     hover: false,
-    crawl: 0,
   },
 
   ability_scores: {
