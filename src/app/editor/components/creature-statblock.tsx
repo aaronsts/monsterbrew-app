@@ -11,7 +11,11 @@ import { LegendaryActions } from "./statblock/legendary-actions";
 import { BasicInfo } from "./statblock/basic-info";
 import { RefObject } from "react";
 
-function CreatureStatblock({ pdfRef }: { pdfRef: RefObject<HTMLDivElement> }) {
+function CreatureStatblock({
+  pdfRef,
+}: {
+  pdfRef: RefObject<HTMLDivElement | null>;
+}) {
   const { watch } = useFormContext<z.infer<typeof createCreatureSchema>>();
   const creature = watch();
 

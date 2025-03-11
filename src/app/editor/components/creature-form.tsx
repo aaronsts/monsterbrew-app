@@ -39,7 +39,11 @@ import { toImprovedInitiative } from "@/services/converters/improved-initiative"
 import { useReactToPrint } from "react-to-print";
 import { RefObject } from "react";
 
-function CreatureForm({ pdfRef }: { pdfRef: RefObject<HTMLDivElement> }) {
+function CreatureForm({
+  pdfRef,
+}: {
+  pdfRef: RefObject<HTMLDivElement | null>;
+}) {
   const formContext = useFormContext<z.infer<typeof createCreatureSchema>>();
 
   const isLegendary = formContext.watch("is_legendary");

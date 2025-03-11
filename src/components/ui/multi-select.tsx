@@ -18,6 +18,7 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { CheckIcon, ChevronsUpDown, X } from "lucide-react";
+import { Input } from "./input";
 
 interface Option {
   value: string;
@@ -75,7 +76,7 @@ const SelectBox = React.forwardRef<HTMLInputElement, SelectBoxProps>(
       <Popover open={isOpen} onOpenChange={setIsOpen}>
         <PopoverTrigger asChild>
           <Button
-            variant={"outline"}
+            variant="form"
             className={cn(
               "flex min-h-[36px] cursor-pointer items-center justify-between rounded-md border px-3 py-1 data-[state=open]:border-ring w-full h-full ",
               className

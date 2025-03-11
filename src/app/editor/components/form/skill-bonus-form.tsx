@@ -108,21 +108,21 @@ function SkillBonusForm() {
         </div>
         <Button
           type="button"
-          variant="tertiary"
           onClick={addSkill}
           className="mt-8"
           data-expert="false"
+          variant="proficient"
         >
           Proficient
         </Button>
         <Button
           type="button"
-          variant="secondary"
+          variant="expert"
           onClick={addSkill}
           className="mt-8"
           data-expert="true"
         >
-          Exprtise
+          Expertise
         </Button>
       </div>
       <div className="flex flex-wrap gap-3 py-3">

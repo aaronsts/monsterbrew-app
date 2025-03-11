@@ -64,7 +64,7 @@ export function GeneralInfoForm() {
                 value={field.value}
               >
                 <FormControl>
-                  <SelectTrigger>
+                  <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select a type" />
                   </SelectTrigger>
                 </FormControl>
@@ -94,7 +94,7 @@ export function GeneralInfoForm() {
                 value={field.value}
               >
                 <FormControl className="capitalize">
-                  <SelectTrigger>
+                  <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select a size" />
                   </SelectTrigger>
                 </FormControl>
@@ -182,7 +182,7 @@ export function GeneralInfoForm() {
                     Hit Dice
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <Info className="absolute -right-6 -top-0.5 w-4 text-cararra-700" />
+                        <Info className="absolute left-15 w-4" />
                       </TooltipTrigger>
                       <TooltipContent>
                         <p>
@@ -201,9 +201,8 @@ export function GeneralInfoForm() {
             )}
           />
         )}
-
         <div className="space-y-0.5">
-          <span className="h-10 block"></span>
+          <span className="h-7 block"></span>
           <div className="flex items-center space-x-2">
             <Checkbox
               id="customHp"
@@ -233,7 +232,7 @@ export function GeneralInfoForm() {
                 onValueChange={(v) => field.onChange(JSON.parse(v))}
               >
                 <FormControl className="relative">
-                  <SelectTrigger>
+                  <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select a rating" />
                   </SelectTrigger>
                 </FormControl>
@@ -257,7 +256,7 @@ export function GeneralInfoForm() {
           )}
         />
         <div className="space-y-0.5 col-span-2">
-          <span className="h-9 block"></span>
+          <span className="h-7 block"></span>
           <p>Proficiency Bonus: +{cr.proficiency_bonus}</p>
         </div>
       </div>
