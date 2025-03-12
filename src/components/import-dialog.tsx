@@ -50,7 +50,7 @@ export function ImportDialog() {
           e.target.value = "";
           throw Error("Only JSON files are supported");
         }
-      } catch (err: unknown) {
+      } catch (err: any) {
         toast.error(err.message);
         throw Error(err.message);
       }
