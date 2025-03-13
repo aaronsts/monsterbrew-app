@@ -26,9 +26,9 @@ import {
 } from "./ui/select";
 import { fromImprovedInitiative } from "@/services/converters/improved-initiative";
 import { fromTetacube } from "@/services/converters/tetra-cube";
-import { Alert } from "./ui/alert";
 import { ImportTypes } from "@/lib/constants";
 import { fromOpen5e } from "@/services/converters/open5e";
+import { Alert } from "./ui/alert";
 
 export function ImportDialog() {
   const [importedStatblock, setImportedStatblock] = useState<string>();
@@ -68,7 +68,7 @@ export function ImportDialog() {
         try {
           monsterbrewCreature = fromImprovedInitiative(parsedImport);
           formContext.reset(monsterbrewCreature);
-        } catch (error) {
+        } catch (error: unknown) {
           toast.error("An Error occured during conversion");
         }
         setShowModal(false);
@@ -92,7 +92,7 @@ export function ImportDialog() {
   return (
     <Dialog open={showModal} onOpenChange={setShowModal}>
       <DialogTrigger asChild>
-        <Button>Import</Button>
+        <Button variant="outline">Import</Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
@@ -101,7 +101,7 @@ export function ImportDialog() {
             Please upload a file or past the content below.
           </DialogDescription>
         </DialogHeader>
-        <ScrollArea className="max-h-96">
+        <ScrollArea className="max-h-96 bg-background rounded-md p-1">
           {importedStatblock?.toString()}
         </ScrollArea>
 

@@ -18,6 +18,7 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { CheckIcon, ChevronsUpDown, X } from "lucide-react";
+import { Input } from "./input";
 
 interface Option {
   value: string;
@@ -75,7 +76,7 @@ const SelectBox = React.forwardRef<HTMLInputElement, SelectBoxProps>(
       <Popover open={isOpen} onOpenChange={setIsOpen}>
         <PopoverTrigger asChild>
           <Button
-            variant={"outline"}
+            variant="form"
             className={cn(
               "flex min-h-[36px] cursor-pointer items-center justify-between rounded-md border px-3 py-1 data-[state=open]:border-ring w-full h-full ",
               className
@@ -99,7 +100,7 @@ const SelectBox = React.forwardRef<HTMLInputElement, SelectBoxProps>(
                     ?.map((option) => (
                       <span
                         key={option.value}
-                        className="inline-flex items-center gap-1 rounded-md border py-0.5 pl-2 pr-1 text-xs font-medium text-muted bg-muted-foreground transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 capitalize"
+                        className="inline-flex items-center gap-1 rounded-md border py-0.5 pl-2 pr-1 text-xs font-medium text-accent-foreground bg-accent border-ring transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 capitalize"
                       >
                         <span>{option.label}</span>
                         <span
@@ -107,7 +108,7 @@ const SelectBox = React.forwardRef<HTMLInputElement, SelectBoxProps>(
                             e.preventDefault();
                             handleSelect(option.value);
                           }}
-                          className="flex items-center rounded-sm px-[1px] text-muted/60 hover:text-muted"
+                          className="flex items-center rounded-sm px-[1px] text-accent-foreground hover:text-accent-foreground/60"
                         >
                           <X />
                         </span>
@@ -183,9 +184,9 @@ const SelectBox = React.forwardRef<HTMLInputElement, SelectBoxProps>(
                           {multiple && (
                             <div
                               className={cn(
-                                "mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary",
+                                "mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-accent-foreground",
                                 isSelected
-                                  ? "bg-primary text-primary-foreground"
+                                  ? "bg-accent text-accent-foreground"
                                   : "opacity-50 [&_svg]:invisible"
                               )}
                             >
