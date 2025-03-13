@@ -15,8 +15,8 @@ export function AbilityScores() {
     : [];
 
   return (
-    <div className="grid grid-cols-2 w-full gap-px border bg-black/10 my-2">
-      <div className="grid col-span-2 bg-card grid-cols-2 text-xs font-semibold">
+    <div className="grid grid-cols-2 w-full rounded-md overflow-hidden gap-px border bg-black/10 my-2">
+      <div className="grid col-span-2 bg-background grid-cols-2 text-xs font-semibold">
         <div className="grid px-4 grid-cols-4  gap-3 ">
           <span className="col-start-3">MOD</span>
           <span className="col-start-4">SAVE</span>
@@ -29,7 +29,7 @@ export function AbilityScores() {
       {abilityScores.map((score) => (
         <div
           key={score.label}
-          className="grid grid-cols-4 w-full bg-card gap-3  px-4 py-1"
+          className="grid grid-cols-4 w-full bg-background gap-3  px-4 py-1"
         >
           <h4>{score.label}</h4>
           <p>{score.value || "0"}</p>

@@ -1,4 +1,4 @@
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { createCreatureSchema } from "@/schema/createCreatureSchema";
 import { useFormContext } from "react-hook-form";
 import { z } from "zod";
@@ -21,20 +21,16 @@ function CreatureStatblock({
 
   return (
     <Card className="h-fit" ref={pdfRef}>
-      <CardContent className="pt-6 grid gap-1.5">
-        <h1 className="text-3xl font-bold small-caps border-b leading-normal">
-          {creature.name || "Example Creature"}
-        </h1>
-        <BasicInfo />
-        <AbilityScores />
-        <Features />
-        <div className="flex flex-col gap-6 my-3">
-          <Traits />
-          <Actions />
-          <LegendaryActions />
-        </div>
-        <Reactions />
-      </CardContent>
+      <CardTitle>{creature.name || "Example Creature"}</CardTitle>
+      <BasicInfo />
+      <AbilityScores />
+      <Features />
+      <div className="flex flex-col gap-6 my-3">
+        <Traits />
+        <Actions />
+        <LegendaryActions />
+      </div>
+      <Reactions />
     </Card>
   );
 }

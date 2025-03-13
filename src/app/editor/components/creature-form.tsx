@@ -65,10 +65,11 @@ function CreatureForm({
 
   return (
     <Card>
-      <CardHeader className="flex flex-row items-center justify-between">
+      <div className="flex items-center justify-between">
         <CardTitle className="w-fit">Create creature</CardTitle>
         <div className="flex gap-2">
           <ImportDialog />
+
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button>Export</Button>
@@ -96,74 +97,72 @@ function CreatureForm({
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
-      </CardHeader>
-      <CardContent>
-        <Accordion
-          type="multiple"
-          defaultValue={[
-            "general-info",
-            "languages-skills",
-            "movement-senses",
-            "damages-conditions",
-            "features",
-          ]}
-        >
-          <AccordionItem value="general-info" defaultChecked>
-            <AccordionTrigger>General Info</AccordionTrigger>
-            <AccordionContent>
-              <GeneralInfoForm />
-            </AccordionContent>
-          </AccordionItem>
-          <AccordionItem value="movement-senses">
-            <AccordionTrigger>Movement & Senses</AccordionTrigger>
-            <AccordionContent className="space-y-3">
-              <MovementForm />
-              <AbilityScoresForm />
-              <SensesForm />
-            </AccordionContent>
-          </AccordionItem>
-          <AccordionItem value="languages-skills">
-            <AccordionTrigger>Languages & Skills</AccordionTrigger>
-            <AccordionContent className="space-y-3">
-              <LanguagesForm />
-              <SavingThrowsForm />
-              <SkillBonusForm />
-            </AccordionContent>
-          </AccordionItem>
-          <AccordionItem value="damages-conditions">
-            <AccordionTrigger>Damages & Conditions</AccordionTrigger>
-            <AccordionContent className="space-y-3">
-              <DamageTypesForm />
-              <ConditionTypesForm />
-            </AccordionContent>
-          </AccordionItem>
-          <AccordionItem value="features-actions" className="relative">
-            <div className="flex gap-1.5 items-center w-fit absolute left-28 top-[18px]">
-              <Checkbox
-                id="isLegendary"
-                checked={isLegendary}
-                onCheckedChange={(e) =>
-                  formContext.setValue("is_legendary", e as boolean)
-                }
-              />
-              <Label
-                htmlFor="isLegendary"
-                className="text-xs font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-              >
-                Is Legendary
-              </Label>
-            </div>
-            <AccordionTrigger>Traits & Actions</AccordionTrigger>
-            <AccordionContent className="space-y-3">
-              <TraitsForm />
-              <ActionsForm />
+      </div>
+      <Accordion
+        type="multiple"
+        defaultValue={[
+          "general-info",
+          "languages-skills",
+          "movement-senses",
+          "damages-conditions",
+          "features",
+        ]}
+      >
+        <AccordionItem value="general-info" defaultChecked>
+          <AccordionTrigger>General Info</AccordionTrigger>
+          <AccordionContent>
+            <GeneralInfoForm />
+          </AccordionContent>
+        </AccordionItem>
+        <AccordionItem value="movement-senses">
+          <AccordionTrigger>Movement & Senses</AccordionTrigger>
+          <AccordionContent className="space-y-3">
+            <MovementForm />
+            <AbilityScoresForm />
+            <SensesForm />
+          </AccordionContent>
+        </AccordionItem>
+        <AccordionItem value="languages-skills">
+          <AccordionTrigger>Languages & Skills</AccordionTrigger>
+          <AccordionContent className="space-y-3">
+            <LanguagesForm />
+            <SavingThrowsForm />
+            <SkillBonusForm />
+          </AccordionContent>
+        </AccordionItem>
+        <AccordionItem value="damages-conditions">
+          <AccordionTrigger>Damages & Conditions</AccordionTrigger>
+          <AccordionContent className="space-y-3">
+            <DamageTypesForm />
+            <ConditionTypesForm />
+          </AccordionContent>
+        </AccordionItem>
+        <AccordionItem value="features-actions" className="relative">
+          <div className="flex gap-1.5 items-center w-fit absolute left-33 top-[18px]">
+            <Checkbox
+              id="isLegendary"
+              checked={isLegendary}
+              onCheckedChange={(e) =>
+                formContext.setValue("is_legendary", e as boolean)
+              }
+            />
+            <Label
+              htmlFor="isLegendary"
+              className="text-xs font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+              Is Legendary
+            </Label>
+          </div>
+          <AccordionTrigger>Traits & Actions</AccordionTrigger>
+          <AccordionContent className="space-y-3">
+            <TraitsForm />
+            <ActionsForm />
 
-              {isLegendary && <LegendaryActionsForm />}
-              <ReactionsForm />
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
-      </CardContent>
+            {isLegendary && <LegendaryActionsForm />}
+            <ReactionsForm />
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
     </Card>
   );
 }
