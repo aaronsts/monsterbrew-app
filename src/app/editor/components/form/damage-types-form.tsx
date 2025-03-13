@@ -92,7 +92,7 @@ function DamageTypesForm() {
           </Button>
           <Button
             type="button"
-            variant="tertiary"
+            variant="ghost"
             onClick={() =>
               addDamageType(selectedDamageType, "damage_resistances")
             }
