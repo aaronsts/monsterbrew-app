@@ -61,8 +61,9 @@ export function BasicInfo() {
         />
         <Description
           title="Initiative"
-          description={`+${creature.cr.proficiency_bonus.toString()}`}
-          placeholder="+3"
+          description={`+${creature.cr.proficiency_bonus.toString()} (${
+            creature.cr.proficiency_bonus + 10
+          })`}
         />
       </div>
       <Description title="HP" description={hp} placeholder="15 (2d8 + 6)" />

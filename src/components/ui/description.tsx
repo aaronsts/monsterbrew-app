@@ -17,7 +17,7 @@ export function Description({
   if (!show) return null;
   return (
     <p className={cn(className)}>
-      <span className="italic font-bold">{title}</span>{" "}
+      <span className="italic font-semibold">{title}.</span>{" "}
       {description || placeholder}
     </p>
   );
