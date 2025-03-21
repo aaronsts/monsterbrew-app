@@ -37,7 +37,7 @@ export default function RootLayout({
         >
           <MainNavigation />
           <main className="max-w-8xl mx-auto w-full">{children}</main>
-          <Toaster richColors position="top-right" />
+          <Toaster richColors position="bottom-right" />
         </body>
       </html>
     </ReactQueryClientProvider>

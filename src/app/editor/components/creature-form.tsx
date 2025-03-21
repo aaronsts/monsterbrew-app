@@ -1,6 +1,6 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardTitle } from "@/components/ui/card";
 
 import MovementForm from "./form/movements-form";
 import AbilityScoresForm from "./form/ability-scores-form";
@@ -38,6 +38,7 @@ import { ImportDialog } from "@/components/import-dialog";
 import { toImprovedInitiative } from "@/services/converters/improved-initiative";
 import { useReactToPrint } from "react-to-print";
 import { RefObject } from "react";
+import { SaveDialog } from "@/components/save-dialog";
 
 function CreatureForm({
   pdfRef,
@@ -69,7 +70,6 @@ function CreatureForm({
         <CardTitle className="w-fit">Create creature</CardTitle>
         <div className="flex gap-2">
           <ImportDialog />
-
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button>Export</Button>
@@ -96,6 +96,7 @@ function CreatureForm({
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+          <SaveDialog />
         </div>
       </div>
       <Accordion
@@ -138,7 +139,10 @@ function CreatureForm({
           </AccordionContent>
         </AccordionItem>
         <AccordionItem value="features-actions" className="relative">
-          <div className="flex gap-1.5 items-center w-fit absolute left-33 top-[18px]">
+          <div
+            className="flex gap-1.5 items-center w-fit absolute left-33
+           top-[18px]"
+          >
             <Checkbox
               id="isLegendary"
               checked={isLegendary}
