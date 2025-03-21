@@ -10,7 +10,8 @@ import {
 export default function MainNavigation() {
   return (
     <header className="max-w-8xl mx-auto p-3 pb-0 w-full ">
-      <div className="bg-card  text-card-foreground w-full flex justify-end border p-2 rounded-xl">
+      <div className="bg-card  text-card-foreground w-full flex justify-between items-center border p-2 rounded-xl">
+        <h2 className="text-2xl font-bold pl-4">Monsterbrew</h2>
         <NavigationMenu>
           <NavigationMenuList>
             <NavigationMenuItem>

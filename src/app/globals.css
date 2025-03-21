@@ -121,6 +121,9 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 }
+@theme {
+  --font-nippo: var(var(--font-nippo)), "sans-serif";
+}
 
 @layer base {
   * {

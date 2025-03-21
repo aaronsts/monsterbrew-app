@@ -7,15 +7,11 @@ import MainNavigation from "@/components/main-navigation";
 import { ReactQueryClientProvider } from "@/components/providers/ReactQueryClientProvider";
 import { Toaster } from "@/components/ui/sonner";
 
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
+const nippo = localFont({
+  src: "./fonts/Nippo-Variable.ttf",
+  variable: "--font-nippo",
   weight: "100 900",
-});
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -33,7 +29,7 @@ export default function RootLayout({
     <ReactQueryClientProvider>
       <html lang="en">
         <body
-          className={`${geistSans.variable} ${geistMono.variable} bg-background text-foreground antialiased`}
+          className={`${nippo.variable} font-nippo bg-background text-foreground antialiased`}
         >
           <MainNavigation />
           <main className="max-w-8xl mx-auto w-full">{children}</main>
