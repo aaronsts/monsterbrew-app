@@ -161,9 +161,8 @@ function CreatureForm({
           <AccordionContent className="space-y-3">
             <TraitsForm />
             <ActionsForm />
-
-            {isLegendary && <LegendaryActionsForm />}
             <ReactionsForm />
+            {isLegendary && <LegendaryActionsForm />}
           </AccordionContent>
         </AccordionItem>
       </Accordion>

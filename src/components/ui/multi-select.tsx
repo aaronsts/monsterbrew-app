@@ -19,6 +19,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { CheckIcon, ChevronsUpDown, X } from "lucide-react";
 import { Input } from "./input";
+import { Badge } from "./badge";
 
 interface Option {
   value: string;
@@ -98,10 +99,7 @@ const SelectBox = React.forwardRef<HTMLInputElement, SelectBoxProps>(
                         Array.isArray(value) && value.includes(option.value)
                     )
                     ?.map((option) => (
-                      <span
-                        key={option.value}
-                        className="inline-flex items-center gap-1 rounded-md border py-0.5 pl-2 pr-1 text-xs font-medium text-accent-foreground bg-accent border-ring transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 capitalize"
-                      >
+                      <Badge variant="accent" key={option.value}>
                         <span>{option.label}</span>
                         <span
                           onClick={(e) => {
@@ -112,7 +110,7 @@ const SelectBox = React.forwardRef<HTMLInputElement, SelectBoxProps>(
                         >
                           <X />
                         </span>
-                      </span>
+                      </Badge>
                     ))
                 ) : (
                   options.find((opt) => opt.value === value)?.label

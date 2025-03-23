@@ -139,7 +139,7 @@ export const CREATURE_SIZES = [
 export const CHALLENGE_RATINGS = [
   {
     challenge_rating: "0",
-    proficiency_bonus: 3,
+    proficiency_bonus: 2,
     hit_points_range: "1 - 6",
     attack_bonus: 3,
     damage_per_round: "0 - 1 ",

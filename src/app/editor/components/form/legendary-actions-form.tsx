@@ -33,6 +33,7 @@ export function LegendaryActionsForm() {
     <div className="grid gap-3">
       <Button
         className="ml-auto"
+        variant="outline"
         type="button"
         onClick={() => append({ name: "", description: "" })}
       >
