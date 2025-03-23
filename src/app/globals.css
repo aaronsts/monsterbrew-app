@@ -103,11 +103,10 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
-  --spacing: var(--spacing);
+
+  --font-nippo: var(--font-nippo), "sans-serif";
 }
 @theme {
-  --font-nippo: var(var(--font-nippo)), "sans-serif";
-
   --animate-move: move 2s ease-in-out infinite;
   @keyframes move {
     0%,
