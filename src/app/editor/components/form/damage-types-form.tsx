@@ -83,7 +83,7 @@ function DamageTypesForm() {
         <div className="grid grid-cols-3 gap-3">
           <Button
             type="button"
-            variant="secondary"
+            variant="destructive"
             onClick={() =>
               addDamageType(selectedDamageType, "damage_vulnerabilities")
             }
@@ -92,7 +92,7 @@ function DamageTypesForm() {
           </Button>
           <Button
             type="button"
-            variant="ghost"
+            className="bg-resistant text-white shadow-xs hover:bg-resistant/90 focus-visible:ring-resistant/80 dark:focus-visible:ring-resistant/40"
             onClick={() =>
               addDamageType(selectedDamageType, "damage_resistances")
             }
@@ -101,7 +101,7 @@ function DamageTypesForm() {
           </Button>
           <Button
             type="button"
-            variant="destructive"
+            className="bg-immune text-white shadow-xs hover:bg-immune/90 focus-visible:ring-immune/80 dark:focus-visible:ring-immune/40"
             onClick={() =>
               addDamageType(selectedDamageType, "damage_immunities")
             }
@@ -132,10 +132,10 @@ function DamageTypesForm() {
             className="relative pr-6 capitalize"
             variant={
               bonus?.includes("immune")
-                ? "destructive"
+                ? "immune"
                 : bonus?.includes("resistant")
-                ? "proficient"
-                : "expert"
+                ? "resistant"
+                : "destructive"
             }
             key={bonus}
           >

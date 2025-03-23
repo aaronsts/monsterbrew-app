@@ -32,7 +32,8 @@ export function ActionsForm() {
   return (
     <div className="grid gap-3">
       <Button
-        className=" ml-auto"
+        className="ml-auto"
+        variant="outline"
         type="button"
         onClick={() => append({ name: "", description: "" })}
       >

@@ -32,8 +32,9 @@ export function TraitsForm() {
   return (
     <div className="grid gap-3">
       <Button
-        className=" ml-auto"
+        className="ml-auto"
         type="button"
+        variant="outline"
         onClick={() => append({ name: "", description: "" })}
       >
         Add Trait
