@@ -33,6 +33,7 @@
   --immune: oklch(70.96% 0.1155 164.77);
 
   --radius: 0.625rem;
+  --spacing: 4px;
 }
 
 .dark {
@@ -102,6 +103,7 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+  --spacing: var(--spacing);
 }
 @theme {
   --font-nippo: var(var(--font-nippo)), "sans-serif";
