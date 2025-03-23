@@ -3,7 +3,20 @@
 const releaseConfig = {
   branches: ["main"],
   plugins: [
-    "@semantic-release/commit-analyzer",
+    [
+      "@semantic-release/commit-analyzer",
+      {
+        releaseRules: [
+          { type: "docs", scope: "README", release: "patch" },
+          { type: "refactor", release: "patch" },
+          { type: "style", release: "patch" },
+          { type: "ci", release: "patch" },
+        ],
+        parserOpts: {
+          noteKeywords: ["BREAKING CHANGE", "BREAKING CHANGES"],
+        },
+      },
+    ],
 
     "@semantic-release/release-notes-generator",
 
@@ -13,18 +26,21 @@ const releaseConfig = {
         npmPublish: false,
       },
     ],
+
     [
       "@semantic-release/changelog",
       {
         changelogFile: "CHANGELOG.md",
       },
     ],
+
     [
       "@semantic-release/github",
       {
         assets: ["CHANGELOG.md"],
       },
     ],
+
     [
       "@semantic-release/exec",
       {
