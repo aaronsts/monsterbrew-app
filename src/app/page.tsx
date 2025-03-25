@@ -22,7 +22,7 @@ export default function Home() {
           interface that makes it easy for Dungeon Masters to create new and
           unique creatures or tweak existing ones for their campaigns.
         </p>
-        <Button>
+        <Button size="lg" className="text-lg">
           <Link href="/editor">Start Homebrewing!</Link>
         </Button>
       </div>

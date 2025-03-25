@@ -157,10 +157,10 @@ export const defaultCreature: z.infer<typeof createCreatureSchema> = {
 
   ability_scores: {
     str: 10,
-    int: 10,
     dex: 10,
-    wis: 10,
     con: 10,
+    int: 10,
+    wis: 10,
     cha: 10,
   },
   saving_throws: [],
@@ -184,7 +184,7 @@ export const defaultCreature: z.infer<typeof createCreatureSchema> = {
 
   cr: {
     challenge_rating: "0",
-    proficiency_bonus: 3,
+    proficiency_bonus: 2,
     hit_points_range: "1 - 6",
     attack_bonus: 3,
     damage_per_round: "0 - 1 ",

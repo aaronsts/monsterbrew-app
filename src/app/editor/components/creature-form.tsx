@@ -39,6 +39,8 @@ import { toImprovedInitiative } from "@/services/converters/improved-initiative"
 import { useReactToPrint } from "react-to-print";
 import { RefObject } from "react";
 import { SaveDialog } from "@/components/save-dialog";
+import { access } from "fs";
+import { RotateCcw } from "lucide-react";
 
 function CreatureForm({
   pdfRef,
@@ -69,6 +71,13 @@ function CreatureForm({
       <div className="flex items-center justify-between">
         <CardTitle className="w-fit">Create creature</CardTitle>
         <div className="flex gap-2">
+          <Button
+            type="button"
+            variant="destructive"
+            onClick={() => formContext.reset()}
+          >
+            Reset
+          </Button>
           <ImportDialog />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -99,18 +108,37 @@ function CreatureForm({
           <SaveDialog />
         </div>
       </div>
-      <Accordion
-        type="multiple"
-        defaultValue={[
-          "general-info",
-          "languages-skills",
-          "movement-senses",
-          "damages-conditions",
-          "features",
-        ]}
-      >
+      <Accordion type="multiple" defaultValue={["general-info"]}>
         <AccordionItem value="general-info" defaultChecked>
-          <AccordionTrigger>General Info</AccordionTrigger>
+          <div className="flex items-center gap-3">
+            <div className="flex-1">
+              <AccordionTrigger className="flex-1">
+                General Info
+              </AccordionTrigger>
+            </div>
+            <Button
+              type="button"
+              variant="destructive"
+              size="icon"
+              onClick={() =>
+                formContext.reset({
+                  ...formContext.getValues(),
+                  name: "",
+                  type: "",
+                  size: "",
+                  alignment: "",
+                  armor_class: "",
+                  armor_description: "",
+                  hit_dice: "",
+                  hit_points: "",
+                  custom_hp: false,
+                  ability_scores: {},
+                })
+              }
+            >
+              <RotateCcw />
+            </Button>
+          </div>
           <AccordionContent>
             <GeneralInfoForm />
           </AccordionContent>
@@ -119,7 +147,6 @@ function CreatureForm({
           <AccordionTrigger>Movement & Senses</AccordionTrigger>
           <AccordionContent className="space-y-3">
             <MovementForm />
-            <AbilityScoresForm />
             <SensesForm />
           </AccordionContent>
         </AccordionItem>

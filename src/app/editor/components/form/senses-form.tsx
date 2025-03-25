@@ -33,7 +33,12 @@ function SensesForm() {
             <FormItem>
               <FormLabel>{titleCase(sense)}</FormLabel>
               <FormControl>
-                <Input placeholder="10" type="number" {...field} />
+                <Input
+                  onFocus={(e) => e.target.select()}
+                  placeholder="10"
+                  type="number"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>

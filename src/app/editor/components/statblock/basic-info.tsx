@@ -70,7 +70,7 @@ export function BasicInfo() {
       <Description
         title="Speed"
         description={movements.join(", ")}
-        placeholder="20 ft., climb 20 ft., fly 40 ft."
+        placeholder="30 ft."
       />
     </div>
   );

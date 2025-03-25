@@ -30,6 +30,7 @@ import { createCreatureSchema } from "@/schema/createCreatureSchema";
 import { Info } from "lucide-react";
 import { useFormContext } from "react-hook-form";
 import { z } from "zod";
+import AbilityScoresForm from "./ability-scores-form";
 
 export function GeneralInfoForm() {
   const form = useFormContext<z.infer<typeof createCreatureSchema>>();
@@ -46,7 +47,7 @@ export function GeneralInfoForm() {
             <FormItem className="col-span-2">
               <FormLabel>Creature Name</FormLabel>
               <FormControl>
-                <Input placeholder="Ancient Red Dragon" {...field} />
+                <Input placeholder="ex. Ancient Red Dragon" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -220,6 +221,7 @@ export function GeneralInfoForm() {
           </div>
         </div>
       </div>
+      <AbilityScoresForm />
       <div className="grid grid-cols-3 gap-3">
         <FormField
           control={form.control}

@@ -13,6 +13,8 @@ import { z } from "zod";
 
 function MovementForm() {
   const form = useFormContext<z.infer<typeof createCreatureSchema>>();
+
+  console.log("test");
   return (
     <div className="grid grid-cols-5 gap-3">
       <FormField
@@ -26,7 +28,12 @@ function MovementForm() {
                 <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-zinc-400 z-10">
                   ft.
                 </span>
-                <Input type="number" placeholder="ex. 0" {...field} />
+                <Input
+                  onFocus={(e) => e.target.select()}
+                  type="number"
+                  placeholder="ex. 0"
+                  {...field}
+                />
               </div>
             </FormControl>
             <FormMessage />
@@ -44,7 +51,12 @@ function MovementForm() {
                 <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-zinc-400 z-10">
                   ft.
                 </span>
-                <Input type="number" placeholder="ex. 0" {...field} />
+                <Input
+                  onFocus={(e) => e.target.select()}
+                  type="number"
+                  placeholder="ex. 0"
+                  {...field}
+                />
               </div>
             </FormControl>
             <FormMessage />
@@ -62,7 +74,12 @@ function MovementForm() {
                 <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-zinc-400 z-10">
                   ft.
                 </span>
-                <Input type="number" placeholder="ex. 0" {...field} />
+                <Input
+                  onFocus={(e) => e.target.select()}
+                  type="number"
+                  placeholder="ex. 0"
+                  {...field}
+                />
               </div>
             </FormControl>
             <FormMessage />
@@ -80,7 +97,12 @@ function MovementForm() {
                 <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-zinc-400 z-10">
                   ft.
                 </span>
-                <Input type="number" placeholder="ex. 0" {...field} />
+                <Input
+                  onFocus={(e) => e.target.select()}
+                  type="number"
+                  placeholder="ex. 0"
+                  {...field}
+                />
               </div>
             </FormControl>
             <FormMessage />
@@ -114,7 +136,12 @@ function MovementForm() {
                   <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-zinc-400 z-10">
                     ft.
                   </span>
-                  <Input type="number" placeholder="ex. 0" {...field} />
+                  <Input
+                    onFocus={(e) => e.target.select()}
+                    type="number"
+                    placeholder="ex. 0"
+                    {...field}
+                  />
                 </div>
               </FormControl>
               <FormMessage />

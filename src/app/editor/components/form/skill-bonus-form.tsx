@@ -90,7 +90,7 @@ function SkillBonusForm() {
               {skills &&
                 Object.keys(skills).map((modifier) => (
                   <SelectGroup key={modifier}>
-                    <SelectLabel>{modifier}</SelectLabel>
+                    <SelectLabel className="uppercase">{modifier}</SelectLabel>
                     {skills[modifier] &&
                       skills[modifier].map((skill) => (
                         <SelectItem
