@@ -18,7 +18,7 @@ function SavingThrowsForm() {
 
   const saves = abilityScoresSchema
     .keyof()
-    ._def.values.map((save) => ({ label: save, value: save }));
+    ._def.values.map((save) => ({ label: save.toUpperCase(), value: save }));
 
   return (
     <FormField

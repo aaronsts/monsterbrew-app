@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/form";
 
 import SelectBox from "@/components/ui/multi-select";
-import { cn } from "@/lib/utils";
+import { cn, titleCase } from "@/lib/utils";
 import { createCreatureSchema, Languages } from "@/schema/createCreatureSchema";
 import { useFormContext } from "react-hook-form";
 import { z } from "zod";
@@ -16,7 +16,7 @@ function LanguagesForm() {
   const form = useFormContext<z.infer<typeof createCreatureSchema>>();
 
   const languages = Object.keys(Languages).map((lang) => ({
-    label: lang as string,
+    label: titleCase(lang) as string,
     value: lang as string,
   }));
 

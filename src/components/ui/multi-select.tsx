@@ -116,7 +116,7 @@ const SelectBox = React.forwardRef<HTMLInputElement, SelectBoxProps>(
                   options.find((opt) => opt.value === value)?.label
                 )
               ) : (
-                <span className="mr-auto text-muted-foreground">
+                <span className="mr-auto text-muted-foreground/40 font-normal">
                   {placeholder}
                 </span>
               )}
