@@ -49,10 +49,6 @@ export function BasicInfo() {
 
   return (
     <div>
-      <p className="capitalize italic font-medium text-black/50 mb-3">
-        {creature.size || "Size"} {creature.type || "Type"},{" "}
-        {creature.alignment || "Alignment"}
-      </p>
       <div className="flex gap-1.5">
         <Description
           title="AC"

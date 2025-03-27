@@ -80,10 +80,10 @@ function SkillBonusForm() {
   return (
     <div>
       <div className="grid grid-cols-4 gap-3">
-        <div className="space-y-2 col-span-2">
+        <div className="flex flex-col justify-end gap-2 col-span-2">
           <Label>Skill Bonuses</Label>
           <Select onValueChange={handleSelectChange}>
-            <SelectTrigger className="relative capitalize">
+            <SelectTrigger className="mb-0 relative capitalize">
               <SelectValue placeholder="Select a skill" />
             </SelectTrigger>
             <SelectContent>

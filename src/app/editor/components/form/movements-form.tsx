@@ -13,8 +13,6 @@ import { z } from "zod";
 
 function MovementForm() {
   const form = useFormContext<z.infer<typeof createCreatureSchema>>();
-
-  console.log("test");
   return (
     <div className="grid grid-cols-5 gap-3">
       <FormField

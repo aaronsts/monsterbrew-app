@@ -21,16 +21,22 @@ function CreatureStatblock({
 
   return (
     <Card className="h-fit" ref={pdfRef}>
-      <CardTitle>{creature.name || "Example Creature"}</CardTitle>
+      <div>
+        <CardTitle>{creature.name || "Example Creature"}</CardTitle>
+        <p className="capitalize italic font-medium text-black/50">
+          {creature.size || "Size"} {creature.type || "Type"},{" "}
+          {creature.alignment || "Alignment"}
+        </p>
+      </div>
       <BasicInfo />
       <AbilityScores />
       <Features />
       <div className="flex flex-col gap-6 my-3">
         <Traits />
         <Actions />
+        <Reactions />
         <LegendaryActions />
       </div>
-      <Reactions />
     </Card>
   );
 }

@@ -144,14 +144,55 @@ function CreatureForm({
           </AccordionContent>
         </AccordionItem>
         <AccordionItem value="movement-senses">
-          <AccordionTrigger>Movement & Senses</AccordionTrigger>
+          <div className="flex items-center gap-3">
+            <div className="flex-1">
+              <AccordionTrigger className="flex-1">
+                Movement & Senses
+              </AccordionTrigger>
+            </div>
+            <Button
+              type="button"
+              variant="destructive"
+              size="icon"
+              onClick={() =>
+                formContext.reset({
+                  ...formContext.getValues(),
+                  movements: {},
+                  senses: {},
+                })
+              }
+            >
+              <RotateCcw />
+            </Button>
+          </div>
           <AccordionContent className="space-y-3">
             <MovementForm />
             <SensesForm />
           </AccordionContent>
         </AccordionItem>
         <AccordionItem value="languages-skills">
-          <AccordionTrigger>Languages & Skills</AccordionTrigger>
+          <div className="flex items-center gap-3">
+            <div className="flex-1">
+              <AccordionTrigger className="flex-1">
+                Languages & Skills
+              </AccordionTrigger>
+            </div>
+            <Button
+              type="button"
+              variant="destructive"
+              size="icon"
+              onClick={() =>
+                formContext.reset({
+                  ...formContext.getValues(),
+                  languages: [],
+                  saving_throws: [],
+                  skill_bonuses: [],
+                })
+              }
+            >
+              <RotateCcw />
+            </Button>
+          </div>
           <AccordionContent className="space-y-3">
             <LanguagesForm />
             <SavingThrowsForm />
@@ -159,7 +200,29 @@ function CreatureForm({
           </AccordionContent>
         </AccordionItem>
         <AccordionItem value="damages-conditions">
-          <AccordionTrigger>Damages & Conditions</AccordionTrigger>
+          <div className="flex items-center gap-3">
+            <div className="flex-1">
+              <AccordionTrigger className="flex-1">
+                Damages & Conditions
+              </AccordionTrigger>
+            </div>
+            <Button
+              type="button"
+              variant="destructive"
+              size="icon"
+              onClick={() =>
+                formContext.reset({
+                  ...formContext.getValues(),
+                  damage_immunities: [],
+                  damage_resistances: [],
+                  damage_vulnerabilities: [],
+                  condition_immunities: [],
+                })
+              }
+            >
+              <RotateCcw />
+            </Button>
+          </div>
           <AccordionContent className="space-y-3">
             <DamageTypesForm />
             <ConditionTypesForm />
@@ -184,7 +247,31 @@ function CreatureForm({
               Is Legendary
             </Label>
           </div>
-          <AccordionTrigger>Traits & Actions</AccordionTrigger>
+          <div className="flex items-center gap-3">
+            <div className="flex-1">
+              <AccordionTrigger className="flex-1">
+                Traits & Actions
+              </AccordionTrigger>
+            </div>
+            <Button
+              type="button"
+              variant="destructive"
+              size="icon"
+              onClick={() =>
+                formContext.reset({
+                  ...formContext.getValues(),
+                  actions: [],
+                  reactions: [],
+                  traits: [],
+                  legendary_actions: [],
+                  legendary_description: "",
+                })
+              }
+            >
+              <RotateCcw />
+            </Button>
+          </div>
+
           <AccordionContent className="space-y-3">
             <TraitsForm />
             <ActionsForm />

@@ -79,8 +79,8 @@ function DamageTypesForm() {
   return (
     <div className="space-y-2">
       <Label>Damage types</Label>
-      <div className="grid grid-cols-2 gap-3">
-        <div className="grid grid-cols-3 gap-3">
+      <div className="flex flex-col md:flex-row gap-3">
+        <div className="grid xl:grid-cols-3 gap-3 w-full">
           <Button
             type="button"
             variant="destructive"
@@ -109,10 +109,10 @@ function DamageTypesForm() {
             Immune
           </Button>
         </div>
-        <div className="">
+        <div className="ml-auto">
           <Select onValueChange={handleSelectChange}>
-            <SelectTrigger className="relative capitalize">
-              <SelectValue placeholder="Select a skill" />
+            <SelectTrigger className="w-full capitalize">
+              <SelectValue placeholder="Select a damage type" />
             </SelectTrigger>
             <SelectContent>
               {DAMAGE_TYPES.map((type) => (
