@@ -1,4 +1,5 @@
-import { CHALLENGE_RATINGS, SKILLS } from "@/lib/constants";
+import { CHALLENGE_RATINGS } from "@/lib/constants";
+import { SKILLS } from "@/lib/skills";
 import { defaultCreature, Languages } from "@/schema/createCreatureSchema";
 import { Open5eCreature } from "@/types/open5e";
 
@@ -35,7 +36,7 @@ export function fromOpen5e(source: Open5eCreature): typeof defaultCreature {
   const skills = Object.entries(source.skills)
     .map((skl) => {
       const foundSkill = SKILLS.find(
-        (s) => s.name.toLowerCase() === skl[0].toLowerCase()
+        (s) => s.skill_name.toLowerCase() === skl[0].toLowerCase()
       );
 
       if (!foundSkill) {
@@ -47,8 +48,8 @@ export function fromOpen5e(source: Open5eCreature): typeof defaultCreature {
       return {
         is_expert: isExpert,
         is_proficient: !isExpert,
-        skill_modifier: foundSkill.modifier,
-        skill_name: foundSkill.name,
+        skill_modifier: foundSkill.skill_modifier,
+        skill_name: foundSkill.skill_name,
       };
     })
     .filter((skl) => skl !== null);
