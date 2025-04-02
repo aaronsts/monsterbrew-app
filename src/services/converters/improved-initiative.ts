@@ -1,4 +1,5 @@
-import { CHALLENGE_RATINGS, SKILLS } from "@/lib/constants";
+import { CHALLENGE_RATINGS } from "@/lib/constants";
+import { SKILLS } from "@/lib/skills";
 import { calculateStatBonus, titleCase } from "@/lib/utils";
 import { defaultCreature, Languages } from "@/schema/createCreatureSchema";
 
@@ -59,7 +60,7 @@ export function fromImprovedInitiative(
 
   const skills = source.Skills.map((skl) => {
     const foundSkill = SKILLS.find(
-      (s) => s.name.toLowerCase() === skl.Name.toLowerCase()
+      (s) => s.skill_name.toLowerCase() === skl.Name.toLowerCase()
     );
 
     if (!foundSkill) {
@@ -71,8 +72,8 @@ export function fromImprovedInitiative(
     return {
       is_expert: isExpert,
       is_proficient: !isExpert,
-      skill_modifier: foundSkill.modifier,
-      skill_name: foundSkill.name,
+      skill_modifier: foundSkill.skill_modifier,
+      skill_name: foundSkill.skill_name,
     };
   }).filter((skl) => skl !== null);
 
