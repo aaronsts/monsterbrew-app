@@ -11,6 +11,7 @@ const releaseConfig = {
           { type: "refactor", release: "patch" },
           { type: "style", release: "patch" },
           { type: "ci", release: "patch" },
+          { type: "chore", release: "patch" },
         ],
         parserOpts: {
           noteKeywords: ["BREAKING CHANGE", "BREAKING CHANGES"],
