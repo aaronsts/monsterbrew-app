@@ -10,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useGetSkills } from "@/queries/getSkills";
+import { SkillModifier, SKILLS } from "@/lib/skills";
 import { createCreatureSchema } from "@/schema/createCreatureSchema";
 import { X } from "lucide-react";
 import { useState } from "react";
@@ -34,15 +34,13 @@ function SkillBonusForm() {
     name: "skill_bonuses",
   });
 
-  const { data } = useGetSkills();
-
-  const skills =
-    data?.data &&
-    Object.groupBy(data.data, ({ skill_modifier }) => skill_modifier);
+  const skills = Object.groupBy(
+    SKILLS,
+    ({ skill_modifier }) => skill_modifier
+  ) as Record<SkillModifier, (typeof SKILLS)[number][]>;
 
   const handleSelectChange = (value: string) => {
-    if (!data?.data) return;
-    const skill = data.data.find((skl) => skl.id.toString() === value);
+    const skill = SKILLS.find((skl) => skl.id.toString() === value);
     if (!skill) return;
     setSelectedSkill({
       ...skill,
@@ -87,22 +85,20 @@ function SkillBonusForm() {
               <SelectValue placeholder="Select a skill" />
             </SelectTrigger>
             <SelectContent>
-              {skills &&
-                Object.keys(skills).map((modifier) => (
-                  <SelectGroup key={modifier}>
-                    <SelectLabel className="uppercase">{modifier}</SelectLabel>
-                    {skills[modifier] &&
-                      skills[modifier].map((skill) => (
-                        <SelectItem
-                          key={skill.id}
-                          value={skill.id.toString()}
-                          className="relative capitalize"
-                        >
-                          {skill.skill_name}
-                        </SelectItem>
-                      ))}
-                  </SelectGroup>
-                ))}
+              {Object.keys(skills).map((modifier) => (
+                <SelectGroup key={modifier}>
+                  <SelectLabel className="uppercase">{modifier}</SelectLabel>
+                  {skills[modifier as SkillModifier].map((skill) => (
+                    <SelectItem
+                      key={skill.id}
+                      value={skill.id.toString()}
+                      className="relative capitalize"
+                    >
+                      {skill.skill_name}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              ))}
             </SelectContent>
           </Select>
         </div>
