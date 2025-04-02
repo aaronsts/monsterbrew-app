@@ -478,24 +478,3 @@ export const CHALLENGE_RATINGS = [
     armor_class: 19,
   },
 ] as const;
-
-export const SKILLS = [
-  { name: "acrobatics", modifier: "dex" },
-  { name: "animal handling", modifier: "wis" },
-  { name: "arcana", modifier: "int" },
-  { name: "athletics", modifier: "str" },
-  { name: "deception", modifier: "cha" },
-  { name: "history", modifier: "int" },
-  { name: "insight", modifier: "wis" },
-  { name: "intimidation", modifier: "cha" },
-  { name: "investigation", modifier: "int" },
-  { name: "medicine", modifier: "wis" },
-  { name: "nature", modifier: "int" },
-  { name: "perception", modifier: "wis" },
-  { name: "performance", modifier: "cha" },
-  { name: "persuasion", modifier: "cha" },
-  { name: "religion", modifier: "int" },
-  { name: "sleight of hand", modifier: "dex" },
-  { name: "stealth", modifier: "dex" },
-  { name: "survival", modifier: "wis" },
-] as const;
