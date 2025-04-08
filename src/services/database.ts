@@ -25,7 +25,7 @@ export const monsterbrewDB = async () => {
       }
 
       function upgradeDB3fromV0toV1() {
-        db.createObjectStore("creatures", { autoIncrement: true });
+        db.createObjectStore("creatures", { keyPath: "id" });
       }
     },
   });

@@ -33,8 +33,11 @@ export function SaveDialog() {
       toast.warning("Please provide a name for the creature");
       return;
     }
+
+    creature.id = Date.now().toString();
+
     const db = await monsterbrewDB();
-    db.add("creatures", creature, creature.name)
+    db.add("creatures", creature)
       .then((res) => {
         console.log(res);
         toast.success(`Successfully saved ${creature.name}.`);
@@ -72,17 +75,4 @@ export function SaveDialog() {
       </Dialog>
     </>
   );
-}
-
-export async function demo3() {
-  const db1 = await openDB("db1", 1);
-  db1
-    .add("store1", "hello again!!", "new message")
-    .then((result) => {
-      console.log("success!", result);
-    })
-    .catch((err) => {
-      console.error("error: ", err);
-    });
-  db1.close();
 }
