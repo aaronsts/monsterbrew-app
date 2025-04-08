@@ -15,13 +15,13 @@ export function AbilityScores() {
     : [];
 
   return (
-    <div className="grid grid-cols-2 w-full rounded-md overflow-hidden gap-px border bg-black/10">
-      <div className="grid col-span-2 bg-background grid-cols-2 text-xs font-semibold">
-        <div className="grid px-4 grid-cols-4 py-0.5 gap-3">
+    <div className="grid lg:grid-cols-2 w-full rounded-md overflow-hidden gap-px border bg-black/10">
+      <div className="grid lg:col-span-2 bg-background lg:grid-cols-2 text-xs font-semibold">
+        <div className="hidden lg:grid px-4 grid-cols-4 py-0.5 gap-3">
           <span className="col-start-3">MOD</span>
           <span className="col-start-4">SAVE</span>
         </div>
-        <div className="grid px-4 grid-cols-4 py-0.5 gap-3">
+        <div className="grid  px-4 grid-cols-4 py-0.5 gap-3">
           <span className="col-start-3">MOD</span>
           <span className="col-start-4">SAVE</span>
         </div>

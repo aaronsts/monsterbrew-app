@@ -23,7 +23,7 @@ function SensesForm() {
     ._def.values.filter((sense) => sense !== "is_blind_beyond");
 
   return (
-    <div className="grid grid-cols-4 gap-3">
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 pt-6">
       {senses.map((sense) => (
         <FormField
           key={sense}
@@ -49,7 +49,7 @@ function SensesForm() {
         control={form.control}
         name="senses.is_blind_beyond"
         render={({ field }) => (
-          <FormItem className="flex gap-2 space-y-0 items-center">
+          <FormItem className="flex col-span-2 lg:col-span-1 gap-2 space-y-0 items-center">
             <FormControl>
               <Checkbox
                 checked={field.value}

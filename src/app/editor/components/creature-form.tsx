@@ -3,7 +3,6 @@
 import { Card, CardTitle } from "@/components/ui/card";
 
 import MovementForm from "./form/movements-form";
-import AbilityScoresForm from "./form/ability-scores-form";
 import SensesForm from "./form/senses-form";
 import SavingThrowsForm from "./form/saving-throws-form";
 import LanguagesForm from "./form/languages-form";
@@ -27,7 +26,10 @@ import ConditionTypesForm from "./form/condition-types-form";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useFormContext } from "react-hook-form";
@@ -37,16 +39,17 @@ import { z } from "zod";
 import { ImportDialog } from "@/components/import-dialog";
 import { toImprovedInitiative } from "@/services/converters/improved-initiative";
 import { useReactToPrint } from "react-to-print";
-import { RefObject } from "react";
+import { RefObject, useState } from "react";
 import { SaveDialog } from "@/components/save-dialog";
-import { access } from "fs";
-import { RotateCcw } from "lucide-react";
+import { EllipsisVertical, RotateCcw } from "lucide-react";
 
 function CreatureForm({
   pdfRef,
 }: {
   pdfRef: RefObject<HTMLDivElement | null>;
 }) {
+  const [showModal, setShowModal] = useState(false);
+
   const formContext = useFormContext<z.infer<typeof createCreatureSchema>>();
 
   const isLegendary = formContext.watch("is_legendary");
@@ -68,44 +71,54 @@ function CreatureForm({
 
   return (
     <Card>
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col lg:flex-row items-center justify-between">
         <CardTitle className="w-fit">Create creature</CardTitle>
         <div className="flex gap-2">
-          <Button
-            type="button"
-            variant="destructive"
-            onClick={() => formContext.reset()}
-          >
-            Reset
-          </Button>
-          <ImportDialog />
+          <ImportDialog open={showModal} onOpenChange={setShowModal} />
+          <SaveDialog />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button>Export</Button>
+              <Button variant="ghost">
+                <EllipsisVertical />
+              </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
-              <DropdownMenuItem
-                onClick={formContext.handleSubmit(
-                  (v: z.infer<typeof createCreatureSchema>) =>
-                    createMarkdownPage(v)
-                )}
-              >
-                Homebrewery V3
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={formContext.handleSubmit(
-                  (v: z.infer<typeof createCreatureSchema>) =>
-                    exportData(toImprovedInitiative(v))
-                )}
-              >
-                Improved Initiative
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => reactToPrintFn()}>
-                PDF
-              </DropdownMenuItem>
+              <DropdownMenuGroup>
+                <DropdownMenuItem onClick={() => setShowModal(true)}>
+                  Import
+                </DropdownMenuItem>
+              </DropdownMenuGroup>
+              <DropdownMenuSeparator />
+              <DropdownMenuGroup>
+                <DropdownMenuLabel>Export</DropdownMenuLabel>
+                <DropdownMenuItem
+                  onClick={formContext.handleSubmit(
+                    (v: z.infer<typeof createCreatureSchema>) =>
+                      createMarkdownPage(v)
+                  )}
+                >
+                  Homebrewery V3
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={formContext.handleSubmit(
+                    (v: z.infer<typeof createCreatureSchema>) =>
+                      exportData(toImprovedInitiative(v))
+                  )}
+                >
+                  Improved Initiative
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => reactToPrintFn()}>
+                  PDF
+                </DropdownMenuItem>
+              </DropdownMenuGroup>
+              <DropdownMenuSeparator />
+              <DropdownMenuGroup>
+                <DropdownMenuItem onClick={() => formContext.reset()}>
+                  reset
+                </DropdownMenuItem>
+              </DropdownMenuGroup>
             </DropdownMenuContent>
           </DropdownMenu>
-          <SaveDialog />
         </div>
       </div>
       <Accordion type="multiple" defaultValue={["general-info"]}>
@@ -230,8 +243,8 @@ function CreatureForm({
         </AccordionItem>
         <AccordionItem value="features-actions" className="relative">
           <div
-            className="flex gap-1.5 items-center w-fit absolute left-33
-           top-[18px]"
+            className="flex gap-1.5 items-center w-fit absolute lg:left-33 left-4 top-9
+           lg:top-[18px]"
           >
             <Checkbox
               id="isLegendary"

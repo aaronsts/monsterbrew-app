@@ -77,11 +77,11 @@ function SkillBonusForm() {
 
   return (
     <div>
-      <div className="grid grid-cols-4 gap-3">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-3">
         <div className="flex flex-col justify-end gap-2 col-span-2">
           <Label>Skill Bonuses</Label>
           <Select onValueChange={handleSelectChange}>
-            <SelectTrigger className="mb-0 relative capitalize">
+            <SelectTrigger className="mb-0 relative capitalize w-full">
               <SelectValue placeholder="Select a skill" />
             </SelectTrigger>
             <SelectContent>
@@ -105,7 +105,7 @@ function SkillBonusForm() {
         <Button
           type="button"
           onClick={addSkill}
-          className="mt-8"
+          className="lg:mt-8"
           data-expert="false"
           variant="proficient"
         >
@@ -115,7 +115,7 @@ function SkillBonusForm() {
           type="button"
           variant="expert"
           onClick={addSkill}
-          className="mt-8"
+          className="lg:mt-8"
           data-expert="true"
         >
           Expertise

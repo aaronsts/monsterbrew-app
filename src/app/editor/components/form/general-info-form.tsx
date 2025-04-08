@@ -39,12 +39,12 @@ export function GeneralInfoForm() {
 
   return (
     <div className="space-y-3">
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
         <FormField
           control={form.control}
           name="name"
           render={({ field }) => (
-            <FormItem className="col-span-2">
+            <FormItem className="col-span-3 lg:col-span-2">
               <FormLabel>Creature Name</FormLabel>
               <FormControl>
                 <Input placeholder="ex. Ancient Red Dragon" {...field} />
@@ -82,7 +82,7 @@ export function GeneralInfoForm() {
           )}
         />
       </div>
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
         <FormField
           control={form.control}
           name="size"
@@ -203,7 +203,7 @@ export function GeneralInfoForm() {
           />
         )}
         <div className="space-y-0.5">
-          <span className="h-7 block"></span>
+          <span className="h-7 hidden lg:block"></span>
           <div className="flex items-center space-x-2">
             <Checkbox
               id="customHp"
@@ -222,7 +222,7 @@ export function GeneralInfoForm() {
         </div>
       </div>
       <AbilityScoresForm />
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
         <FormField
           control={form.control}
           name="cr"
@@ -258,7 +258,7 @@ export function GeneralInfoForm() {
           )}
         />
         <div className="space-y-0.5 col-span-2">
-          <span className="h-7 block"></span>
+          <span className="h-7 hidden lg:block"></span>
           <p>Proficiency Bonus: +{cr.proficiency_bonus}</p>
         </div>
       </div>
