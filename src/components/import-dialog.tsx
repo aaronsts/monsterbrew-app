@@ -1,4 +1,4 @@
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, Dispatch, SetStateAction, useState } from "react";
 import { Button } from "./ui/button";
 import {
   Dialog,
@@ -30,10 +30,14 @@ import { ImportTypes } from "@/lib/constants";
 import { fromOpen5e } from "@/services/converters/open5e";
 import { Alert } from "./ui/alert";
 
-export function ImportDialog() {
+interface ImportDialogProps {
+  open: boolean;
+  onOpenChange: Dispatch<SetStateAction<boolean>>;
+}
+
+export function ImportDialog({ open, onOpenChange }: ImportDialogProps) {
   const [importedStatblock, setImportedStatblock] = useState<string>();
   const [format, setFormat] = useState<string | undefined>();
-  const [showModal, setShowModal] = useState(false);
   const formContext = useFormContext<z.infer<typeof createCreatureSchema>>();
 
   const readFileOnUpload = (e: ChangeEvent<HTMLInputElement>) => {
@@ -71,17 +75,17 @@ export function ImportDialog() {
         } catch (error: unknown) {
           toast.error("An Error occured during conversion");
         }
-        setShowModal(false);
+        onOpenChange(false);
         break;
       case ImportTypes.TetraCube:
         monsterbrewCreature = fromTetacube(parsedImport);
         formContext.reset(monsterbrewCreature);
-        setShowModal(false);
+        onOpenChange(false);
         break;
       case ImportTypes.Open5e:
         monsterbrewCreature = fromOpen5e(parsedImport);
         formContext.reset(monsterbrewCreature);
-        setShowModal(false);
+        onOpenChange(false);
         break;
       default:
         break;
@@ -90,10 +94,7 @@ export function ImportDialog() {
   }
 
   return (
-    <Dialog open={showModal} onOpenChange={setShowModal}>
-      <DialogTrigger asChild>
-        <Button variant="outline">Import</Button>
-      </DialogTrigger>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Importing creature</DialogTitle>

@@ -14,7 +14,7 @@ import { z } from "zod";
 function MovementForm() {
   const form = useFormContext<z.infer<typeof createCreatureSchema>>();
   return (
-    <div className="grid grid-cols-5 gap-3">
+    <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
       <FormField
         control={form.control}
         name="movements.walk"
@@ -112,7 +112,7 @@ function MovementForm() {
           control={form.control}
           name="movements.hover"
           render={({ field }) => (
-            <FormItem className="flex gap-2 space-y-0 items-center lg:absolute top-[3px] right-0">
+            <FormItem className="flex gap-2 space-y-0 items-center absolute top-0 lg:top-[3px] lg:right-0 -right-4">
               <FormControl>
                 <Checkbox
                   checked={field.value}

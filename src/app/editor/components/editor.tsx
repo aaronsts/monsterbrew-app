@@ -28,7 +28,7 @@ export default function Editor() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
-        <div className="grid grid-cols-2 p-3 gap-3">
+        <div className="grid grid-cols-1 lg:grid-cols-2 p-3 gap-3">
           <CreatureForm pdfRef={pdfRef} />
           <CreatureStatblock pdfRef={pdfRef} />
         </div>
