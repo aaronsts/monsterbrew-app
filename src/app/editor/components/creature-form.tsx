@@ -71,8 +71,10 @@ function CreatureForm({
 
   return (
     <Card>
-      <div className="flex flex-col lg:flex-row items-center justify-between">
-        <CardTitle className="w-fit">Create creature</CardTitle>
+      <div className="flex flex-row items-center justify-between">
+        <CardTitle className="w-fit">
+          {creature.id ? "Update" : "Create"} creature
+        </CardTitle>
         <div className="flex gap-2">
           <ImportDialog open={showModal} onOpenChange={setShowModal} />
           <SaveDialog />

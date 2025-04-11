@@ -102,9 +102,9 @@ export function ImportDialog({ open, onOpenChange }: ImportDialogProps) {
             Please upload a file or past the content below.
           </DialogDescription>
         </DialogHeader>
-        <ScrollArea className="max-h-96 bg-background rounded-md p-1">
+        <div className="max-h-96 overflow-y-auto h-auto bg-background rounded-md p-1">
           {importedStatblock?.toString()}
-        </ScrollArea>
+        </div>
 
         <div className="grid gap-2">
           <Label htmlFor="file-upload">File upload</Label>

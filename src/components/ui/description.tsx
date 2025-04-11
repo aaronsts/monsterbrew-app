@@ -16,7 +16,7 @@ export function Description({
 }: DescriptionProps) {
   if (!show) return null;
   return (
-    <p className={cn(className)}>
+    <p className={cn("whitespace-pre-wrap", className)}>
       <span className="italic font-semibold">{title}.</span>{" "}
       {description || placeholder}
     </p>
