@@ -1,29 +1,13 @@
 "use client";
 
-import { ChangeEvent, useState } from "react";
 import { Button } from "./ui/button";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "./ui/dialog";
-import { Input } from "./ui/input";
-import { Label } from "./ui/label";
 import { toast } from "sonner";
-import { ScrollArea } from "./ui/scroll-area";
 import { useFormContext } from "react-hook-form";
 import { z } from "zod";
 import { createCreatureSchema } from "@/schema/createCreatureSchema";
-import { openDB } from "idb";
 import { monsterbrewDB } from "@/services/database";
 
 export function SaveDialog() {
-  const [showModal, setShowModal] = useState(false);
   const formContext = useFormContext<z.infer<typeof createCreatureSchema>>();
 
   const creature = formContext.watch();
@@ -34,45 +18,37 @@ export function SaveDialog() {
       return;
     }
 
-    creature.id = Date.now().toString();
-
     const db = await monsterbrewDB();
-    db.add("creatures", creature)
-      .then((res) => {
-        console.log(res);
-        toast.success(`Successfully saved ${creature.name}.`);
-      })
-      .catch((err) => {
-        console.log(err);
-        toast.error(`Something went wrong: ${err.message}`);
-      });
-    db.close();
+
+    toast.promise(
+      (async () => {
+        try {
+          if (creature.id) {
+            await db.put("creatures", creature);
+            return `Updated ${creature.name}`;
+          } else {
+            const creatureToSave = {
+              ...creature,
+              id: Date.now().toString(),
+            };
+            await db.add("creatures", creatureToSave);
+            return `Saved ${creature.name}`;
+          }
+        } finally {
+          db.close();
+        }
+      })(),
+      {
+        loading: creature.id ? "Updating creature..." : "Saving creature...",
+        success: (message) => message,
+        error: (err) => `Something went wrong: ${err.message}`,
+      }
+    );
   }
 
   return (
-    <>
-      <Dialog open={showModal} onOpenChange={setShowModal}>
-        <DialogTrigger asChild>
-          <Button variant="outline">Save</Button>
-        </DialogTrigger>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Save creature</DialogTitle>
-            <DialogDescription>Choose to save your creature.</DialogDescription>
-          </DialogHeader>
-          <ScrollArea className="max-h-96 bg-background rounded-md p-1"></ScrollArea>
-          <DialogFooter className="items-end">
-            <DialogClose asChild>
-              <Button type="button" variant="outline">
-                Cancel
-              </Button>
-            </DialogClose>
-            <Button type="button" onClick={saveLocally}>
-              Save
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </>
+    <Button variant="outline" type="button" onClick={saveLocally}>
+      {creature.id ? "Update" : "Save"}
+    </Button>
   );
 }

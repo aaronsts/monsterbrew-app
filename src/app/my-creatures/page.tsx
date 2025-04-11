@@ -7,7 +7,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { monsterbrewDB } from "@/services/database";
-import { Suspense, useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
+import { StandaloneStatblock } from "@/components/standalone-statblock";
 import { toast } from "sonner";
 import { createCreatureSchema } from "@/schema/createCreatureSchema";
 import { z } from "zod";
@@ -21,7 +22,15 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Edit, EllipsisVertical, Eye, Trash } from "lucide-react";
+import {
+  ChevronDown,
+  ChevronRight,
+  Copy,
+  Edit,
+  EllipsisVertical,
+  Eye,
+  Trash,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 import {
   DropdownMenu,
@@ -31,13 +40,23 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Badge, BadgeVariants } from "@/components/ui/badge";
 
 type MonsterbrewCreature = z.infer<typeof createCreatureSchema>;
 
 export default function MyCreaturesPage() {
   const [myCreatures, setMyCreatures] = useState<MonsterbrewCreature[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [expandedRows, setExpandedRows] = useState<Record<string, boolean>>({});
   const router = useRouter();
+
+  // Function to toggle row expansion
+  const toggleRowExpansion = (creatureId: string) => {
+    setExpandedRows((prev) => ({
+      ...prev,
+      [creatureId]: !prev[creatureId],
+    }));
+  };
 
   async function getLocalCreatures() {
     setIsLoading(true);
@@ -73,6 +92,18 @@ export default function MyCreaturesPage() {
         error: "Failed to load creature",
       }
     );
+  };
+
+  // Function to duplicate a creature and open it in the editor
+  const duplicateCreature = (creature: MonsterbrewCreature) => {
+    const creatureCopy = { ...creature };
+    delete creatureCopy.id;
+
+    creatureCopy.name = `Copy of ${creature.name}`;
+
+    localStorage.setItem("editCreature", JSON.stringify(creatureCopy));
+
+    router.push("/editor");
   };
 
   // Function to delete a creature
@@ -132,47 +163,108 @@ export default function MyCreaturesPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {myCreatures.map((creature) => (
-                  <TableRow key={creature.id}>
-                    <TableCell className="font-medium">
-                      {creature.name || "Unknown Creature"}
-                    </TableCell>
-                    <TableCell>{creature.type}</TableCell>
-                    <TableCell>{creature.size}</TableCell>
-                    <TableCell>{creature.cr.challenge_rating}</TableCell>
-                    <TableCell>{creature.hit_points}</TableCell>
-                    <TableCell className="text-right">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon">
-                            <EllipsisVertical className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                          <DropdownMenuItem
-                            onClick={() => loadCreatureIntoEditor(creature)}
+                {myCreatures.map((creature) => {
+                  const creatureId = creature.id || "";
+                  const isExpanded = expandedRows[creatureId];
+
+                  return (
+                    <React.Fragment key={creatureId}>
+                      <TableRow
+                        className={`${
+                          isExpanded ? "bg-muted/30" : ""
+                        } cursor-pointer`}
+                        onClick={() => toggleRowExpansion(creatureId)}
+                      >
+                        <TableCell className="font-medium">
+                          <div className="flex items-center gap-2">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                toggleRowExpansion(creatureId);
+                              }}
+                              className="h-6 w-6"
+                            >
+                              {isExpanded ? (
+                                <ChevronDown className="h-4 w-4" />
+                              ) : (
+                                <ChevronRight className="h-4 w-4" />
+                              )}
+                            </Button>
+                            {creature.name || "Unknown Creature"}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <Badge
+                            variant={
+                              creature.type.toLocaleLowerCase() as BadgeVariants
+                            }
                           >
-                            <Edit className="mr-2 h-4 w-4" />
-                            Edit in Editor
-                          </DropdownMenuItem>
-                          <DropdownMenuItem>
-                            <Eye className="mr-2 h-4 w-4" />
-                            View Details
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem
-                            onClick={() => deleteCreature(creature)}
-                            className="text-destructive"
+                            {creature.type}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>{creature.size}</TableCell>
+                        <TableCell>{creature.cr.challenge_rating}</TableCell>
+                        <TableCell>{creature.hit_points}</TableCell>
+                        <TableCell
+                          className="text-right"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" size="icon">
+                                <EllipsisVertical className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                              <DropdownMenuItem
+                                onClick={() => loadCreatureIntoEditor(creature)}
+                              >
+                                <Edit className="mr-2 h-4 w-4" />
+                                Edit in Editor
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                onClick={() => toggleRowExpansion(creatureId)}
+                              >
+                                <Eye className="mr-2 h-4 w-4" />
+                                {isExpanded ? "Hide Details" : "View Details"}
+                              </DropdownMenuItem>
+                              <DropdownMenuSeparator />
+                              <DropdownMenuItem
+                                onClick={() => duplicateCreature(creature)}
+                              >
+                                <Copy className="mr-2 h-4 w-4" />
+                                Duplicate
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                onClick={() => deleteCreature(creature)}
+                                className="text-destructive"
+                              >
+                                <Trash className="mr-2 h-4 w-4" />
+                                Delete
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </TableCell>
+                      </TableRow>
+                      {/* Collapsible statblock row */}
+                      {isExpanded && (
+                        <TableRow className="bg-muted/50 hover:bg-muted/50 cursor-default">
+                          <TableCell
+                            colSpan={6}
+                            className="p-0 animate-in fade-in-10 duration-300"
                           >
-                            <Trash className="mr-2 h-4 w-4" />
-                            Delete
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
-                ))}
+                            <div className="p-4">
+                              <StandaloneStatblock creature={creature} />
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      )}
+                    </React.Fragment>
+                  );
+                })}
               </TableBody>
             </Table>
           )}

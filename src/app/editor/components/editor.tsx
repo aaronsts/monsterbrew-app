@@ -11,10 +11,13 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form } from "@/components/ui/form";
 import { createMarkdownPage } from "@/services/converters/markdown";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
+import { monsterbrewDB } from "@/services/database";
+import { useSearchParams } from "next/navigation";
 
 export default function Editor() {
+  const params = useSearchParams();
   const form = useForm<z.infer<typeof createCreatureSchema>>({
     resolver: zodResolver(createCreatureSchema),
     defaultValues: defaultCreature,
@@ -22,7 +25,37 @@ export default function Editor() {
 
   const pdfRef = useRef<HTMLDivElement>(null);
 
-  // Check for creature data in localStorage on component mount
+  async function getLocalCreature() {
+    const creatureId = params.get("id");
+    if (creatureId) {
+      const db = await monsterbrewDB();
+      const storedCreature = await db.get("creatures", creatureId);
+      if (storedCreature) {
+        toast.promise(
+          (async () => {
+            try {
+              form.reset(storedCreature);
+              return storedCreature.name;
+            } catch (error) {
+              console.error("Error loading stored creature:", error);
+              throw new Error("Could not load the creature for editing");
+            }
+          })(),
+          {
+            loading: "Loading creature into editor...",
+            success: (name) => `${name} loaded successfully`,
+            error: "Failed to load creature",
+          }
+        );
+      }
+      db.close();
+    }
+  }
+
+  useEffect(() => {
+    getLocalCreature();
+  }, []);
+
   useEffect(() => {
     const storedCreature = localStorage.getItem("editCreature");
     if (storedCreature) {

@@ -107,6 +107,22 @@
   --font-nippo: var(--font-nippo), "sans-serif";
 }
 @theme {
+  --color-aberration: #dd83fd;
+  --color-beast: #a98dba;
+  --color-celestial: #f7e64a;
+  --color-construct: #f1c67c;
+  --color-dragon: #dd5d63;
+  --color-elemental: #1ddcf3;
+  --color-fey: #61f4cb;
+  --color-fiend: #eb7648;
+  --color-giant: #afbec1;
+  --color-humanoid: #95b974;
+  --color-monstrosity: #7597ec;
+  --color-ooze: #bef0f5;
+  --color-plant: #64bc5e;
+  --color-undead: #c77e5d;
+  --color-other: #efefef;
+
   --animate-move: move 2s ease-in-out infinite;
   @keyframes move {
     0%,
@@ -131,22 +147,6 @@
     @apply text-xl font-bold leading-2;
   }
 }
-
-/*  aberration: "#dd83fd",
-        beast: "#a98dba",
-        celestial: "#f7e64a",
-        construct: "#f1c67c",
-        dragon: "#dd5d63",
-        elemental: "#1ddcf3",
-        fey: "#61f4cb",
-        fiend: "#eb7648",
-        giant: "#afbec1",
-        humanoid: "#95b974",
-        monstrosity: "#7597ec",
-        ooze: "#bef0f5",
-        plant: "#64bc5e",
-        undead: "#c77e5d",
-        other: "#efefef", */
 
 /* Firefox */
 input[type="number"] {
