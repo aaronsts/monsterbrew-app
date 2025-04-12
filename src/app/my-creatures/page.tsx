@@ -198,7 +198,7 @@ export default function MyCreaturesPage() {
                         <TableCell>
                           <Badge
                             variant={
-                              creature.type.toLocaleLowerCase() as BadgeVariants
+                              creature.type.toLocaleLowerCase() as keyof BadgeVariants["variant"]
                             }
                           >
                             {creature.type}
