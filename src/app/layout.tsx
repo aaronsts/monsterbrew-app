@@ -36,7 +36,9 @@ export default function RootLayout({
           className={`${nippo.variable} font-nippo flex flex-col bg-background text-foreground h-full antialiased`}
         >
           <MainNavigation />
-          <main className="max-w-8xl mx-auto w-full flex-1">{children}</main>
+          <main className="max-w-8xl mx-auto w-full flex-1 p-3">
+            {children}
+          </main>
           <Toaster richColors position="bottom-right" />
           <footer className="max-w-8xl mx-auto p-3 pt-0 w-full">
             <div className="bg-card text-card-foreground w-full flex justify-end items-center border p-2 rounded-xl shadow-sm">

@@ -31,6 +31,7 @@ import { Info } from "lucide-react";
 import { useFormContext } from "react-hook-form";
 import { z } from "zod";
 import AbilityScoresForm from "./ability-scores-form";
+import { toast } from "sonner";
 
 export function GeneralInfoForm() {
   const form = useFormContext<z.infer<typeof createCreatureSchema>>();
@@ -231,7 +232,17 @@ export function GeneralInfoForm() {
               <FormLabel>Challenge Rating</FormLabel>
               <Select
                 value={JSON.stringify(field.value)}
-                onValueChange={(v) => field.onChange(JSON.parse(v))}
+                onValueChange={(v) => {
+                  // Only parse if v is not empty
+                  if (v && v.trim() !== "") {
+                    try {
+                      field.onChange(JSON.parse(v));
+                    } catch (error) {
+                      toast.error("Something went wrong parsing CR value");
+                      console.error("Error parsing CR value:", error);
+                    }
+                  }
+                }}
               >
                 <FormControl className="relative">
                   <SelectTrigger className="w-full">

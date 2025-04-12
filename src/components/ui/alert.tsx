@@ -85,9 +85,13 @@ function Alert({
       {...props}
     >
       <Info />
-      <h5 className="mb-1 font-medium leading-none tracking-tight">{title}</h5>
+      <AlertTitle className="mb-1 font-medium leading-none tracking-tight">
+        {title}
+      </AlertTitle>
       {description && (
-        <div className="text-sm [&_p]:leading-relaxed">{description}</div>
+        <AlertDescription className="text-sm [&_p]:leading-relaxed w-max">
+          {description}
+        </AlertDescription>
       )}
     </div>
   );
