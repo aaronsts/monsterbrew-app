@@ -10,6 +10,8 @@ import Link from "next/link";
 import { KofiLogo } from "@/components/images/KofiLogo";
 import { Button } from "@/components/ui/button";
 import { GithubLogo } from "@/components/images/GithubLogo";
+import Script from "next/script";
+import { PropsWithChildren } from "react";
 
 const nippo = localFont({
   src: "./fonts/Nippo-Variable.ttf",
@@ -19,19 +21,69 @@ const nippo = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Monsterbrew | Homebrewing creatures with ease",
+  title: "Monsterbrew | D&D 5e Monster Creator & Homebrew Tool",
   description:
-    "Create custom 5e Dungeons & Dragons creatures effortlessly with an intuitive D&D homebrew tool!",
+    "Create, customize and manage D&D 5e monsters and creatures with Monsterbrew - the free, intuitive homebrew tool for Dungeon Masters. Design unique encounters for your tabletop RPG campaigns!",
+  keywords: [
+    "D&D monster creator",
+    "DnD 5e homebrew",
+    "D&D creature builder",
+    "Dungeons and Dragons monsters",
+    "tabletop RPG tools",
+    "DM resources",
+    "custom D&D creatures",
+    "monster statblock generator",
+    "5e encounter design",
+    "fantasy creature creator",
+  ],
+  creator: "Monsterbrew",
+  openGraph: {
+    title: "Monsterbrew | D&D 5e Monster Creator & Homebrew Tool",
+    description:
+      "Create, customize and manage D&D 5e monsters and creatures with Monsterbrew - the free, intuitive homebrew tool for Dungeon Masters.",
+    url: "https://monsterbrew.app",
+    siteName: "Monsterbrew",
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Monsterbrew | D&D 5e Monster Creator & Homebrew Tool",
+    description:
+      "Create, customize and manage D&D 5e monsters and creatures with Monsterbrew.",
+  },
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: PropsWithChildren) {
+  // JSON-LD structured data for SEO
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    name: "Monsterbrew",
+    url: "https://monsterbrew.app",
+    description:
+      "Create, customize and manage D&D 5e monsters and creatures with Monsterbrew - the free, intuitive homebrew tool for Dungeon Masters.",
+    applicationCategory: "UtilityApplication",
+    operatingSystem: "Any",
+    offers: {
+      "@type": "Offer",
+      price: "0",
+      priceCurrency: "USD",
+    },
+    keywords:
+      "D&D, DnD, Dungeons and Dragons, monster creator, homebrew, 5e, tabletop RPG",
+  };
+
   return (
     <ReactQueryClientProvider>
       <html lang="en" className="h-full">
+        <head>
+          <Script
+            id="structured-data"
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+          />
+        </head>
         <body
           className={`${nippo.variable} font-nippo flex flex-col bg-background text-foreground h-full antialiased`}
         >
