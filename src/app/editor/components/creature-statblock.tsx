@@ -8,7 +8,7 @@ import { Reactions } from "./statblock/reactions";
 import { Traits } from "./statblock/traits";
 import { Features } from "./statblock/features";
 import { LegendaryActions } from "./statblock/legendary-actions";
-import { BasicInfo } from "./statblock/basic-info";
+import { BasicInfo } from "./statblock/general-info";
 import { RefObject } from "react";
 
 function CreatureStatblock({

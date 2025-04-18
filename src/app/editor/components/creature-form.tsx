@@ -39,9 +39,10 @@ import { z } from "zod";
 import { ImportDialog } from "@/components/import-dialog";
 import { toImprovedInitiative } from "@/services/converters/improved-initiative";
 import { useReactToPrint } from "react-to-print";
-import { RefObject, useState } from "react";
+import { RefObject, useEffect, useState } from "react";
 import { SaveDialog } from "@/components/save-dialog";
 import { EllipsisVertical, RotateCcw } from "lucide-react";
+import { calculateStatBonus } from "@/lib/utils";
 
 function CreatureForm({
   pdfRef,
@@ -68,6 +69,19 @@ function CreatureForm({
     }.json`;
     link.click();
   };
+
+  useEffect(() => {
+    let passivePerception = calculateStatBonus(creature.ability_scores.wis);
+    const isProficientOrExpert = creature.skill_bonuses.find(
+      (s) => s.skill_name === "perception"
+    );
+    if (!!isProficientOrExpert) {
+      passivePerception += isProficientOrExpert.is_expert
+        ? creature.cr.proficiency_bonus * 2
+        : creature.cr.proficiency_bonus;
+    }
+    formContext.setValue("passive_perception", 10 + passivePerception);
+  }, [creature.ability_scores.wis, creature.skill_bonuses]);
 
   return (
     <Card>

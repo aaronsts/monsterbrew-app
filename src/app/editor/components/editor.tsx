@@ -49,38 +49,39 @@ export default function Editor() {
         );
       }
       db.close();
+    } else {
+      const storedCreature = localStorage.getItem("editCreature");
+      if (storedCreature) {
+        toast.promise(
+          (async () => {
+            try {
+              const parsedCreature = JSON.parse(storedCreature);
+              console.log(
+                parsedCreature.languages,
+                parsedCreature.saving_throws
+              );
+              form.reset(parsedCreature);
+              // Clear the localStorage after loading
+              localStorage.removeItem("editCreature");
+              return parsedCreature.name; // Return the name for the success message
+            } catch (error) {
+              console.error("Error parsing stored creature:", error);
+              throw new Error("Could not load the creature for editing");
+            }
+          })(),
+          {
+            loading: "Loading creature into editor...",
+            success: (name) => `${name} loaded successfully`,
+            error: "Failed to load creature",
+          }
+        );
+      }
     }
   }
 
   useEffect(() => {
     getLocalCreature();
   }, []);
-
-  useEffect(() => {
-    const storedCreature = localStorage.getItem("editCreature");
-    if (storedCreature) {
-      toast.promise(
-        (async () => {
-          try {
-            const parsedCreature = JSON.parse(storedCreature);
-
-            form.reset(parsedCreature);
-            // Clear the localStorage after loading
-            localStorage.removeItem("editCreature");
-            return parsedCreature.name; // Return the name for the success message
-          } catch (error) {
-            console.error("Error parsing stored creature:", error);
-            throw new Error("Could not load the creature for editing");
-          }
-        })(),
-        {
-          loading: "Loading creature into editor...",
-          success: (name) => `${name} loaded successfully`,
-          error: "Failed to load creature",
-        }
-      );
-    }
-  }, [form]);
 
   const onSubmit = (values: z.infer<typeof createCreatureSchema>) => {
     createMarkdownPage(values);

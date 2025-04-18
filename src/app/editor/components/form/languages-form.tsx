@@ -16,8 +16,8 @@ function LanguagesForm() {
   const form = useFormContext<z.infer<typeof createCreatureSchema>>();
 
   const languages = Object.keys(Languages).map((lang) => ({
-    label: titleCase(lang) as string,
-    value: lang as string,
+    label: titleCase(lang),
+    value: lang.toLowerCase(),
   }));
 
   return (

@@ -189,13 +189,15 @@ export function StandaloneStatblock({
           />
           <Description
             title="Senses"
-            description={`${senses.join(", ")} Passive perception ${
+            description={`${senses
+              .map((l) => titleCase(l))
+              .join(", ")} Passive perception ${
               creature.passive_perception || 10
             }`}
           />
           <Description
             title="Languages"
-            description={creature.languages.join(", ")}
+            description={creature.languages.map((l) => titleCase(l)).join(", ")}
             show={creature.languages?.length > 0}
           />
           <Description
