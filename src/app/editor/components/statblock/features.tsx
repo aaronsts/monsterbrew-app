@@ -87,7 +87,7 @@ export function Features() {
       />
       <Description
         title="Languages"
-        description={creature.languages.join(", ")}
+        description={titleCase(creature.languages.join(", "))}
         show={creature.languages?.length > 0}
       />
       <Description
@@ -96,7 +96,7 @@ export function Features() {
           ${new Intl.NumberFormat().format(creature.cr.experience)}; PB +${
           creature.cr.proficiency_bonus
         })`}
-        className="mt-1.5"
+        className="mt-1.5 whitespace-nowrap"
       />
     </div>
   );

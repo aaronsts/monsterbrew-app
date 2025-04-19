@@ -61,8 +61,11 @@ export function GeneralInfoForm() {
             <FormItem>
               <FormLabel>Creature Type</FormLabel>
               <Select
-                onValueChange={field.onChange}
-                defaultValue={field.value}
+                onValueChange={(v) => {
+                  if (v && v.trim() !== "") {
+                    field.onChange(v);
+                  }
+                }}
                 value={field.value}
               >
                 <FormControl>
@@ -91,8 +94,11 @@ export function GeneralInfoForm() {
             <FormItem>
               <FormLabel>Creature Size</FormLabel>
               <Select
-                onValueChange={field.onChange}
-                defaultValue={field.value}
+                onValueChange={(v) => {
+                  if (v && v.trim() !== "") {
+                    field.onChange(v);
+                  }
+                }}
                 value={field.value}
               >
                 <FormControl className="capitalize">
