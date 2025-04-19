@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { GithubLogo } from "@/components/images/GithubLogo";
 import Script from "next/script";
 import { PropsWithChildren } from "react";
+import PlausibleProvider from "next-plausible";
 
 const nippo = localFont({
   src: "./fonts/Nippo-Variable.ttf",
@@ -75,46 +76,50 @@ export default function RootLayout({ children }: PropsWithChildren) {
   };
 
   return (
-    <ReactQueryClientProvider>
-      <html lang="en" className="h-full">
-        <head>
-          <Script
-            id="structured-data"
-            type="application/ld+json"
-            dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
-          />
-        </head>
-        <body
-          className={`${nippo.variable} font-nippo flex flex-col bg-background text-foreground h-full antialiased`}
-        >
-          <MainNavigation />
-          <main className="max-w-8xl mx-auto w-full flex-1 p-3">
-            {children}
-          </main>
-          <Toaster richColors position="bottom-right" />
-          <footer className="max-w-8xl mx-auto p-3 pt-0 w-full">
-            <div className="bg-card text-card-foreground w-full flex justify-end items-center border p-2 rounded-xl shadow-sm">
-              <div className="flex items-end">
-                <Link href="https://ko-fi.com/X8X11CCUAU" target="_blank">
-                  <Button variant="link" size="sm">
-                    <KofiLogo />
-                    Buy me a Coffee
-                  </Button>
-                </Link>
-                <Link
-                  href="https://github.com/aaronsts/monsterbrew-app"
-                  target="_blank"
-                  referrerPolicy="no-referrer"
-                >
-                  <Button size="icon" variant="ghost">
-                    <GithubLogo />
-                  </Button>
-                </Link>
+    <PlausibleProvider domain="monsterbrew-app.vercel.app">
+      <ReactQueryClientProvider>
+        <html lang="en" className="h-full">
+          <head>
+            <Script
+              id="structured-data"
+              type="application/ld+json"
+              dangerouslySetInnerHTML={{
+                __html: JSON.stringify(structuredData),
+              }}
+            />
+          </head>
+          <body
+            className={`${nippo.variable} font-nippo flex flex-col bg-background text-foreground h-full antialiased`}
+          >
+            <MainNavigation />
+            <main className="max-w-8xl mx-auto w-full flex-1 p-3">
+              {children}
+            </main>
+            <Toaster richColors position="bottom-right" />
+            <footer className="max-w-8xl mx-auto p-3 pt-0 w-full">
+              <div className="bg-card text-card-foreground w-full flex justify-end items-center border p-2 rounded-xl shadow-sm">
+                <div className="flex items-end">
+                  <Link href="https://ko-fi.com/X8X11CCUAU" target="_blank">
+                    <Button variant="link" size="sm">
+                      <KofiLogo />
+                      Buy me a Coffee
+                    </Button>
+                  </Link>
+                  <Link
+                    href="https://github.com/aaronsts/monsterbrew-app"
+                    target="_blank"
+                    referrerPolicy="no-referrer"
+                  >
+                    <Button size="icon" variant="ghost">
+                      <GithubLogo />
+                    </Button>
+                  </Link>
+                </div>
               </div>
-            </div>
-          </footer>
-        </body>
-      </html>
-    </ReactQueryClientProvider>
+            </footer>
+          </body>
+        </html>
+      </ReactQueryClientProvider>
+    </PlausibleProvider>
   );
 }
