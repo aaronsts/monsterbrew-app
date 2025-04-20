@@ -29,6 +29,7 @@ import { fromTetacube } from "@/services/converters/tetra-cube";
 import { ImportTypes } from "@/lib/constants";
 import { fromOpen5e } from "@/services/converters/open5e";
 import { Alert } from "./ui/alert";
+import { from5ETools } from "@/services/converters/fiveETools";
 
 interface ImportDialogProps {
   open: boolean;
@@ -85,6 +86,14 @@ export function ImportDialog({ open, onOpenChange }: ImportDialogProps) {
       case ImportTypes.Open5e:
         monsterbrewCreature = fromOpen5e(parsedImport);
         formContext.reset(monsterbrewCreature);
+        onOpenChange(false);
+        break;
+      case ImportTypes.FiveETools:
+        if (typeof from5ETools(parsedImport) !== undefined) {
+          monsterbrewCreature = from5ETools(parsedImport);
+          console.log(monsterbrewCreature);
+          formContext.reset(monsterbrewCreature);
+        }
         onOpenChange(false);
         break;
       default:

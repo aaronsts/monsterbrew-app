@@ -2,6 +2,7 @@ export const ImportTypes = {
   TetraCube: "tetra-cube",
   ImprovedInitiative: "improved-initiative",
   Open5e: "open-5e",
+  FiveETools: "5e Tools",
 } as const;
 
 export const CREATURE_TYPES = [
