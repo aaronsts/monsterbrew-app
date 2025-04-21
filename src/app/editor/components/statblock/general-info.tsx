@@ -9,6 +9,8 @@ export function BasicInfo() {
   const { watch } = useFormContext<z.infer<typeof createCreatureSchema>>();
   const creature = watch();
 
+  console.log(creature);
+
   function calculateHitPoints(amount: string, constitution?: number) {
     const size = CREATURE_SIZES.find((s) => creature.size === s.value);
     const hit_dice = size?.hit_dice || 4;
