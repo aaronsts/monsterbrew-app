@@ -56,10 +56,6 @@ export default function Editor() {
           (async () => {
             try {
               const parsedCreature = JSON.parse(storedCreature);
-              console.log(
-                parsedCreature.languages,
-                parsedCreature.saving_throws
-              );
               form.reset(parsedCreature);
               // Clear the localStorage after loading
               localStorage.removeItem("editCreature");
