@@ -31,7 +31,7 @@ export default function Home() {
             Free & Open Source
           </Badge>
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight">
-            Create Epic D&D Monsters <br />
+            Create Epic D&D Creatures <br />
             <span className="text-primary">In Minutes</span>
           </h1>
           <p className="text-lg text-muted-foreground max-w-3xl">
@@ -81,32 +81,33 @@ export default function Home() {
           <FeatureCard
             icon={<Wand2 className="h-10 w-10 text-primary" />}
             title="Intuitive Creator"
-            description="Build monsters with our easy-to-use interface. No complex rules to remember - just create!"
+            description="Build creatures with an easy-to-use interface. No calculations to remember - just create!"
           />
           <FeatureCard
             icon={<Dices className="h-10 w-10 text-primary" />}
             title="CR Calculator"
-            description="Automatically calculate Challenge Rating based on stats, ensuring balanced encounters."
+            description="Calculate Challenge Rating based on stats, ensuring balanced encounters."
+            badge="coming soon"
           />
           <FeatureCard
             icon={<FileEdit className="h-10 w-10 text-primary" />}
             title="Custom Statblocks"
-            description="Generate professional-looking statblocks that match official D&D formatting."
+            description="Generate statblocks that match the new D&D formatting."
           />
           <FeatureCard
             icon={<Save className="h-10 w-10 text-primary" />}
             title="Local Storage"
-            description="All your creations are saved locally - no account required and your data stays private."
+            description="All your creatures are saved locally - no account required."
           />
           <FeatureCard
             icon={<Layers className="h-10 w-10 text-primary" />}
-            title="Monster Library"
+            title="Creature Library"
             description="Organize and manage your collection of custom creatures for easy access."
           />
           <FeatureCard
             icon={<Share2 className="h-10 w-10 text-primary" />}
             title="Export Options"
-            description="Export your monsters as JSON or formatted text to use in other tools."
+            description="Export your creatures as JSON or markdown to use in other tools."
           />
         </div>
       </section>
@@ -116,18 +117,18 @@ export default function Home() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <StepCard
             number="1"
-            title="Design Your Monster"
+            title="Design Your Creature"
             description="Enter basic stats, abilities, and special features using our intuitive form."
           />
           <StepCard
             number="2"
             title="Preview & Refine"
-            description="See your creation come to life with a real-time preview of the statblock."
+            description="See it come to life with a real-time preview of the statblock."
           />
           <StepCard
             number="3"
             title="Save & Export"
-            description="Store your monster in your library and export it for your game sessions."
+            description="Store your creature in your library and export it for your game sessions."
           />
         </div>
       </section>
@@ -137,13 +138,13 @@ export default function Home() {
           <h2>Perfect for Every Campaign</h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
             From one-shot adventures to epic campaigns, Monsterbrew helps DMs
-            create memorable encounters
+            create memorable creatures
           </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <UseCaseCard
             title="Homebrew Campaigns"
-            description="Create unique monsters that fit perfectly into your custom world and lore."
+            description="Create unique creatures that fit perfectly into your custom world and lore."
             icon={<Brain className="h-8 w-8 text-primary" />}
           />
           <UseCaseCard
@@ -171,13 +172,17 @@ function FeatureCard({
   icon,
   title,
   description,
+  badge,
 }: {
   icon: React.ReactNode;
   title: string;
   description: string;
+  badge?: string;
 }) {
   return (
-    <Card>
+    <Card className="relative">
+      {badge && <Badge className="absolute top-4 right-4">{badge}</Badge>}
+
       <CardHeader>
         <div className="[&_svg]:size-8">{icon}</div>
         <CardTitle>{title}</CardTitle>

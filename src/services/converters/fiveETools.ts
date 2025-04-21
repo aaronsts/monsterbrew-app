@@ -15,7 +15,7 @@ export function from5ETools(
       alignment: convertAlignment(fiveEToolsCreature.alignment),
       armor_class: fiveEToolsCreature.ac[0]?.toString() || "",
       armor_description: "",
-      hit_dice: fiveEToolsCreature.hp.formula || "",
+      hit_dice: fiveEToolsCreature.hp.formula.split("d")[0] || "",
       hit_points: fiveEToolsCreature.hp.average?.toString() || "",
       custom_hp: false,
       movements: {
