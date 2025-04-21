@@ -37,7 +37,7 @@ import { createMarkdownPage } from "@/services/converters/markdown";
 import { createCreatureSchema } from "@/schema/createCreatureSchema";
 import { z } from "zod";
 import { ImportDialog } from "@/components/import-dialog";
-import { toImprovedInitiative } from "@/services/converters/improved-initiative";
+import { toImprovedInitiative } from "@/services/converters/improvedInitiative";
 import { useReactToPrint } from "react-to-print";
 import { RefObject, useEffect, useState } from "react";
 import { SaveDialog } from "@/components/save-dialog";

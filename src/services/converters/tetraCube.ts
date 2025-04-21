@@ -1,6 +1,6 @@
 import { CHALLENGE_RATINGS } from "@/lib/constants";
 import { defaultCreature, Languages } from "@/schema/createCreatureSchema";
-import { TetraCubeCreature } from "@/types/tetra-cube";
+import { TetraCubeCreature } from "@/types/tetraCube";
 
 export function fromTetacube(
   source: TetraCubeCreature

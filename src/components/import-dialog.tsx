@@ -24,8 +24,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
-import { fromImprovedInitiative } from "@/services/converters/improved-initiative";
-import { fromTetacube } from "@/services/converters/tetra-cube";
+import { fromImprovedInitiative } from "@/services/converters/improvedInitiative";
+import { fromTetacube } from "@/services/converters/tetraCube";
 import { ImportTypes } from "@/lib/constants";
 import { fromOpen5e } from "@/services/converters/open5e";
 import { Alert } from "./ui/alert";
@@ -91,7 +91,6 @@ export function ImportDialog({ open, onOpenChange }: ImportDialogProps) {
       case ImportTypes.FiveETools:
         if (typeof from5ETools(parsedImport) !== undefined) {
           monsterbrewCreature = from5ETools(parsedImport);
-          console.log(monsterbrewCreature);
           formContext.reset(monsterbrewCreature);
         }
         onOpenChange(false);

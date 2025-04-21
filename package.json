@@ -8,10 +8,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "generate:types": "npx supabase gen types --lang=typescript --project-id 'namlljtkmoqskllqqjxh' --schema public > src/types/database.types.ts",
-    "generate:enums": "node ./scripts/generate-enums.js",
     "prepare": "husky",
-    "release": "semantic-release"
+    "release": "semantic-release",
+    "test": "vitest"
   },
   "dependencies": {
     "@fontsource/yatra-one": "^5.2.5",
@@ -55,17 +54,26 @@
   "devDependencies": {
     "@commitlint/cli": "^19.8.0",
     "@commitlint/config-conventional": "^19.8.0",
+    "@playwright/test": "^1.52.0",
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/exec": "^7.0.3",
+    "@testing-library/dom": "^10.4.0",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
     "@types/node": "^22",
     "@types/react": "^19.1.2",
     "@types/react-dom": "^19.1.2",
+    "@vitejs/plugin-react": "^4.4.1",
+    "@vitest/ui": "^3.1.1",
     "conventional-changelog-angular": "^8.0.0",
     "eslint": "^9",
     "eslint-config-next": "^15.2.1",
     "husky": "^9.1.7",
+    "jsdom": "^26.1.0",
     "semantic-release": "^24.2.3",
     "supabase": "^2.15.8",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vite-tsconfig-paths": "^5.1.4",
+    "vitest": "^3.1.1"
   }
 }
