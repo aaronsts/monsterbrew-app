@@ -31,7 +31,7 @@ import {
   Eye,
   Trash,
 } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -41,16 +41,16 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Badge, BadgeVariants } from "@/components/ui/badge";
+import { calculateHitPoints } from "@/lib/utils";
 
 type MonsterbrewCreature = z.infer<typeof createCreatureSchema>;
 
 export default function MyCreaturesPage() {
+  const id = useSearchParams().get("id");
   const [myCreatures, setMyCreatures] = useState<MonsterbrewCreature[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [expandedRows, setExpandedRows] = useState<Record<string, boolean>>({});
   const router = useRouter();
-
-  // Function to toggle row expansion
   const toggleRowExpansion = (creatureId: string) => {
     setExpandedRows((prev) => ({
       ...prev,
@@ -75,6 +75,12 @@ export default function MyCreaturesPage() {
   useEffect(() => {
     getLocalCreatures();
   }, []);
+
+  useEffect(() => {
+    if (id) {
+      setExpandedRows({ [id]: true });
+    }
+  }, [id]);
 
   // Function to load creature into editor
   const loadCreatureIntoEditor = (creature: MonsterbrewCreature) => {
@@ -167,6 +173,17 @@ export default function MyCreaturesPage() {
                   const creatureId = creature.id || "";
                   const isExpanded = expandedRows[creatureId];
 
+                  const medianHP = calculateHitPoints(
+                    creature.hit_dice,
+                    creature.size,
+                    creature.ability_scores.con
+                  );
+
+                  const hp =
+                    creature.custom_hp ||
+                    medianHP ||
+                    creature.hit_points.toString();
+
                   return (
                     <React.Fragment key={creatureId}>
                       <TableRow
@@ -201,14 +218,14 @@ export default function MyCreaturesPage() {
                               creature.type.toLocaleLowerCase() as keyof BadgeVariants["variant"]
                             }
                           >
-                            {creature.type}
+                            {creature.type || "not selected"}
                           </Badge>
                         </TableCell>
-                        <TableCell>{creature.size}</TableCell>
+                        <TableCell>{creature.size || "not selected"}</TableCell>
                         <TableCell>{creature.cr.challenge_rating}</TableCell>
-                        <TableCell>{creature.hit_points}</TableCell>
+                        <TableCell className="w-24">{hp}</TableCell>
                         <TableCell
-                          className="text-right"
+                          className="text-right w-fit"
                           onClick={(e) => e.stopPropagation()}
                         >
                           <DropdownMenu>
@@ -242,7 +259,7 @@ export default function MyCreaturesPage() {
                                 onClick={() => deleteCreature(creature)}
                                 className="text-destructive"
                               >
-                                <Trash className="mr-2 h-4 w-4" />
+                                <Trash className="text-destructive mr-2 h-4 w-4" />
                                 Delete
                               </DropdownMenuItem>
                             </DropdownMenuContent>

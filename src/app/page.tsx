@@ -27,7 +27,7 @@ export default function Home() {
     <div className="w-full flex flex-col py-8 gap-16 px-6">
       <section className="flex flex-col lg:flex-row items-center justify-between gap-8">
         <div className="flex-1 flex flex-col gap-4 text-center lg:text-left">
-          <Badge variant="default" className="-mb-2">
+          <Badge variant="default" className="-mb-2 mx-auto md:mx-0">
             Free & Open Source
           </Badge>
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight">
@@ -40,8 +40,8 @@ export default function Home() {
             campaigns.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start pt-4">
-            <Link href="/editor" className="flex items-center gap-2">
-              <Button size="lg" className="gap-2">
+            <Link href="/editor">
+              <Button size="lg">
                 Start Creating <ArrowRight className="h-5 w-5" />
               </Button>
             </Link>
@@ -208,8 +208,10 @@ function StepCard({
       <div className="size-16 border rounded-full bg-primary flex items-center justify-center text-primary-foreground text-xl font-bold mb-6">
         {number}
       </div>
-      <div className="flex-1 text-left mt-3">
-        <h3 className="text-xl font-bold mb-3">{title}</h3>
+      <div className="flex-1 text-left md:mt-3">
+        <h3 className="leading-normal md:leading-none font-bold mb-3">
+          {title}
+        </h3>
         <p className="text-muted">{description}</p>
       </div>
     </div>

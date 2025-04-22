@@ -3,7 +3,7 @@
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { Description } from "@/components/ui/description";
 import { CREATURE_SIZES } from "@/lib/constants";
-import { calculateStatBonus, titleCase } from "@/lib/utils";
+import { calculateHitPoints, calculateStatBonus, titleCase } from "@/lib/utils";
 import { createCreatureSchema } from "@/schema/createCreatureSchema";
 import { z } from "zod";
 
@@ -16,20 +16,9 @@ export function StandaloneStatblock({
 }: {
   creature: MonsterbrewCreature;
 }) {
-  // Basic Info
-  function calculateHitPoints(amount: string, constitution?: number) {
-    const size = CREATURE_SIZES.find((s) => creature.size === s.value);
-    const hit_dice = size?.hit_dice || 4;
-    const modifier = calculateStatBonus(constitution);
-    const extraHP = modifier * parseInt(amount);
-    const hp = parseInt(amount) + Math.floor(hit_dice * parseInt(amount));
-    const medianHp = Math.floor(hp / 2 + extraHP);
-    if (Number.isNaN(medianHp)) return "";
-    return `${medianHp} (${amount}d${hit_dice} + ${extraHP})`;
-  }
-
   const medianHP = calculateHitPoints(
     creature.hit_dice,
+    creature.size,
     creature.ability_scores.con
   );
 
