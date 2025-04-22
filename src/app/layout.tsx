@@ -96,7 +96,7 @@ export default function RootLayout({ children }: PropsWithChildren) {
               {children}
             </main>
             <Toaster richColors position="bottom-right" />
-            <footer className="max-w-8xl mx-auto p-3 pt-0 w-full">
+            <footer className="max-w-8xl mx-auto px-3 pt-0 w-full">
               <div className="bg-card text-card-foreground w-full flex justify-end items-center border p-2 rounded-xl shadow-sm">
                 <Link href="/privacy">
                   <Button variant="link" size="sm">

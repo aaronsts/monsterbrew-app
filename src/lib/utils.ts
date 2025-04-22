@@ -1,6 +1,7 @@
 import { defaultCreature } from "@/schema/createCreatureSchema";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { CREATURE_SIZES } from "./constants";
 
 interface Option {
   label: string;
@@ -38,4 +39,19 @@ export function titleCase(str: string) {
   return str
     .replace(/^[-_]*(.)/, (_, c) => c.toUpperCase())
     .replace(/[-_]+(.)/g, (_, c) => " " + c.toUpperCase());
+}
+
+export function calculateHitPoints(
+  amount: string,
+  size: string,
+  constitution?: number
+) {
+  const foundSize = CREATURE_SIZES.find((s) => size === s.value);
+  const hit_dice = foundSize?.hit_dice || 4;
+  const modifier = calculateStatBonus(constitution);
+  const extraHP = modifier * parseInt(amount);
+  const hp = parseInt(amount) + Math.floor(hit_dice * parseInt(amount));
+  const medianHp = Math.floor(hp / 2 + extraHP);
+  if (Number.isNaN(medianHp)) return "";
+  return `${medianHp} (${amount}d${hit_dice} + ${extraHP})`;
 }
