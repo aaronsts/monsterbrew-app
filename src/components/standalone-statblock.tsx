@@ -1,9 +1,13 @@
 "use client";
 
-import { Card, CardContent, CardTitle } from "@/components/ui/card";
+import { Card, CardTitle } from "@/components/ui/card";
 import { Description } from "@/components/ui/description";
-import { CREATURE_SIZES } from "@/lib/constants";
-import { calculateHitPoints, calculateStatBonus, titleCase } from "@/lib/utils";
+import {
+  calculateHitPoints,
+  calculateSavingThrow,
+  calculateStatBonus,
+  titleCase,
+} from "@/lib/utils";
 import { createCreatureSchema } from "@/schema/createCreatureSchema";
 import { z } from "zod";
 
@@ -97,7 +101,7 @@ export function StandaloneStatblock({
 
   return (
     <Card className="h-fit bg-background">
-      <div className="p-4 columns-2">
+      <div className="p-2 md:columns-2">
         {/* Header - Always full width */}
         <div className="mb-4 border-b pb-2">
           <CardTitle>{creature.name || "Example Creature"}</CardTitle>
@@ -134,19 +138,30 @@ export function StandaloneStatblock({
         </div>
 
         {/* Ability Scores - Full width */}
-        <div className="grid grid-cols-6 w-full rounded-md overflow-hidden gap-px border bg-black/10 mb-4 break-inside-avoid">
+        <div className="grid lg:grid-cols-2 w-full rounded-md overflow-hidden gap-px border bg-black/10">
+          <div className="grid lg:col-span-2 bg-background lg:grid-cols-2 text-xs font-semibold">
+            <div className="hidden lg:grid px-4 grid-cols-4 py-0.5 gap-3">
+              <span className="col-start-3">MOD</span>
+              <span className="col-start-4">SAVE</span>
+            </div>
+            <div className="grid  px-4 grid-cols-4 py-0.5 gap-3">
+              <span className="col-start-3">MOD</span>
+              <span className="col-start-4">SAVE</span>
+            </div>
+          </div>
           {abilityScores.map((score) => (
             <div
               key={score.label}
-              className="flex flex-col items-center bg-background p-2"
+              className="grid grid-cols-4 w-full bg-background gap-3  px-4 py-1"
             >
-              <h4 className="text-sm font-semibold">{score.label}</h4>
-              <p className="text-lg">{score.value || "0"}</p>
-              <p className="text-xs">
+              <h4>{score.label}</h4>
+              <p>{score.value || "0"}</p>
+              <p>
                 {calculateStatBonus(score.value) >= 0
                   ? `+${calculateStatBonus(score.value)}`
                   : `${calculateStatBonus(score.value)}`}
               </p>
+              <p>{calculateSavingThrow(score, creature)}</p>
             </div>
           ))}
         </div>
