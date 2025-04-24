@@ -5,8 +5,8 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { MultiSelect } from "@/components/ui/multi-select";
 
-import SelectBox from "@/components/ui/multi-select";
 import { cn, titleCase } from "@/lib/utils";
 import { createCreatureSchema, Languages } from "@/schema/createCreatureSchema";
 import { useFormContext } from "react-hook-form";
@@ -29,15 +29,13 @@ function LanguagesForm() {
           <FormItem className={cn("h-fit col-span-2")}>
             <FormLabel>Languages</FormLabel>
             <FormControl>
-              <SelectBox
+              <MultiSelect
+                title="Select languages"
                 options={languages}
-                value={field.value as unknown as string}
-                onChange={field.onChange}
-                placeholder="Select languages..."
-                inputPlaceholder="Search language"
-                emptyPlaceholder="No language found."
-                multiple
-                search
+                selectedValues={new Set(field.value)}
+                onSelectionChange={(selectedValues) => {
+                  field.onChange(Array.from(selectedValues));
+                }}
               />
             </FormControl>
             <FormMessage />

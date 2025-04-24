@@ -1,7 +1,12 @@
-import React from "react";
+// ui/multi-select.tsx
+
+"use client";
 
 import { cn } from "@/lib/utils";
-
+import { Popover, PopoverContent, PopoverTrigger } from "./popover";
+import { Button } from "./button";
+import { CheckIcon, ChevronsUpDown, X } from "lucide-react";
+import { Badge } from "./badge";
 import {
   Command,
   CommandEmpty,
@@ -9,213 +14,184 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from "@/components/ui/command";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Button } from "@/components/ui/button";
-import { CheckIcon, ChevronsUpDown, X } from "lucide-react";
-import { Input } from "./input";
-import { Badge } from "./badge";
+} from "./command";
 
-interface Option {
-  value: string;
+type Option = {
   label: string;
-}
+  value: string;
+  icon?: React.ComponentType<{ className?: string }>;
+};
 
-interface SelectBoxProps {
-  options: Option[] | readonly Option[];
-  value?: string[] | string;
-  onChange?: (values: string[] | string) => void;
-  placeholder?: string;
-  inputPlaceholder?: string;
-  emptyPlaceholder?: string;
+type GroupedOptions = {
+  [key: string]: Option[];
+};
+
+interface MultiSelectProps {
+  title?: string;
+  options?: Option[];
+  groupedOptions?: GroupedOptions;
+  selectedValues: Set<string>;
+  onSelectionChange: (selectedValues: Set<string>) => void;
   className?: string;
-  multiple?: boolean;
   search?: boolean;
+  numberOfTags?: number;
 }
 
-const SelectBox = React.forwardRef<HTMLInputElement, SelectBoxProps>(
-  (
-    {
-      inputPlaceholder,
-      emptyPlaceholder,
-      placeholder,
-      className,
-      options,
-      value,
-      onChange,
-      multiple,
-      search,
-    },
-    ref
-  ) => {
-    const [searchTerm, setSearchTerm] = React.useState<string>("");
-    const [isOpen, setIsOpen] = React.useState(false);
+export function MultiSelect({
+  title,
+  options,
+  groupedOptions,
+  selectedValues,
+  onSelectionChange,
+  className,
+  search = false,
+  numberOfTags = 5,
+}: MultiSelectProps) {
+  const handleClear = (option: string) => {
+    selectedValues.delete(option);
+    onSelectionChange(selectedValues);
+  };
 
-    const handleSelect = (selectedValue: string) => {
-      if (multiple) {
-        const newValue =
-          value?.includes(selectedValue) && Array.isArray(value)
-            ? value.filter((v) => v !== selectedValue)
-            : [...(value ?? []), selectedValue];
-        onChange?.(newValue);
-      } else {
-        onChange?.(selectedValue);
-        setIsOpen(false);
-      }
-    };
-
-    const handleClear = () => {
-      onChange?.(multiple ? [] : "");
-    };
-
-    return (
-      <Popover open={isOpen} onOpenChange={setIsOpen}>
-        <PopoverTrigger asChild>
-          <Button
-            variant="form"
+  return (
+    <Popover>
+      <PopoverTrigger asChild>
+        <Button
+          variant="form"
+          className={cn(
+            "flex min-h-[36px] cursor-pointer items-center justify-between rounded-md border px-3 py-1 data-[state=open]:border-ring w-full h-full ",
+            className
+          )}
+        >
+          <div
             className={cn(
-              "flex min-h-[36px] cursor-pointer items-center justify-between rounded-md border px-3 py-1 data-[state=open]:border-ring w-full h-full ",
-              className
+              "flex flex-grow flex-wrap  items-center gap-1 overflow-hidden text-sm"
             )}
           >
-            <div
-              className={cn(
-                "items-center gap-1 overflow-hidden text-sm",
-                multiple
-                  ? "flex flex-grow flex-wrap "
-                  : "inline-flex whitespace-nowrap"
-              )}
-            >
-              {value && value.length > 0 ? (
-                multiple ? (
-                  options
-                    .filter(
-                      (option) =>
-                        Array.isArray(value) && value.includes(option.value)
-                    )
-                    ?.map((option) => (
-                      <Badge variant="accent" key={option.value}>
-                        <span>{option.label}</span>
-                        <span
-                          onClick={(e) => {
-                            e.preventDefault();
-                            handleSelect(option.value);
-                          }}
-                          className="flex items-center rounded-sm px-[1px] text-accent-foreground hover:text-accent-foreground/60"
-                        >
-                          <X />
-                        </span>
-                      </Badge>
-                    ))
-                ) : (
-                  options.find((opt) => opt.value === value)?.label
-                )
+            {selectedValues.size > 0 ? (
+              selectedValues.size <= numberOfTags ? (
+                Array.from(selectedValues)?.map((option) => (
+                  <Badge variant="accent" key={option}>
+                    <span>{option}</span>
+                    <span
+                      onClick={(e) => {
+                        e.preventDefault();
+                        handleClear(option);
+                      }}
+                    >
+                      <X />
+                    </span>
+                  </Badge>
+                ))
               ) : (
-                <span className="mr-auto text-muted-foreground/40 font-normal">
-                  {placeholder}
-                </span>
-              )}
-            </div>
-            <div className="flex items-center self-stretch pl-1 text-muted-foreground/60 hover:text-foreground [&>div]:flex [&>div]:items-center [&>div]:self-stretch">
-              {value && value.length > 0 ? (
-                <div
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleClear();
-                  }}
-                >
-                  <X className="size-4" />
-                </div>
-              ) : (
-                <div>
-                  <ChevronsUpDown className="size-4" />
-                </div>
-              )}
-            </div>
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent
-          className="w-[var(--radix-popover-trigger-width)] p-0"
-          align="start"
-        >
-          <Command>
-            {search && (
-              <div className="relative">
-                <CommandInput
-                  value={searchTerm}
-                  onValueChange={(e) => setSearchTerm(e)}
-                  ref={ref}
-                  placeholder={inputPlaceholder ?? "Search..."}
-                  className="h-9"
-                />
-                {searchTerm && (
-                  <div
-                    className="absolute inset-y-0 right-0 flex cursor-pointer items-center pr-3 text-muted-foreground hover:text-foreground"
-                    onClick={() => setSearchTerm("")}
-                  >
-                    <X className="size-4" />
-                  </div>
-                )}
+                <Badge variant="accent">{selectedValues.size}+ Selected</Badge>
+              )
+            ) : (
+              <span className="font-normal italic text-carrara-600">
+                {title}
+              </span>
+            )}
+          </div>
+          <div className="flex items-center self-stretch pl-1 text-muted-foreground/60 hover:text-foreground [&>div]:flex [&>div]:items-center [&>div]:self-stretch">
+            {selectedValues.size > 0 ? (
+              <div
+                onClick={(e) => {
+                  e.preventDefault();
+                  onSelectionChange(new Set());
+                }}
+              >
+                <X className="size-4" />
+              </div>
+            ) : (
+              <div>
+                <ChevronsUpDown className="size-4" />
               </div>
             )}
-            <CommandList>
-              <CommandEmpty>
-                {emptyPlaceholder ?? "No results found."}
-              </CommandEmpty>
+          </div>
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-[200px] p-0" align="start">
+        <Command>
+          {search && <CommandInput placeholder={title} />}
+          <CommandList>
+            <CommandEmpty>No results found.</CommandEmpty>
+            {options && (
               <CommandGroup>
-                <ScrollArea>
-                  <div className="max-h-64">
-                    {options?.map((option) => {
-                      const isSelected =
-                        Array.isArray(value) && value.includes(option.value);
+                {options.map((option) => {
+                  const isSelected = selectedValues.has(option.value);
+                  return (
+                    <CommandItem
+                      key={option.value}
+                      onSelect={() => {
+                        const newSelectedValues = new Set(selectedValues);
+                        if (isSelected) {
+                          newSelectedValues.delete(option.value);
+                        } else {
+                          newSelectedValues.add(option.value);
+                        }
+                        onSelectionChange(newSelectedValues);
+                      }}
+                    >
+                      <div
+                        className={cn(
+                          "mr-2 flex h-4 w-4  items-center justify-center rounded-sm border border-calypso-700",
+                          isSelected
+                            ? "bg-calypso-200/50 text-calypso-700"
+                            : "opacity-50 [&_svg]:invisible"
+                        )}
+                      >
+                        <CheckIcon className={cn("h-4 w-4")} />
+                      </div>
+                      {option.icon && (
+                        <option.icon className="mr-2 h-4 w-4 text-muted-foreground" />
+                      )}
+                      <span>{option.label}</span>
+                    </CommandItem>
+                  );
+                })}
+              </CommandGroup>
+            )}
+            {groupedOptions &&
+              Object.entries(groupedOptions).map(
+                ([groupName, groupOptions]) => (
+                  <CommandGroup key={groupName} heading={groupName}>
+                    {groupOptions.map((option) => {
+                      const isSelected = selectedValues.has(option.value);
                       return (
                         <CommandItem
                           key={option.value}
-                          // value={option.value}
-                          onSelect={() => handleSelect(option.value)}
+                          onSelect={() => {
+                            const newSelectedValues = new Set(selectedValues);
+                            if (isSelected) {
+                              newSelectedValues.delete(option.value);
+                            } else {
+                              newSelectedValues.add(option.value);
+                            }
+                            onSelectionChange(newSelectedValues);
+                          }}
                         >
-                          {multiple && (
-                            <div
-                              className={cn(
-                                "mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-accent-foreground",
-                                isSelected
-                                  ? "bg-accent text-accent-foreground"
-                                  : "opacity-50 [&_svg]:invisible"
-                              )}
-                            >
-                              <CheckIcon />
-                            </div>
+                          <div
+                            className={cn(
+                              "mr-2 flex h-4 w-4  items-center justify-center rounded-sm border border-calypso-700",
+                              isSelected
+                                ? "bg-calypso-200/50 text-calypso-700"
+                                : "opacity-50 [&_svg]:invisible"
+                            )}
+                          >
+                            <CheckIcon className={cn("h-4 w-4")} />
+                          </div>
+                          {option.icon && (
+                            <option.icon className="mr-2 h-4 w-4 text-muted-foreground" />
                           )}
                           <span>{option.label}</span>
-                          {!multiple && option.value === value && (
-                            <CheckIcon
-                              className={cn(
-                                "ml-auto",
-                                option.value === value
-                                  ? "opacity-100"
-                                  : "opacity-0"
-                              )}
-                            />
-                          )}
                         </CommandItem>
                       );
                     })}
-                  </div>
-                </ScrollArea>
-              </CommandGroup>
-            </CommandList>
-          </Command>
-        </PopoverContent>
-      </Popover>
-    );
-  }
-);
-
-SelectBox.displayName = "SelectBox";
-
-export default SelectBox;
+                  </CommandGroup>
+                )
+              )}
+          </CommandList>
+        </Command>
+      </PopoverContent>
+    </Popover>
+  );
+}
