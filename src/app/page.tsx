@@ -1,15 +1,9 @@
+"use client";
 import Image from "next/image";
 import beholder from "../components/images/beholder-pixelart.svg";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import {
   ArrowRight,
   BookOpen,
@@ -21,6 +15,9 @@ import {
   Share2,
   Wand2,
 } from "lucide-react";
+import { FeatureCard } from "@/components/home/feature-card";
+import { UseCaseCard } from "@/components/home/use-case-card";
+import { StepCard } from "@/components/home/step-card";
 
 export default function Home() {
   return (
@@ -56,7 +53,7 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="flex-1 flex justify-center mb-6 bg-background rounded-full p-4 animate-move">
+        <div className="flex-1 flex justify-center mb-6 rounded-full p-4 animate-move">
           <Image
             src={beholder}
             alt="Dungeons and Dragons Beholder looking down"
@@ -165,77 +162,5 @@ export default function Home() {
         </Link>
       </section>
     </div>
-  );
-}
-
-function FeatureCard({
-  icon,
-  title,
-  description,
-  badge,
-}: {
-  icon: React.ReactNode;
-  title: string;
-  description: string;
-  badge?: string;
-}) {
-  return (
-    <Card className="relative">
-      {badge && <Badge className="absolute top-4 right-4">{badge}</Badge>}
-
-      <CardHeader>
-        <div className="[&_svg]:size-8">{icon}</div>
-        <CardTitle>{title}</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <CardDescription className="text-base">{description}</CardDescription>
-      </CardContent>
-    </Card>
-  );
-}
-
-function StepCard({
-  number,
-  title,
-  description,
-}: {
-  number: string;
-  title: string;
-  description: string;
-}) {
-  return (
-    <div className="flex gap-6 items-start text-center">
-      <div className="size-16 border rounded-full bg-primary flex items-center justify-center text-primary-foreground text-xl font-bold mb-6">
-        {number}
-      </div>
-      <div className="flex-1 text-left md:mt-3">
-        <h3 className="leading-normal md:leading-none font-bold mb-3">
-          {title}
-        </h3>
-        <p className="text-muted">{description}</p>
-      </div>
-    </div>
-  );
-}
-
-function UseCaseCard({
-  title,
-  description,
-  icon,
-}: {
-  title: string;
-  description: string;
-  icon: React.ReactNode;
-}) {
-  return (
-    <Card>
-      <CardHeader className="flex flex-row items-center gap-4">
-        <div className="bg-primary/10 p-3 rounded-lg">{icon}</div>
-        <CardTitle>{title}</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <CardDescription className="text-base">{description}</CardDescription>
-      </CardContent>
-    </Card>
   );
 }

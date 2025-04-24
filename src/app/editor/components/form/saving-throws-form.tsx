@@ -5,7 +5,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import SelectBox from "@/components/ui/multi-select";
+import { MultiSelect } from "@/components/ui/multi-select";
 import {
   abilityScoresSchema,
   createCreatureSchema,
@@ -28,12 +28,13 @@ function SavingThrowsForm() {
         <FormItem>
           <FormLabel>Saving Throws</FormLabel>
           <FormControl>
-            <SelectBox
+            <MultiSelect
+              title="Select ability"
               options={saves}
-              value={field.value}
-              onChange={field.onChange}
-              placeholder="Select ability..."
-              multiple
+              selectedValues={new Set(field.value)}
+              onSelectionChange={(selectedValues) => {
+                field.onChange(Array.from(selectedValues));
+              }}
             />
           </FormControl>
           <FormMessage />
