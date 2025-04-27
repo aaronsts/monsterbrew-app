@@ -6,45 +6,6 @@
 @plugin "@tailwindcss/typography";
 
 :root {
-  --color-carrara-50: oklch(97.6% 0.004 91.4);
-  --color-carrara-100: oklch(93.1% 0.012 91.5);
-  --color-carrara-200: oklch(88.5% 0.021 91.6);
-  --color-carrara-300: oklch(80.6% 0.032 88.4);
-  --color-carrara-400: oklch(71.6% 0.044 80.2);
-  --color-carrara-500: oklch(65.2% 0.051 76.1);
-  --color-carrara-600: oklch(60.3% 0.05 68.8);
-  --color-carrara-700: oklch(52.6% 0.041 64);
-  --color-carrara-800: oklch(46% 0.032 59.7);
-  --color-carrara-900: oklch(40.2% 0.025 57.5);
-  --color-carrara-950: oklch(26.7% 0.016 58.9);
-
-  --color-stromboli-50: oklch(97.8% 0.005 183);
-  --color-stromboli-100: oklch(93% 0.022 175);
-  --color-stromboli-200: oklch(85.9% 0.041 177);
-  --color-stromboli-300: oklch(76.5% 0.062 177);
-  --color-stromboli-400: oklch(66.3% 0.072 179);
-  --color-stromboli-500: oklch(57.6% 0.071 179);
-  --color-stromboli-600: oklch(47.5% 0.058 181);
-  --color-stromboli-700: oklch(42.5% 0.048 184);
-  --color-stromboli-800: oklch(37.2% 0.038 183);
-  --color-stromboli-900: oklch(33.6% 0.029 186);
-  --color-stromboli-950: oklch(23.7% 0.023 191);
-
-  --color-calypso-50: oklch(97.4% 0.008 217);
-  --color-calypso-100: oklch(93.3% 0.018 218);
-  --color-calypso-200: oklch(87.3% 0.033 216);
-  --color-calypso-300: oklch(77.7% 0.055 222);
-  --color-calypso-400: oklch(65.9% 0.075 224);
-  --color-calypso-500: oklch(56.8% 0.077 227);
-  --color-calypso-600: oklch(49.7% 0.066 232);
-  --color-calypso-700: oklch(43.8% 0.053 234);
-  --color-calypso-800: oklch(39.5% 0.042 236);
-  --color-calypso-900: oklch(35.8% 0.034 241);
-  --color-calypso-950: oklch(26.9% 0.029 241);
-
-  --color-black: oklch(0.145 0 0);
-  --color-white: oklch(0.985 0 0);
-
   --background: oklch(93.08% 0.0125 91.52);
   --foreground: oklch(26.74% 0.0163 58.86);
   --card: oklch(97.61% 0.0041 91.45);
@@ -69,46 +30,8 @@
   --input: oklch(93.08% 0.0125 91.52);
   --ring: oklch(75.08% 0.0553 187.15);
 
-  --resistant: oklch(75.25% 0.1435 55.42);
-  --immune: oklch(70.96% 0.1155 164.77);
-
   --radius: 0.625rem;
   --spacing: 4px;
-}
-
-.dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.145 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.145 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.985 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.396 0.141 25.723);
-  --destructive-foreground: oklch(0.637 0.237 25.331);
-  --border: oklch(0.269 0 0);
-  --input: oklch(0.269 0 0);
-  --ring: oklch(0.439 0 0);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(0.269 0 0);
-  --sidebar-ring: oklch(0.439 0 0);
 }
 
 @theme inline {
@@ -122,12 +45,24 @@
   --color-carrara-700: oklch(52.6% 0.041 64);
   --color-carrara-800: oklch(46% 0.032 59.7);
   --color-carrara-900: oklch(40.2% 0.025 57.5);
-  --color-carrara-950: oklch(26.7% 0.016 58.9);
+  --color-carrara-950: oklch(26.7% 0.016 58.9); /*  primary */
+
+  --color-calypso-50: oklch(97.4% 0.008 217);
+  --color-calypso-100: oklch(93.3% 0.018 218);
+  --color-calypso-200: oklch(87.3% 0.033 216);
+  --color-calypso-300: oklch(77.7% 0.055 222);
+  --color-calypso-400: oklch(65.9% 0.075 224); /*  secondary */
+  --color-calypso-500: oklch(56.8% 0.077 227);
+  --color-calypso-600: oklch(49.7% 0.066 232);
+  --color-calypso-700: oklch(43.8% 0.053 234);
+  --color-calypso-800: oklch(39.5% 0.042 236);
+  --color-calypso-900: oklch(35.8% 0.034 241);
+  --color-calypso-950: oklch(26.9% 0.029 241);
 
   --color-stromboli-50: oklch(97.8% 0.005 183);
   --color-stromboli-100: oklch(93% 0.022 175);
   --color-stromboli-200: oklch(85.9% 0.041 177);
-  --color-stromboli-300: oklch(76.5% 0.062 177);
+  --color-stromboli-300: oklch(76.5% 0.062 177); /*  accent */
   --color-stromboli-400: oklch(66.3% 0.072 179);
   --color-stromboli-500: oklch(57.6% 0.071 179);
   --color-stromboli-600: oklch(47.5% 0.058 181);
@@ -136,20 +71,11 @@
   --color-stromboli-900: oklch(33.6% 0.029 186);
   --color-stromboli-950: oklch(23.7% 0.023 191);
 
-  --color-calypso-50: oklch(97.4% 0.008 217);
-  --color-calypso-100: oklch(93.3% 0.018 218);
-  --color-calypso-200: oklch(87.3% 0.033 216);
-  --color-calypso-300: oklch(77.7% 0.055 222);
-  --color-calypso-400: oklch(65.9% 0.075 224);
-  --color-calypso-500: oklch(56.8% 0.077 227);
-  --color-calypso-600: oklch(49.7% 0.066 232);
-  --color-calypso-700: oklch(43.8% 0.053 234);
-  --color-calypso-800: oklch(39.5% 0.042 236);
-  --color-calypso-900: oklch(35.8% 0.034 241);
-  --color-calypso-950: oklch(26.9% 0.029 241);
+  --color-resistant: oklch(75.25% 0.1435 55.42);
+  --color-immune: oklch(70.96% 0.1155 164.77);
 
-  --color-black: oklch(0.145 0 0);
-  --color-white: oklch(0.985 0 0);
+  --color-black: oklch(26.7% 0.016 58.9);
+  --color-white: oklch(93.08% 0.0125 91.52);
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -164,19 +90,13 @@
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
   --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-expert: var(--expert);
-  --color-expert-foreground: var(--expert-foreground);
-  --color-proficient: var(--proficient);
+
   --color-proficient-foreground: var(--proficient-foreground);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
-
-  --color-resistant: var(--resistant);
-  --color-immune: var(--immune);
 
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);

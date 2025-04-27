@@ -14,7 +14,11 @@ export function FeatureCard({
 }) {
   return (
     <Card className="relative">
-      {badge && <Badge className="absolute top-4 right-4">{badge}</Badge>}
+      {badge && (
+        <Badge variant="secondary" className="absolute top-4 right-4">
+          {badge}
+        </Badge>
+      )}
       <CardHeader>
         <div className="[&_svg]:size-8">{icon}</div>
         <p>{title}</p>

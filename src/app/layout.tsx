@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 import "@fontsource/yatra-one";
-import MainNavigation from "@/components/main-navigation";
 import { Toaster } from "@/components/ui/sonner";
 import Link from "next/link";
 import { KofiLogo } from "@/components/images/KofiLogo";
@@ -13,6 +12,7 @@ import { PropsWithChildren } from "react";
 import { Providers } from "@/components/providers/providers";
 
 import { nippo } from "./fonts/nippo/nippoVariable";
+import { SiteHeader } from "@/components/ui/side-header";
 
 export const metadata: Metadata = {
   title: "Monsterbrew | D&D 5e Monster Creator & Homebrew Tool",
@@ -83,7 +83,7 @@ export default function RootLayout({ children }: PropsWithChildren) {
         <body
           className={`${nippo.variable} font-nippo flex flex-col bg-background text-foreground h-full antialiased`}
         >
-          <MainNavigation />
+          <SiteHeader />
           <main className="max-w-8xl mx-auto w-full flex-1 p-3">
             {children}
           </main>
@@ -107,7 +107,7 @@ export default function RootLayout({ children }: PropsWithChildren) {
                   target="_blank"
                   referrerPolicy="no-referrer"
                 >
-                  <Button size="icon" variant="ghost">
+                  <Button size="icon" variant="transparant">
                     <GithubLogo />
                   </Button>
                 </Link>

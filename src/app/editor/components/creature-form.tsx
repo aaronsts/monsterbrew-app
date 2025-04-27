@@ -94,7 +94,7 @@ function CreatureForm({
           <SaveDialog />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost">
+              <Button variant="transparant" color="carrara" size="icon">
                 <EllipsisVertical />
               </Button>
             </DropdownMenuTrigger>
@@ -147,8 +147,9 @@ function CreatureForm({
             </div>
             <Button
               type="button"
-              variant="destructive"
-              size="icon"
+              variant="light"
+              color="destructive"
+              size="icon-sm"
               onClick={() =>
                 formContext.reset({
                   ...formContext.getValues(),
@@ -161,7 +162,14 @@ function CreatureForm({
                   hit_dice: "",
                   hit_points: "",
                   custom_hp: false,
-                  ability_scores: {},
+                  ability_scores: {
+                    str: 10,
+                    con: 10,
+                    dex: 10,
+                    int: 10,
+                    wis: 10,
+                    cha: 10,
+                  },
                 })
               }
             >
@@ -181,8 +189,9 @@ function CreatureForm({
             </div>
             <Button
               type="button"
-              variant="destructive"
-              size="icon"
+              variant="light"
+              color="destructive"
+              size="icon-sm"
               onClick={() =>
                 formContext.reset({
                   ...formContext.getValues(),
@@ -208,8 +217,9 @@ function CreatureForm({
             </div>
             <Button
               type="button"
-              variant="destructive"
-              size="icon"
+              variant="light"
+              color="destructive"
+              size="icon-sm"
               onClick={() =>
                 formContext.reset({
                   ...formContext.getValues(),
@@ -237,8 +247,9 @@ function CreatureForm({
             </div>
             <Button
               type="button"
-              variant="destructive"
-              size="icon"
+              variant="light"
+              color="destructive"
+              size="icon-sm"
               onClick={() =>
                 formContext.reset({
                   ...formContext.getValues(),
@@ -284,8 +295,9 @@ function CreatureForm({
             </div>
             <Button
               type="button"
-              variant="destructive"
-              size="icon"
+              variant="light"
+              color="destructive"
+              size="icon-sm"
               onClick={() =>
                 formContext.reset({
                   ...formContext.getValues(),

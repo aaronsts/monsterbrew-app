@@ -23,8 +23,8 @@ export default function Home() {
   return (
     <div className="w-full flex flex-col py-8 gap-16 px-6">
       <section className="flex flex-col lg:flex-row items-center justify-between gap-8">
-        <div className="flex-1 flex flex-col gap-4 text-center lg:text-left">
-          <Badge variant="default" className="-mb-2 mx-auto md:mx-0">
+        <div className="flex flex-col items-center gap-4 text-center lg:text-left">
+          <Badge variant="secondary" className="lg:mr-auto">
             Free & Open Source
           </Badge>
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight">
@@ -38,15 +38,12 @@ export default function Home() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start pt-4">
             <Link href="/editor">
-              <Button size="lg">
-                Start Creating <ArrowRight className="h-5 w-5" />
+              <Button variant="filled" color="carrara">
+                Start Creating <ArrowRight />
               </Button>
             </Link>
             <Link href="/my-creatures">
-              <Button
-                size="lg"
-                className="bg-primary/20 text-primary hover:bg-primary/30"
-              >
+              <Button variant="light" color="carrara">
                 View My Creatures
               </Button>
             </Link>
@@ -156,7 +153,7 @@ export default function Home() {
       <section className="py-16 bg-primary text-primary-foreground rounded-xl p-8 text-center">
         <h2>Ready to Create Your First Creature?</h2>
         <Link href="/editor">
-          <Button size="lg" variant="accent">
+          <Button size="lg" variant="filled" color="stromboli">
             Start Creating <ArrowRight className="h-5 w-5" />
           </Button>
         </Link>

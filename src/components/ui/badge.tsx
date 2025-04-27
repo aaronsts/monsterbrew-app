@@ -5,25 +5,21 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const badgeVariants = cva(
-  "inline-flex items-center justify-center rounded-sm border px-2 py-0.5 text-xs italic w-fit whitespace-nowrap shrink-0 [&>svg]:size-3 gap-1 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-hidden",
+  "inline-flex px-2 py-0.5 items-center justify-center rounded-sm border text-xs w-fit italic  whitespace-nowrap gap-1 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-hidden",
   {
     variants: {
       variant: {
         default:
-          "border-transparent bg-primary text-primary-foreground [a&]:hover:bg-primary/90",
-        secondary:
-          "border-transparent bg-secondary text-secondary-foreground [a&]:hover:bg-secondary/90",
-        accent:
-          "font-normal pl-2 pr-1 text-xs text-accent-foreground bg-accent border-ring transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 capitalize",
-        destructive:
-          "border-transparent bg-destructive text-white [a&]:hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40",
+          "border-transparent bg-carrara-600 text-carrara-100 [a&]:hover:bg-carrara-300",
+        secondary: "border-stromboli-400 bg-stromboli-200 text-stromboli-700 ",
+        accent: "border-calypso-400 bg-calypso-200 text-calypso-700 ",
+        destructive: "border-transparent bg-destructive text-white",
         outline:
           "text-foreground [a&]:hover:bg-accent [a&]:hover:text-accent-foreground",
-        proficient:
-          "bg-proficient text-proficient-foreground hover:bg-proficient/80",
-        expert: "bg-expert text-expert-foreground hover:bg-expert/80",
-        resistant: "bg-resistant text-white hover:bg-resistant/80",
-        immune: "bg-immune text-white hover:bg-immune/80",
+        proficient: "bg-stromboli-400 text-stromboli-50",
+        expert: "bg-calypso-400 text-calypso-50 ",
+        resistant: "border-transparent bg-resistant text-white",
+        immune: "border-transparent bg-immune text-whit",
 
         aberration: "bg-aberration/20 border-aberration",
         beast: "bg-beast/20 border-beast",

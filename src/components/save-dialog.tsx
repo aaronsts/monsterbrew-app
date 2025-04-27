@@ -45,7 +45,12 @@ export function SaveDialog() {
   }
 
   return (
-    <Button variant="outline" type="button" onClick={saveLocally}>
+    <Button
+      variant="filled"
+      color="carrara"
+      type="button"
+      onClick={saveLocally}
+    >
       {creature.id ? "Update" : "Save"}
     </Button>
   );

@@ -184,15 +184,13 @@ export default function MyCreatures() {
                 return (
                   <React.Fragment key={creatureId}>
                     <TableRow
-                      className={`${
-                        isExpanded ? "bg-muted/30" : ""
-                      } cursor-pointer`}
+                      className="border-b"
                       onClick={() => toggleRowExpansion(creatureId)}
                     >
                       <TableCell className="font-medium">
                         <div className="flex items-center gap-2">
                           <Button
-                            variant="ghost"
+                            variant="transparant"
                             size="icon"
                             onClick={(e) => {
                               e.stopPropagation();
@@ -227,7 +225,11 @@ export default function MyCreatures() {
                       >
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon">
+                            <Button
+                              variant="transparant"
+                              color="carrara"
+                              size="icon-sm"
+                            >
                               <EllipsisVertical className="h-4 w-4" />
                             </Button>
                           </DropdownMenuTrigger>
