@@ -107,7 +107,7 @@ export default function RootLayout({ children }: PropsWithChildren) {
                   target="_blank"
                   referrerPolicy="no-referrer"
                 >
-                  <Button size="icon" variant="ghost">
+                  <Button size="icon" variant="transparant">
                     <GithubLogo />
                   </Button>
                 </Link>
