@@ -97,24 +97,25 @@ function DamageTypesForm() {
             }}
           />
         </div>
-        <div className="grid xl:grid-cols-3 gap-3 w-full">
+        <div className="grid sm:grid-cols-3 gap-3 w-full">
           <Button
             type="button"
-            variant="destructive"
+            variant="filled"
+            color="destructive"
             onClick={() => addDamageType("damage_vulnerabilities")}
           >
             Vulnerable
           </Button>
           <Button
             type="button"
-            className="bg-resistant text-white shadow-xs hover:bg-resistant/90 focus-visible:ring-resistant/80 dark:focus-visible:ring-resistant/40"
+            className="bg-resistant text-carrara-50 shadow-xs hover:bg-resistant/90"
             onClick={() => addDamageType("damage_resistances")}
           >
             Resistant
           </Button>
           <Button
             type="button"
-            className="bg-immune text-white shadow-xs hover:bg-immune/90 focus-visible:ring-immune/80 dark:focus-visible:ring-immune/40"
+            className="bg-immune text-carrara-50 shadow-xs hover:bg-immune/90"
             onClick={() => addDamageType("damage_immunities")}
           >
             Immune

@@ -78,7 +78,7 @@ export function MultiSelect({
                         handleClear(option);
                       }}
                     >
-                      <X />
+                      <X className="size-3!" />
                     </span>
                   </Badge>
                 ))
@@ -86,12 +86,10 @@ export function MultiSelect({
                 <Badge variant="accent">{selectedValues.size}+ Selected</Badge>
               )
             ) : (
-              <span className="font-normal italic text-carrara-600">
-                {title}
-              </span>
+              <span className="font-normal text-carrara-400">{title}</span>
             )}
           </div>
-          <div className="flex items-center self-stretch pl-1 text-muted-foreground/60 hover:text-foreground [&>div]:flex [&>div]:items-center [&>div]:self-stretch">
+          <div className="flex items-center self-stretch pl-1 text-carrara-700 hover:text-carrara-800 [&>div]:flex [&>div]:items-center [&>div]:self-stretch">
             {selectedValues.size > 0 ? (
               <div
                 onClick={(e) => {

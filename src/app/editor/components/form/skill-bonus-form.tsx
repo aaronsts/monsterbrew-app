@@ -89,13 +89,15 @@ function SkillBonusForm() {
             type="button"
             onClick={addSkill}
             data-expert="false"
-            variant="proficient"
+            variant="light"
+            color="stromboli"
           >
             Proficient
           </Button>
           <Button
             type="button"
-            variant="expert"
+            variant="light"
+            color="calypso"
             onClick={addSkill}
             data-expert="true"
           >

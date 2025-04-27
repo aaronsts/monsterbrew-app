@@ -1,3 +1,4 @@
+import { FieldArrayButtons } from "@/components/field-array-buttons";
 import { Button } from "@/components/ui/button";
 import {
   FormControl,
@@ -33,7 +34,8 @@ export function ActionsForm() {
     <div className="grid gap-3">
       <Button
         className="ml-auto"
-        variant="outline"
+        variant="light"
+        color="carrara"
         type="button"
         onClick={() => append({ name: "", description: "" })}
       >
@@ -43,37 +45,13 @@ export function ActionsForm() {
         <div key={field.id} className=" border p-3 rounded">
           <div className="flex justify-between">
             <h4>Feature {index + 1}</h4>
-            <div className="flex gap-1 items-centers">
-              <Button
-                type="button"
-                onClick={() => moveUp(index)}
-                disabled={index === 0}
-                className="disabled:opacity-50"
-                variant="ghost"
-                size="icon"
-              >
-                ↑
-              </Button>
-              <Button
-                type="button"
-                onClick={() => moveDown(index)}
-                disabled={index === fields.length - 1}
-                className="disabled:opacity-50"
-                variant="ghost"
-                size="icon"
-              >
-                ↓
-              </Button>
-              <Button
-                type="button"
-                variant="destructive"
-                size="icon"
-                onClick={() => remove(index)}
-              >
-                <span className="sr-only">Remove Feature</span>
-                <Trash2 />
-              </Button>
-            </div>
+            <FieldArrayButtons
+              index={index}
+              moveUp={moveUp}
+              moveDown={moveDown}
+              remove={remove}
+              fields={fields}
+            />
           </div>
           <div className="grid gap-y-2">
             <FormField
