@@ -147,7 +147,7 @@
   }
 
   h3 {
-    @apply text-xl font-bold leading-2;
+    @apply text-xl font-bold;
   }
 }
 

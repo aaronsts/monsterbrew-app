@@ -44,7 +44,7 @@ export function ActionsForm() {
       {fields.map((field, index) => (
         <div key={field.id} className=" border p-3 rounded">
           <div className="flex justify-between">
-            <h4>Feature {index + 1}</h4>
+            <h4>Action {index + 1}</h4>
             <FieldArrayButtons
               index={index}
               moveUp={moveUp}

@@ -12,7 +12,7 @@ import { PropsWithChildren } from "react";
 import { Providers } from "@/components/providers/providers";
 
 import { nippo } from "./fonts/nippo/nippoVariable";
-import { SiteHeader } from "@/components/ui/side-header";
+import { SiteHeader } from "@/components/ui/site-header";
 
 export const metadata: Metadata = {
   title: "Monsterbrew | D&D 5e Monster Creator & Homebrew Tool",
@@ -70,7 +70,7 @@ export default function RootLayout({ children }: PropsWithChildren) {
 
   return (
     <Providers>
-      <html lang="en" className="h-full">
+      <html lang="en" className="h-dvh">
         <head>
           <Script
             id="structured-data"
@@ -81,15 +81,15 @@ export default function RootLayout({ children }: PropsWithChildren) {
           />
         </head>
         <body
-          className={`${nippo.variable} font-nippo flex flex-col bg-background text-foreground h-full antialiased`}
+          className={`${nippo.variable} font-nippo flex flex-col bg-background text-foreground h-dvh antialiased`}
         >
           <SiteHeader />
-          <main className="max-w-8xl mx-auto w-full flex-1 p-3">
+          <main className="max-w-8xl mx-auto w-full mt-14 flex-1 p-3">
             {children}
           </main>
           <Toaster richColors position="bottom-right" />
-          <footer className="max-w-8xl mx-auto px-3 pt-0 w-full">
-            <div className="bg-card text-card-foreground w-full flex justify-end items-center border p-2 rounded-xl shadow-sm">
+          <footer className="max-w-8xl mx-auto pt-0 w-full">
+            <div className="bg-carrara-50 text-carrara-950 w-full flex justify-end items-center border p-2 px-6">
               <Link href="/privacy">
                 <Button variant="link" size="sm">
                   Privacy Policy

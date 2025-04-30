@@ -100,18 +100,17 @@ export function StandaloneStatblock({
     creature.condition_immunities.length > 0;
 
   return (
-    <Card className="h-fit bg-background">
+    <Card className="h-fit bg-carrara-100 text-carrara-900 ">
       <div className="p-2 md:columns-2">
-        {/* Header - Always full width */}
-        <div className="mb-4 border-b pb-2">
+        <div className="mb-4 border-b border-carrara-600 pb-2">
           <CardTitle>{creature.name || "Example Creature"}</CardTitle>
-          <p className="capitalize italic font-medium text-black/50">
+          <p className="capitalize italic font-medium text-carrara-600">
             {creature.size || "Size"} {creature.type || "Type"},{" "}
             {creature.alignment || "Alignment"}
           </p>
         </div>
 
-        <div className="mb-4 break-inside-avoid">
+        <div className="mb-2 break-inside-avoid">
           <div className="flex gap-1.5">
             <Description
               title="AC"
@@ -138,8 +137,8 @@ export function StandaloneStatblock({
         </div>
 
         {/* Ability Scores - Full width */}
-        <div className="grid lg:grid-cols-2 w-full rounded-md overflow-hidden gap-px border bg-black/10">
-          <div className="grid lg:col-span-2 bg-background lg:grid-cols-2 text-xs font-semibold">
+        <div className="grid lg:grid-cols-2 w-full border-carrara-600 rounded-md overflow-hidden gap-px border bg-carrara-200 mb-2">
+          <div className="grid lg:col-span-2 bg-carrara-200 lg:grid-cols-2 text-xs font-semibold">
             <div className="hidden lg:grid px-4 grid-cols-4 py-0.5 gap-3">
               <span className="col-start-3">MOD</span>
               <span className="col-start-4">SAVE</span>
@@ -152,7 +151,7 @@ export function StandaloneStatblock({
           {abilityScores.map((score) => (
             <div
               key={score.label}
-              className="grid grid-cols-4 w-full bg-background gap-3  px-4 py-1"
+              className="grid grid-cols-4 w-full bg-white gap-3  px-4 py-1"
             >
               <h4>{score.label}</h4>
               <p>{score.value || "0"}</p>
@@ -217,7 +216,9 @@ export function StandaloneStatblock({
         {/* Traits */}
         {creature.traits.length > 0 && (
           <div className="mb-4 break-inside-avoid">
-            <h3 className="text-lg font-bold border-b mb-2">Traits</h3>
+            <h3 className="text-lg font-bold border-b border-carrara-600 mb-2">
+              Traits
+            </h3>
             {creature.traits?.map((trait, i) => (
               <Description
                 key={trait.name + i}
@@ -231,7 +232,9 @@ export function StandaloneStatblock({
         {/* Actions */}
         {creature.actions.length > 0 && (
           <div className="mb-4 break-inside-avoid">
-            <h3 className="text-lg font-bold border-b mb-2">Actions</h3>
+            <h3 className="text-lg font-bold border-b border-carrara-600 mb-2">
+              Actions
+            </h3>
             {creature.actions?.map((action, i) => (
               <Description
                 key={action.name + i}
@@ -245,7 +248,9 @@ export function StandaloneStatblock({
         {/* Reactions */}
         {creature.reactions.length > 0 && (
           <div className="mb-4 break-inside-avoid">
-            <h3 className="text-lg font-bold border-b mb-2">Reactions</h3>
+            <h3 className="text-lg font-bold border-b border-carrara-600 mb-2">
+              Reactions
+            </h3>
             {creature.reactions?.map((reaction, i) => (
               <Description
                 key={reaction.name + i}
@@ -259,7 +264,7 @@ export function StandaloneStatblock({
         {/* Legendary Actions */}
         {creature.legendary_actions.length > 0 && (
           <div className="mb-4 break-inside-avoid">
-            <h3 className="text-lg font-bold border-b mb-2">
+            <h3 className="text-lg font-bold border-b border-carrara-600 mb-2">
               Legendary Actions
             </h3>
             <p className="italic mb-2 whitespace-pre-wrap">

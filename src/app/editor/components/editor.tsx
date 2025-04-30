@@ -15,6 +15,7 @@ import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { monsterbrewDB } from "@/services/database";
 import { useSearchParams } from "next/navigation";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 export default function Editor() {
   const params = useSearchParams();

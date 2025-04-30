@@ -23,7 +23,7 @@ export default function Home() {
   return (
     <div className="w-full flex flex-col py-8 gap-16 px-6">
       <section className="flex flex-col lg:flex-row items-center justify-between gap-8">
-        <div className="flex flex-col items-center gap-4 text-center lg:text-left">
+        <div className="flex flex-col items-center gap-4 text-center lg:items-start lg:text-left">
           <Badge variant="secondary" className="lg:mr-auto">
             Free & Open Source
           </Badge>
@@ -106,7 +106,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="py-16 bg-primary text-primary-foreground rounded-xl p-8">
+      <section className="py-16 bg-carrara-950 text-carrara-50 rounded-xl p-8">
         <h2 className="text-center">How Monsterbrew Works</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <StepCard
@@ -150,7 +150,7 @@ export default function Home() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 bg-primary text-primary-foreground rounded-xl p-8 text-center">
+      <section className="py-16 bg-carrara-300 text-carrara-950 rounded-xl p-8 text-center">
         <h2>Ready to Create Your First Creature?</h2>
         <Link href="/editor">
           <Button size="lg" variant="filled" color="stromboli">

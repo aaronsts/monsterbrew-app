@@ -56,7 +56,7 @@ const buttonVariants = cva(
         color: "stromboli",
         variant: "filled",
         className:
-          "bg-stromboli-500 text-stromboli-100 hover:bg-stromboli-500/90",
+          "bg-stromboli-500 text-stromboli-50 hover:bg-stromboli-500/90",
       },
       {
         color: "destructive",

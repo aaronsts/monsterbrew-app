@@ -18,7 +18,7 @@ export function MobileNavigation() {
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <div className="w-full bg-carrara-50 flex justify-between items-center md:hidden shadow-xs h-14 rounded-lg mx-3 px-6">
+      <div className="w-full bg-carrara-100 flex justify-between items-center md:hidden shadow-xs h-14 rounded-lg mx-3 px-6">
         <Link href="/" className="mr-4 flex w-fit items-center gap-2 lg:mr-6">
           <h1 className="text-xl font-bold">Monsterbrew</h1>
         </Link>
