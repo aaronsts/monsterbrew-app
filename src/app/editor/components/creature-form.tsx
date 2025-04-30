@@ -43,6 +43,7 @@ import { RefObject, useEffect, useState } from "react";
 import { SaveDialog } from "@/components/save-dialog";
 import { EllipsisVertical, RotateCcw } from "lucide-react";
 import { calculateStatBonus } from "@/lib/utils";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 function CreatureForm({
   pdfRef,
@@ -84,8 +85,8 @@ function CreatureForm({
   }, [creature.ability_scores.wis, creature.skill_bonuses]);
 
   return (
-    <Card>
-      <div className="flex flex-row items-center justify-between">
+    <Card className="h-fit md:pt-0">
+      <div className="flex sticky bg-carrara-50 rounded-t-xl pb-1 border-carrara-100 top-14 z-40 pt-6 mb-6 flex-row items-center justify-between">
         <CardTitle className="w-fit">
           {creature.id ? "Update" : "Create"} creature
         </CardTitle>

@@ -120,6 +120,7 @@ export function ImportDialog({ open, onOpenChange }: ImportDialogProps) {
             id="file-upload"
             type="file"
             onChange={(e) => readFileOnUpload(e)}
+            className="bg-carrara-100 border-carrara-300"
           />
         </div>
         <div>
@@ -146,7 +147,7 @@ export function ImportDialog({ open, onOpenChange }: ImportDialogProps) {
             </SelectContent>
           </Select>
           <DialogClose asChild>
-            <Button type="button" variant="outline">
+            <Button type="button" variant="outline" color="carrara">
               Cancel
             </Button>
           </DialogClose>
@@ -154,6 +155,8 @@ export function ImportDialog({ open, onOpenChange }: ImportDialogProps) {
             disabled={!format}
             onClick={handleImportCreature}
             type="submit"
+            variant="filled"
+            color="carrara"
           >
             Import
           </Button>
