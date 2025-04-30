@@ -31,14 +31,13 @@ const releaseConfig = {
     [
       "@semantic-release/changelog",
       {
-        changelogFile: "CHANGELOG.md",
+        changelogFile: "docs/CHANGELOG.md",
       },
     ],
-
     [
       "@semantic-release/github",
       {
-        assets: ["CHANGELOG.md"],
+        assets: ["docs/CHANGELOG.md"],
       },
     ],
 
