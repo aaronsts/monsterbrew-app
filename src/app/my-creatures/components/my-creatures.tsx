@@ -265,7 +265,6 @@ export default function MyCreatures() {
                         </DropdownMenu>
                       </TableCell>
                     </TableRow>
-                    {/* Collapsible statblock row */}
                     {isExpanded && (
                       <TableRow className="bg-muted/50 hover:bg-muted/50 cursor-default">
                         <TableCell
