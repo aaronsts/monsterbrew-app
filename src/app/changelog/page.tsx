@@ -4,7 +4,7 @@ import Markdown from "react-markdown";
 export default function Changelog() {
   const changelogContent = `# Changelog
 
-## 2.0.0 - ${new Date().toISOString().split("T")[0]}
+## 2.0.0 - 2025-05-01
 ### Major Update
 Version 2.0 of Monsterbrew is finally here. It's been almost a year since the last update! This version brings a complete UI overhaul and improved creature creating! The biggest change is the live form updating. Besides this feature, there are a ton of other improvements as well.
 
