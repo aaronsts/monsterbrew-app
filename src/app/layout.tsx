@@ -90,6 +90,11 @@ export default function RootLayout({ children }: PropsWithChildren) {
           <Toaster richColors position="bottom-right" />
           <footer className="max-w-8xl mx-auto pt-0 w-full">
             <div className="bg-carrara-50 text-carrara-950 w-full flex justify-end items-center border p-2 px-6">
+              <Link href="/changelog">
+                <Button variant="link" size="sm">
+                  Changelog
+                </Button>
+              </Link>
               <Link href="/privacy">
                 <Button variant="link" size="sm">
                   Privacy Policy
