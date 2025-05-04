@@ -98,6 +98,10 @@ export function fromTetacube(
     legendary_description: source.legendariesDescription,
     legendary_actions: convertToNameAndDescription(source.legendaries),
 
+    is_mythic: source.isMythic,
+    mythic_description: source.mythicDescription,
+    mythic_actions: convertToNameAndDescription(source.mythics),
+
     id: "",
     user_id: "", // No direct equivalent in source
     is_public: false,

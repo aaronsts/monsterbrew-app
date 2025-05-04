@@ -208,6 +208,44 @@ function generateMarkdown(creature: z.infer<typeof createCreatureSchema>) {
     });
   }
 
+  if (creature.legendary_actions && creature.legendary_actions.length > 0) {
+    markdownLines.push("### Legendary Actions");
+    markdownLines.push(creature.legendary_description);
+    markdownLines.push(":");
+    creature.legendary_actions.forEach((la, i) => {
+      if (
+        creature.legendary_actions?.length &&
+        i === creature.legendary_actions.length - 1
+      )
+        markdownLines.push(`***${titleCase(la.name)}.*** ${la.description}`);
+      else {
+        markdownLines.push(
+          `***${titleCase(la.name)}.*** ${la.description}`,
+          ":"
+        );
+      }
+    });
+  }
+
+  if (creature.mythic_actions && creature.mythic_actions.length > 0) {
+    markdownLines.push("### Mythic Actions");
+    markdownLines.push(creature.mythic_description);
+    markdownLines.push(":");
+    creature.mythic_actions.forEach((ma, i) => {
+      if (
+        creature.mythic_actions?.length &&
+        i === creature.mythic_actions.length - 1
+      )
+        markdownLines.push(`***${titleCase(ma.name)}.*** ${ma.description}`);
+      else {
+        markdownLines.push(
+          `***${titleCase(ma.name)}.*** ${ma.description}`,
+          ":"
+        );
+      }
+    });
+  }
+
   markdownLines.push("}}");
   return markdownToHtml(markdownLines);
 }

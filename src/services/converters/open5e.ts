@@ -136,6 +136,10 @@ export function fromOpen5e(source: Open5eCreature): typeof defaultCreature {
     legendary_description: source.legendary_desc,
     legendary_actions: convertToNameAndDescription(source.legendary_actions),
 
+    is_mythic: false,
+    mythic_description: "",
+    mythic_actions: [],
+
     id: "",
     user_id: "",
     is_public: false,

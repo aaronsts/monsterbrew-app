@@ -123,15 +123,6 @@ export function ImportDialog({ open, onOpenChange }: ImportDialogProps) {
             className="bg-carrara-100 border-carrara-300"
           />
         </div>
-        <div>
-          {format === ImportTypes.TetraCube && (
-            <Alert
-              title="Tetracube"
-              description="Lair and Mythical actions are not supported"
-              variant="info"
-            />
-          )}
-        </div>
 
         <DialogFooter className="items-end">
           <Select onValueChange={(v) => setFormat(v)}>

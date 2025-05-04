@@ -104,13 +104,7 @@ export const createCreatureSchema = z.object({
     experience: z.coerce.number(),
     armor_class: z.coerce.number(),
   }),
-  traits: z.array(z.object({ name: z.string(), description: z.string() })),
-  actions: z.array(z.object({ name: z.string(), description: z.string() })),
-  legendary_actions: z.array(
-    z.object({ name: z.string(), description: z.string() })
-  ),
-  legendary_description: z.string(),
-  reactions: z.array(z.object({ name: z.string(), description: z.string() })),
+
   movements: movementSchema,
   ability_scores: abilityScoresSchema,
   senses: sensesSchema,
@@ -127,7 +121,23 @@ export const createCreatureSchema = z.object({
   hit_points: z.string(),
   id: z.string().optional(),
   is_public: z.boolean().optional(),
+
+  traits: z.array(z.object({ name: z.string(), description: z.string() })),
+  actions: z.array(z.object({ name: z.string(), description: z.string() })),
+  reactions: z.array(z.object({ name: z.string(), description: z.string() })),
+
   is_legendary: z.boolean(),
+  legendary_description: z.string(),
+  legendary_actions: z.array(
+    z.object({ name: z.string(), description: z.string() })
+  ),
+
+  is_mythic: z.boolean(),
+  mythic_description: z.string(),
+  mythic_actions: z.array(
+    z.object({ name: z.string(), description: z.string() })
+  ),
+
   nonmagical_attack_immunity: z.boolean().optional(),
   nonmagical_attack_resistance: z.boolean().optional(),
   passive_perception: z.number(),
@@ -201,6 +211,10 @@ export const defaultCreature: z.infer<typeof createCreatureSchema> = {
   is_legendary: false,
   legendary_description: "",
   legendary_actions: [],
+
+  is_mythic: false,
+  mythic_description: "",
+  mythic_actions: [],
 
   id: "",
   user_id: "",

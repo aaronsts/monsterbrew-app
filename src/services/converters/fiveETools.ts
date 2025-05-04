@@ -82,9 +82,15 @@ export function from5ETools(
       traits: convertTraits(source),
       actions: convertActions(source.action),
       reactions: convertActions(source.reaction),
+
       is_legendary: Boolean(source.legendary),
       legendary_description: getLegendaryDescription(source),
       legendary_actions: convertLegendaryActions(source.legendary),
+
+      is_mythic: Boolean(source.mythic),
+      mythic_description: getMythicDescription(source),
+      mythic_actions: convertMythivActions(source.mythic),
+
       environment_id: convertEnvironment(source.environment),
       user_id: "",
     };
@@ -369,17 +375,32 @@ function convertActions(
   return convertedActions;
 }
 
-function getLegendaryDescription(creature: any): string {
+function getLegendaryDescription(
+  creature: z.infer<typeof fiveECreatureSchema>
+): string {
   // Check if there's a dedicated legendary description
-  if (creature.legendary && creature.legendary.headerEntries) {
-    return Array.isArray(creature.legendary.headerEntries)
-      ? creature.legendary.headerEntries.join("\n")
-      : creature.legendary.headerEntries;
+  if (creature.legendaryHeader) {
+    return Array.isArray(creature.legendaryHeader)
+      ? creature.legendaryHeader.join("\n")
+      : creature.legendaryHeader;
   }
 
   // Default legendary description
   if (creature.legendary) {
     return `The ${creature.name} can take 3 legendary actions, choosing from the options below. Only one legendary action can be used at a time and only at the end of another creature's turn. The ${creature.name} regains spent legendary actions at the start of its turn.`;
+  }
+
+  return "";
+}
+
+function getMythicDescription(
+  creature: z.infer<typeof fiveECreatureSchema>
+): string {
+  // Check if there's a dedicated legendary description
+  if (creature.mythic && creature.mythicHeader) {
+    return Array.isArray(creature.mythicHeader)
+      ? creature.mythicHeader.join("\n")
+      : creature.mythicHeader;
   }
 
   return "";
@@ -392,6 +413,19 @@ function convertLegendaryActions(
 
   return legendary.map((item, i) => ({
     name: item.name || `Legendary Action ${i}`,
+    description: Array.isArray(item.entries)
+      ? item.entries.join("\n")
+      : item.entries,
+  }));
+}
+
+function convertMythivActions(
+  mythic: z.infer<typeof fiveECreatureSchema>["mythic"]
+): z.infer<typeof createCreatureSchema>["mythic_actions"] {
+  if (!mythic || !Array.isArray(mythic)) return [];
+
+  return mythic.map((item, i) => ({
+    name: item.name || `Mythic Action ${i}`,
     description: Array.isArray(item.entries)
       ? item.entries.join("\n")
       : item.entries,

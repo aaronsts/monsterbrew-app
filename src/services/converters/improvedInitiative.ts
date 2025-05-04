@@ -134,6 +134,10 @@ export function fromImprovedInitiative(
     legendary_description: "",
     legendary_actions: convertToNameAndDescription(source.LegendaryActions),
 
+    is_mythic: source.MythicActions.length > 0,
+    mythic_description: "",
+    mythic_actions: convertToNameAndDescription(source.MythicActions),
+
     id: "",
     user_id: "",
     is_public: false,
