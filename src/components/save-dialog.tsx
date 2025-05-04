@@ -62,6 +62,7 @@ function SaveDialogComponent() {
       color="carrara"
       type="button"
       onClick={saveLocally}
+      title={creature.id ? "Update Creature" : "Save Creature"}
     >
       {creature.id ? "Update" : "Save"}
     </Button>

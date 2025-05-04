@@ -149,6 +149,7 @@ function CreatureForm({
               </AccordionTrigger>
             </div>
             <Button
+              title="Reset General Info"
               type="button"
               variant="light"
               color="destructive"
@@ -191,6 +192,7 @@ function CreatureForm({
               </AccordionTrigger>
             </div>
             <Button
+              title="Reset Movements and Senses"
               type="button"
               variant="light"
               color="destructive"
@@ -219,6 +221,7 @@ function CreatureForm({
               </AccordionTrigger>
             </div>
             <Button
+              title="Reset Languages & Skills"
               type="button"
               variant="light"
               color="destructive"
@@ -249,6 +252,7 @@ function CreatureForm({
               </AccordionTrigger>
             </div>
             <Button
+              title="Reset Damages & Conditions"
               type="button"
               variant="light"
               color="destructive"
@@ -311,6 +315,7 @@ function CreatureForm({
               </AccordionTrigger>
             </div>
             <Button
+              title="Reset Traits & Actions"
               type="button"
               variant="light"
               color="destructive"
@@ -321,8 +326,12 @@ function CreatureForm({
                   actions: [],
                   reactions: [],
                   traits: [],
+                  is_legendary: false,
                   legendary_actions: [],
                   legendary_description: "",
+                  is_mythic: false,
+                  mythic_actions: [],
+                  mythic_description: "",
                 })
               }
             >

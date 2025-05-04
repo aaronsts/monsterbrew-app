@@ -91,7 +91,7 @@ export const createCreatureSchema = z.object({
   type: z.string(),
   size: z.string(),
   alignment: z.string().optional(),
-  armor_class: z.string(),
+  armor_class: z.number(),
   armor_description: z.string().optional(),
   custom_hp: z.boolean(),
   cr: z.object({
@@ -150,7 +150,7 @@ export const defaultCreature: z.infer<typeof createCreatureSchema> = {
   type: "",
   alignment: "",
 
-  armor_class: "",
+  armor_class: 0,
   armor_description: "",
   hit_dice: "",
   hit_points: "",
