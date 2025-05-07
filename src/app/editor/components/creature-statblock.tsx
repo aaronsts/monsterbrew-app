@@ -10,6 +10,7 @@ import { Features } from "./statblock/features";
 import { LegendaryActions } from "./statblock/legendary-actions";
 import { BasicInfo } from "./statblock/general-info";
 import { RefObject } from "react";
+import { MythicActions } from "./statblock/mythic-actions";
 
 function CreatureStatblock({
   pdfRef,
@@ -35,7 +36,8 @@ function CreatureStatblock({
         <Traits />
         <Actions />
         <Reactions />
-        <LegendaryActions />
+        {creature.is_legendary && <LegendaryActions />}
+        {creature.is_mythic && <MythicActions />}
       </div>
     </Card>
   );

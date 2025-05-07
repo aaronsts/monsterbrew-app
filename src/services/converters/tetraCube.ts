@@ -46,7 +46,7 @@ export function fromTetacube(
     type: source.type.toLowerCase(),
     alignment: source.alignment,
 
-    armor_class: source.otherArmorDesc.split(" ")[0], // Extract "22" from "22 (natural armor)"
+    armor_class: parseInt(source.otherArmorDesc.split(" ")[0]), // Extract "22" from "22 (natural armor)"
     armor_description: source.armorName,
     hit_dice: source.hitDice.toString(),
     hit_points: source.hpText,
@@ -97,6 +97,10 @@ export function fromTetacube(
     is_legendary: source.isLegendary,
     legendary_description: source.legendariesDescription,
     legendary_actions: convertToNameAndDescription(source.legendaries),
+
+    is_mythic: source.isMythic,
+    mythic_description: source.mythicDescription,
+    mythic_actions: convertToNameAndDescription(source.mythics),
 
     id: "",
     user_id: "", // No direct equivalent in source

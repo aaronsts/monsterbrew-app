@@ -44,6 +44,7 @@ import { SaveDialog } from "@/components/save-dialog";
 import { EllipsisVertical, RotateCcw } from "lucide-react";
 import { calculateStatBonus } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { MythicActionsForm } from "./form/mythic-actions.form";
 
 function CreatureForm({
   pdfRef,
@@ -55,7 +56,11 @@ function CreatureForm({
   const formContext = useFormContext<z.infer<typeof createCreatureSchema>>();
 
   const isLegendary = formContext.watch("is_legendary");
+  const isMythic = formContext.watch("is_mythic");
   const creature = formContext.watch();
+  const customPassivePerception = formContext.watch(
+    "custom_passive_perception"
+  );
 
   const reactToPrintFn = useReactToPrint({ contentRef: pdfRef });
 
@@ -81,8 +86,14 @@ function CreatureForm({
         ? creature.cr.proficiency_bonus * 2
         : creature.cr.proficiency_bonus;
     }
-    formContext.setValue("passive_perception", 10 + passivePerception);
-  }, [creature.ability_scores.wis, creature.skill_bonuses]);
+    if (!customPassivePerception) {
+      formContext.setValue("passive_perception", 10 + passivePerception);
+    }
+  }, [
+    creature.ability_scores.wis,
+    creature.skill_bonuses,
+    customPassivePerception,
+  ]);
 
   return (
     <Card className="h-fit md:pt-0">
@@ -147,6 +158,7 @@ function CreatureForm({
               </AccordionTrigger>
             </div>
             <Button
+              title="Reset General Info"
               type="button"
               variant="light"
               color="destructive"
@@ -158,7 +170,7 @@ function CreatureForm({
                   type: "",
                   size: "",
                   alignment: "",
-                  armor_class: "",
+                  armor_class: 0,
                   armor_description: "",
                   hit_dice: "",
                   hit_points: "",
@@ -189,6 +201,7 @@ function CreatureForm({
               </AccordionTrigger>
             </div>
             <Button
+              title="Reset Movements and Senses"
               type="button"
               variant="light"
               color="destructive"
@@ -204,7 +217,7 @@ function CreatureForm({
               <RotateCcw />
             </Button>
           </div>
-          <AccordionContent className="space-y-3">
+          <AccordionContent className="flex flex-col gap-3">
             <MovementForm />
             <SensesForm />
           </AccordionContent>
@@ -217,6 +230,7 @@ function CreatureForm({
               </AccordionTrigger>
             </div>
             <Button
+              title="Reset Languages & Skills"
               type="button"
               variant="light"
               color="destructive"
@@ -247,6 +261,7 @@ function CreatureForm({
               </AccordionTrigger>
             </div>
             <Button
+              title="Reset Damages & Conditions"
               type="button"
               variant="light"
               color="destructive"
@@ -270,23 +285,37 @@ function CreatureForm({
           </AccordionContent>
         </AccordionItem>
         <AccordionItem value="features-actions" className="relative">
-          <div
-            className="flex gap-1.5 items-center w-fit absolute lg:left-33 left-4 top-9
-           lg:top-[18px]"
-          >
-            <Checkbox
-              id="isLegendary"
-              checked={isLegendary}
-              onCheckedChange={(e) =>
-                formContext.setValue("is_legendary", e as boolean)
-              }
-            />
-            <Label
-              htmlFor="isLegendary"
-              className="text-xs font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-            >
-              Is Legendary
-            </Label>
+          <div className="pt-3 -mb-1 md:pt-0 md:absolute top-4 left-36 flex gap-3">
+            <div className="flex gap-2">
+              <Checkbox
+                id="isLegendary"
+                checked={isLegendary}
+                onCheckedChange={(e) =>
+                  formContext.setValue("is_legendary", e as boolean)
+                }
+              />
+              <Label
+                htmlFor="isLegendary"
+                className="text-xs font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              >
+                Is Legendary
+              </Label>
+            </div>
+            <div className="flex gap-2">
+              <Checkbox
+                id="isMythic"
+                checked={isMythic}
+                onCheckedChange={(e) =>
+                  formContext.setValue("is_mythic", e as boolean)
+                }
+              />
+              <Label
+                htmlFor="isMythic"
+                className="text-xs font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              >
+                Is Mythic
+              </Label>
+            </div>
           </div>
           <div className="flex items-center gap-3">
             <div className="flex-1">
@@ -295,6 +324,7 @@ function CreatureForm({
               </AccordionTrigger>
             </div>
             <Button
+              title="Reset Traits & Actions"
               type="button"
               variant="light"
               color="destructive"
@@ -305,8 +335,12 @@ function CreatureForm({
                   actions: [],
                   reactions: [],
                   traits: [],
+                  is_legendary: false,
                   legendary_actions: [],
                   legendary_description: "",
+                  is_mythic: false,
+                  mythic_actions: [],
+                  mythic_description: "",
                 })
               }
             >
@@ -319,6 +353,7 @@ function CreatureForm({
             <ActionsForm />
             <ReactionsForm />
             {isLegendary && <LegendaryActionsForm />}
+            {isMythic && <MythicActionsForm />}
           </AccordionContent>
         </AccordionItem>
       </Accordion>

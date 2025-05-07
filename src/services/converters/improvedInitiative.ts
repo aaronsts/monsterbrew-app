@@ -92,7 +92,7 @@ export function fromImprovedInitiative(
     type: basicInfo[0].split(" ")[1].toLowerCase(),
     alignment: basicInfo[1],
 
-    armor_class: source.AC.Value.toString(),
+    armor_class: source.AC.Value,
     armor_description: source.AC.Notes,
     hit_dice: "",
     hit_points: `${source.HP.Value} ${source.HP.Notes}`,
@@ -133,6 +133,10 @@ export function fromImprovedInitiative(
     is_legendary: source.LegendaryActions.length > 0,
     legendary_description: "",
     legendary_actions: convertToNameAndDescription(source.LegendaryActions),
+
+    is_mythic: source.MythicActions.length > 0,
+    mythic_description: "",
+    mythic_actions: convertToNameAndDescription(source.MythicActions),
 
     id: "",
     user_id: "",
@@ -202,7 +206,7 @@ export function toImprovedInitiative(
       Notes: source.hit_dice,
     },
     AC: {
-      Value: parseInt(source.armor_class) || 10,
+      Value: source.armor_class || 10,
       Notes: source.armor_description ?? "",
     },
     InitiativeModifier: 0,

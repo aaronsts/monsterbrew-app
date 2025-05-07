@@ -32,6 +32,7 @@ import { useFormContext } from "react-hook-form";
 import { z } from "zod";
 import AbilityScoresForm from "./ability-scores-form";
 import { toast } from "sonner";
+import { NumberInput } from "@/components/ui/number-input";
 
 export function GeneralInfoForm() {
   const form = useFormContext<z.infer<typeof createCreatureSchema>>();
@@ -145,7 +146,7 @@ export function GeneralInfoForm() {
             <FormItem>
               <FormLabel>Armor Class (AC)</FormLabel>
               <FormControl>
-                <Input placeholder="ex. 21" {...field} />
+                <NumberInput placeholder="ex. 21" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
