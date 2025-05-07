@@ -58,6 +58,9 @@ function CreatureForm({
   const isLegendary = formContext.watch("is_legendary");
   const isMythic = formContext.watch("is_mythic");
   const creature = formContext.watch();
+  const customPassivePerception = formContext.watch(
+    "custom_passive_perception"
+  );
 
   const reactToPrintFn = useReactToPrint({ contentRef: pdfRef });
 
@@ -83,8 +86,14 @@ function CreatureForm({
         ? creature.cr.proficiency_bonus * 2
         : creature.cr.proficiency_bonus;
     }
-    formContext.setValue("passive_perception", 10 + passivePerception);
-  }, [creature.ability_scores.wis, creature.skill_bonuses]);
+    if (!customPassivePerception) {
+      formContext.setValue("passive_perception", 10 + passivePerception);
+    }
+  }, [
+    creature.ability_scores.wis,
+    creature.skill_bonuses,
+    customPassivePerception,
+  ]);
 
   return (
     <Card className="h-fit md:pt-0">
@@ -161,7 +170,7 @@ function CreatureForm({
                   type: "",
                   size: "",
                   alignment: "",
-                  armor_class: "",
+                  armor_class: 0,
                   armor_description: "",
                   hit_dice: "",
                   hit_points: "",
@@ -208,7 +217,7 @@ function CreatureForm({
               <RotateCcw />
             </Button>
           </div>
-          <AccordionContent className="space-y-3">
+          <AccordionContent className="flex flex-col gap-3">
             <MovementForm />
             <SensesForm />
           </AccordionContent>

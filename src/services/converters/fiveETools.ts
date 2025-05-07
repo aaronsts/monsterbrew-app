@@ -21,7 +21,13 @@ export function from5ETools(
       size: convertSize(source.size),
       type: extractType(source.type),
       alignment: convertAlignment(source.alignment),
-      armor_class: source.ac ? source.ac[0]?.toString() : "",
+      armor_class: source.ac
+        ? typeof source.ac[0] === "object"
+          ? "ac" in source.ac[0]
+            ? source.ac[0].ac
+            : 0
+          : source.ac[0]
+        : 0,
       armor_description: "",
       hit_dice:
         source.hp && "formula" in source.hp

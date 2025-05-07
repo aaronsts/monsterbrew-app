@@ -46,7 +46,7 @@ export function fromTetacube(
     type: source.type.toLowerCase(),
     alignment: source.alignment,
 
-    armor_class: source.otherArmorDesc.split(" ")[0], // Extract "22" from "22 (natural armor)"
+    armor_class: parseInt(source.otherArmorDesc.split(" ")[0]), // Extract "22" from "22 (natural armor)"
     armor_description: source.armorName,
     hit_dice: source.hitDice.toString(),
     hit_points: source.hpText,

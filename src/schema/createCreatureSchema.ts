@@ -141,6 +141,7 @@ export const createCreatureSchema = z.object({
   nonmagical_attack_immunity: z.boolean().optional(),
   nonmagical_attack_resistance: z.boolean().optional(),
   passive_perception: z.number(),
+  custom_passive_perception: z.boolean().optional(),
   user_id: z.string(),
 });
 
@@ -184,6 +185,7 @@ export const defaultCreature: z.infer<typeof createCreatureSchema> = {
   skill_bonuses: [],
   languages: [],
   passive_perception: 0,
+  custom_passive_perception: false,
   senses: {
     blindsight: 0,
     darkvision: 0,

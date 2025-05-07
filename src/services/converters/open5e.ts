@@ -77,7 +77,7 @@ export function fromOpen5e(source: Open5eCreature): typeof defaultCreature {
     type: source.type.toLowerCase(),
     alignment: source.alignment,
 
-    armor_class: source.armor_class.toString(),
+    armor_class: source.armor_class,
     armor_description: source.armor_desc,
     hit_dice: source.hit_dice.split("d")[0],
     hit_points: source.hit_points.toString(),
