@@ -1,5 +1,6 @@
 import { FieldArrayButtons } from "@/components/field-array-buttons";
 import { Button } from "@/components/ui/button";
+import { Combobox } from "@/components/ui/combo-box";
 import {
   FormControl,
   FormField,
@@ -9,12 +10,14 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { ACTION_PRESETS } from "@/lib/constants/actionPresets";
 import { createCreatureSchema } from "@/schema/createCreatureSchema";
-import { Trash2 } from "lucide-react";
+import { useState } from "react";
 import { useFieldArray, useFormContext } from "react-hook-form";
 import { z } from "zod";
 
 export function ActionsForm() {
+  const [selectedAction, setSelectedAction] = useState<string | undefined>();
   const form = useFormContext<z.infer<typeof createCreatureSchema>>();
 
   const { fields, append, remove, swap } = useFieldArray({
@@ -30,17 +33,48 @@ export function ActionsForm() {
     if (index < fields.length - 1) swap(index, index + 1);
   };
 
+  function onChange(value: string) {
+    setSelectedAction(value);
+  }
+
+  function addAction() {
+    if (!selectedAction) return append({ name: "", description: "" });
+
+    const action = ACTION_PRESETS.find((a) => a.name === selectedAction);
+
+    if (!action) return;
+
+    append({
+      name: action.name,
+      description: action.desc,
+    });
+
+    setSelectedAction(undefined);
+  }
+
   return (
     <div className="grid gap-3">
-      <Button
-        className="ml-auto"
-        variant="light"
-        color="carrara"
-        type="button"
-        onClick={() => append({ name: "", description: "" })}
-      >
-        Add Action
-      </Button>
+      <div className="flex justify-end gap-2">
+        <Combobox
+          placeholder="Action presets ..."
+          value={selectedAction}
+          onChange={onChange}
+          options={ACTION_PRESETS.filter((a) => a.type === "action").map(
+            (a) => ({
+              label: a.name,
+              value: a.name,
+            })
+          )}
+        />
+        <Button
+          variant="light"
+          color="carrara"
+          type="button"
+          onClick={addAction}
+        >
+          Add Action
+        </Button>
+      </div>
       {fields.map((field, index) => (
         <div key={field.id} className=" border p-3 rounded">
           <div className="flex justify-between">

@@ -10,7 +10,7 @@ export function Actions() {
 
   return (
     <div className="flex flex-col gap-3">
-      <h3>Actions</h3>
+      <h3 className="border-b border-carrara-600">Actions</h3>
       {creature.actions?.map((action, i) => (
         <Description
           key={action.name + i}
