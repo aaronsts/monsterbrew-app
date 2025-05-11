@@ -4,7 +4,9 @@ export default function Changelog() {
   const changelogContent = `# Changelog
 
 ## 2.2.0 - 2025-05-11
-
+Presets are now available to use for traits, actions, and legendary actions! You can apply a preset when you add a new trait or action. Markdown is also made available in the description fields. More info on this will follow soon.
+- Add presets for traits, actions, and legendary actions
+- Add markdown support for description fields
 
 ## 2.1.0 - 2025-05-07
 Minor UI improvements for number inputs and accessibility.
