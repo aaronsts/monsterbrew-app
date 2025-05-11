@@ -1,8 +1,17 @@
-import { Suspense } from "react";
 import Markdown from "react-markdown";
 
 export default function Changelog() {
   const changelogContent = `# Changelog
+
+## 2.2.0 - 2025-05-11
+
+
+## 2.1.0 - 2025-05-07
+Minor UI improvements for number inputs and accessibility.
+- Add Mythic Actions
+- Convert inputs for stats / ac to number inputs
+- Add better accessibility for buttons
+- Add overwrite for passive perception
 
 ## 2.0.0 - 2025-05-01
 ### Major Update
