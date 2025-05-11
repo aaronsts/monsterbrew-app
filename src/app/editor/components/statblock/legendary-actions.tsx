@@ -11,7 +11,7 @@ export function LegendaryActions() {
 
   return (
     <div className="flex flex-col gap-3">
-      <h3>Legendary Actions</h3>
+      <h3 className="border-b border-carrara-600">Legendary Actions</h3>
       <p className="italic">{creature.legendary_description}</p>
       {creature.legendary_actions?.map((action, i) => (
         <Description

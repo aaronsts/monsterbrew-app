@@ -9,7 +9,7 @@ export function Traits() {
   if (creature.traits.length === 0) return null;
   return (
     <div className="flex flex-col gap-3">
-      <h3>Traits</h3>
+      <h3 className="border-b border-carrara-600">Traits</h3>
       {creature.traits?.map((trait, i) => (
         <Description
           key={trait.name + i}

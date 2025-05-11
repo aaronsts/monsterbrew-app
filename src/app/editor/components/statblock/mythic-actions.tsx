@@ -11,7 +11,7 @@ export function MythicActions() {
 
   return (
     <div className="flex flex-col gap-3">
-      <h3>Mythic Actions</h3>
+      <h3 className="border-b border-carrara-600">Mythic Actions</h3>
       <p className="italic">{creature.mythic_description}</p>
       {creature.mythic_actions?.map((action, i) => (
         <Description
