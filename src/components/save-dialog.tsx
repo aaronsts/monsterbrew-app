@@ -9,6 +9,14 @@ import { monsterbrewDB } from "@/services/database";
 import { useRouter } from "next/navigation";
 import { useCallback } from "react";
 import dynamic from "next/dynamic";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "./ui/dialog";
 
 const DynamicSaveButton = dynamic(() => Promise.resolve(SaveDialogComponent), {
   ssr: false,
@@ -56,16 +64,80 @@ function SaveDialogComponent() {
     }
   }
 
+  const formattings = [
+    {
+      title: "Showing a creature's name",
+      value: "[MON]",
+    },
+    {
+      title: "Showing a creature's modifier",
+      value: "[CHA]",
+    },
+    {
+      title: "Calculate a die roll",
+      value: "[3D6]",
+    },
+    {
+      title: "Calculate the creatueres attack roll (ex. Strength based attack)",
+      value: "[STR ATK]",
+    },
+    {
+      title:
+        "Calculate a damage roll w/ modifiers (ex. Dexterity based attack)",
+      value: "[DEX 2D8]",
+    },
+    {
+      title: "Calculate the save DC (ex. Wisdom save)",
+      value: "[WIS SAVE]",
+    },
+    {
+      title: "Add a flat modifier to a value",
+      value: "[3D6 + 1], [WIS SAVE + 3]",
+    },
+  ];
+
   return (
-    <Button
-      variant="filled"
-      color="carrara"
-      type="button"
-      onClick={saveLocally}
-      title={creature.id ? "Update Creature" : "Save Creature"}
-    >
-      {creature.id ? "Update" : "Save"}
-    </Button>
+    <>
+      <Dialog defaultOpen>
+        <DialogTrigger asChild>
+          <Button
+            className="italic font-normal text-xs text-carrara-600 hover:text-carrara-800 hover:underline"
+            type="button"
+          >
+            formatting help
+          </Button>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Formatting</DialogTitle>
+          </DialogHeader>
+          <h4 className="font-medium">
+            Use _ to italicize and ** to bold. For Spellcasting lists, use &gt;
+            to reverse-indent.
+          </h4>
+          <ul className="grid gap-2">
+            {formattings.map((formatting) => (
+              <li
+                key={formatting.title}
+                className="flex font-normal justify-between border-b border-carrara-600 py-3"
+              >
+                <p className="max-w-2/3 text-carrara-900">{formatting.title}</p>
+                <p className="font-medium">{formatting.value}</p>
+              </li>
+            ))}
+          </ul>
+        </DialogContent>
+      </Dialog>
+      <Button
+        variant="filled"
+        color="carrara"
+        type="button"
+        onClick={saveLocally}
+        title={creature.id ? "Update Creature" : "Save Creature"}
+      >
+        {creature.id ? "Update" : "Save"}
+      </Button>
+    </>
   );
 }
 
