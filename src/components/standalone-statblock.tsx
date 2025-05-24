@@ -1,7 +1,7 @@
 "use client";
 
 import { Card, CardTitle } from "@/components/ui/card";
-import { Description } from "@/components/ui/description";
+import { StandAloneDescription as Description } from "@/components/ui/stand-alone-description";
 import {
   calculateHitPoints,
   calculateSavingThrow,
@@ -109,8 +109,7 @@ export function StandaloneStatblock({
             {creature.alignment || "Alignment"}
           </p>
         </div>
-
-        <div className="mb-2 break-inside-avoid">
+        <div className="mb-2">
           <div className="flex gap-1.5">
             <Description
               title="AC"
@@ -135,7 +134,6 @@ export function StandaloneStatblock({
             placeholder="30 ft."
           />
         </div>
-
         {/* Ability Scores - Full width */}
         <div className="grid lg:grid-cols-2 w-full border-carrara-600 rounded-md overflow-hidden gap-px border bg-carrara-200 mb-2">
           <div className="grid lg:col-span-2 bg-carrara-200 lg:grid-cols-2 text-xs font-semibold">
@@ -164,9 +162,8 @@ export function StandaloneStatblock({
             </div>
           ))}
         </div>
-
         {/* Features */}
-        <div className="mb-4 break-inside-avoid">
+        <div className="mb-4">
           <Description
             title="Skills"
             description={skillSaves?.join(", ")}
@@ -212,73 +209,63 @@ export function StandaloneStatblock({
             className="mt-1.5 whitespace-nowrap"
           />
         </div>
-
-        {/* Traits */}
-        {creature.traits.length > 0 && (
-          <div className="mb-4 break-inside-avoid">
-            <h3 className="text-lg font-bold border-b border-carrara-600 mb-2">
-              Traits
-            </h3>
-            {creature.traits?.map((trait, i) => (
-              <Description
-                key={trait.name + i}
-                title={trait.name}
-                description={trait.description}
-              />
-            ))}
-          </div>
-        )}
-
-        {/* Actions */}
-        {creature.actions.length > 0 && (
-          <div className="mb-4 break-inside-avoid">
-            <h3 className="text-lg font-bold border-b border-carrara-600 mb-2">
-              Actions
-            </h3>
-            {creature.actions?.map((action, i) => (
-              <Description
-                key={action.name + i}
-                title={action.name}
-                description={action.description}
-              />
-            ))}
-          </div>
-        )}
-
-        {/* Reactions */}
-        {creature.reactions.length > 0 && (
-          <div className="mb-4 break-inside-avoid">
-            <h3 className="text-lg font-bold border-b border-carrara-600 mb-2">
-              Reactions
-            </h3>
-            {creature.reactions?.map((reaction, i) => (
-              <Description
-                key={reaction.name + i}
-                title={reaction.name}
-                description={reaction.description}
-              />
-            ))}
-          </div>
-        )}
-
-        {/* Legendary Actions */}
-        {creature.legendary_actions.length > 0 && (
-          <div className="mb-4 break-inside-avoid">
-            <h3 className="text-lg font-bold border-b border-carrara-600 mb-2">
-              Legendary Actions
-            </h3>
-            <p className="italic mb-2 whitespace-pre-wrap">
-              {creature.legendary_description}
-            </p>
-            {creature.legendary_actions?.map((action, i) => (
-              <Description
-                key={action.name + i}
-                title={action.name}
-                description={action.description}
-              />
-            ))}
-          </div>
-        )}
+        <div className="flex flex-col gap-6 my-3">
+          {/* Traits */}
+          {creature.traits.length > 0 && (
+            <div className="flex flex-col gap-3">
+              <h3 className="border-b border-carrara-600">Traits</h3>
+              {creature.traits?.map((trait, i) => (
+                <Description
+                  key={trait.name + i}
+                  title={trait.name}
+                  description={trait.description}
+                />
+              ))}
+            </div>
+          )}
+          Actions
+          {creature.actions.length > 0 && (
+            <div className="flex flex-col gap-3">
+              <h3 className="border-b border-carrara-600">Actions</h3>
+              {creature.actions?.map((action, i) => (
+                <Description
+                  key={action.name + i}
+                  title={action.name}
+                  description={action.description}
+                />
+              ))}
+            </div>
+          )}
+          {/* Reactions */}
+          {creature.reactions.length > 0 && (
+            <div className="flex flex-col gap-3">
+              <h3 className="border-b border-carrara-600">Reactions</h3>
+              {creature.reactions?.map((reaction, i) => (
+                <Description
+                  key={reaction.name + i}
+                  title={reaction.name}
+                  description={reaction.description}
+                />
+              ))}
+            </div>
+          )}
+          {/* Legendary Actions */}
+          {creature.legendary_actions.length > 0 && (
+            <div className="flex flex-col gap-3">
+              <h3 className="border-b border-carrara-600">Legendary Actions</h3>
+              <p className="italic mb-2 whitespace-pre-wrap">
+                {creature.legendary_description}
+              </p>
+              {creature.legendary_actions?.map((action, i) => (
+                <Description
+                  key={action.name + i}
+                  title={action.name}
+                  description={action.description}
+                />
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </Card>
   );

@@ -2,7 +2,6 @@ import { calculateStatBonus, cn } from "@/lib/utils";
 import { createCreatureSchema } from "@/schema/createCreatureSchema";
 import { useFormContext } from "react-hook-form";
 import Markdown from "react-markdown";
-import { Z } from "vitest/dist/chunks/reporters.d.CfRkRKN2.js";
 import { z } from "zod";
 
 interface DescriptionProps extends Partial<HTMLParagraphElement> {
