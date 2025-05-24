@@ -13,8 +13,6 @@ import { z } from "zod";
 
 type MonsterbrewCreature = z.infer<typeof createCreatureSchema>;
 
-// CSS for the multi-column layout is in globals.css
-
 export function StandaloneStatblock({
   creature,
 }: {
