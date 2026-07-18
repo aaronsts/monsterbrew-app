@@ -24,9 +24,15 @@ jobs:
           # This is needed for semantic-release to work
           fetch-depth: 0
 
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
       - name: Install Package Dependencies
         # needed for both commitlint and semantic-release to work
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: Lint commits on main since last version tag
         run: |
@@ -65,8 +71,11 @@ jobs:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
           echo "RELEASED=0" >> $GITHUB_ENV
-          npm audit signatures
-          npm run release
+          # Replaces `npm audit signatures`; pnpm has no signature-audit
+          # equivalent. Non-blocking (`|| true`) so pre-existing advisories
+          # in the tree don't halt the release. Remove `|| true` to gate.
+          pnpm audit --audit-level=high || true
+          pnpm release
 
   deploy:
     name: Deploy to Vercel

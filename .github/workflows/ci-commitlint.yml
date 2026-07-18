@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-24.04
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           # this is needed to get one of the
           # commitlint invocations below (that
@@ -23,11 +23,17 @@ jobs:
           # to work
           fetch-depth: 0
 
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
       - name: Install dependencies
         # If we don't do this, commitlint throws
         # errors aboutnot not finding rules package
         # for commit message conventions
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       # Using env in steps below below to pass
       # required values from github context rather
@@ -39,10 +45,10 @@ jobs:
         env:
           basesha: ${{ github.event.pull_request.base.sha }}
           headsha: ${{ github.event.pull_request.head.sha }}
-        run: npx commitlint --from $basesha --to $headsha --verbose
+        run: pnpm exec commitlint --from $basesha --to $headsha --verbose
 
       - name: Run commitlint on PR Title and Description
         env:
           prtitle: ${{ github.event.pull_request.title }}
           prdescription: ${{ github.event.pull_request.body }}
-        run: printf "$prtitle\n\n$prdescription" | npx commitlint
+        run: printf "$prtitle\n\n$prdescription" | pnpm exec commitlint
