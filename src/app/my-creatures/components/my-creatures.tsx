@@ -7,6 +7,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { monsterbrewDB } from "@/services/database";
+import { downloadCreatureBackup } from "@/services/backup";
 import React, { Suspense, useEffect, useState } from "react";
 import { StandaloneStatblock } from "@/components/standalone-statblock";
 import { toast } from "sonner";
@@ -26,6 +27,7 @@ import {
   ChevronDown,
   ChevronRight,
   Copy,
+  Download,
   Edit,
   EllipsisVertical,
   Eye,
@@ -71,6 +73,18 @@ export default function MyCreatures() {
       setIsLoading(false);
     }
   }
+
+  // Function to back up all creatures to a JSON file on the user's computer
+  const backupCreatures = () => {
+    toast.promise(downloadCreatureBackup(), {
+      loading: "Preparing backup...",
+      success: (count) =>
+        count === 0
+          ? "No creatures to back up yet"
+          : `Backed up ${count} creature${count === 1 ? "" : "s"}`,
+      error: (err) => `Backup failed: ${err.message}`,
+    });
+  };
 
   useEffect(() => {
     getLocalCreatures();
@@ -140,8 +154,23 @@ export default function MyCreatures() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>My Creatures</CardTitle>
-        <CardDescription>Manage your locally saved creatures</CardDescription>
+        <div className="flex items-start justify-between gap-4">
+          <div className="space-y-1.5">
+            <CardTitle>My Creatures</CardTitle>
+            <CardDescription>
+              Manage your locally saved creatures
+            </CardDescription>
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={backupCreatures}
+            disabled={isLoading || myCreatures.length === 0}
+          >
+            <Download className="mr-2 h-4 w-4" />
+            Download backup
+          </Button>
+        </div>
       </CardHeader>
       <CardContent>
         {isLoading ? (

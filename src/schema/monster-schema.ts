@@ -61,8 +61,11 @@ export const monsterSchema = z.object({
   size: z.string(),
   sub_type: z.string(),
   alignment: z.string().optional(),
+  description: z.string().optional(),
   senses: sensesSchema,
   languages: z.array(languagesSchema),
+  passive_perception: z.coerce.number(),
+  custom_passive_perception: z.boolean().optional(),
 
   // Combat
   cr: challengeRatingSchema,
@@ -70,6 +73,7 @@ export const monsterSchema = z.object({
   armor_description: z.string().optional(),
   hit_points: z.string(),
   hit_dice: z.string(),
+  custom_hp: z.boolean(),
   ability_scores: abilityScoresSchema,
   movements: movementSchema,
 
@@ -79,6 +83,8 @@ export const monsterSchema = z.object({
   damage_modifiers: z
     .record(z.string(), z.enum(["resistant", "vulnerable", "immune"]))
     .optional(),
+  nonmagical_attack_immunity: z.boolean().optional(),
+  nonmagical_attack_resistance: z.boolean().optional(),
   condition_immunities: z.array(z.string()),
   proficiency_bonus: z.coerce.number(),
 
@@ -110,6 +116,7 @@ export const defaultMonster: Monster = {
   size: "",
   sub_type: "",
   alignment: "",
+  description: "",
   senses: {
     blindsight: 0,
     darkvision: 0,
@@ -118,6 +125,8 @@ export const defaultMonster: Monster = {
     is_blind_beyond: false,
   },
   languages: [],
+  passive_perception: 0,
+  custom_passive_perception: false,
 
   // Combat
   cr: {
@@ -134,6 +143,7 @@ export const defaultMonster: Monster = {
   armor_description: "",
   hit_points: "",
   hit_dice: "",
+  custom_hp: false,
   ability_scores: {
     str: 10,
     dex: 10,
@@ -155,6 +165,8 @@ export const defaultMonster: Monster = {
   saving_throws: {},
   skills: {},
   damage_modifiers: {},
+  nonmagical_attack_immunity: false,
+  nonmagical_attack_resistance: false,
   condition_immunities: [],
   proficiency_bonus: 2,
 
