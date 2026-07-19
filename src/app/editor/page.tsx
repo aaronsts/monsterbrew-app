@@ -12,6 +12,7 @@ import {
 import { Input } from "@base-ui/react";
 import { IdentityForm } from "./components/identity-form";
 import { CombatForm } from "./components/combat-form";
+import { DefenseForm } from "./components/defense-form";
 
 export default async function CreatureEditor() {
   return (
@@ -24,6 +25,7 @@ export default async function CreatureEditor() {
           <CardContent className="space-y-6">
             <IdentityForm />
             <CombatForm />
+            <DefenseForm />
           </CardContent>
         </Card>
         <Editor />
