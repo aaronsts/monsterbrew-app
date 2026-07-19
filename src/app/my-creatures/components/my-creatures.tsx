@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/card";
 import { monsterbrewDB } from "@/services/database";
 import { downloadCreatureBackup } from "@/services/backup";
-import React, { Suspense, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { StandaloneStatblock } from "@/components/standalone-statblock";
 import { toast } from "sonner";
 import { createCreatureSchema } from "@/schema/createCreatureSchema";
@@ -42,8 +42,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Badge, BadgeVariants } from "@/components/ui/badge";
+import { Badge } from "@/components/ui/badge";
 import { calculateHitPoints } from "@/lib/utils";
+import { getCreatureFormat } from "@/services/migrations/creatureFormat";
+import { MigrateDialog } from "./migrate-dialog";
 
 type MonsterbrewCreature = z.infer<typeof createCreatureSchema>;
 
@@ -52,12 +54,26 @@ export default function MyCreatures() {
   const [myCreatures, setMyCreatures] = useState<MonsterbrewCreature[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [expandedRows, setExpandedRows] = useState<Record<string, boolean>>({});
+  const [migrateTarget, setMigrateTarget] =
+    useState<MonsterbrewCreature | null>(null);
   const router = useRouter();
   const toggleRowExpansion = (creatureId: string) => {
     setExpandedRows((prev) => ({
       ...prev,
       [creatureId]: !prev[creatureId],
     }));
+  };
+
+  const isLegacy = (creature: MonsterbrewCreature) =>
+    getCreatureFormat(creature) === "legacy";
+
+  // Clicking a legacy row prompts migration; a new row just expands.
+  const handleRowActivate = (creature: MonsterbrewCreature) => {
+    if (isLegacy(creature)) {
+      setMigrateTarget(creature);
+    } else {
+      toggleRowExpansion(creature.id || "");
+    }
   };
 
   async function getLocalCreatures() {
@@ -67,8 +83,10 @@ export default function MyCreatures() {
       const creatures = await db.getAll("creatures");
       setMyCreatures(creatures);
       db.close();
-    } catch (err: any) {
-      toast.error(`Something went wrong: ${err.message}`);
+    } catch (err) {
+      toast.error(
+        `Something went wrong: ${err instanceof Error ? err.message : String(err)}`,
+      );
     } finally {
       setIsLoading(false);
     }
@@ -98,12 +116,14 @@ export default function MyCreatures() {
 
   // Function to load creature into editor
   const loadCreatureIntoEditor = (creature: MonsterbrewCreature) => {
+    // Legacy creatures open in the legacy editor; migrated ones in the new one.
+    const destination = isLegacy(creature) ? "/legacy-editor" : "/editor";
     toast.promise(
       new Promise<void>((resolve) => {
         // Store the creature in localStorage to pass it to the editor
         localStorage.setItem("editCreature", JSON.stringify(creature));
         // Navigate to the editor page
-        router.push("/editor");
+        router.push(destination);
         resolve();
       }),
       {
@@ -198,6 +218,7 @@ export default function MyCreatures() {
               {myCreatures.map((creature) => {
                 const creatureId = creature.id || "";
                 const isExpanded = expandedRows[creatureId];
+                const legacy = isLegacy(creature);
 
                 const medianHP = calculateHitPoints(
                   creature.hit_dice,
@@ -214,16 +235,16 @@ export default function MyCreatures() {
                   <React.Fragment key={creatureId}>
                     <TableRow
                       className="border-b"
-                      onClick={() => toggleRowExpansion(creatureId)}
+                      onClick={() => handleRowActivate(creature)}
                     >
                       <TableCell className="font-medium">
                         <div className="flex items-center gap-2">
                           <Button
-                            variant="transparant"
+                            variant="ghost"
                             size="icon"
                             onClick={(e) => {
                               e.stopPropagation();
-                              toggleRowExpansion(creatureId);
+                              handleRowActivate(creature);
                             }}
                             className="h-6 w-6"
                           >
@@ -234,14 +255,15 @@ export default function MyCreatures() {
                             )}
                           </Button>
                           {creature.name || "Unknown Creature"}
+                          {legacy && (
+                            <Badge variant="outline" className="text-amber-400">
+                              Legacy
+                            </Badge>
+                          )}
                         </div>
                       </TableCell>
                       <TableCell>
-                        <Badge
-                          variant={
-                            creature.type.toLocaleLowerCase() as keyof BadgeVariants["variant"]
-                          }
-                        >
+                        <Badge variant="secondary">
                           {creature.type || "not selected"}
                         </Badge>
                       </TableCell>
@@ -253,14 +275,10 @@ export default function MyCreatures() {
                         onClick={(e) => e.stopPropagation()}
                       >
                         <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button
-                              variant="transparant"
-                              color="carrara"
-                              size="icon-sm"
-                            >
-                              <EllipsisVertical className="h-4 w-4" />
-                            </Button>
+                          <DropdownMenuTrigger
+                            render={<Button variant="ghost" size="icon-sm" />}
+                          >
+                            <EllipsisVertical className="h-4 w-4" />
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
                             <DropdownMenuLabel>Actions</DropdownMenuLabel>
@@ -301,7 +319,13 @@ export default function MyCreatures() {
                           className="p-0 animate-in fade-in-10 duration-300"
                         >
                           <div className="p-4">
-                            <StandaloneStatblock creature={creature} />
+                            {legacy ? (
+                              <StandaloneStatblock creature={creature} />
+                            ) : (
+                              <p className="text-sm text-muted-foreground">
+                                Preview for migrated creatures is coming soon.
+                              </p>
+                            )}
                           </div>
                         </TableCell>
                       </TableRow>
@@ -313,6 +337,14 @@ export default function MyCreatures() {
           </Table>
         )}
       </CardContent>
+      <MigrateDialog
+        creature={migrateTarget}
+        open={migrateTarget !== null}
+        onOpenChange={(next) => {
+          if (!next) setMigrateTarget(null);
+        }}
+        onMigrated={getLocalCreatures}
+      />
     </Card>
   );
 }
