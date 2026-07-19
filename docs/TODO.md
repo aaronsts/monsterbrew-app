@@ -1,0 +1,3 @@
+- [x] Upgrade tailwind to v4
+- [ ] Migrate from Nextjs to Tanstack
+- [ ] Migrate from RadixUI to BaseUI

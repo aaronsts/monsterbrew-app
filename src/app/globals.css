@@ -1,8 +1,8 @@
 @import "tailwindcss";
+@import "tw-animate-css";
 /*  ---break--- */
 @custom-variant dark (&:is(.dark *));
 
-@plugin 'tailwindcss-animate';
 @plugin "@tailwindcss/typography";
 
 :root {
@@ -149,9 +149,4 @@
   h3 {
     @apply text-xl font-bold;
   }
-}
-
-/* Firefox */
-input[type="number"] {
-  -moz-appearance: textfield;
 }
