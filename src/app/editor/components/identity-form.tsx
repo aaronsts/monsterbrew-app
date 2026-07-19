@@ -1,4 +1,5 @@
 "use client";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Combobox,
   ComboboxContent,
@@ -25,12 +26,29 @@ import {
   ItemMedia,
 } from "@/components/ui/item";
 import { CREATURE_SIZES, CREATURE_TYPES } from "@/lib/constants";
-import { createCreatureSchema } from "@/schema/createCreatureSchema";
+import { titleCase } from "@/lib/utils";
+import {
+  createCreatureSchema,
+  defaultCreature,
+  Languages,
+} from "@/schema/createCreatureSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 
+const SENSES = [
+  { name: "senses.blindsight", label: "Blindsight" },
+  { name: "senses.darkvision", label: "Darkvision" },
+  { name: "senses.tremorsense", label: "Tremorsense" },
+  { name: "senses.truesight", label: "Truesight" },
+] as const;
+
+const LANGUAGES = Object.values(Languages);
+
 export const IdentityForm = () => {
-  const form = useForm({ resolver: zodResolver(createCreatureSchema) });
+  const form = useForm({
+    resolver: zodResolver(createCreatureSchema),
+    defaultValues: defaultCreature,
+  });
   return (
     <FieldSet>
       <FieldLegend>Identity</FieldLegend>
@@ -171,6 +189,98 @@ export const IdentityForm = () => {
           )}
         />
       </FieldGroup>
+
+      {/* Senses */}
+      <FieldGroup>
+        <FieldLabel className="-mb-1">Senses</FieldLabel>
+        <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+          {SENSES.map((sense) => (
+            <Controller
+              key={sense.name}
+              name={sense.name}
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel htmlFor={`form-rhf-input-${sense.name}`}>
+                    {sense.label}{" "}
+                    <span className="text-muted-foreground/60">(ft.)</span>
+                  </FieldLabel>
+                  <Input
+                    {...field}
+                    id={`form-rhf-input-${sense.name}`}
+                    type="number"
+                    onFocus={(e) => e.target.select()}
+                    aria-invalid={fieldState.invalid}
+                    placeholder="ex. 0"
+                  />
+                  {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                </Field>
+              )}
+            />
+          ))}
+          <Controller
+            name="senses.is_blind_beyond"
+            control={form.control}
+            render={({ field }) => (
+              <Field orientation="horizontal" className="items-center md:pb-2">
+                <Checkbox
+                  id="form-rhf-input-is-blind-beyond"
+                  checked={field.value}
+                  onCheckedChange={field.onChange}
+                />
+                <FieldLabel
+                  htmlFor="form-rhf-input-is-blind-beyond"
+                  className="font-normal"
+                >
+                  Blind beyond
+                </FieldLabel>
+              </Field>
+            )}
+          />
+        </div>
+      </FieldGroup>
+
+      {/* Languages */}
+      <Controller
+        name="languages"
+        control={form.control}
+        render={({ field }) => {
+          const selected = field.value ?? [];
+          return (
+            <FieldGroup>
+              <FieldLabel className="-mb-1">Languages</FieldLabel>
+              <div className="grid grid-cols-2 gap-x-4 gap-y-2 sm:grid-cols-3 xl:grid-cols-5">
+                {LANGUAGES.map((language) => {
+                  const active = selected.includes(language);
+                  const id = `form-rhf-language-${language}`;
+                  return (
+                    <Field
+                      key={language}
+                      orientation="horizontal"
+                      className="w-auto items-center"
+                    >
+                      <Checkbox
+                        id={id}
+                        checked={active}
+                        onCheckedChange={(checked) =>
+                          field.onChange(
+                            checked
+                              ? [...selected, language]
+                              : selected.filter((l) => l !== language),
+                          )
+                        }
+                      />
+                      <FieldLabel htmlFor={id} className="font-normal">
+                        {titleCase(language)}
+                      </FieldLabel>
+                    </Field>
+                  );
+                })}
+              </div>
+            </FieldGroup>
+          );
+        }}
+      />
     </FieldSet>
   );
 };
