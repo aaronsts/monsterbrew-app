@@ -163,4 +163,38 @@ describe("creatureToMonster", () => {
 
     expect(result.id).toMatch(/^\d+-[a-z0-9]+$/);
   });
+
+  it("does not throw when legacy collection fields are missing (defensive guards)", () => {
+    const broken = { ...defaultCreature } as Record<string, unknown>;
+    for (const key of [
+      "saving_throws",
+      "skill_bonuses",
+      "damage_immunities",
+      "damage_resistances",
+      "damage_vulnerabilities",
+      "condition_immunities",
+      "languages",
+      "traits",
+      "actions",
+      "reactions",
+      "legendary_actions",
+      "mythic_actions",
+    ]) {
+      delete broken[key];
+    }
+
+    let result!: StoredMonster;
+    expect(() => {
+      result = creatureToMonster(broken as unknown as LegacyCreature);
+    }).not.toThrow();
+
+    // Affected outputs collapse to empty containers, never undefined.
+    expect(result.saving_throws).toEqual({});
+    expect(result.skills).toEqual({});
+    expect(result.damage_modifiers).toEqual({});
+    expect(result.condition_immunities).toEqual([]);
+    expect(result.languages).toEqual([]);
+    expect(result.traits).toEqual([]);
+    expect(result.mythic_actions).toEqual([]);
+  });
 });
