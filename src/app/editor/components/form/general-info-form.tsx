@@ -32,7 +32,6 @@ import { useFormContext } from "react-hook-form";
 import { z } from "zod";
 import AbilityScoresForm from "./ability-scores-form";
 import { toast } from "sonner";
-import { NumberInput } from "@/components/ui/number-input";
 
 export function GeneralInfoForm() {
   const form = useFormContext<z.infer<typeof createCreatureSchema>>();
@@ -41,52 +40,51 @@ export function GeneralInfoForm() {
 
   return (
     <div className="space-y-3">
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem className="col-span-3 lg:col-span-2">
-              <FormLabel>Creature Name</FormLabel>
+      <FormField
+        control={form.control}
+        name="name"
+        render={({ field }) => (
+          <FormItem className="col-span-3 lg:col-span-2">
+            <FormLabel>Creature Name</FormLabel>
+            <FormControl>
+              <Input placeholder="ex. Ancient Red Dragon" {...field} />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+      <FormField
+        control={form.control}
+        name="type"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Creature Type</FormLabel>
+            <Select
+              onValueChange={(v) => {
+                if (v && v.trim() !== "") {
+                  field.onChange(v);
+                }
+              }}
+              value={field.value}
+            >
               <FormControl>
-                <Input placeholder="ex. Ancient Red Dragon" {...field} />
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select a type" />
+                </SelectTrigger>
               </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="type"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Creature Type</FormLabel>
-              <Select
-                onValueChange={(v) => {
-                  if (v && v.trim() !== "") {
-                    field.onChange(v);
-                  }
-                }}
-                value={field.value}
-              >
-                <FormControl>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select a type" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {CREATURE_TYPES.map((type) => (
-                    <SelectItem key={type.value} value={type.value}>
-                      {type.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-      </div>
+              <SelectContent>
+                {CREATURE_TYPES.map((type) => (
+                  <SelectItem key={type.value} value={type.value}>
+                    {type.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
         <FormField
           control={form.control}
@@ -146,7 +144,7 @@ export function GeneralInfoForm() {
             <FormItem>
               <FormLabel>Armor Class (AC)</FormLabel>
               <FormControl>
-                <NumberInput placeholder="ex. 21" {...field} />
+                <Input placeholder="ex. 21" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -187,10 +185,10 @@ export function GeneralInfoForm() {
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="relative">
-                  <TooltipProvider delayDuration={300}>
+                  <TooltipProvider delay={300}>
                     Hit Dice
                     <Tooltip>
-                      <TooltipTrigger asChild>
+                      <TooltipTrigger>
                         <Info className="absolute left-15 w-4" />
                       </TooltipTrigger>
                       <TooltipContent>

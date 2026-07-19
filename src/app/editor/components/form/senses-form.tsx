@@ -6,7 +6,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { NumberInput } from "@/components/ui/number-input";
+import { Input } from "@/components/ui/input";
 import { titleCase } from "@/lib/utils";
 import {
   createCreatureSchema,
@@ -45,7 +45,7 @@ function SensesForm() {
                 <span className="text-xs text-carrara-600">(ft.)</span>
               </FormLabel>
               <FormControl>
-                <NumberInput
+                <Input
                   onFocus={(e) => e.target.select()}
                   placeholder="10"
                   type="number"
@@ -83,7 +83,7 @@ function SensesForm() {
             <FormItem>
               <FormLabel>Passive Perception</FormLabel>
               <FormControl>
-                <NumberInput
+                <Input
                   onFocus={(e) => e.target.select()}
                   placeholder="10"
                   type="number"

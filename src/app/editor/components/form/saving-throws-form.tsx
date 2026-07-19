@@ -1,11 +1,21 @@
 import {
+  Combobox,
+  ComboboxChip,
+  ComboboxChips,
+  ComboboxChipsInput,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxItem,
+  ComboboxList,
+  ComboboxValue,
+} from "@/components/ui/combobox";
+import {
   FormControl,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { MultiSelect } from "@/components/ui/multi-select";
 import {
   abilityScoresSchema,
   createCreatureSchema,
@@ -28,14 +38,31 @@ function SavingThrowsForm() {
         <FormItem>
           <FormLabel>Saving Throws</FormLabel>
           <FormControl>
-            <MultiSelect
-              title="Select ability"
-              options={saves}
-              selectedValues={new Set(field.value)}
-              onSelectionChange={(selectedValues) => {
-                field.onChange(Array.from(selectedValues));
-              }}
-            />
+            <Combobox
+              items={saves}
+              multiple
+              value={field.value}
+              onValueChange={field.onChange}
+            >
+              <ComboboxChips>
+                <ComboboxValue>
+                  {field.value.map((item) => (
+                    <ComboboxChip key={item}>{item}</ComboboxChip>
+                  ))}
+                </ComboboxValue>
+                <ComboboxChipsInput placeholder="Add framework" />
+              </ComboboxChips>
+              <ComboboxContent>
+                <ComboboxEmpty>No items found.</ComboboxEmpty>
+                <ComboboxList>
+                  {(item) => (
+                    <ComboboxItem key={item} value={item}>
+                      {item}
+                    </ComboboxItem>
+                  )}
+                </ComboboxList>
+              </ComboboxContent>
+            </Combobox>
           </FormControl>
           <FormMessage />
         </FormItem>

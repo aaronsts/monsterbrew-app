@@ -1,6 +1,16 @@
 import { FieldArrayButtons } from "@/components/field-array-buttons";
 import { Button } from "@/components/ui/button";
-import { Combobox } from "@/components/ui/combo-box";
+import {
+  Combobox,
+  ComboboxChip,
+  ComboboxChips,
+  ComboboxChipsInput,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxItem,
+  ComboboxList,
+  ComboboxValue,
+} from "@/components/ui/combobox";
 import {
   FormControl,
   FormField,
@@ -56,22 +66,31 @@ export function ActionsForm() {
     <div className="grid gap-3">
       <div className="flex justify-end gap-2">
         <Combobox
-          placeholder="Action presets ..."
+          items={ACTION_PRESETS}
           value={selectedAction}
-          onChange={onChange}
-          options={ACTION_PRESETS.filter((a) => a.type === "action").map(
-            (a) => ({
-              label: a.name,
-              value: a.name,
-            })
-          )}
-        />
-        <Button
-          variant="light"
-          color="carrara"
-          type="button"
-          onClick={addAction}
+          onValueChange={onChange}
         >
+          <ComboboxChips>
+            <ComboboxValue>
+              {ACTION_PRESETS.map((item) => (
+                <ComboboxChip key={item}>{item}</ComboboxChip>
+              ))}
+            </ComboboxValue>
+            <ComboboxChipsInput placeholder="Add framework" />
+          </ComboboxChips>
+          <ComboboxContent>
+            <ComboboxEmpty>No items found.</ComboboxEmpty>
+            <ComboboxList>
+              {(item) => (
+                <ComboboxItem key={item} value={item}>
+                  {item}
+                </ComboboxItem>
+              )}
+            </ComboboxList>
+          </ComboboxContent>
+        </Combobox>
+
+        <Button type="button" onClick={addAction}>
           Add Action
         </Button>
       </div>

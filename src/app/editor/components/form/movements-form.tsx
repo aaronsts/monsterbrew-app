@@ -7,7 +7,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { NumberInput } from "@/components/ui/number-input";
 import { createCreatureSchema } from "@/schema/createCreatureSchema";
 import { useFormContext } from "react-hook-form";
 import { z } from "zod";
@@ -25,7 +24,7 @@ function MovementForm() {
               Walking <span className="text-xs text-carrara-600">(ft.)</span>
             </FormLabel>
             <FormControl>
-              <NumberInput
+              <Input
                 onFocus={(e) => e.target.select()}
                 type="number"
                 placeholder="ex. 0"
@@ -45,7 +44,7 @@ function MovementForm() {
               Swimming <span className="text-xs text-carrara-600">(ft.)</span>
             </FormLabel>
             <FormControl>
-              <NumberInput
+              <Input
                 onFocus={(e) => e.target.select()}
                 type="number"
                 placeholder="ex. 0"
@@ -65,7 +64,7 @@ function MovementForm() {
               Burrowing <span className="text-xs text-carrara-600">(ft.)</span>
             </FormLabel>
             <FormControl>
-              <NumberInput
+              <Input
                 onFocus={(e) => e.target.select()}
                 type="number"
                 placeholder="ex. 0"
@@ -85,7 +84,7 @@ function MovementForm() {
               Climbing <span className="text-xs text-carrara-600">(ft.)</span>
             </FormLabel>
             <FormControl>
-              <NumberInput
+              <Input
                 onFocus={(e) => e.target.select()}
                 type="number"
                 placeholder="ex. 0"
@@ -105,7 +104,7 @@ function MovementForm() {
               Flying <span className="text-xs text-carrara-600">(ft.)</span>
             </FormLabel>
             <FormControl>
-              <NumberInput
+              <Input
                 onFocus={(e) => e.target.select()}
                 type="number"
                 placeholder="ex. 0"

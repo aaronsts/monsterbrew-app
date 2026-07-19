@@ -1,6 +1,13 @@
 "use client";
 
-import { Card, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 import MovementForm from "./form/movements-form";
 import SensesForm from "./form/senses-form";
@@ -59,14 +66,14 @@ function CreatureForm({
   const isMythic = formContext.watch("is_mythic");
   const creature = formContext.watch();
   const customPassivePerception = formContext.watch(
-    "custom_passive_perception"
+    "custom_passive_perception",
   );
 
   const reactToPrintFn = useReactToPrint({ contentRef: pdfRef });
 
   const exportData = (jsonOutput: typeof ImprovedInitiativeCreature) => {
     const jsonString = `data:text/json;chatset=utf-8,${encodeURIComponent(
-      JSON.stringify(jsonOutput)
+      JSON.stringify(jsonOutput),
     )}`;
     const link = document.createElement("a");
     link.href = jsonString;
@@ -79,7 +86,7 @@ function CreatureForm({
   useEffect(() => {
     let passivePerception = calculateStatBonus(creature.ability_scores.wis);
     const isProficientOrExpert = creature.skill_bonuses.find(
-      (s) => s.skill_name === "perception"
+      (s) => s.skill_name === "perception",
     );
     if (!!isProficientOrExpert) {
       passivePerception += isProficientOrExpert.is_expert
@@ -96,17 +103,18 @@ function CreatureForm({
   ]);
 
   return (
-    <Card className="h-fit md:pt-0">
-      <div className="flex sticky bg-carrara-50 rounded-t-xl pb-1 border-carrara-100 top-14 z-40 pt-6 mb-6 flex-row items-center justify-between">
-        <CardTitle className="w-fit">
+    <Card>
+      <CardHeader>
+        <CardTitle className="w-fit items-center">
           {creature.id ? "Update" : "Create"} creature
         </CardTitle>
-        <div className="flex gap-2">
-          <ImportDialog open={showModal} onOpenChange={setShowModal} />
+        <CardDescription>Create or edit a creature</CardDescription>
+
+        <CardAction className="flex justify-center">
           <SaveDialog />
           <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="transparant" color="carrara" size="icon">
+            <DropdownMenuTrigger>
+              <Button variant="ghost" size="icon">
                 <EllipsisVertical />
               </Button>
             </DropdownMenuTrigger>
@@ -122,7 +130,7 @@ function CreatureForm({
                 <DropdownMenuItem
                   onClick={formContext.handleSubmit(
                     (v: z.infer<typeof createCreatureSchema>) =>
-                      createMarkdownPage(v)
+                      createMarkdownPage(v),
                   )}
                 >
                   Homebrewery V3
@@ -130,7 +138,7 @@ function CreatureForm({
                 <DropdownMenuItem
                   onClick={formContext.handleSubmit(
                     (v: z.infer<typeof createCreatureSchema>) =>
-                      exportData(toImprovedInitiative(v))
+                      exportData(toImprovedInitiative(v)),
                   )}
                 >
                   Improved Initiative
@@ -147,216 +155,214 @@ function CreatureForm({
               </DropdownMenuGroup>
             </DropdownMenuContent>
           </DropdownMenu>
-        </div>
-      </div>
-      <Accordion type="multiple" defaultValue={["general-info"]}>
-        <AccordionItem value="general-info" defaultChecked>
-          <div className="flex items-center gap-3">
-            <div className="flex-1">
-              <AccordionTrigger className="flex-1">
-                General Info
-              </AccordionTrigger>
-            </div>
-            <Button
-              title="Reset General Info"
-              type="button"
-              variant="light"
-              color="destructive"
-              size="icon-sm"
-              onClick={() =>
-                formContext.reset({
-                  ...formContext.getValues(),
-                  name: "",
-                  type: "",
-                  size: "",
-                  alignment: "",
-                  armor_class: 0,
-                  armor_description: "",
-                  hit_dice: "",
-                  hit_points: "",
-                  custom_hp: false,
-                  ability_scores: {
-                    str: 10,
-                    con: 10,
-                    dex: 10,
-                    int: 10,
-                    wis: 10,
-                    cha: 10,
-                  },
-                })
-              }
-            >
-              <RotateCcw />
-            </Button>
-          </div>
-          <AccordionContent>
-            <GeneralInfoForm />
-          </AccordionContent>
-        </AccordionItem>
-        <AccordionItem value="movement-senses">
-          <div className="flex items-center gap-3">
-            <div className="flex-1">
-              <AccordionTrigger className="flex-1">
-                Movement & Senses
-              </AccordionTrigger>
-            </div>
-            <Button
-              title="Reset Movements and Senses"
-              type="button"
-              variant="light"
-              color="destructive"
-              size="icon-sm"
-              onClick={() =>
-                formContext.reset({
-                  ...formContext.getValues(),
-                  movements: {},
-                  senses: {},
-                })
-              }
-            >
-              <RotateCcw />
-            </Button>
-          </div>
-          <AccordionContent className="flex flex-col gap-3">
-            <MovementForm />
-            <SensesForm />
-          </AccordionContent>
-        </AccordionItem>
-        <AccordionItem value="languages-skills">
-          <div className="flex items-center gap-3">
-            <div className="flex-1">
-              <AccordionTrigger className="flex-1">
-                Languages & Skills
-              </AccordionTrigger>
-            </div>
-            <Button
-              title="Reset Languages & Skills"
-              type="button"
-              variant="light"
-              color="destructive"
-              size="icon-sm"
-              onClick={() =>
-                formContext.reset({
-                  ...formContext.getValues(),
-                  languages: [],
-                  saving_throws: [],
-                  skill_bonuses: [],
-                })
-              }
-            >
-              <RotateCcw />
-            </Button>
-          </div>
-          <AccordionContent className="space-y-3">
-            <LanguagesForm />
-            <SavingThrowsForm />
-            <SkillBonusForm />
-          </AccordionContent>
-        </AccordionItem>
-        <AccordionItem value="damages-conditions">
-          <div className="flex items-center gap-3">
-            <div className="flex-1">
-              <AccordionTrigger className="flex-1">
-                Damages & Conditions
-              </AccordionTrigger>
-            </div>
-            <Button
-              title="Reset Damages & Conditions"
-              type="button"
-              variant="light"
-              color="destructive"
-              size="icon-sm"
-              onClick={() =>
-                formContext.reset({
-                  ...formContext.getValues(),
-                  damage_immunities: [],
-                  damage_resistances: [],
-                  damage_vulnerabilities: [],
-                  condition_immunities: [],
-                })
-              }
-            >
-              <RotateCcw />
-            </Button>
-          </div>
-          <AccordionContent className="space-y-3">
-            <DamageTypesForm />
-            <ConditionTypesForm />
-          </AccordionContent>
-        </AccordionItem>
-        <AccordionItem value="features-actions" className="relative">
-          <div className="pt-3 -mb-1 md:pt-0 md:absolute top-4 left-36 flex gap-3">
-            <div className="flex gap-2">
-              <Checkbox
-                id="isLegendary"
-                checked={isLegendary}
-                onCheckedChange={(e) =>
-                  formContext.setValue("is_legendary", e as boolean)
+        </CardAction>
+      </CardHeader>
+      <CardContent>
+        <Accordion multiple defaultValue={["general-info"]}>
+          <AccordionItem value="general-info">
+            <div className="flex items-center gap-3">
+              <div className="flex-1">
+                <AccordionTrigger className="flex-1">
+                  General Info
+                </AccordionTrigger>
+              </div>
+              <Button
+                title="Reset General Info"
+                type="button"
+                variant="destructive"
+                size="icon-sm"
+                onClick={() =>
+                  formContext.reset({
+                    ...formContext.getValues(),
+                    name: "",
+                    type: "",
+                    size: "",
+                    alignment: "",
+                    armor_class: 0,
+                    armor_description: "",
+                    hit_dice: "",
+                    hit_points: "",
+                    custom_hp: false,
+                    ability_scores: {
+                      str: 10,
+                      con: 10,
+                      dex: 10,
+                      int: 10,
+                      wis: 10,
+                      cha: 10,
+                    },
+                  })
                 }
-              />
-              <Label
-                htmlFor="isLegendary"
-                className="text-xs font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
               >
-                Is Legendary
-              </Label>
+                <RotateCcw />
+              </Button>
             </div>
-            <div className="flex gap-2">
-              <Checkbox
-                id="isMythic"
-                checked={isMythic}
-                onCheckedChange={(e) =>
-                  formContext.setValue("is_mythic", e as boolean)
+            <AccordionContent>
+              <GeneralInfoForm />
+            </AccordionContent>
+          </AccordionItem>
+          <AccordionItem value="movement-senses">
+            <div className="flex items-center gap-3">
+              <div className="flex-1">
+                <AccordionTrigger className="flex-1">
+                  Movement & Senses
+                </AccordionTrigger>
+              </div>
+              <Button
+                title="Reset Movements and Senses"
+                type="button"
+                variant="destructive"
+                size="icon-sm"
+                onClick={() =>
+                  formContext.reset({
+                    ...formContext.getValues(),
+                    movements: {},
+                    senses: {},
+                  })
                 }
-              />
-              <Label
-                htmlFor="isMythic"
-                className="text-xs font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
               >
-                Is Mythic
-              </Label>
+                <RotateCcw />
+              </Button>
             </div>
-          </div>
-          <div className="flex items-center gap-3">
-            <div className="flex-1">
-              <AccordionTrigger className="flex-1">
-                Traits & Actions
-              </AccordionTrigger>
+            <AccordionContent className="flex flex-col gap-3">
+              <MovementForm />
+              <SensesForm />
+            </AccordionContent>
+          </AccordionItem>
+          <AccordionItem value="languages-skills">
+            <div className="flex items-center gap-3">
+              <div className="flex-1">
+                <AccordionTrigger className="flex-1">
+                  Languages & Skills
+                </AccordionTrigger>
+              </div>
+              <Button
+                title="Reset Languages & Skills"
+                type="button"
+                variant="destructive"
+                size="icon-sm"
+                onClick={() =>
+                  formContext.reset({
+                    ...formContext.getValues(),
+                    languages: [],
+                    saving_throws: [],
+                    skill_bonuses: [],
+                  })
+                }
+              >
+                <RotateCcw />
+              </Button>
             </div>
-            <Button
-              title="Reset Traits & Actions"
-              type="button"
-              variant="light"
-              color="destructive"
-              size="icon-sm"
-              onClick={() =>
-                formContext.reset({
-                  ...formContext.getValues(),
-                  actions: [],
-                  reactions: [],
-                  traits: [],
-                  is_legendary: false,
-                  legendary_actions: [],
-                  legendary_description: "",
-                  is_mythic: false,
-                  mythic_actions: [],
-                  mythic_description: "",
-                })
-              }
-            >
-              <RotateCcw />
-            </Button>
-          </div>
+            <AccordionContent className="space-y-3">
+              <LanguagesForm />
+              <SavingThrowsForm />
+              {/* <SkillBonusForm /> */}
+            </AccordionContent>
+          </AccordionItem>
+          <AccordionItem value="damages-conditions">
+            <div className="flex items-center gap-3">
+              <div className="flex-1">
+                <AccordionTrigger className="flex-1">
+                  Damages & Conditions
+                </AccordionTrigger>
+              </div>
+              <Button
+                title="Reset Damages & Conditions"
+                type="button"
+                variant="destructive"
+                size="icon-sm"
+                onClick={() =>
+                  formContext.reset({
+                    ...formContext.getValues(),
+                    damage_immunities: [],
+                    damage_resistances: [],
+                    damage_vulnerabilities: [],
+                    condition_immunities: [],
+                  })
+                }
+              >
+                <RotateCcw />
+              </Button>
+            </div>
+            <AccordionContent className="space-y-3">
+              {/* <DamageTypesForm /> */}
+              <ConditionTypesForm />
+            </AccordionContent>
+          </AccordionItem>
+          <AccordionItem value="features-actions" className="relative">
+            <div className="pt-3 -mb-1 md:pt-0 md:absolute top-4 left-36 flex gap-3">
+              <div className="flex gap-2">
+                <Checkbox
+                  id="isLegendary"
+                  checked={isLegendary}
+                  onCheckedChange={(e) =>
+                    formContext.setValue("is_legendary", e as boolean)
+                  }
+                />
+                <Label
+                  htmlFor="isLegendary"
+                  className="text-xs font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                >
+                  Is Legendary
+                </Label>
+              </div>
+              <div className="flex gap-2">
+                <Checkbox
+                  id="isMythic"
+                  checked={isMythic}
+                  onCheckedChange={(e) =>
+                    formContext.setValue("is_mythic", e as boolean)
+                  }
+                />
+                <Label
+                  htmlFor="isMythic"
+                  className="text-xs font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                >
+                  Is Mythic
+                </Label>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="flex-1">
+                <AccordionTrigger className="flex-1">
+                  Traits & Actions
+                </AccordionTrigger>
+              </div>
+              <Button
+                title="Reset Traits & Actions"
+                type="button"
+                variant="destructive"
+                size="icon-sm"
+                onClick={() =>
+                  formContext.reset({
+                    ...formContext.getValues(),
+                    actions: [],
+                    reactions: [],
+                    traits: [],
+                    is_legendary: false,
+                    legendary_actions: [],
+                    legendary_description: "",
+                    is_mythic: false,
+                    mythic_actions: [],
+                    mythic_description: "",
+                  })
+                }
+              >
+                <RotateCcw />
+              </Button>
+            </div>
 
-          <AccordionContent className="space-y-3">
-            <TraitsForm />
-            <ActionsForm />
-            <ReactionsForm />
-            {isLegendary && <LegendaryActionsForm />}
-            {isMythic && <MythicActionsForm />}
-          </AccordionContent>
-        </AccordionItem>
-      </Accordion>
+            <AccordionContent className="space-y-3">
+              {/* <TraitsForm /> */}
+              <ActionsForm />
+              <ReactionsForm />
+              {isLegendary && <LegendaryActionsForm />}
+              {isMythic && <MythicActionsForm />}
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
+      </CardContent>
+      <ImportDialog open={showModal} onOpenChange={setShowModal} />
     </Card>
   );
 }

@@ -6,7 +6,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { NumberInput } from "@/components/ui/number-input";
+
 import { calculateStatBonus } from "@/lib/utils";
 import {
   abilityScoresSchema,
@@ -42,7 +42,7 @@ function AbilityScoresForm() {
                 </span>
               </FormLabel>
               <FormControl>
-                <NumberInput
+                <Input
                   {...field}
                   onFocus={(e) => e.target.select()}
                   placeholder="10"

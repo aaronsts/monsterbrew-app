@@ -30,7 +30,7 @@ const arrays = [
 
 function DamageTypesForm() {
   const [selectedDamageTypes, setSelectedDamageTypes] = useState<Set<string>>(
-    new Set()
+    new Set(),
   );
   const form = useFormContext<z.infer<typeof createCreatureSchema>>();
 
@@ -51,7 +51,7 @@ function DamageTypesForm() {
         const current = form.getValues(otherArray) || [];
         form.setValue(
           otherArray,
-          current.filter((item) => item !== dmg)
+          current.filter((item) => item !== dmg),
         );
       });
 
@@ -78,7 +78,7 @@ function DamageTypesForm() {
       const current = form.getValues(arrayName) || [];
       form.setValue(
         arrayName,
-        current.filter((item) => item !== dmg)
+        current.filter((item) => item !== dmg),
       );
     });
   };
@@ -100,8 +100,6 @@ function DamageTypesForm() {
         <div className="grid sm:grid-cols-3 gap-3 w-full">
           <Button
             type="button"
-            variant="filled"
-            color="destructive"
             onClick={() => addDamageType("damage_vulnerabilities")}
           >
             Vulnerable
@@ -126,17 +124,7 @@ function DamageTypesForm() {
         {damages.map((bonus) => {
           const [type, category] = bonus.split("_");
           return (
-            <Badge
-              className="relative pr-6 capitalize"
-              variant={
-                category === "immune"
-                  ? "immune"
-                  : category === "resistant"
-                  ? "resistant"
-                  : "destructive"
-              }
-              key={bonus}
-            >
+            <Badge className="relative pr-6 capitalize" key={bonus}>
               {type}
               <span
                 className="absolute right-1.5 top-1 hover:cursor-pointer"
