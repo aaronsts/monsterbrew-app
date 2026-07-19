@@ -10,6 +10,8 @@ import { monsterbrewDB } from "@/services/database";
 import { downloadCreatureBackup } from "@/services/backup";
 import React, { useEffect, useState } from "react";
 import { StandaloneStatblock } from "@/components/standalone-statblock";
+import { MonsterStatblock } from "@/components/monster-statblock";
+import { Monster } from "@/schema/monster-schema";
 import { toast } from "sonner";
 import { createCreatureSchema } from "@/schema/createCreatureSchema";
 import { z } from "zod";
@@ -325,9 +327,9 @@ export default function MyCreatures() {
                             {legacy ? (
                               <StandaloneStatblock creature={creature} />
                             ) : (
-                              <p className="text-sm text-muted-foreground">
-                                Preview for migrated creatures is coming soon.
-                              </p>
+                              <MonsterStatblock
+                                creature={creature as unknown as Monster}
+                              />
                             )}
                           </div>
                         </TableCell>
