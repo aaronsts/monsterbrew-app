@@ -9,13 +9,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
@@ -31,7 +24,23 @@ import { Info } from "lucide-react";
 import { useFormContext } from "react-hook-form";
 import { z } from "zod";
 import AbilityScoresForm from "./ability-scores-form";
-import { toast } from "sonner";
+import {
+  Combobox,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxList,
+} from "@/components/ui/combobox";
+import {
+  Item,
+  ItemContent,
+  ItemDescription,
+  ItemMedia,
+  ItemTitle,
+} from "@/components/ui/item";
+
+type ChallengeRating = z.infer<typeof createCreatureSchema>["cr"];
 
 export function GeneralInfoForm() {
   const form = useFormContext<z.infer<typeof createCreatureSchema>>();
@@ -59,27 +68,35 @@ export function GeneralInfoForm() {
         render={({ field }) => (
           <FormItem>
             <FormLabel>Creature Type</FormLabel>
-            <Select
-              onValueChange={(v) => {
-                if (v && v.trim() !== "") {
-                  field.onChange(v);
+            <FormControl>
+              <Combobox
+                items={CREATURE_TYPES}
+                inputValue={field.value}
+                itemToStringValue={(size: (typeof CREATURE_TYPES)[number]) =>
+                  size.label
                 }
-              }}
-              value={field.value}
-            >
-              <FormControl>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select a type" />
-                </SelectTrigger>
-              </FormControl>
-              <SelectContent>
-                {CREATURE_TYPES.map((type) => (
-                  <SelectItem key={type.value} value={type.value}>
-                    {type.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+                onInputValueChange={field.onChange}
+              >
+                <ComboboxInput placeholder="Select a type" showClear />
+                <ComboboxContent>
+                  <ComboboxEmpty>No items found.</ComboboxEmpty>
+                  <ComboboxList>
+                    {(item: (typeof CREATURE_TYPES)[number]) => (
+                      <ComboboxItem key={item.value} value={item.value}>
+                        <Item size="sm">
+                          <ItemContent>
+                            <ItemTitle>{item.label}</ItemTitle>
+                            <ItemDescription>
+                              {item.description}
+                            </ItemDescription>
+                          </ItemContent>
+                        </Item>
+                      </ComboboxItem>
+                    )}
+                  </ComboboxList>
+                </ComboboxContent>
+              </Combobox>
+            </FormControl>
             <FormMessage />
           </FormItem>
         )}
@@ -92,34 +109,33 @@ export function GeneralInfoForm() {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Creature Size</FormLabel>
-              <Select
-                onValueChange={(v) => {
-                  if (v && v.trim() !== "") {
-                    field.onChange(v);
+              <FormControl>
+                <Combobox
+                  items={CREATURE_SIZES}
+                  inputValue={field.value}
+                  itemToStringValue={(size: (typeof CREATURE_SIZES)[number]) =>
+                    size.label
                   }
-                }}
-                value={field.value}
-              >
-                <FormControl className="capitalize">
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select a size" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {CREATURE_SIZES.map((size) => (
-                    <SelectItem
-                      key={size.id}
-                      className="capitalize"
-                      value={size.value}
-                    >
-                      {size.label} -{" "}
-                      <span className="text-muted-foreground">
-                        D{size.hit_dice}
-                      </span>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+                  onInputValueChange={field.onChange}
+                >
+                  <ComboboxInput placeholder="Select a size" showClear />
+                  <ComboboxContent>
+                    <ComboboxEmpty>No items found.</ComboboxEmpty>
+                    <ComboboxList>
+                      {(item: (typeof CREATURE_SIZES)[number]) => (
+                        <ComboboxItem key={item.value} value={item.value}>
+                          <Item size="xs">
+                            <ItemMedia>d{item.hit_dice}</ItemMedia>
+                            <ItemContent>
+                              <ItemTitle>{item.label}</ItemTitle>
+                            </ItemContent>
+                          </Item>
+                        </ComboboxItem>
+                      )}
+                    </ComboboxList>
+                  </ComboboxContent>
+                </Combobox>
+              </FormControl>
               <FormMessage />
             </FormItem>
           )}
@@ -185,7 +201,7 @@ export function GeneralInfoForm() {
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="relative">
-                  <TooltipProvider delay={300}>
+                  <TooltipProvider delay={200}>
                     Hit Dice
                     <Tooltip>
                       <TooltipTrigger>
@@ -235,40 +251,42 @@ export function GeneralInfoForm() {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Challenge Rating</FormLabel>
-              <Select
-                value={JSON.stringify(field.value)}
-                onValueChange={(v) => {
-                  // Only parse if v is not empty
-                  if (v && v.trim() !== "") {
-                    try {
-                      field.onChange(JSON.parse(v));
-                    } catch (error) {
-                      toast.error("Something went wrong parsing CR value");
-                      console.error("Error parsing CR value:", error);
-                    }
+              <FormControl>
+                <Combobox
+                  items={CHALLENGE_RATINGS}
+                  value={field.value}
+                  onValueChange={field.onChange}
+                  isItemEqualToValue={(
+                    item: ChallengeRating,
+                    value: ChallengeRating,
+                  ) => item.challenge_rating === value?.challenge_rating}
+                  itemToStringLabel={(rating: ChallengeRating) =>
+                    `${rating.challenge_rating} (${new Intl.NumberFormat().format(
+                      rating.experience,
+                    )} XP)`
                   }
-                }}
-              >
-                <FormControl className="relative">
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select a rating" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {CHALLENGE_RATINGS.map((rating) => (
-                    <SelectItem
-                      key={rating.experience}
-                      value={JSON.stringify(rating)}
-                      className="justify-between"
-                    >
-                      {rating.challenge_rating}
-                      <span className="absolute right-8 text-primary">
-                        {new Intl.NumberFormat().format(rating.experience)} XP
-                      </span>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+                >
+                  <ComboboxInput placeholder="Select a rating" showClear />
+                  <ComboboxContent>
+                    <ComboboxEmpty>No items found.</ComboboxEmpty>
+                    <ComboboxList>
+                      {(item: ChallengeRating) => (
+                        <ComboboxItem key={item.experience} value={item}>
+                          <Item size="xs">
+                            <ItemContent>
+                              <ItemTitle>{item.challenge_rating}</ItemTitle>
+                            </ItemContent>
+                            <ItemMedia className="text-muted-foreground">
+                              {new Intl.NumberFormat().format(item.experience)}{" "}
+                              XP
+                            </ItemMedia>
+                          </Item>
+                        </ComboboxItem>
+                      )}
+                    </ComboboxList>
+                  </ComboboxContent>
+                </Combobox>
+              </FormControl>
               <FormMessage />
             </FormItem>
           )}
