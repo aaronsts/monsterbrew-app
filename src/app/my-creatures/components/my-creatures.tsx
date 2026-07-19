@@ -67,12 +67,12 @@ export default function MyCreatures() {
   const isLegacy = (creature: MonsterbrewCreature) =>
     getCreatureFormat(creature) === "legacy";
 
-  // Clicking a legacy row prompts migration; a new row just expands.
-  const handleRowActivate = (creature: MonsterbrewCreature) => {
+  // Editing a legacy creature prompts migration first; a new one opens directly.
+  const handleEdit = (creature: MonsterbrewCreature) => {
     if (isLegacy(creature)) {
       setMigrateTarget(creature);
     } else {
-      toggleRowExpansion(creature.id || "");
+      loadCreatureIntoEditor(creature);
     }
   };
 
@@ -116,14 +116,12 @@ export default function MyCreatures() {
 
   // Function to load creature into editor
   const loadCreatureIntoEditor = (creature: MonsterbrewCreature) => {
-    // Legacy creatures open in the legacy editor; migrated ones in the new one.
-    const destination = isLegacy(creature) ? "/legacy-editor" : "/editor";
     toast.promise(
       new Promise<void>((resolve) => {
         // Store the creature in localStorage to pass it to the editor
         localStorage.setItem("editCreature", JSON.stringify(creature));
         // Navigate to the editor page
-        router.push(destination);
+        router.push("/editor");
         resolve();
       }),
       {
@@ -235,7 +233,7 @@ export default function MyCreatures() {
                   <React.Fragment key={creatureId}>
                     <TableRow
                       className="border-b"
-                      onClick={() => handleRowActivate(creature)}
+                      onClick={() => toggleRowExpansion(creatureId)}
                     >
                       <TableCell className="font-medium">
                         <div className="flex items-center gap-2">
@@ -244,7 +242,7 @@ export default function MyCreatures() {
                             size="icon"
                             onClick={(e) => {
                               e.stopPropagation();
-                              handleRowActivate(creature);
+                              toggleRowExpansion(creatureId);
                             }}
                             className="h-6 w-6"
                           >
@@ -282,9 +280,7 @@ export default function MyCreatures() {
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
                             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                            <DropdownMenuItem
-                              onClick={() => loadCreatureIntoEditor(creature)}
-                            >
+                            <DropdownMenuItem onClick={() => handleEdit(creature)}>
                               <Edit className="mr-2 h-4 w-4" />
                               Edit in Editor
                             </DropdownMenuItem>

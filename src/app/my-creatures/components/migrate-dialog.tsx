@@ -150,14 +150,23 @@ export function MigrateDialog({
                 backup first if you want a safety copy.
               </DialogDescription>
             </DialogHeader>
-            <button
-              type="button"
-              onClick={() => downloadCreatureBackup()}
-              className="flex w-fit items-center gap-1.5 text-xs text-muted-foreground underline underline-offset-4 hover:text-foreground"
-            >
-              <Download className="size-3" />
-              Download a backup first
-            </button>
+            <div className="flex flex-col gap-1.5">
+              <button
+                type="button"
+                onClick={() => downloadCreatureBackup()}
+                className="flex w-fit items-center gap-1.5 text-xs text-muted-foreground underline underline-offset-4 hover:text-foreground"
+              >
+                <Download className="size-3" />
+                Download a backup first
+              </button>
+              <button
+                type="button"
+                onClick={openLegacyEditor}
+                className="flex w-fit items-center gap-1.5 text-xs text-muted-foreground underline underline-offset-4 hover:text-foreground"
+              >
+                Or edit it in the legacy editor without migrating
+              </button>
+            </div>
             <DialogFooter>
               <Button
                 variant="outline"
