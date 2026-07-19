@@ -1,7 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { MultiSelect } from "@/components/ui/multi-select";
+import { MultiSelect } from "../ui/multi-select";
 import { SkillModifier, SKILLS } from "@/lib/skills";
 import { titleCase } from "@/lib/utils";
 import { createCreatureSchema } from "@/schema/createCreatureSchema";
@@ -80,7 +80,6 @@ function SkillBonusForm() {
             selectedValues={new Set(selectedSkills)}
             onSelectionChange={(selectedValues) => {
               setSelectedSkills(selectedValues);
-              console.log(selectedValues);
             }}
           />
         </div>
@@ -89,15 +88,13 @@ function SkillBonusForm() {
             type="button"
             onClick={addSkill}
             data-expert="false"
-            variant="light"
-            color="stromboli"
+            variant="outline"
           >
             Proficient
           </Button>
           <Button
             type="button"
-            variant="light"
-            color="calypso"
+            variant="outline"
             onClick={addSkill}
             data-expert="true"
           >
@@ -109,7 +106,7 @@ function SkillBonusForm() {
         {fieldArray.fields.map((bonus, i) => (
           <Badge
             className="relative pr-6"
-            variant={bonus.is_proficient ? "proficient" : "expert"}
+            variant="secondary"
             key={bonus.skill_name + i}
           >
             {bonus.skill_name}

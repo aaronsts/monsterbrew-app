@@ -1,6 +1,6 @@
 import { FieldArrayButtons } from "@/components/field-array-buttons";
 import { Button } from "@/components/ui/button";
-import { Combobox } from "@/components/ui/combo-box";
+import { Combobox } from "../ui/combo-box";
 import {
   FormControl,
   FormField,
@@ -66,12 +66,7 @@ export function TraitsForm() {
             })
           )}
         />
-        <Button
-          type="button"
-          variant="light"
-          color="carrara"
-          onClick={addTrait}
-        >
+        <Button type="button" variant="outline" onClick={addTrait}>
           Add Trait
         </Button>
       </div>

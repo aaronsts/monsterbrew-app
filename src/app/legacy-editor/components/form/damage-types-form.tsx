@@ -1,17 +1,10 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { MultiSelect } from "@/components/ui/multi-select";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { MultiSelect } from "../ui/multi-select";
 import { titleCase } from "@/lib/utils";
 import { createCreatureSchema } from "@/schema/createCreatureSchema";
-import { DAMAGE_TYPES, Option } from "@/types/types";
+import { DAMAGE_TYPES } from "@/types/types";
 import { X } from "lucide-react";
 import { useState } from "react";
 import { useFormContext } from "react-hook-form";
@@ -122,7 +115,7 @@ function DamageTypesForm() {
       </div>
       <div className="flex flex-wrap gap-3">
         {damages.map((bonus) => {
-          const [type, category] = bonus.split("_");
+          const [type] = bonus.split("_");
           return (
             <Badge className="relative pr-6 capitalize" key={bonus}>
               {type}

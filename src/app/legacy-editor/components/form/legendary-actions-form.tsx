@@ -13,12 +13,12 @@ import { createCreatureSchema } from "@/schema/createCreatureSchema";
 import { useFieldArray, useFormContext } from "react-hook-form";
 import { z } from "zod";
 
-export function MythicActionsForm() {
+export function LegendaryActionsForm() {
   const form = useFormContext<z.infer<typeof createCreatureSchema>>();
 
   const { fields, append, remove, swap } = useFieldArray({
     control: form.control,
-    name: "mythic_actions",
+    name: "legendary_actions",
   });
 
   const moveUp = (index: number) => {
@@ -33,20 +33,20 @@ export function MythicActionsForm() {
     <div className="grid gap-3">
       <Button
         className="ml-auto"
-        variant="light"
-        color="carrara"
+        variant="outline"
         type="button"
         onClick={() => append({ name: "", description: "" })}
       >
-        Add M. Action
+        Add L. Action
       </Button>
+
       <div>
         <FormField
           control={form.control}
-          name="mythic_description"
+          name="legendary_description"
           render={({ field }) => (
             <FormItem className="col-span-2">
-              <FormLabel>Mythic Description</FormLabel>
+              <FormLabel>Legendary Description</FormLabel>
 
               <FormControl>
                 <Textarea {...field} />
@@ -59,7 +59,7 @@ export function MythicActionsForm() {
       {fields.map((field, index) => (
         <div key={field.id} className=" border p-3 rounded">
           <div className="flex justify-between">
-            <h4>Mythic Action {index + 1}</h4>
+            <h4>Legendary Action {index + 1}</h4>
             <FieldArrayButtons
               index={index}
               moveUp={moveUp}
@@ -71,7 +71,7 @@ export function MythicActionsForm() {
           <div className="grid gap-y-2">
             <FormField
               control={form.control}
-              name={`mythic_actions.${index}.name`}
+              name={`legendary_actions.${index}.name`}
               render={({ field }) => (
                 <FormItem className="col-span-2">
                   <FormLabel>Name</FormLabel>
@@ -84,7 +84,7 @@ export function MythicActionsForm() {
             />
             <FormField
               control={form.control}
-              name={`mythic_actions.${index}.description`}
+              name={`legendary_actions.${index}.description`}
               render={({ field }) => (
                 <FormItem className="col-span-2">
                   <FormLabel>Description</FormLabel>

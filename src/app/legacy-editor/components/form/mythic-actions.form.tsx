@@ -1,17 +1,6 @@
 import { FieldArrayButtons } from "@/components/field-array-buttons";
 import { Button } from "@/components/ui/button";
 import {
-  Combobox,
-  ComboboxChip,
-  ComboboxChips,
-  ComboboxChipsInput,
-  ComboboxContent,
-  ComboboxEmpty,
-  ComboboxItem,
-  ComboboxList,
-  ComboboxValue,
-} from "@/components/ui/combobox";
-import {
   FormControl,
   FormField,
   FormItem,
@@ -20,19 +9,16 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { ACTION_PRESETS } from "@/lib/constants/actionPresets";
 import { createCreatureSchema } from "@/schema/createCreatureSchema";
-import { useState } from "react";
 import { useFieldArray, useFormContext } from "react-hook-form";
 import { z } from "zod";
 
-export function ActionsForm() {
-  const [selectedAction, setSelectedAction] = useState<string | undefined>();
+export function MythicActionsForm() {
   const form = useFormContext<z.infer<typeof createCreatureSchema>>();
 
   const { fields, append, remove, swap } = useFieldArray({
     control: form.control,
-    name: "actions",
+    name: "mythic_actions",
   });
 
   const moveUp = (index: number) => {
@@ -43,61 +29,36 @@ export function ActionsForm() {
     if (index < fields.length - 1) swap(index, index + 1);
   };
 
-  function onChange(value: string) {
-    setSelectedAction(value);
-  }
-
-  function addAction() {
-    if (!selectedAction) return append({ name: "", description: "" });
-
-    const action = ACTION_PRESETS.find((a) => a.name === selectedAction);
-
-    if (!action) return;
-
-    append({
-      name: action.name,
-      description: action.desc,
-    });
-
-    setSelectedAction(undefined);
-  }
-
   return (
     <div className="grid gap-3">
-      <div className="flex justify-end gap-2">
-        <Combobox
-          items={ACTION_PRESETS}
-          value={selectedAction}
-          onValueChange={onChange}
-        >
-          <ComboboxChips>
-            <ComboboxValue>
-              {ACTION_PRESETS.map((item) => (
-                <ComboboxChip key={item}>{item}</ComboboxChip>
-              ))}
-            </ComboboxValue>
-            <ComboboxChipsInput placeholder="Add framework" />
-          </ComboboxChips>
-          <ComboboxContent>
-            <ComboboxEmpty>No items found.</ComboboxEmpty>
-            <ComboboxList>
-              {(item) => (
-                <ComboboxItem key={item} value={item}>
-                  {item}
-                </ComboboxItem>
-              )}
-            </ComboboxList>
-          </ComboboxContent>
-        </Combobox>
+      <Button
+        className="ml-auto"
+        variant="outline"
+        type="button"
+        onClick={() => append({ name: "", description: "" })}
+      >
+        Add M. Action
+      </Button>
+      <div>
+        <FormField
+          control={form.control}
+          name="mythic_description"
+          render={({ field }) => (
+            <FormItem className="col-span-2">
+              <FormLabel>Mythic Description</FormLabel>
 
-        <Button type="button" onClick={addAction}>
-          Add Action
-        </Button>
+              <FormControl>
+                <Textarea {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
       </div>
       {fields.map((field, index) => (
         <div key={field.id} className=" border p-3 rounded">
           <div className="flex justify-between">
-            <h4>Action {index + 1}</h4>
+            <h4>Mythic Action {index + 1}</h4>
             <FieldArrayButtons
               index={index}
               moveUp={moveUp}
@@ -109,7 +70,7 @@ export function ActionsForm() {
           <div className="grid gap-y-2">
             <FormField
               control={form.control}
-              name={`actions.${index}.name`}
+              name={`mythic_actions.${index}.name`}
               render={({ field }) => (
                 <FormItem className="col-span-2">
                   <FormLabel>Name</FormLabel>
@@ -122,7 +83,7 @@ export function ActionsForm() {
             />
             <FormField
               control={form.control}
-              name={`actions.${index}.description`}
+              name={`mythic_actions.${index}.description`}
               render={({ field }) => (
                 <FormItem className="col-span-2">
                   <FormLabel>Description</FormLabel>

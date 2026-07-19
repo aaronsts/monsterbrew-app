@@ -10,7 +10,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { createCreatureSchema } from "@/schema/createCreatureSchema";
-import { Trash2 } from "lucide-react";
 import { useFieldArray, useFormContext } from "react-hook-form";
 import { z } from "zod";
 
@@ -34,8 +33,7 @@ export function ReactionsForm() {
     <div className="grid gap-3">
       <Button
         className="ml-auto"
-        variant="light"
-        color="carrara"
+        variant="outline"
         type="button"
         onClick={() => append({ name: "", description: "" })}
       >
