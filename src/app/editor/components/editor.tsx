@@ -1,21 +1,20 @@
 "use client";
 
-import { useForm } from "react-hook-form";
-import CreatureForm from "./creature-form";
-import CreatureStatblock from "./creature-statblock";
-import { z } from "zod";
+import { Form } from "@/components/ui/form";
 import {
   createCreatureSchema,
   defaultCreature,
 } from "@/schema/createCreatureSchema";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Form } from "@/components/ui/form";
 import { createMarkdownPage } from "@/services/converters/markdown";
-import { useEffect, useRef, useState } from "react";
-import { toast } from "sonner";
 import { monsterbrewDB } from "@/services/database";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useSearchParams } from "next/navigation";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { useEffect, useRef } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { z } from "zod";
+import CreatureForm from "./creature-form";
+import CreatureStatblock from "./creature-statblock";
 
 export default function Editor() {
   const params = useSearchParams();
@@ -46,7 +45,7 @@ export default function Editor() {
             loading: "Loading creature into editor...",
             success: (name) => `${name} loaded successfully`,
             error: "Failed to load creature",
-          }
+          },
         );
       }
       db.close();
@@ -70,7 +69,7 @@ export default function Editor() {
             loading: "Loading creature into editor...",
             success: (name) => `${name} loaded successfully`,
             error: "Failed to load creature",
-          }
+          },
         );
       }
     }
