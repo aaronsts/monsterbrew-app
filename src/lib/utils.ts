@@ -21,18 +21,18 @@ export function calculateStatBonus(value: number | undefined) {
 
 export function calculateSavingThrow(
   score: Option,
-  creature: typeof defaultCreature
+  creature: typeof defaultCreature,
 ) {
   const hasSavingThrow = creature.saving_throws.includes(
-    score.label.toLowerCase()
+    score.label.toLowerCase(),
   );
   return hasSavingThrow
     ? `+${
         calculateStatBonus(score.value) + (creature.cr.proficiency_bonus || 0)
       }`
     : calculateStatBonus(score.value) >= 0
-    ? `+${calculateStatBonus(score.value)}`
-    : `${calculateStatBonus(score.value)}`;
+      ? `+${calculateStatBonus(score.value)}`
+      : `${calculateStatBonus(score.value)}`;
 }
 
 export function titleCase(str: string) {
@@ -44,7 +44,7 @@ export function titleCase(str: string) {
 export function calculateHitPoints(
   amount: string,
   size: string,
-  constitution?: number
+  constitution?: number,
 ) {
   const foundSize = CREATURE_SIZES.find((s) => size === s.value);
   const hit_dice = foundSize?.hit_dice || 4;

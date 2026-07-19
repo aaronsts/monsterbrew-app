@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
 
-import "@fontsource/yatra-one";
 import { Toaster } from "@/components/ui/sonner";
 import Link from "next/link";
 import { KofiLogo } from "@/components/images/KofiLogo";
@@ -13,6 +12,18 @@ import { Providers } from "@/components/providers/providers";
 
 import { nippo } from "./fonts/nippo/nippoVariable";
 import { SiteHeader } from "@/components/ui/site-header";
+import { JetBrains_Mono, Oxanium } from "next/font/google";
+import { cn } from "@/lib/utils";
+
+const oxaniumHeading = Oxanium({
+  subsets: ["latin"],
+  variable: "--font-heading",
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-mono",
+});
 
 export const metadata: Metadata = {
   title: "Monsterbrew | D&D 5e Monster Creator & Homebrew Tool",
@@ -70,7 +81,15 @@ export default function RootLayout({ children }: PropsWithChildren) {
 
   return (
     <Providers>
-      <html lang="en" className="h-dvh">
+      <html
+        lang="en"
+        className={cn(
+          "h-dvh",
+          "font-mono",
+          jetbrainsMono.variable,
+          oxaniumHeading.variable,
+        )}
+      >
         <head>
           <Script
             id="structured-data"
@@ -112,7 +131,7 @@ export default function RootLayout({ children }: PropsWithChildren) {
                   target="_blank"
                   referrerPolicy="no-referrer"
                 >
-                  <Button size="icon" variant="transparant">
+                  <Button size="icon" variant="ghost">
                     <GithubLogo />
                   </Button>
                 </Link>
