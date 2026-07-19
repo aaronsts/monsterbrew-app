@@ -37,6 +37,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -279,31 +280,37 @@ export default function MyCreatures() {
                             <EllipsisVertical className="h-4 w-4" />
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
-                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                            <DropdownMenuItem onClick={() => handleEdit(creature)}>
-                              <Edit className="mr-2 h-4 w-4" />
-                              Edit in Editor
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                              onClick={() => toggleRowExpansion(creatureId)}
-                            >
-                              <Eye className="mr-2 h-4 w-4" />
-                              {isExpanded ? "Hide Details" : "View Details"}
-                            </DropdownMenuItem>
+                            <DropdownMenuGroup>
+                              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                              <DropdownMenuItem
+                                onClick={() => handleEdit(creature)}
+                              >
+                                <Edit className="mr-2 h-4 w-4" />
+                                Edit in Editor
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                onClick={() => toggleRowExpansion(creatureId)}
+                              >
+                                <Eye className="mr-2 h-4 w-4" />
+                                {isExpanded ? "Hide Details" : "View Details"}
+                              </DropdownMenuItem>
+                            </DropdownMenuGroup>
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem
-                              onClick={() => duplicateCreature(creature)}
-                            >
-                              <Copy className="mr-2 h-4 w-4" />
-                              Duplicate
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                              onClick={() => deleteCreature(creature)}
-                              className="text-destructive"
-                            >
-                              <Trash className="text-destructive mr-2 h-4 w-4" />
-                              Delete
-                            </DropdownMenuItem>
+                            <DropdownMenuGroup>
+                              <DropdownMenuItem
+                                onClick={() => duplicateCreature(creature)}
+                              >
+                                <Copy className="mr-2 h-4 w-4" />
+                                Duplicate
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                onClick={() => deleteCreature(creature)}
+                                className="text-destructive"
+                              >
+                                <Trash className="text-destructive mr-2 h-4 w-4" />
+                                Delete
+                              </DropdownMenuItem>
+                            </DropdownMenuGroup>
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </TableCell>
