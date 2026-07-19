@@ -40,7 +40,12 @@ jobs:
           message: |
             # Vercel Preview Environment
             Deployment in progress...
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
       - name: Update Version Number in package.json
         run: npm --no-git-tag-version version 0.0.0-pr${{ github.event.number }}
       - name: Install Vercel CLI
