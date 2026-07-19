@@ -12,39 +12,14 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { Monster } from "@/schema/monster-schema";
 import { ArrowDown, ArrowUp, Plus, Trash2 } from "lucide-react";
-import { Control, Controller, useFieldArray, useForm } from "react-hook-form";
-import { z } from "zod";
-
-const featureSchema = z.object({
-  name: z.string(),
-  description: z.string(),
-});
-
-// Local, form-scoped schema: the canonical createCreatureSchema is intentionally
-// left untouched while the editor migration is in progress. It also has no
-// bonus_actions / lair fields yet, so keeping this local avoids downstream ripple.
-const actionsSchema = z.object({
-  traits: z.array(featureSchema),
-  actions: z.array(featureSchema),
-  reactions: z.array(featureSchema),
-  bonus_actions: z.array(featureSchema),
-
-  has_lair: z.boolean(),
-  lair_description: z.string(),
-  lair_actions: z.array(featureSchema),
-
-  is_legendary: z.boolean(),
-  legendary_description: z.string(),
-  legendary_actions: z.array(featureSchema),
-
-  is_mythic: z.boolean(),
-  mythic_description: z.string(),
-  mythic_actions: z.array(featureSchema),
-});
-
-type ActionsValues = z.infer<typeof actionsSchema>;
+import {
+  Control,
+  Controller,
+  useFieldArray,
+  useFormContext,
+} from "react-hook-form";
 
 type FeatureArrayName =
   | "traits"
@@ -60,27 +35,8 @@ type DescriptionName =
   | "legendary_description"
   | "mythic_description";
 
-const defaultActions: ActionsValues = {
-  traits: [],
-  actions: [],
-  reactions: [],
-  bonus_actions: [],
-
-  has_lair: false,
-  lair_description: "",
-  lair_actions: [],
-
-  is_legendary: false,
-  legendary_description: "",
-  legendary_actions: [],
-
-  is_mythic: false,
-  mythic_description: "",
-  mythic_actions: [],
-};
-
 interface FeatureListProps {
-  control: Control<ActionsValues>;
+  control: Control<Monster>;
   name: FeatureArrayName;
   itemLabel: string;
   addLabel: string;
@@ -225,10 +181,7 @@ function FeatureList({
 }
 
 export const ActionsForm = () => {
-  const form = useForm({
-    resolver: zodResolver(actionsSchema),
-    defaultValues: defaultActions,
-  });
+  const form = useFormContext<Monster>();
   const hasLair = form.watch("has_lair");
   const isLegendary = form.watch("is_legendary");
   const isMythic = form.watch("is_mythic");

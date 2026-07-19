@@ -17,11 +17,10 @@ import {
 } from "@/components/ui/tooltip";
 import { SKILLS } from "@/lib/skills";
 import { calculateStatBonus, cn } from "@/lib/utils";
-import { abilityScoresSchema } from "@/schema/createCreatureSchema";
+import { abilityScoresSchema, Monster } from "@/schema/monster-schema";
 import { CONDITIONS, DAMAGE_TYPES } from "@/types/types";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { Check, Info } from "lucide-react";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, useFormContext } from "react-hook-form";
 import { z } from "zod";
 
 type AbilityKey = keyof z.infer<typeof abilityScoresSchema>;
@@ -45,36 +44,6 @@ const SKILLS_BY_ABILITY = ABILITY_SCORES.map((ability) => ({
   skills: SKILLS.filter((skill) => skill.skill_modifier === ability),
 })).filter((group) => group.skills.length > 0);
 
-const defenseSchema = z.object({
-  saving_throws: z.object({
-    str: z.boolean().optional(),
-    dex: z.boolean().optional(),
-    con: z.boolean().optional(),
-    int: z.boolean().optional(),
-    wis: z.boolean().optional(),
-    cha: z.boolean().optional(),
-  }),
-  skills: z.record(z.string(), z.enum(["proficient", "expert"])).optional(),
-  damage_modifiers: z
-    .record(z.string(), z.enum(["resistant", "vulnerable", "immune"]))
-    .optional(),
-  condition_immunities: z.array(z.string()),
-  // Needed locally to compute the displayed modifiers.
-  ability_scores: abilityScoresSchema,
-  proficiency_bonus: z.coerce.number(),
-});
-
-type DefenseValues = z.infer<typeof defenseSchema>;
-
-const defaultDefense: DefenseValues = {
-  saving_throws: {},
-  skills: {},
-  damage_modifiers: {},
-  condition_immunities: [],
-  ability_scores: { str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10 },
-  proficiency_bonus: 2,
-};
-
 function formatModifier(mod: number): string {
   return mod >= 0 ? `+${mod}` : `${mod}`;
 }
@@ -94,10 +63,10 @@ function nextDamageState(state: DamageState): DamageState {
 }
 
 function setSkill(
-  current: NonNullable<DefenseValues["skills"]>,
+  current: NonNullable<Monster["skills"]>,
   name: string,
   next: SkillProficiency,
-): DefenseValues["skills"] {
+): Monster["skills"] {
   const updated = { ...current };
   if (next === "") {
     delete updated[name];
@@ -108,10 +77,10 @@ function setSkill(
 }
 
 function setDamage(
-  current: NonNullable<DefenseValues["damage_modifiers"]>,
+  current: NonNullable<Monster["damage_modifiers"]>,
   name: string,
   next: DamageState,
-): DefenseValues["damage_modifiers"] {
+): Monster["damage_modifiers"] {
   const updated = { ...current };
   if (next === "") {
     delete updated[name];
@@ -153,10 +122,7 @@ function CheckSquare({ checked }: { checked: boolean }) {
 }
 
 export const DefenseForm = () => {
-  const form = useForm({
-    resolver: zodResolver(defenseSchema),
-    defaultValues: defaultDefense,
-  });
+  const form = useFormContext<Monster>();
   const scores = form.watch("ability_scores");
   const profBonus = form.watch("proficiency_bonus");
 

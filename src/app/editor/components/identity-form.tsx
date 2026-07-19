@@ -27,13 +27,9 @@ import {
 } from "@/components/ui/item";
 import { CREATURE_SIZES, CREATURE_TYPES } from "@/lib/constants";
 import { titleCase } from "@/lib/utils";
-import {
-  createCreatureSchema,
-  defaultCreature,
-  Languages,
-} from "@/schema/createCreatureSchema";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Controller, useForm } from "react-hook-form";
+import { Languages } from "@/schema/createCreatureSchema";
+import { Monster } from "@/schema/monster-schema";
+import { Controller, useFormContext } from "react-hook-form";
 
 const SENSES = [
   { name: "senses.blindsight", label: "Blindsight" },
@@ -45,10 +41,7 @@ const SENSES = [
 const LANGUAGES = Object.values(Languages);
 
 export const IdentityForm = () => {
-  const form = useForm({
-    resolver: zodResolver(createCreatureSchema),
-    defaultValues: defaultCreature,
-  });
+  const form = useFormContext<Monster>();
   return (
     <FieldSet>
       <FieldLegend>Identity</FieldLegend>

@@ -21,16 +21,10 @@ import { Input } from "@/components/ui/input";
 import { Item, ItemContent, ItemMedia, ItemTitle } from "@/components/ui/item";
 import { CHALLENGE_RATINGS } from "@/lib/constants";
 import { calculateStatBonus } from "@/lib/utils";
-import {
-  abilityScoresSchema,
-  createCreatureSchema,
-  defaultCreature,
-} from "@/schema/createCreatureSchema";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Controller, useForm } from "react-hook-form";
-import { z } from "zod";
+import { abilityScoresSchema, Monster } from "@/schema/monster-schema";
+import { Controller, useFormContext } from "react-hook-form";
 
-type ChallengeRating = z.infer<typeof createCreatureSchema>["cr"];
+type ChallengeRating = Monster["cr"];
 
 const ABILITY_SCORES = abilityScoresSchema.keyof()._def.values;
 
@@ -43,10 +37,7 @@ const MOVEMENTS = [
 ] as const;
 
 export const CombatForm = () => {
-  const form = useForm({
-    resolver: zodResolver(createCreatureSchema),
-    defaultValues: defaultCreature,
-  });
+  const form = useFormContext<Monster>();
   const abilityScoreValues = form.watch("ability_scores");
 
   return (
