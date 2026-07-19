@@ -2,7 +2,11 @@
 
 import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
-import { defaultMonster, monsterSchema, Monster } from "@/schema/monster-schema";
+import {
+  defaultMonster,
+  monsterSchema,
+  Monster,
+} from "@/schema/monster-schema";
 import { MonsterStatblock } from "@/components/monster-statblock";
 import { monsterbrewDB } from "@/services/database";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -62,13 +66,20 @@ export const MonsterForm = () => {
 
   async function save() {
     const values = form.getValues();
-    if (!values.name || values.name.length === 0) {
+    if (!values.name || values.name.trim().length === 0) {
       toast.warning("Please provide a name for the creature");
       return;
     }
 
+    const parsed = monsterSchema.safeParse(values);
+    if (!parsed.success) {
+      form.trigger();
+      toast.warning("Please fix the highlighted fields before saving");
+      return;
+    }
+
     const id = creatureId ?? generateId();
-    const record = { ...values, id };
+    const record = { ...parsed.data, id };
 
     const db = await monsterbrewDB();
     try {
