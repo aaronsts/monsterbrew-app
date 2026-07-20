@@ -1,0 +1,14 @@
+diff --git a/dist/CommitParser.js b/dist/CommitParser.js
+index 2447be2e4e16440568b1519d26ff716c6454329f..00518a389b91b6a9b85b0d37332d24264a1f42bc 100644
+--- a/dist/CommitParser.js
++++ b/dist/CommitParser.js
+@@ -74,6 +74,9 @@ export class CommitParser {
+     }
+     parseReferences(input) {
+         const { regexes } = this;
++        if (input == null) {
++            return [];
++        }
+         const regex = input.match(regexes.references)
+             ? regexes.references
+             : /()(.+)/gi;
