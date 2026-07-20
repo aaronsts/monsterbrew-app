@@ -19,8 +19,8 @@ export function MainNavigation() {
         <Link
           href="/"
           className={cn(
-            "transition-colors  hover:text-carrara-900/80",
-            pathname === "/" ? "text-calypso-500 " : "text-carrara-900"
+            "transition-colors  hover:text-secondary",
+            pathname === "/" ? "text-primary " : "text-foreground",
           )}
         >
           Home
@@ -28,8 +28,8 @@ export function MainNavigation() {
         <Link
           href="/editor"
           className={cn(
-            "transition-colors  hover:text-carrara-900/80",
-            pathname === "/editor" ? "text-calypso-500 " : "text-carrara-900"
+            "transition-colors  hover:text-secondary",
+            pathname === "/editor" ? "text-primary " : "text-foreground",
           )}
         >
           Editor
@@ -37,10 +37,8 @@ export function MainNavigation() {
         <Link
           href="/my-creatures"
           className={cn(
-            "transition-colors  hover:text-carrara-900/80",
-            pathname === "/my-creatures"
-              ? "text-calypso-500 "
-              : "text-carrara-900"
+            "transition-colors  hover:text-secondary",
+            pathname === "/my-creatures" ? "text-primary " : "text-foreground",
           )}
         >
           My Creatures

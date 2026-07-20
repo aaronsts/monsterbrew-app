@@ -108,20 +108,20 @@ export default function RootLayout({ children }: PropsWithChildren) {
           </main>
           <Toaster richColors position="bottom-right" />
           <footer className="max-w-8xl mx-auto pt-0 w-full">
-            <div className="bg-carrara-50 text-carrara-950 w-full flex justify-end items-center border p-2 px-6">
+            <div className="w-full flex justify-end items-center border p-2 px-6">
               <Link href="/changelog">
                 <Button variant="link" size="sm">
                   Changelog
                 </Button>
               </Link>
               <Link href="/privacy">
-                <Button variant="link" size="sm">
+                <Button variant="link" size="xs">
                   Privacy Policy
                 </Button>
               </Link>
               <div className="flex items-end">
                 <Link href="https://ko-fi.com/X8X11CCUAU" target="_blank">
-                  <Button variant="link" size="sm">
+                  <Button variant="link" size="xs">
                     <KofiLogo />
                     Buy me a Coffee
                   </Button>

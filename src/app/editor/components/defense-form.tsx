@@ -197,7 +197,7 @@ export const DefenseForm = () => {
             return (
               <FieldGroup>
                 <FieldLabel className="-mb-1">Skills</FieldLabel>
-                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-5">
+                <div className="grid grid-cols-2 gap-3 sm:grid-cols-2 lg:grid-cols-3">
                   {SKILLS_BY_ABILITY.map(({ ability, label, skills }) => (
                     <div key={ability} className="space-y-px">
                       <p className="pt-1.5 pb-0.5 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">

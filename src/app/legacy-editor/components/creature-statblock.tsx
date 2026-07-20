@@ -1,6 +1,6 @@
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { createCreatureSchema } from "@/schema/createCreatureSchema";
-import { useFormContext } from "react-hook-form";
+import { useFormContext, useWatch } from "react-hook-form";
 import { z } from "zod";
 import { AbilityScores } from "./statblock/ability-scores";
 import { Actions } from "./statblock/actions";
@@ -17,8 +17,8 @@ function CreatureStatblock({
 }: {
   pdfRef: RefObject<HTMLDivElement | null>;
 }) {
-  const { watch } = useFormContext<z.infer<typeof createCreatureSchema>>();
-  const creature = watch();
+  const { control } = useFormContext<z.infer<typeof createCreatureSchema>>();
+  const creature = useWatch({ control });
 
   return (
     <Card className="h-fit" ref={pdfRef}>
