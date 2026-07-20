@@ -168,15 +168,17 @@ export const CombatForm = () => {
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
               <FieldLabel htmlFor="form-rhf-input-hit-dice">
-                HP Formula
+                Hit Dice
               </FieldLabel>
               <Input
                 {...field}
                 id="form-rhf-input-hit-dice"
                 aria-invalid={fieldState.invalid}
-                placeholder="ex. 17d12 + 85"
+                placeholder="ex. 21"
               />
-              <FieldDescription>Dice notation used to roll HP</FieldDescription>
+              <FieldDescription>
+                Number of dice; size sets the die, CON the bonus
+              </FieldDescription>
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
           )}

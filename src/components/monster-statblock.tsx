@@ -45,7 +45,7 @@ function FeatureSection({
 }
 
 export function MonsterStatblock({ creature }: { creature: Monster }) {
-  const pb = creature.proficiency_bonus || 0;
+  const pb = creature.cr.proficiency_bonus || 0;
 
   const medianHP = calculateHitPoints(
     creature.hit_dice,

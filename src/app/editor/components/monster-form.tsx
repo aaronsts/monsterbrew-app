@@ -8,6 +8,7 @@ import {
   Monster,
 } from "@/schema/monster-schema";
 import { MonsterStatblock } from "@/components/monster-statblock";
+import { calculateStatBonus, generateId } from "@/lib/utils";
 import { monsterbrewDB } from "@/services/database";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useSearchParams, useRouter } from "next/navigation";
@@ -18,10 +19,6 @@ import { IdentityForm } from "./identity-form";
 import { CombatForm } from "./combat-form";
 import { DefenseForm } from "./defense-form";
 import { ActionsForm } from "./actions-form";
-
-function generateId(): string {
-  return `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
-}
 
 export const MonsterForm = () => {
   const params = useSearchParams();
@@ -63,6 +60,24 @@ export const MonsterForm = () => {
     loadMonster();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const wis = form.watch("ability_scores.wis");
+  const skills = form.watch("skills");
+  const proficiencyBonus = form.watch("cr.proficiency_bonus");
+  const customPassivePerception = form.watch("custom_passive_perception");
+
+  useEffect(() => {
+    if (customPassivePerception) return;
+    let perception = calculateStatBonus(wis);
+    const perceptionProficiency = skills?.perception;
+    if (perceptionProficiency) {
+      perception +=
+        perceptionProficiency === "expert"
+          ? proficiencyBonus * 2
+          : proficiencyBonus;
+    }
+    form.setValue("passive_perception", 10 + perception);
+  }, [wis, skills, proficiencyBonus, customPassivePerception, form]);
 
   async function save() {
     const values = form.getValues();

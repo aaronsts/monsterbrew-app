@@ -86,7 +86,6 @@ export const monsterSchema = z.object({
   nonmagical_attack_immunity: z.boolean().optional(),
   nonmagical_attack_resistance: z.boolean().optional(),
   condition_immunities: z.array(z.string()),
-  proficiency_bonus: z.coerce.number(),
 
   // Actions
   traits: z.array(featureSchema),
@@ -168,7 +167,6 @@ export const defaultMonster: Monster = {
   nonmagical_attack_immunity: false,
   nonmagical_attack_resistance: false,
   condition_immunities: [],
-  proficiency_bonus: 2,
 
   // Actions
   traits: [],

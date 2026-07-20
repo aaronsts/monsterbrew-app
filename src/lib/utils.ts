@@ -49,9 +49,15 @@ export function calculateHitPoints(
   const foundSize = CREATURE_SIZES.find((s) => size === s.value);
   const hit_dice = foundSize?.hit_dice || 4;
   const modifier = calculateStatBonus(constitution);
-  const extraHP = modifier * parseInt(amount);
-  const hp = parseInt(amount) + Math.floor(hit_dice * parseInt(amount));
+  const extraHP = modifier * Number.parseInt(amount);
+  const hp =
+    Number.parseInt(amount) + Math.floor(hit_dice * Number.parseInt(amount));
   const medianHp = Math.floor(hp / 2 + extraHP);
   if (Number.isNaN(medianHp)) return "";
-  return `${medianHp} (${amount}d${hit_dice} + ${extraHP})`;
+
+  return `${medianHp} (${Number.parseInt(amount)}d${hit_dice} + ${extraHP})`;
+}
+
+export function generateId(): string {
+  return `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
 }

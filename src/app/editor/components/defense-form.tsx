@@ -123,8 +123,9 @@ function CheckSquare({ checked }: { checked: boolean }) {
 
 export const DefenseForm = () => {
   const form = useFormContext<Monster>();
+
   const scores = form.watch("ability_scores");
-  const profBonus = form.watch("proficiency_bonus");
+  const profBonus = form.watch("cr.proficiency_bonus");
 
   return (
     <TooltipProvider>
