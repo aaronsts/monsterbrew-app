@@ -1,0 +1,115 @@
+{
+  "Source": "5e 2024 Rules",
+  "Type": "Huge Dragon, chaotic evil",
+  "HP": {
+    "Value": 195,
+    "Notes": "(17d12 + 85)"
+  },
+  "AC": {
+    "Value": 19,
+    "Notes": "(natural armor)"
+  },
+  "InitiativeModifier": 10,
+  "InitiativeAdvantage": false,
+  "Speed": ["walk 40 feet", "swim 40 feet", "fly 80 feet"],
+  "Abilities": {
+    "Str": 23,
+    "Dex": 14,
+    "Con": 21,
+    "Int": 14,
+    "Wis": 13,
+    "Cha": 19
+  },
+  "DamageVulnerabilities": [],
+  "DamageResistances": [],
+  "DamageImmunities": ["Acid"],
+  "ConditionImmunities": [],
+  "Saves": [
+    {
+      "Name": "Strength",
+      "Modifier": 6
+    },
+    {
+      "Name": "Dexterity",
+      "Modifier": 7
+    },
+    {
+      "Name": "Constitution",
+      "Modifier": 5
+    },
+    {
+      "Name": "Intelligence",
+      "Modifier": 2
+    },
+    {
+      "Name": "Wisdom",
+      "Modifier": 6
+    },
+    {
+      "Name": "Charisma",
+      "Modifier": 4
+    }
+  ],
+  "Skills": [
+    {
+      "Name": "Perception",
+      "Modifier": 11
+    },
+    {
+      "Name": "Stealth",
+      "Modifier": 7
+    }
+  ],
+  "Senses": ["darkvision 120 ft.", "blindsight 60 ft."],
+  "Languages": ["Common", "Draconic"],
+  "Challenge": "14",
+  "Traits": [
+    {
+      "Name": "Amphibious",
+      "Content": "The dragon can breathe air and water."
+    },
+    {
+      "Name": "Legendary Resistance (3/Day, or 4/Day in Lair)",
+      "Content": "If the dragon fails a saving throw, it can choose to succeed instead."
+    }
+  ],
+  "Actions": [
+    {
+      "Name": "Acid Breath",
+      "Content": "Dexterity Saving Throw: DC 18, each creature in a 60-foot-long, 5-foot-wide Line. Failure: 54 (12d8) Acid damage. Success: Half damage."
+    },
+    {
+      "Name": "Multiattack",
+      "Content": "The dragon makes three Rend attacks. It can replace one attack with a use of Spellcasting to cast Acid Arrow (level 3 version)."
+    },
+    {
+      "Name": "Rend",
+      "Content": "Melee Attack Roll: +11, reach 10 ft. 13 (2d6 + 6) Slashing damage plus 4 (1d8) Acid damage."
+    },
+    {
+      "Name": "Spellcasting",
+      "Content": "The dragon casts one of the following spells, requiring no Material components and using Charisma as the spellcasting ability (spell save DC 17, +9 to hit with spell attacks):\n\n- **At Will:** Detect Magic, Fear, Acid Arrow\n- **1/Day Each:** Speak with Dead, Vitriolic Sphere"
+    }
+  ],
+  "BonusActions": [],
+  "Reactions": [],
+  "LegendaryActions": [
+    {
+      "Name": "Cloud of Insects",
+      "Content": "Dexterity Saving Throw: DC 17, one creature the dragon can see within 120 feet. Failure: 22 (4d10) Poison damage, and the target has Disadvantage on saving throws to maintain Concentration until the end of its next turn. Failure or Success: The dragon can't take this action again until the start of its next turn."
+    },
+    {
+      "Name": "Frightful Presence",
+      "Content": "The dragon uses Spellcasting to cast Fear. The dragon can't take this action again until the start of its next turn."
+    },
+    {
+      "Name": "Pounce",
+      "Content": "The dragon can move up to half its Speed, and it makes one Rend attack."
+    }
+  ],
+  "MythicActions": [],
+  "Description": "",
+  "Player": "",
+  "Version": "3.16.3",
+  "ImageURL": ""
+}
