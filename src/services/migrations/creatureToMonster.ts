@@ -83,7 +83,6 @@ export function creatureToMonster(creature: LegacyCreature): StoredMonster {
     nonmagical_attack_immunity: creature.nonmagical_attack_immunity,
     nonmagical_attack_resistance: creature.nonmagical_attack_resistance,
     condition_immunities: creature.condition_immunities ?? [],
-    proficiency_bonus: creature.cr.proficiency_bonus,
 
     // Actions
     traits: creature.traits ?? [],

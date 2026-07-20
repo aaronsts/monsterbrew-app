@@ -3,7 +3,10 @@ import {
   creatureToMonster,
   StoredMonster,
 } from "@/services/migrations/creatureToMonster";
-import { createCreatureSchema, defaultCreature } from "@/schema/createCreatureSchema";
+import {
+  createCreatureSchema,
+  defaultCreature,
+} from "@/schema/createCreatureSchema";
 import { monsterSchema } from "@/schema/monster-schema";
 import { z } from "zod";
 
@@ -124,13 +127,6 @@ describe("creatureToMonster", () => {
       necrotic: "immune",
       fire: "immune", // present in all three -> immune wins
     });
-  });
-
-  it("copies proficiency_bonus from cr.proficiency_bonus to the top level", () => {
-    const source = legacy();
-    source.cr = { ...source.cr, proficiency_bonus: 6 };
-
-    expect(creatureToMonster(source).proficiency_bonus).toBe(6);
   });
 
   it("defaults the new-only fields that have no legacy source", () => {
