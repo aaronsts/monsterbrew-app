@@ -42,7 +42,7 @@ export function MainNavigation() {
             pathname === "/my-creatures" ? "text-primary " : "text-foreground",
           )}
         >
-          My Creatures
+          Library
         </Link>
         <ThemeToggle className="ml-2" />
       </nav>
