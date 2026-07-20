@@ -3,7 +3,7 @@ import { from5ETools } from "@/services/converters/fiveETools";
 import { defaultCreature } from "@/schema/createCreatureSchema";
 import { CHALLENGE_RATINGS } from "@/lib/constants";
 import { z } from "zod";
-import { fiveECreatureSchema } from "@/types/fiveETools";
+import { fiveECreatureSchema } from "@/types/5e-tools";
 
 // Mock the toast function
 vi.mock("sonner", () => ({

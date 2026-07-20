@@ -4,7 +4,7 @@ import {
   defaultCreature,
   Languages,
 } from "@/schema/createCreatureSchema";
-import { fiveECreatureSchema } from "@/types/fiveETools";
+import { fiveECreatureSchema } from "@/types/5e-tools";
 import { toast } from "sonner";
 import { z } from "zod";
 

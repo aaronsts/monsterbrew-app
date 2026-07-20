@@ -1,8 +1,9 @@
 import { z } from "zod";
 import { Monster } from "@/schema/monster-schema";
-import { fiveECreatureSchema } from "@/types/fiveETools";
+import { fiveECreatureSchema } from "@/types/5e-tools";
 import {
   findChallengeRating,
+  parseOrThrow,
   parseSenses,
   toDamageModifiers,
   toLanguages,
@@ -75,7 +76,7 @@ const ALIGNMENT_MAP: Record<string, string> = {
 
 /** Parse and convert raw 5eTools JSON into the canonical `Monster` shape. */
 export function from5eTools(raw: unknown): Monster {
-  const source = fiveEToolsCreature.parse(raw);
+  const source = parseOrThrow(fiveEToolsCreature, raw, "5eTools");
   const cr = findChallengeRating(extractCr(source.cr));
 
   return {

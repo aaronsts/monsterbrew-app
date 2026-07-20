@@ -1,7 +1,34 @@
+import { z } from "zod";
 import { abilityScoresSchema, Monster } from "@/schema/monster-schema";
 import { CHALLENGE_RATINGS } from "@/lib/constants";
 import { SKILLS } from "@/lib/skills";
 import { partitionLanguages } from "@/lib/utils";
+
+/**
+ * Validate `raw` against a source-format schema, returning the parsed value or
+ * throwing a concise, human-readable error naming the offending fields (so the
+ * import dialog can surface it in a toast instead of a raw ZodError dump).
+ */
+export function parseOrThrow<S extends z.ZodTypeAny>(
+  schema: S,
+  raw: unknown,
+  format: string,
+): z.infer<S> {
+  const result = schema.safeParse(raw);
+  if (!result.success) {
+    const fields = [
+      ...new Set(
+        result.error.issues.map((issue) => issue.path[0]).filter(Boolean),
+      ),
+    ];
+    throw new Error(
+      `Not a valid ${format} creature${
+        fields.length ? ` (check: ${fields.join(", ")})` : ""
+      }`,
+    );
+  }
+  return result.data;
+}
 
 export const ABILITY_KEYS = abilityScoresSchema.keyof().options;
 export type AbilityKey = (typeof ABILITY_KEYS)[number];

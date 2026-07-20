@@ -1,7 +1,9 @@
 import { Monster } from "@/schema/monster-schema";
 import { SKILLS } from "@/lib/skills";
+import { improvedInitiativeSchema } from "@/types/improved-initiative";
 import {
   findChallengeRating,
+  parseOrThrow,
   parsePassivePerception,
   parseSenses,
   toDamageModifiers,
@@ -10,8 +12,6 @@ import {
   toSkills,
   SkillEntry,
 } from "./monster-mappers";
-
-type Source = typeof ImprovedInitiativeCreature;
 
 const SKILL_NAME_SET = new Set<string>(SKILLS.map((s) => s.skill_name));
 
@@ -25,7 +25,12 @@ function toFeatures(
 }
 
 /** Convert an Improved Initiative export into the canonical `Monster` shape. */
-export function fromImprovedInitiative(source: Source): Monster {
+export function fromImprovedInitiative(raw: unknown): Monster {
+  const source = parseOrThrow(
+    improvedInitiativeSchema,
+    raw,
+    "Improved Initiative",
+  );
   const cr = findChallengeRating(source.Challenge);
 
   // "Speed": ["walk 40 ft.", "fly 80 ft."] -> movement object.

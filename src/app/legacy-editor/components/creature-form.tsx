@@ -42,6 +42,7 @@ import { createCreatureSchema } from "@/schema/createCreatureSchema";
 import { z } from "zod";
 import { ImportDialog } from "@/components/import-dialog";
 import { toImprovedInitiative } from "@/services/converters/improvedInitiative";
+import { ImprovedInitiativeCreature } from "@/types/improved-initiative";
 import { useReactToPrint } from "react-to-print";
 import { RefObject, useEffect, useState } from "react";
 import { SaveDialog } from "@/components/save-dialog";
@@ -67,7 +68,7 @@ function CreatureForm({
 
   const reactToPrintFn = useReactToPrint({ contentRef: pdfRef });
 
-  const exportData = (jsonOutput: typeof ImprovedInitiativeCreature) => {
+  const exportData = (jsonOutput: ImprovedInitiativeCreature) => {
     const jsonString = `data:text/json;chatset=utf-8,${encodeURIComponent(
       JSON.stringify(jsonOutput),
     )}`;

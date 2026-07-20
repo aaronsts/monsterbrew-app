@@ -1,8 +1,9 @@
 import { Monster } from "@/schema/monster-schema";
-import { TetraCubeCreature } from "@/types/tetraCube";
+import { tetraCubeSchema } from "@/types/tetra-cube";
 import { calculateStatBonus } from "@/lib/utils";
 import {
   findChallengeRating,
+  parseOrThrow,
   toDamageModifiers,
   toLanguages,
   toSavingThrows,
@@ -16,7 +17,8 @@ function toFeatures(
 }
 
 /** Convert a TetraCube export into the canonical `Monster` shape. */
-export function fromTetraCube(source: TetraCubeCreature): Monster {
+export function fromTetraCube(raw: unknown): Monster {
+  const source = parseOrThrow(tetraCubeSchema, raw, "TetraCube");
   const cr = findChallengeRating(source.customCr || source.cr);
 
   const perceptionSkill = source.skills.find((s) => s.name === "perception");

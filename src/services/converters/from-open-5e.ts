@@ -1,8 +1,9 @@
 import { Monster } from "@/schema/monster-schema";
-import { Open5eCreature } from "@/types/open5e";
+import { open5eSchema, Open5eCreature } from "@/types/open-5e";
 import { calculateStatBonus } from "@/lib/utils";
 import {
   findChallengeRating,
+  parseOrThrow,
   parsePassivePerception,
   parseSenses,
   toDamageModifiers,
@@ -27,7 +28,8 @@ function splitList(value: string): string[] {
 }
 
 /** Convert an Open5e (v1) creature into the canonical `Monster` shape. */
-export function fromOpen5e(source: Open5eCreature): Monster {
+export function fromOpen5e(raw: unknown): Monster {
+  const source = parseOrThrow(open5eSchema, raw, "Open5e");
   const cr = findChallengeRating(source.cr);
 
   const savingThrows: Array<string | null> = [
