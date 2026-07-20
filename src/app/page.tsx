@@ -38,12 +38,12 @@ export default function Home() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start pt-4">
             <Link href="/editor">
-              <Button variant="filled" color="carrara">
+              <Button variant="default">
                 Start Creating <ArrowRight />
               </Button>
             </Link>
             <Link href="/my-creatures">
-              <Button variant="light" color="carrara">
+              <Button variant="secondary">
                 View My Creatures
               </Button>
             </Link>
@@ -153,7 +153,7 @@ export default function Home() {
       <section className="py-16 bg-carrara-300 text-carrara-950 rounded-xl p-8 text-center">
         <h2>Ready to Create Your First Creature?</h2>
         <Link href="/editor">
-          <Button size="lg" variant="filled" color="stromboli">
+          <Button size="lg" variant="default">
             Start Creating <ArrowRight className="h-5 w-5" />
           </Button>
         </Link>

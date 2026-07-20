@@ -90,6 +90,7 @@ export function fromImprovedInitiative(
     name: "Imrpoved Initiative Creature",
     size: basicInfo[0].split(" ")[0].toLowerCase(),
     type: basicInfo[0].split(" ")[1].toLowerCase(),
+    sub_type: "",
     alignment: basicInfo[1],
 
     armor_class: source.AC.Value,

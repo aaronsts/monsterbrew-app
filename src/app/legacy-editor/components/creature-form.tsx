@@ -13,8 +13,6 @@ import MovementForm from "./form/movements-form";
 import SensesForm from "./form/senses-form";
 import SavingThrowsForm from "./form/saving-throws-form";
 import LanguagesForm from "./form/languages-form";
-import SkillBonusForm from "./form/skill-bonus-form";
-import DamageTypesForm from "./form/damage-types-form";
 import {
   Accordion,
   AccordionContent,
@@ -25,7 +23,6 @@ import { GeneralInfoForm } from "./form/general-info-form";
 import { ActionsForm } from "./form/actions-form";
 import { Button } from "@/components/ui/button";
 import { ReactionsForm } from "./form/reactions-form";
-import { TraitsForm } from "./form/traits-form";
 import { LegendaryActionsForm } from "./form/legendary-actions-form";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
@@ -50,7 +47,6 @@ import { RefObject, useEffect, useState } from "react";
 import { SaveDialog } from "@/components/save-dialog";
 import { EllipsisVertical, RotateCcw } from "lucide-react";
 import { calculateStatBonus } from "@/lib/utils";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { MythicActionsForm } from "./form/mythic-actions.form";
 
 function CreatureForm({

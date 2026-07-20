@@ -20,6 +20,7 @@ export function from5ETools(
       name: source.name || "",
       size: convertSize(source.size),
       type: extractType(source.type),
+      sub_type: "",
       alignment: convertAlignment(source.alignment),
       armor_class: source.ac
         ? typeof source.ac[0] === "object"
@@ -210,17 +211,19 @@ function convertSkills(
   const result = [];
   for (const [skill, bonus] of Object.entries(skills)) {
     const isExpert = parseInt(bonus) >= proficiencyBonus * 2;
-    isExpert
-      ? result.push({
-          skill_name: skill,
-          skill_modifier: bonus,
-          is_expert: true,
-        })
-      : result.push({
-          skill_name: skill,
-          skill_modifier: bonus,
-          is_proficient: true,
-        });
+    if (isExpert) {
+      result.push({
+        skill_name: skill,
+        skill_modifier: bonus,
+        is_expert: true,
+      });
+    } else {
+      result.push({
+        skill_name: skill,
+        skill_modifier: bonus,
+        is_proficient: true,
+      });
+    }
   }
 
   return result;

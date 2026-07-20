@@ -1,4 +1,3 @@
-import { useReactToPrint } from "react-to-print";
 import { RefObject } from "react";
 
 export function PdfStatblock({

@@ -22,11 +22,9 @@ export function MobileNavigation() {
         <Link href="/" className="mr-4 flex w-fit items-center gap-2 lg:mr-6">
           <h1 className="text-xl font-bold">Monsterbrew</h1>
         </Link>
-        <SheetTrigger asChild>
-          <Button variant="transparant" size="icon">
-            <Menu />
-            <span className="sr-only">Toggle Menu</span>
-          </Button>
+        <SheetTrigger render={<Button variant="transparent" size="icon" />}>
+          <Menu />
+          <span className="sr-only">Toggle Menu</span>
         </SheetTrigger>
       </div>
       <SheetContent aria-describedby={undefined}>

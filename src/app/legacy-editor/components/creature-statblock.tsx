@@ -1,4 +1,4 @@
-import { Card, CardContent, CardTitle } from "@/components/ui/card";
+import { Card, CardTitle } from "@/components/ui/card";
 import { createCreatureSchema } from "@/schema/createCreatureSchema";
 import { useFormContext, useWatch } from "react-hook-form";
 import { z } from "zod";

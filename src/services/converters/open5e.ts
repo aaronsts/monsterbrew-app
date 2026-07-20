@@ -75,6 +75,7 @@ export function fromOpen5e(source: Open5eCreature): typeof defaultCreature {
     name: source.name,
     size: source.size.toLowerCase(),
     type: source.type.toLowerCase(),
+    sub_type: source.subtype,
     alignment: source.alignment,
 
     armor_class: source.armor_class,

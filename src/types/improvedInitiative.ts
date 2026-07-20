@@ -1,3 +1,7 @@
+// Declared in a global-script file (no imports/exports) so `typeof
+// ImprovedInitiativeCreature` is available ambiently in the II converter and the
+// legacy creature form without importing. Not referenced within this file.
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const ImprovedInitiativeCreature = {
   Source: "",
   Type: "",
@@ -81,6 +85,7 @@ const ImprovedInitiativeCreature = {
   ImageURL: "",
 };
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const example = {
   Source: "5e Core Rules",
   Type: "Gargantuan Dragon, chaotic evil ",

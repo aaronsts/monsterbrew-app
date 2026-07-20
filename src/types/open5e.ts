@@ -47,7 +47,7 @@ export interface Open5eCreature {
   legendary_desc: string;
   legendary_actions: LegendaryAction[];
   special_abilities: SpecialAbility[];
-  spell_list: any[]; // Could be more specific if needed
+  spell_list: unknown[]; // Could be more specific if needed
   page_no: number;
   environments: string[];
   img_main: string | null;
