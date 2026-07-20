@@ -18,6 +18,19 @@ type Release = {
 
 const releases: Release[] = [
   {
+    version: "3.1.0",
+    date: "2026-07-20",
+    title: "New foundation",
+    summary:
+      "Monsterbrew now runs on TanStack Start. It's a mostly under-the-hood change that sets up a faster, more resilient app: the marketing pages are server-rendered for better SEO, in-app navigation is snappier, and the footer has been rebuilt. Your saved creatures and the editor keep working exactly as before.",
+    changes: [
+      "Migrated the app from Next.js to TanStack Start (Vite) with server-side rendering",
+      "Server-rendered marketing pages (home, privacy, changelog) for better SEO",
+      "Faster client-side navigation between pages",
+      "Rebuilt site footer",
+    ],
+  },
+  {
     version: "3.0.0",
     date: "2026-07-20",
     badge: "Major",
