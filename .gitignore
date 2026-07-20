@@ -35,3 +35,14 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# agent skills / tooling
+/.claude
+/.agents
+/skills-lock.json
+
+# playwright
+/test-results
+/playwright-report
+/blob-report
+/playwright/.cache

@@ -3,7 +3,7 @@ import { from5ETools } from "@/services/converters/fiveETools";
 import { defaultCreature } from "@/schema/createCreatureSchema";
 import { CHALLENGE_RATINGS } from "@/lib/constants";
 import { z } from "zod";
-import { fiveECreatureSchema } from "@/types/fiveETools";
+import { fiveECreatureSchema } from "@/types/5e-tools";
 
 // Mock the toast function
 vi.mock("sonner", () => ({
@@ -42,7 +42,7 @@ describe("fiveETools converter", () => {
     expect(result.size).toBe("medium");
     expect(result.type).toBe("humanoid");
     expect(result.alignment).toBe("Neutral Good");
-    expect(result.armor_class).toBe("15");
+    expect(result.armor_class).toBe(15);
     expect(result.hit_points).toBe("45");
     expect(result.hit_dice).toBe("10");
     expect(result.movements.walk).toBe(30);
@@ -79,7 +79,7 @@ describe("fiveETools converter", () => {
     expect(result.type).toBe("monstrosity");
     expect(result.alignment).toBe("Chaotic Evil");
     expect(result.cr.proficiency_bonus).toBe(2);
-    expect(result.armor_class).toBe("16");
+    expect(result.armor_class).toBe(16);
   });
 
   it("should handle complex type with choose array", () => {

@@ -7,8 +7,11 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { monsterbrewDB } from "@/services/database";
-import React, { Suspense, useEffect, useState } from "react";
+import { downloadCreatureBackup } from "@/services/backup";
+import React, { useEffect, useState } from "react";
 import { StandaloneStatblock } from "@/components/standalone-statblock";
+import { MonsterStatblock } from "@/components/monster-statblock";
+import { Monster } from "@/schema/monster-schema";
 import { toast } from "sonner";
 import { createCreatureSchema } from "@/schema/createCreatureSchema";
 import { z } from "zod";
@@ -26,6 +29,7 @@ import {
   ChevronDown,
   ChevronRight,
   Copy,
+  Download,
   Edit,
   EllipsisVertical,
   Eye,
@@ -35,13 +39,16 @@ import { useRouter, useSearchParams } from "next/navigation";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Badge, BadgeVariants } from "@/components/ui/badge";
+import { Badge } from "@/components/ui/badge";
 import { calculateHitPoints } from "@/lib/utils";
+import { getCreatureFormat } from "@/services/migrations/creatureFormat";
+import { MigrateDialog } from "./migrate-dialog";
 
 type MonsterbrewCreature = z.infer<typeof createCreatureSchema>;
 
@@ -50,12 +57,26 @@ export default function MyCreatures() {
   const [myCreatures, setMyCreatures] = useState<MonsterbrewCreature[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [expandedRows, setExpandedRows] = useState<Record<string, boolean>>({});
+  const [migrateTarget, setMigrateTarget] =
+    useState<MonsterbrewCreature | null>(null);
   const router = useRouter();
   const toggleRowExpansion = (creatureId: string) => {
     setExpandedRows((prev) => ({
       ...prev,
       [creatureId]: !prev[creatureId],
     }));
+  };
+
+  const isLegacy = (creature: MonsterbrewCreature) =>
+    getCreatureFormat(creature) === "legacy";
+
+  // Editing a legacy creature prompts migration first; a new one opens directly.
+  const handleEdit = (creature: MonsterbrewCreature) => {
+    if (isLegacy(creature)) {
+      setMigrateTarget(creature);
+    } else {
+      loadCreatureIntoEditor(creature);
+    }
   };
 
   async function getLocalCreatures() {
@@ -65,12 +86,26 @@ export default function MyCreatures() {
       const creatures = await db.getAll("creatures");
       setMyCreatures(creatures);
       db.close();
-    } catch (err: any) {
-      toast.error(`Something went wrong: ${err.message}`);
+    } catch (err) {
+      toast.error(
+        `Something went wrong: ${err instanceof Error ? err.message : String(err)}`,
+      );
     } finally {
       setIsLoading(false);
     }
   }
+
+  // Function to back up all creatures to a JSON file on the user's computer
+  const backupCreatures = () => {
+    toast.promise(downloadCreatureBackup(), {
+      loading: "Preparing backup...",
+      success: (count) =>
+        count === 0
+          ? "No creatures to back up yet"
+          : `Backed up ${count} creature${count === 1 ? "" : "s"}`,
+      error: (err) => `Backup failed: ${err.message}`,
+    });
+  };
 
   useEffect(() => {
     getLocalCreatures();
@@ -140,8 +175,23 @@ export default function MyCreatures() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>My Creatures</CardTitle>
-        <CardDescription>Manage your locally saved creatures</CardDescription>
+        <div className="flex items-start justify-between gap-4">
+          <div className="space-y-1.5">
+            <CardTitle>My Creatures</CardTitle>
+            <CardDescription>
+              Manage your locally saved creatures
+            </CardDescription>
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={backupCreatures}
+            disabled={isLoading || myCreatures.length === 0}
+          >
+            <Download className="mr-2 h-4 w-4" />
+            Download backup
+          </Button>
+        </div>
       </CardHeader>
       <CardContent>
         {isLoading ? (
@@ -169,6 +219,7 @@ export default function MyCreatures() {
               {myCreatures.map((creature) => {
                 const creatureId = creature.id || "";
                 const isExpanded = expandedRows[creatureId];
+                const legacy = isLegacy(creature);
 
                 const medianHP = calculateHitPoints(
                   creature.hit_dice,
@@ -190,7 +241,7 @@ export default function MyCreatures() {
                       <TableCell className="font-medium">
                         <div className="flex items-center gap-2">
                           <Button
-                            variant="transparant"
+                            variant="ghost"
                             size="icon"
                             onClick={(e) => {
                               e.stopPropagation();
@@ -205,14 +256,15 @@ export default function MyCreatures() {
                             )}
                           </Button>
                           {creature.name || "Unknown Creature"}
+                          {legacy && (
+                            <Badge variant="outline" className="text-amber-400">
+                              Legacy
+                            </Badge>
+                          )}
                         </div>
                       </TableCell>
                       <TableCell>
-                        <Badge
-                          variant={
-                            creature.type.toLocaleLowerCase() as keyof BadgeVariants["variant"]
-                          }
-                        >
+                        <Badge variant="secondary">
                           {creature.type || "not selected"}
                         </Badge>
                       </TableCell>
@@ -224,43 +276,43 @@ export default function MyCreatures() {
                         onClick={(e) => e.stopPropagation()}
                       >
                         <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button
-                              variant="transparant"
-                              color="carrara"
-                              size="icon-sm"
-                            >
-                              <EllipsisVertical className="h-4 w-4" />
-                            </Button>
+                          <DropdownMenuTrigger
+                            render={<Button variant="ghost" size="icon-sm" />}
+                          >
+                            <EllipsisVertical className="h-4 w-4" />
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
-                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                            <DropdownMenuItem
-                              onClick={() => loadCreatureIntoEditor(creature)}
-                            >
-                              <Edit className="mr-2 h-4 w-4" />
-                              Edit in Editor
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                              onClick={() => toggleRowExpansion(creatureId)}
-                            >
-                              <Eye className="mr-2 h-4 w-4" />
-                              {isExpanded ? "Hide Details" : "View Details"}
-                            </DropdownMenuItem>
+                            <DropdownMenuGroup>
+                              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                              <DropdownMenuItem
+                                onClick={() => handleEdit(creature)}
+                              >
+                                <Edit className="mr-2 h-4 w-4" />
+                                Edit in Editor
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                onClick={() => toggleRowExpansion(creatureId)}
+                              >
+                                <Eye className="mr-2 h-4 w-4" />
+                                {isExpanded ? "Hide Details" : "View Details"}
+                              </DropdownMenuItem>
+                            </DropdownMenuGroup>
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem
-                              onClick={() => duplicateCreature(creature)}
-                            >
-                              <Copy className="mr-2 h-4 w-4" />
-                              Duplicate
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                              onClick={() => deleteCreature(creature)}
-                              className="text-destructive"
-                            >
-                              <Trash className="text-destructive mr-2 h-4 w-4" />
-                              Delete
-                            </DropdownMenuItem>
+                            <DropdownMenuGroup>
+                              <DropdownMenuItem
+                                onClick={() => duplicateCreature(creature)}
+                              >
+                                <Copy className="mr-2 h-4 w-4" />
+                                Duplicate
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                onClick={() => deleteCreature(creature)}
+                                className="text-destructive"
+                              >
+                                <Trash className="text-destructive mr-2 h-4 w-4" />
+                                Delete
+                              </DropdownMenuItem>
+                            </DropdownMenuGroup>
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </TableCell>
@@ -272,7 +324,13 @@ export default function MyCreatures() {
                           className="p-0 animate-in fade-in-10 duration-300"
                         >
                           <div className="p-4">
-                            <StandaloneStatblock creature={creature} />
+                            {legacy ? (
+                              <StandaloneStatblock creature={creature} />
+                            ) : (
+                              <MonsterStatblock
+                                creature={creature as unknown as Monster}
+                              />
+                            )}
                           </div>
                         </TableCell>
                       </TableRow>
@@ -284,6 +342,14 @@ export default function MyCreatures() {
           </Table>
         )}
       </CardContent>
+      <MigrateDialog
+        creature={migrateTarget}
+        open={migrateTarget !== null}
+        onOpenChange={(next) => {
+          if (!next) setMigrateTarget(null);
+        }}
+        onMigrated={getLocalCreatures}
+      />
     </Card>
   );
 }

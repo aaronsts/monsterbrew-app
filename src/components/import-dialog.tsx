@@ -8,12 +8,10 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "./ui/dialog";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { toast } from "sonner";
-import { ScrollArea } from "./ui/scroll-area";
 import { useFormContext } from "react-hook-form";
 import { z } from "zod";
 import { createCreatureSchema } from "@/schema/createCreatureSchema";
@@ -28,7 +26,6 @@ import { fromImprovedInitiative } from "@/services/converters/improvedInitiative
 import { fromTetacube } from "@/services/converters/tetraCube";
 import { ImportTypes } from "@/lib/constants";
 import { fromOpen5e } from "@/services/converters/open5e";
-import { Alert } from "./ui/alert";
 import { from5ETools } from "@/services/converters/fiveETools";
 
 interface ImportDialogProps {
@@ -55,9 +52,10 @@ export function ImportDialog({ open, onOpenChange }: ImportDialogProps) {
           e.target.value = "";
           throw Error("Only JSON files are supported");
         }
-      } catch (err: any) {
-        toast.error(err.message);
-        throw Error(err.message);
+      } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : String(err);
+        toast.error(message);
+        throw new Error(message);
       }
     };
     if (uploadedFile !== undefined) fileReader.readAsText(uploadedFile);
@@ -73,7 +71,7 @@ export function ImportDialog({ open, onOpenChange }: ImportDialogProps) {
         try {
           monsterbrewCreature = fromImprovedInitiative(parsedImport);
           formContext.reset(monsterbrewCreature);
-        } catch (error: unknown) {
+        } catch {
           toast.error("An Error occured during conversion");
         }
         onOpenChange(false);
@@ -125,7 +123,7 @@ export function ImportDialog({ open, onOpenChange }: ImportDialogProps) {
         </div>
 
         <DialogFooter className="items-end">
-          <Select onValueChange={(v) => setFormat(v)}>
+          <Select onValueChange={(v) => setFormat(v as string)}>
             <SelectTrigger className="w-fit">
               <SelectValue id="file-format" placeholder="Select a format" />
             </SelectTrigger>
@@ -137,17 +135,14 @@ export function ImportDialog({ open, onOpenChange }: ImportDialogProps) {
               ))}
             </SelectContent>
           </Select>
-          <DialogClose asChild>
-            <Button type="button" variant="outline" color="carrara">
-              Cancel
-            </Button>
+          <DialogClose render={<Button type="button" variant="outline" />}>
+            Cancel
           </DialogClose>
           <Button
             disabled={!format}
             onClick={handleImportCreature}
             type="submit"
-            variant="filled"
-            color="carrara"
+            variant="default"
           >
             Import
           </Button>

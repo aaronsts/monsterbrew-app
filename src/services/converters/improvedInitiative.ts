@@ -2,9 +2,10 @@ import { CHALLENGE_RATINGS } from "@/lib/constants";
 import { SKILLS } from "@/lib/skills";
 import { calculateStatBonus, titleCase } from "@/lib/utils";
 import { defaultCreature, Languages } from "@/schema/createCreatureSchema";
+import { ImprovedInitiativeCreature } from "@/types/improved-initiative";
 
 export function fromImprovedInitiative(
-  source: typeof ImprovedInitiativeCreature
+  source: ImprovedInitiativeCreature
 ): typeof defaultCreature {
   const conversionIssues = [];
   // Parse speed string into movement components
@@ -90,6 +91,7 @@ export function fromImprovedInitiative(
     name: "Imrpoved Initiative Creature",
     size: basicInfo[0].split(" ")[0].toLowerCase(),
     type: basicInfo[0].split(" ")[1].toLowerCase(),
+    sub_type: "",
     alignment: basicInfo[1],
 
     armor_class: source.AC.Value,
@@ -147,7 +149,7 @@ export function fromImprovedInitiative(
 
 export function toImprovedInitiative(
   source: typeof defaultCreature
-): typeof ImprovedInitiativeCreature {
+): ImprovedInitiativeCreature {
   // Convert movements to speed array
   const speedEntries = [];
   if (source.movements.walk > 0)

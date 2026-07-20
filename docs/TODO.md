@@ -1,0 +1,5 @@
+- [x] Upgrade tailwind to v4
+- [x] Add ability for custom options (language, hp, passive perception, ...)
+- [ ] Add back nonmagical options
+- [ ] Migrate from Nextjs to Tanstack
+- [ ] Migrate from RadixUI to BaseUI

@@ -1,0 +1,51 @@
+{
+  "Source": "5e Core Rules",
+  "Type": "Gargantuan Dragon, chaotic evil",
+  "HP": { "Value": 546, "Notes": "(28d20+252)" },
+  "AC": { "Value": 22, "Notes": "(natural armor)" },
+  "InitiativeModifier": 0,
+  "InitiativeAdvantage": false,
+  "Speed": ["walk 40 ft.", "climb 40 ft.", "fly 80 ft."],
+  "Abilities": { "Str": 30, "Dex": 10, "Con": 29, "Int": 18, "Wis": 15, "Cha": 23 },
+  "DamageVulnerabilities": [],
+  "DamageResistances": [],
+  "DamageImmunities": ["fire"],
+  "ConditionImmunities": [],
+  "Saves": [
+    { "Name": "Dex", "Modifier": 7 },
+    { "Name": "Con", "Modifier": 16 },
+    { "Name": "Wis", "Modifier": 9 },
+    { "Name": "Cha", "Modifier": 13 }
+  ],
+  "Skills": [
+    { "Name": "Perception", "Modifier": 16 },
+    { "Name": "Stealth", "Modifier": 7 }
+  ],
+  "Senses": ["blindsight 60 ft.", "darkvision 120 ft.", "passive Perception 26"],
+  "Languages": ["Common", "Draconic"],
+  "Challenge": "24",
+  "Traits": [
+    {
+      "Name": "Legendary Resistance (3/Day)",
+      "Content": "If the dragon fails a saving throw, it can choose to succeed instead."
+    }
+  ],
+  "Actions": [
+    {
+      "Name": "Bite",
+      "Content": "Melee Weapon Attack: +17 to hit, reach 15 ft., one target. Hit: 21 (2d10 + 10) piercing damage plus 14 (4d6) fire damage."
+    }
+  ],
+  "BonusActions": [],
+  "Reactions": [],
+  "LegendaryActions": [
+    { "Name": "Detect", "Content": "The dragon makes a Wisdom (Perception) check." },
+    { "Name": "Tail Attack", "Content": "The dragon makes a tail attack." },
+    { "Name": "Wing Attack (Costs 2 Actions)", "Content": "The dragon beats its wings." }
+  ],
+  "MythicActions": [],
+  "Description": "Ancient Red Dragon",
+  "Player": "",
+  "Version": "3.11.5",
+  "ImageURL": ""
+}

@@ -1,10 +1,10 @@
 import { Suspense } from "react";
-import Editor from "./components/editor";
+import { MonsterForm } from "./components/monster-form";
 
 export default async function CreatureEditor() {
-	return (
-		<Suspense>
-			<Editor />
-		</Suspense>
-	);
+  return (
+    <Suspense>
+      <MonsterForm />
+    </Suspense>
+  );
 }

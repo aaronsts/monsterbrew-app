@@ -9,7 +9,7 @@ export const jsonSchema: z.ZodSchema = z.lazy(() =>
       z.record(z.union([jsonSchema, z.undefined()])),
       z.array(jsonSchema),
     ])
-    .nullable()
+    .nullable(),
 );
 
 export const damageTypesSchema = z.union([
@@ -83,12 +83,13 @@ export const skillsBonusSchema = z.array(
     is_proficient: z.boolean().optional(),
     skill_modifier: z.string(),
     skill_name: z.string(),
-  })
+  }),
 );
 
 export const createCreatureSchema = z.object({
   name: z.string(),
   type: z.string(),
+  sub_type: z.string(),
   size: z.string(),
   alignment: z.string().optional(),
   armor_class: z.number(),
@@ -129,13 +130,13 @@ export const createCreatureSchema = z.object({
   is_legendary: z.boolean(),
   legendary_description: z.string(),
   legendary_actions: z.array(
-    z.object({ name: z.string(), description: z.string() })
+    z.object({ name: z.string(), description: z.string() }),
   ),
 
   is_mythic: z.boolean(),
   mythic_description: z.string(),
   mythic_actions: z.array(
-    z.object({ name: z.string(), description: z.string() })
+    z.object({ name: z.string(), description: z.string() }),
   ),
 
   nonmagical_attack_immunity: z.boolean().optional(),
@@ -149,6 +150,7 @@ export const defaultCreature: z.infer<typeof createCreatureSchema> = {
   name: "",
   size: "",
   type: "",
+  sub_type: "",
   alignment: "",
 
   armor_class: 0,

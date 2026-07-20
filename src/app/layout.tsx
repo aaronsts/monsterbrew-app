@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
 
-import "@fontsource/yatra-one";
 import { Toaster } from "@/components/ui/sonner";
 import Link from "next/link";
 import { KofiLogo } from "@/components/images/KofiLogo";
@@ -13,6 +12,18 @@ import { Providers } from "@/components/providers/providers";
 
 import { nippo } from "./fonts/nippo/nippoVariable";
 import { SiteHeader } from "@/components/ui/site-header";
+import { JetBrains_Mono, Oxanium } from "next/font/google";
+import { cn } from "@/lib/utils";
+
+const oxaniumHeading = Oxanium({
+  subsets: ["latin"],
+  variable: "--font-heading",
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-mono",
+});
 
 export const metadata: Metadata = {
   title: "Monsterbrew | D&D 5e Monster Creator & Homebrew Tool",
@@ -70,7 +81,16 @@ export default function RootLayout({ children }: PropsWithChildren) {
 
   return (
     <Providers>
-      <html lang="en" className="h-dvh">
+      <html
+        lang="en"
+        suppressHydrationWarning
+        className={cn(
+          "h-dvh",
+          "font-mono",
+          jetbrainsMono.variable,
+          oxaniumHeading.variable,
+        )}
+      >
         <head>
           <Script
             id="structured-data"
@@ -89,20 +109,20 @@ export default function RootLayout({ children }: PropsWithChildren) {
           </main>
           <Toaster richColors position="bottom-right" />
           <footer className="max-w-8xl mx-auto pt-0 w-full">
-            <div className="bg-carrara-50 text-carrara-950 w-full flex justify-end items-center border p-2 px-6">
+            <div className="w-full flex justify-end items-center border p-2 px-6">
               <Link href="/changelog">
                 <Button variant="link" size="sm">
                   Changelog
                 </Button>
               </Link>
               <Link href="/privacy">
-                <Button variant="link" size="sm">
+                <Button variant="link" size="xs">
                   Privacy Policy
                 </Button>
               </Link>
               <div className="flex items-end">
                 <Link href="https://ko-fi.com/X8X11CCUAU" target="_blank">
-                  <Button variant="link" size="sm">
+                  <Button variant="link" size="xs">
                     <KofiLogo />
                     Buy me a Coffee
                   </Button>
@@ -112,7 +132,7 @@ export default function RootLayout({ children }: PropsWithChildren) {
                   target="_blank"
                   referrerPolicy="no-referrer"
                 >
-                  <Button size="icon" variant="transparant">
+                  <Button size="icon" variant="ghost">
                     <GithubLogo />
                   </Button>
                 </Link>

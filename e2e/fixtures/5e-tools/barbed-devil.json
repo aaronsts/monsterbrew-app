@@ -1,0 +1,33 @@
+{
+  "name": "Barbed Devil",
+  "source": "MM",
+  "page": 70,
+  "size": ["M"],
+  "type": "fiend",
+  "alignment": ["L", "E"],
+  "ac": [{ "ac": 15, "from": ["natural armor"] }],
+  "hp": { "average": 110, "formula": "13d8+52" },
+  "speed": { "walk": 30 },
+  "str": 16,
+  "dex": 17,
+  "con": 18,
+  "int": 12,
+  "wis": 14,
+  "cha": 14,
+  "save": { "str": "+6", "con": "+7", "wis": "+5", "cha": "+5" },
+  "skill": { "deception": "+5", "insight": "+5", "perception": "+8" },
+  "senses": ["darkvision 120 ft."],
+  "passive": 18,
+  "languages": ["Infernal", "telepathy 120 ft."],
+  "cr": "5",
+  "resist": ["cold"],
+  "immune": ["fire", "poison"],
+  "conditionImmune": ["poisoned"],
+  "trait": [
+    { "name": "Barbed Hide", "entries": ["At the start of each of its turns, the barbed devil deals 5 (1d10) piercing damage to any creature grappling it."] }
+  ],
+  "action": [
+    { "name": "Multiattack", "entries": ["The devil makes three melee attacks: one with its tail and two with its claws."] },
+    { "name": "Claw", "entries": ["Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 6 (1d6 + 3) piercing damage."] }
+  ]
+}

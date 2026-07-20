@@ -1,4 +1,4 @@
-import { calculateStatBonus, cn } from "@/lib/utils";
+import { calculateStatBonus } from "@/lib/utils";
 import { createCreatureSchema } from "@/schema/createCreatureSchema";
 import { useFormContext } from "react-hook-form";
 import Markdown from "react-markdown";
@@ -15,15 +15,14 @@ export function Description({
   title,
   description,
   show = true,
-  className,
   placeholder = "",
 }: DescriptionProps) {
-  if (!show) return null;
-
   const { watch } = useFormContext<z.infer<typeof createCreatureSchema>>();
   const name = watch("name");
   const abilityScores = watch("ability_scores");
   const cr = watch("cr");
+
+  if (!show) return null;
 
   const mappings = {
     "[MON]": name || "'creature'",

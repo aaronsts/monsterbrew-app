@@ -1,0 +1,104 @@
+{
+  "Source": "5e 2024 Rules",
+  "Type": "Medium Construct, neutral",
+  "HP": {
+    "Value": 127,
+    "Notes": "(15d8 + 60)"
+  },
+  "AC": {
+    "Value": 9,
+    "Notes": "(natural armor)"
+  },
+  "InitiativeModifier": 0,
+  "InitiativeAdvantage": false,
+  "Speed": ["walk 30 feet"],
+  "Abilities": {
+    "Str": 19,
+    "Dex": 9,
+    "Con": 18,
+    "Int": 6,
+    "Wis": 10,
+    "Cha": 5
+  },
+  "DamageVulnerabilities": [],
+  "DamageResistances": [],
+  "DamageImmunities": ["Lightning", "Poison"],
+  "ConditionImmunities": [
+    "Charmed",
+    "Exhaustion",
+    "Frightened",
+    "Paralyzed",
+    "Petrified",
+    "Poisoned"
+  ],
+  "Saves": [
+    {
+      "Name": "Strength",
+      "Modifier": 4
+    },
+    {
+      "Name": "Dexterity",
+      "Modifier": -1
+    },
+    {
+      "Name": "Constitution",
+      "Modifier": 4
+    },
+    {
+      "Name": "Intelligence",
+      "Modifier": -2
+    },
+    {
+      "Name": "Wisdom",
+      "Modifier": 0
+    },
+    {
+      "Name": "Charisma",
+      "Modifier": -3
+    }
+  ],
+  "Skills": [],
+  "Senses": ["darkvision 60 ft."],
+  "Languages": ["Understands Common plus one other language but can't speak"],
+  "Challenge": "5",
+  "Traits": [
+    {
+      "Name": "Aversion to Fire",
+      "Content": "If the golem takes Fire damage, it has Disadvantage on attack rolls and ability checks until the end of its next turn."
+    },
+    {
+      "Name": "Berserk",
+      "Content": "Whenever the golem starts its turn Bloodied, roll 1d6. On a 6, the golem goes berserk. On each of its turns while berserk, the golem attacks the nearest creature it can see. If no creature is near enough to move to and attack, the golem attacks an object. Once the golem goes berserk, it remains so until it is destroyed or it is no longer Bloodied. The golem's creator, if within 60 feet of the berserk golem, can try to calm it by taking an action to make a DC 15 Charisma (Persuasion) check; the golem must be able to hear its creator. If this check succeeds, the golem ceases being berserk until the start of its next turn, at which point it resumes rolling for the Berserk trait again if it is still Bloodied."
+    },
+    {
+      "Name": "Immutable Form",
+      "Content": "The golem can't shape-shift."
+    },
+    {
+      "Name": "Lightning Absorption",
+      "Content": "Whenever the golem is subjected to Lightning damage, it regains a number of Hit Points equal to the Lightning damage dealt."
+    },
+    {
+      "Name": "Magic Resistance",
+      "Content": "The golem has Advantage on saving throws against spells and other magical effects."
+    }
+  ],
+  "Actions": [
+    {
+      "Name": "Multiattack",
+      "Content": "The golem makes two Slam attacks."
+    },
+    {
+      "Name": "Slam",
+      "Content": "Melee Attack Roll: +7, reach 5 ft. 13 (2d8 + 4) Bludgeoning damage plus 4 (1d8) Lightning damage."
+    }
+  ],
+  "BonusActions": [],
+  "Reactions": [],
+  "LegendaryActions": [],
+  "MythicActions": [],
+  "Description": "",
+  "Player": "",
+  "Version": "3.16.3",
+  "ImageURL": ""
+}

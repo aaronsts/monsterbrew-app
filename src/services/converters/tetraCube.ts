@@ -1,6 +1,6 @@
 import { CHALLENGE_RATINGS } from "@/lib/constants";
 import { defaultCreature, Languages } from "@/schema/createCreatureSchema";
-import { TetraCubeCreature } from "@/types/tetraCube";
+import { TetraCubeCreature } from "@/types/tetra-cube";
 
 export function fromTetacube(
   source: TetraCubeCreature
@@ -44,6 +44,7 @@ export function fromTetacube(
     name: source.name,
     size: source.size,
     type: source.type.toLowerCase(),
+    sub_type: "",
     alignment: source.alignment,
 
     armor_class: parseInt(source.otherArmorDesc.split(" ")[0]), // Extract "22" from "22 (natural armor)"

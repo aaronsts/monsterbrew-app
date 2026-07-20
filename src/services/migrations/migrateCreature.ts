@@ -1,0 +1,31 @@
+import { createCreatureSchema } from "@/schema/createCreatureSchema";
+import { creatureToMonster, StoredMonster } from "./creatureToMonster";
+
+export type MigrateResult =
+  | { status: "ok"; creature: StoredMonster }
+  | { status: "error"; reason: string };
+
+function formatIssues(error: import("zod").ZodError): string {
+  return error.issues
+    .map((issue) => {
+      const path = issue.path.join(".") || "(root)";
+      return `${path}: ${issue.message}`;
+    })
+    .join("; ");
+}
+
+export function migrateCreature(record: unknown): MigrateResult {
+  const parsed = createCreatureSchema.safeParse(record);
+  if (!parsed.success) {
+    return { status: "error", reason: formatIssues(parsed.error) };
+  }
+
+  try {
+    return { status: "ok", creature: creatureToMonster(parsed.data) };
+  } catch (err) {
+    return {
+      status: "error",
+      reason: err instanceof Error ? err.message : String(err),
+    };
+  }
+}

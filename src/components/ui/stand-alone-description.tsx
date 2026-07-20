@@ -11,7 +11,6 @@ export function StandAloneDescription({
   title,
   description,
   show = true,
-  className,
   placeholder = "",
 }: DescriptionProps) {
   if (!show) return null;

@@ -1,7 +1,7 @@
 import { CHALLENGE_RATINGS } from "@/lib/constants";
 import { SKILLS } from "@/lib/skills";
 import { defaultCreature, Languages } from "@/schema/createCreatureSchema";
-import { Open5eCreature } from "@/types/open5e";
+import { Open5eCreature } from "@/types/open-5e";
 
 export function fromOpen5e(source: Open5eCreature): typeof defaultCreature {
   const conversionIssues = [];
@@ -75,6 +75,7 @@ export function fromOpen5e(source: Open5eCreature): typeof defaultCreature {
     name: source.name,
     size: source.size.toLowerCase(),
     type: source.type.toLowerCase(),
+    sub_type: source.subtype,
     alignment: source.alignment,
 
     armor_class: source.armor_class,

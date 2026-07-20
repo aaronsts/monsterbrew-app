@@ -1,10 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { createMarkdownPage } from "@/services/converters/markdown";
-import {
-  createCreatureSchema,
-  defaultCreature,
-} from "@/schema/createCreatureSchema";
-import { z } from "zod";
+import { defaultCreature } from "@/schema/createCreatureSchema";
 
 // Mock window.open
 const mockOpen = vi.fn();
