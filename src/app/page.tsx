@@ -1,162 +1,142 @@
-"use client";
-import Image from "next/image";
-import beholder from "../components/images/beholder-pixelart.svg";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import {
-  ArrowRight,
-  BookOpen,
-  Brain,
-  Dices,
-  FileEdit,
-  Layers,
-  Save,
-  Share2,
-  Wand2,
-} from "lucide-react";
+import { ArrowRight, FileText, HardDriveDownload, Library } from "lucide-react";
 import { FeatureCard } from "@/components/home/feature-card";
-import { UseCaseCard } from "@/components/home/use-case-card";
-import { StepCard } from "@/components/home/step-card";
+import { CornerBrackets } from "@/components/home/corner-brackets";
 
 export default function Home() {
   return (
-    <div className="w-full flex flex-col py-8 gap-16 px-6">
-      <section className="flex flex-col lg:flex-row items-center justify-between gap-8">
-        <div className="flex flex-col items-center gap-4 text-center lg:items-start lg:text-left">
-          <Badge variant="secondary" className="lg:mr-auto">
-            Free & Open Source
-          </Badge>
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight">
-            Create Epic D&D Creatures <br />
-            <span className="text-primary">In Minutes</span>
-          </h1>
-          <p className="text-lg text-muted-foreground max-w-3xl">
-            Monsterbrew is the ultimate tool for Dungeon Masters to create,
-            customize, and manage creatures for Dungeons & Dragons 5th Edition
-            campaigns.
+    <div className="w-full flex flex-col gap-24 py-8 px-6">
+      {/* Hero */}
+      <section className="relative flex flex-col items-center gap-6 px-4 py-20 text-center sm:px-8 sm:py-28">
+        {/* Masked grid backdrop */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 -z-10 opacity-25 [mask-image:radial-gradient(ellipse_60%_70%_at_50%_45%,#000,transparent)]"
+          style={{
+            backgroundImage:
+              "linear-gradient(to right, var(--border) 1px, transparent 1px), linear-gradient(to bottom, var(--border) 1px, transparent 1px)",
+            backgroundSize: "34px 34px",
+          }}
+        />
+        {/* Soft glow behind the headline */}
+
+        <CornerBrackets size="size-8" />
+
+        <h1 className="text-4xl font-bold tracking-tight md:text-6xl lg:text-7xl">
+          Build D&D monsters,
+          <br />
+          <span className="text-primary">In Minutes</span>
+        </h1>
+        <p className="max-w-2xl text-lg text-muted-foreground text-balance">
+          Monsterbrew is a statblock builder for D&D 5e. Start from scratch or
+          drop a statblock ready to customize into the editor.
+        </p>
+        <div className="flex flex-col gap-3 pt-2 sm:flex-row">
+          <Link href="/editor">
+            <Button size="lg" variant="default">
+              Start Brewing <ArrowRight />
+            </Button>
+          </Link>
+          <Link href="/my-creatures">
+            <Button size="lg" variant="outline">
+              View Library
+            </Button>
+          </Link>
+        </div>
+      </section>
+
+      {/* What is Monsterbrew */}
+      <section
+        className="relative overflow-hidden bg-accent ring-1 ring-foreground/10"
+        style={{ color: "color-mix(in srgb, var(--bg-base) 96%, white 4%)" }}
+      >
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 opacity-[0.07] [mask-image:radial-gradient(ellipse_75%_75%_at_50%_50%,#000,transparent)]"
+          style={{
+            backgroundImage:
+              "linear-gradient(to right, #fff 1px, transparent 1px), linear-gradient(to bottom, #fff 1px, transparent 1px)",
+            backgroundSize: "34px 34px",
+          }}
+        />
+        <div className="mx-auto max-w-5xl px-6 py-14 sm:px-12">
+          <p className="mb-8 flex items-center gap-2 text-xs font-medium tracking-widest text-primary uppercase">
+            <span aria-hidden className="size-1.5 bg-primary" />
+            What is Monsterbrew
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start pt-4">
-            <Link href="/editor">
-              <Button variant="default">
-                Start Creating <ArrowRight />
-              </Button>
-            </Link>
-            <Link href="/my-creatures">
-              <Button variant="secondary">
-                View My Creatures
-              </Button>
-            </Link>
+          <div className="grid gap-8 border-b border-white/15 pb-10 md:grid-cols-[1fr_1.15fr] md:gap-x-0">
+            <h2 className="mb-0 self-start md:pr-12">
+              A tool to make homebrewing feel like a breeze
+            </h2>
+            <div className="md:border-l md:border-white/15 md:pl-12">
+              <p className="text-lg opacity-80">
+                Enter a creature&apos;s abilities and we&apos;ll handles the
+                rest, modifiers, saving throws, passive scores, and HP all
+                update as you type. Import from tools you already use, and
+                export to well-known formats like Homebrewery or PDF when
+                you&apos;re done.
+              </p>
+            </div>
           </div>
         </div>
-
-        <div className="flex-1 flex justify-center mb-6 rounded-full p-4 animate-move">
-          <Image
-            src={beholder}
-            alt="Dungeons and Dragons Beholder looking down"
-            width={350}
-            height={350}
-            priority
-            className="drop-shadow-xl"
-          />
-        </div>
       </section>
 
-      <section>
-        <div className="text-center mb-8">
-          <h2 className="mb-4">Powerful Features for DMs</h2>
-          <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-            Everything you need to create balanced and exciting encounters for
-            your players
+      {/* Features */}
+      <section className="relative px-4 py-10 sm:px-8">
+        <CornerBrackets />
+        <div className="mb-10 text-center">
+          <p className="mb-3 flex items-center justify-center gap-2 text-xs font-medium tracking-widest text-primary uppercase">
+            <span aria-hidden className="size-1.5 bg-primary" />
+            Features
           </p>
+          <h2 className="mb-0">Everything you need to run the encounter</h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
           <FeatureCard
-            icon={<Wand2 className="h-10 w-10 text-primary" />}
-            title="Intuitive Creator"
-            description="Build creatures with an easy-to-use interface. No calculations to remember - just create!"
+            icon={<FileText />}
+            title="Statblock Creator"
+            description="A live editor that builds 5e-formatted statblocks as you type. Abilities, saves, and passive scores calculate themselves."
           />
           <FeatureCard
-            icon={<Dices className="h-10 w-10 text-primary" />}
-            title="CR Calculator"
-            description="Calculate Challenge Rating based on stats, ensuring balanced encounters."
-            badge="coming soon"
-          />
-          <FeatureCard
-            icon={<FileEdit className="h-10 w-10 text-primary" />}
-            title="Custom Statblocks"
-            description="Generate statblocks that match the new D&D formatting."
-          />
-          <FeatureCard
-            icon={<Save className="h-10 w-10 text-primary" />}
-            title="Local Storage"
-            description="All your creatures are saved locally - no account required."
-          />
-          <FeatureCard
-            icon={<Layers className="h-10 w-10 text-primary" />}
+            icon={<Library />}
             title="Creature Library"
-            description="Organize and manage your collection of custom creatures for easy access."
+            description="Save every creature to your personal library, then search, edit, duplicate, and export them whenever you need them."
           />
           <FeatureCard
-            icon={<Share2 className="h-10 w-10 text-primary" />}
-            title="Export Options"
-            description="Export your creatures as JSON or markdown to use in other tools."
+            icon={<HardDriveDownload />}
+            title="Locally Saved"
+            description="Everything lives in your browser — no account and no sign-up required."
           />
         </div>
       </section>
 
-      <section className="py-16 bg-carrara-950 text-carrara-50 rounded-xl p-8">
-        <h2 className="text-center">How Monsterbrew Works</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <StepCard
-            number="1"
-            title="Design Your Creature"
-            description="Enter basic stats, abilities, and special features using our intuitive form."
-          />
-          <StepCard
-            number="2"
-            title="Preview & Refine"
-            description="See it come to life with a real-time preview of the statblock."
-          />
-          <StepCard
-            number="3"
-            title="Save & Export"
-            description="Store your creature in your library and export it for your game sessions."
-          />
-        </div>
-      </section>
-
-      <section>
-        <div className="text-center mb-12">
-          <h2>Perfect for Every Campaign</h2>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            From one-shot adventures to epic campaigns, Monsterbrew helps DMs
-            create memorable creatures
+      {/* Closing CTA */}
+      <section className="relative overflow-hidden bg-primary p-10 text-center text-primary-foreground ring-1 ring-foreground/10 sm:p-16">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 opacity-15 [mask-image:radial-gradient(ellipse_70%_70%_at_50%_50%,#000,transparent)]"
+          style={{
+            backgroundImage:
+              "linear-gradient(to right, var(--primary-foreground) 1px, transparent 1px), linear-gradient(to bottom, var(--primary-foreground) 1px, transparent 1px)",
+            backgroundSize: "34px 34px",
+          }}
+        />
+        <div className="relative">
+          <h2 className="mb-3">Ready to brew your first monster?</h2>
+          <p className="mx-auto mb-8 max-w-xl text-primary-foreground/80">
+            Jump into the editor and start brewing!
           </p>
+          <Link href="/editor">
+            <Button
+              size="lg"
+              className="bg-accent text-accent-foreground hover:bg-accent/80"
+            >
+              Start Brewing <ArrowRight />
+            </Button>
+          </Link>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <UseCaseCard
-            title="Homebrew Campaigns"
-            description="Create unique creatures that fit perfectly into your custom world and lore."
-            icon={<Brain className="h-8 w-8 text-primary" />}
-          />
-          <UseCaseCard
-            title="Adventure Modules"
-            description="Modify existing creatures or create variants to surprise players who know the module."
-            icon={<BookOpen className="h-8 w-8 text-primary" />}
-          />
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-16 bg-carrara-300 text-carrara-950 rounded-xl p-8 text-center">
-        <h2>Ready to Create Your First Creature?</h2>
-        <Link href="/editor">
-          <Button size="lg" variant="default">
-            Start Creating <ArrowRight className="h-5 w-5" />
-          </Button>
-        </Link>
       </section>
     </div>
   );

@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <polygon
+    points="18.75,0 45.25,0 64,18.75 64,45.25 45.25,64 18.75,64 0,45.25 0,18.75"
+    fill="#4c0a18"
+  />
+  <path
+    d="M18 45 L18 19 L32 33 L46 19 L46 45"
+    fill="none"
+    stroke="#d59d61"
+    stroke-width="8"
+    stroke-linejoin="miter"
+    stroke-linecap="square"
+  />
+</svg>

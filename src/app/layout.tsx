@@ -4,7 +4,6 @@ import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import Link from "next/link";
 import { KofiLogo } from "@/components/images/KofiLogo";
-import { Button } from "@/components/ui/button";
 import { GithubLogo } from "@/components/images/GithubLogo";
 import Script from "next/script";
 import { PropsWithChildren } from "react";
@@ -108,34 +107,79 @@ export default function RootLayout({ children }: PropsWithChildren) {
             {children}
           </main>
           <Toaster richColors position="bottom-right" />
-          <footer className="max-w-8xl mx-auto pt-0 w-full">
-            <div className="w-full flex justify-end items-center border p-2 px-6">
-              <Link href="/changelog">
-                <Button variant="link" size="sm">
-                  Changelog
-                </Button>
-              </Link>
-              <Link href="/privacy">
-                <Button variant="link" size="xs">
-                  Privacy Policy
-                </Button>
-              </Link>
-              <div className="flex items-end">
-                <Link href="https://ko-fi.com/X8X11CCUAU" target="_blank">
-                  <Button variant="link" size="xs">
-                    <KofiLogo />
-                    Buy me a Coffee
-                  </Button>
+          <footer className="mt-16 w-full border-t border-border/60">
+            <div className="max-w-8xl mx-auto flex w-full flex-col gap-8 px-6 py-10 md:flex-row md:items-start md:justify-between">
+              {/* Brand */}
+              <div className="flex max-w-xs flex-col gap-3">
+                <Link href="/" className="text-lg font-bold tracking-tight">
+                  Monsterbrew
                 </Link>
+                <p className="text-sm text-muted-foreground text-balance">
+                  A free statblock builder for D&D 5e. Build, save, and export
+                  your homebrew creatures.
+                </p>
                 <Link
                   href="https://github.com/aaronsts/monsterbrew-app"
                   target="_blank"
                   referrerPolicy="no-referrer"
+                  className="flex w-fit items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
                 >
-                  <Button size="icon" variant="ghost">
-                    <GithubLogo />
-                  </Button>
+                  <GithubLogo />
                 </Link>
+              </div>
+
+              {/* Navigation */}
+              <nav className="flex flex-col gap-3">
+                <p className="text-xs font-medium tracking-widest text-primary uppercase">
+                  Navigation
+                </p>
+                <ul className="flex flex-col gap-2 text-sm">
+                  {[
+                    { href: "/editor", label: "Editor" },
+                    { href: "/my-creatures", label: "Library" },
+                    { href: "/changelog", label: "Changelog" },
+                    { href: "/privacy", label: "Privacy Policy" },
+                  ].map((item) => (
+                    <li key={item.href}>
+                      <Link
+                        href={item.href}
+                        className="text-muted-foreground transition-colors hover:text-foreground"
+                      >
+                        {item.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+
+              {/* Support */}
+              <nav className="flex flex-col gap-3">
+                <p className="text-xs font-medium tracking-widest text-primary uppercase">
+                  Support
+                </p>
+                <ul className="flex flex-col gap-2 text-sm">
+                  <li>
+                    <Link
+                      href="https://ko-fi.com/X8X11CCUAU"
+                      target="_blank"
+                      className="flex items-center gap-2 text-muted-foreground transition-colors hover:text-foreground"
+                    >
+                      <KofiLogo />
+                      Buy me a Coffee
+                    </Link>
+                  </li>
+                </ul>
+              </nav>
+            </div>
+
+            {/* Bottom bar */}
+            <div className="border-t border-border/60">
+              <div className="max-w-8xl mx-auto flex w-full flex-col items-center justify-between gap-2 px-6 py-4 text-xs text-muted-foreground sm:flex-row">
+                <p>© {new Date().getFullYear()} Monsterbrew</p>
+                <p>
+                  Not affiliated with Wizards of the Coast. Made for Dungeon
+                  Masters.
+                </p>
               </div>
             </div>
           </footer>

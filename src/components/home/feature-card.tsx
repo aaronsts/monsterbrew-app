@@ -20,7 +20,9 @@ export function FeatureCard({
         </Badge>
       )}
       <CardHeader>
-        <div className="[&_svg]:size-8">{icon}</div>
+        <div className="mb-1 flex size-11 items-center justify-center bg-accent/10 text-accent ring-1 ring-accent/25 [&_svg]:size-5">
+          {icon}
+        </div>
         <p>{title}</p>
       </CardHeader>
       <CardContent>
