@@ -4,6 +4,9 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+patchedDependencies:
+  conventional-commits-parser@6.1.0: eef6764abfc1810541cfd5b21708e164aac75660d891486681a37c5ad0ef3ab3
+
 importers:
 
   .:
@@ -6845,7 +6848,7 @@ snapshots:
       conventional-changelog-angular: 8.0.0
       conventional-changelog-writer: 8.0.1
       conventional-commits-filter: 5.0.0
-      conventional-commits-parser: 6.1.0
+      conventional-commits-parser: 6.1.0(patch_hash=eef6764abfc1810541cfd5b21708e164aac75660d891486681a37c5ad0ef3ab3)
       debug: 4.4.0
       import-from-esm: 2.0.0
       lodash-es: 4.18.1
@@ -6914,7 +6917,7 @@ snapshots:
       conventional-changelog-angular: 8.0.0
       conventional-changelog-writer: 8.0.1
       conventional-commits-filter: 5.0.0
-      conventional-commits-parser: 6.1.0
+      conventional-commits-parser: 6.1.0(patch_hash=eef6764abfc1810541cfd5b21708e164aac75660d891486681a37c5ad0ef3ab3)
       debug: 4.4.0
       get-stream: 7.0.1
       import-from-esm: 2.0.0
@@ -7794,7 +7797,7 @@ snapshots:
       meow: 12.1.1
       split2: 4.2.0
 
-  conventional-commits-parser@6.1.0:
+  conventional-commits-parser@6.1.0(patch_hash=eef6764abfc1810541cfd5b21708e164aac75660d891486681a37c5ad0ef3ab3):
     dependencies:
       meow: 13.2.0
 
