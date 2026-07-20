@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 import { cn } from "@/lib/utils";
+import { ThemeToggle } from "./theme-toggle";
 
 export function MainNavigation() {
   const pathname = usePathname();
@@ -43,6 +44,7 @@ export function MainNavigation() {
         >
           My Creatures
         </Link>
+        <ThemeToggle className="ml-2" />
       </nav>
     </div>
   );

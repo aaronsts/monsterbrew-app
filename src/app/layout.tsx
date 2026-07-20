@@ -83,6 +83,7 @@ export default function RootLayout({ children }: PropsWithChildren) {
     <Providers>
       <html
         lang="en"
+        suppressHydrationWarning
         className={cn(
           "h-dvh",
           "font-mono",

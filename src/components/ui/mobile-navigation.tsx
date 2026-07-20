@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "./button";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "./sheet";
 import { Menu } from "lucide-react";
+import { ThemeToggle } from "../theme-toggle";
 
 export function MobileNavigation() {
   const [open, setOpen] = React.useState(false);
@@ -22,10 +23,13 @@ export function MobileNavigation() {
         <Link href="/" className="mr-4 flex w-fit items-center gap-2 lg:mr-6">
           <h1 className="text-xl font-bold">Monsterbrew</h1>
         </Link>
-        <SheetTrigger render={<Button variant="transparent" size="icon" />}>
-          <Menu />
-          <span className="sr-only">Toggle Menu</span>
-        </SheetTrigger>
+        <div className="flex items-center gap-2">
+          <ThemeToggle />
+          <SheetTrigger render={<Button variant="transparent" size="icon" />}>
+            <Menu />
+            <span className="sr-only">Toggle Menu</span>
+          </SheetTrigger>
+        </div>
       </div>
       <SheetContent aria-describedby={undefined}>
         <SheetTitle></SheetTitle>

@@ -148,7 +148,7 @@ export const MonsterForm = () => {
             <DefenseForm />
             <ActionsForm />
           </form>
-          <div className="lg:sticky lg:top-30 lg:h-fit">
+          <div className="lg:sticky lg:top-30 lg:h-fit lg:max-h-[calc(100dvh-8.5rem)] lg:overflow-y-auto">
             <MonsterStatblock creature={preview} />
           </div>
         </div>

@@ -1,8 +1,14 @@
 "use client";
 
-import { Card, CardContent, CardTitle } from "@/components/ui/card";
+import { Fragment } from "react";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { StandAloneDescription as Description } from "@/components/ui/stand-alone-description";
-import { calculateHitPoints, calculateStatBonus, titleCase } from "@/lib/utils";
+import {
+  calculateHitPoints,
+  calculateStatBonus,
+  cn,
+  titleCase,
+} from "@/lib/utils";
 import { SKILLS } from "@/lib/skills";
 import { abilityScoresSchema, Monster } from "@/schema/monster-schema";
 
@@ -17,6 +23,62 @@ function formatMod(mod: number): string {
   return mod >= 0 ? `+${mod}` : `${mod}`;
 }
 
+/** Statblock divider bar, tinted to the theme accent and fading out to the right. */
+function TaperedRule({ thin = false }: { thin?: boolean }) {
+  return (
+    <div
+      className={cn(
+        "w-full bg-linear-to-r from-primary to-transparent",
+        thin ? "h-[2px]" : "h-1",
+      )}
+      aria-hidden
+    />
+  );
+}
+
+function SectionHeading({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="mb-2">
+      <h3 className="font-heading text-base font-semibold uppercase tracking-wide text-primary">
+        {children}
+      </h3>
+      <TaperedRule thin />
+    </div>
+  );
+}
+
+/** A single "**Label** value" line as used throughout the 5e 2024 header block. */
+function StatLine({
+  label,
+  value,
+  className,
+}: {
+  label: string;
+  value: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <p className={cn("whitespace-normal", className)}>
+      <span className="font-semibold text-foreground">{label} </span>
+      <span>{value}</span>
+    </p>
+  );
+}
+
+function TraitList({ features }: { features: Feature[] }) {
+  return (
+    <div className="flex flex-col gap-3">
+      {features.map((feature, i) => (
+        <Description
+          key={feature.name + i}
+          title={feature.name}
+          description={feature.description}
+        />
+      ))}
+    </div>
+  );
+}
+
 function FeatureSection({
   title,
   features,
@@ -29,23 +91,18 @@ function FeatureSection({
   if (features.length === 0) return null;
   return (
     <div className="flex flex-col gap-3">
-      <h3 className="border-b border-carrara-600">{title}</h3>
+      <SectionHeading>{title}</SectionHeading>
       {description && (
-        <p className="italic mb-2 whitespace-pre-wrap">{description}</p>
+        <p className="italic mb-1 whitespace-pre-wrap">{description}</p>
       )}
-      {features.map((feature, i) => (
-        <Description
-          key={feature.name + i}
-          title={feature.name}
-          description={feature.description}
-        />
-      ))}
+      <TraitList features={features} />
     </div>
   );
 }
 
 export function MonsterStatblock({ creature }: { creature: Monster }) {
   const pb = creature.cr.proficiency_bonus || 0;
+  const initMod = calculateStatBonus(creature.ability_scores.dex);
 
   const medianHP = calculateHitPoints(
     creature.hit_dice,
@@ -59,7 +116,9 @@ export function MonsterStatblock({ creature }: { creature: Monster }) {
   const movements: string[] = [];
   Object.entries(creature.movements).forEach(([key, value]) => {
     if (!value) return;
-    movements.push(key === "walk" ? `${value} ft.` : `${key} ${value} ft.`);
+    movements.push(
+      key === "walk" ? `${value} ft.` : `${titleCase(key)} ${value} ft.`,
+    );
   });
 
   const abilityScores = ABILITY_KEYS.map((key) => ({
@@ -67,6 +126,8 @@ export function MonsterStatblock({ creature }: { creature: Monster }) {
     label: key.toUpperCase(),
     value: creature.ability_scores[key],
   }));
+  // 5e 2024 lays the six abilities out as two groups of three side by side.
+  const abilityGroups = [abilityScores.slice(0, 3), abilityScores.slice(3, 6)];
 
   const skillSaves = Object.entries(creature.skills ?? {}).map(
     ([name, level]) => {
@@ -110,122 +171,145 @@ export function MonsterStatblock({ creature }: { creature: Monster }) {
   });
 
   return (
-    <Card className="h-fit">
-      <CardContent className="md:columns-2">
-        <div className="mb-4 border-b pb-2">
-          <CardTitle>{creature.name || "Example Creature"}</CardTitle>
-          <p className="capitalize italic font-medium text-carrara-600">
-            {creature.size || "Size"} {creature.type || "Type"},{" "}
-            {creature.alignment || "Alignment"}
-          </p>
-        </div>
-        <div className="mb-2">
-          <div className="flex gap-1.5">
-            <Description
-              title="AC"
-              description={creature.armor_class.toString()}
-              placeholder="10"
+    <Card className="h-fit gap-0 py-0 text-[13px]/relaxed">
+      {/* Name banner */}
+      <CardHeader className="pt-4">
+        <h2 className="mb-0 font-heading text-2xl leading-none font-bold tracking-wide text-primary">
+          {creature.name || "Example Creature"}
+        </h2>
+        <p className="mt-1 capitalize italic text-muted-foreground">
+          {creature.size || "Size"} {creature.type || "Type"},{" "}
+          {creature.alignment || "Alignment"}
+        </p>
+      </CardHeader>
+
+      <CardContent className="flex flex-col gap-2 pb-4">
+        <TaperedRule />
+
+        {/* Defenses & speed */}
+        <div>
+          <div className="flex flex-wrap gap-x-6">
+            <StatLine label="AC" value={creature.armor_class} />
+            <StatLine
+              label="Initiative"
+              value={`${formatMod(initMod)} (${10 + initMod})`}
             />
-            <Description
-              title="Initiative"
-              description={formatMod(
-                calculateStatBonus(creature.ability_scores.dex),
+          </div>
+          <StatLine label="HP" value={hp.toString() || "15 (2d8 + 6)"} />
+          <StatLine label="Speed" value={movements.join(", ") || "30 ft."} />
+        </div>
+
+        <TaperedRule />
+
+        {/* Ability scores — 5e 2024 two-group layout */}
+        <div className="grid grid-cols-2 py-1">
+          {abilityGroups.map((group, gi) => (
+            <div
+              key={gi}
+              className={cn(
+                "grid grid-cols-[1fr_auto_auto] items-center gap-x-3 gap-y-1",
+                gi === 1
+                  ? "border-l border-primary/20 pl-4"
+                  : "pr-4",
               )}
+            >
+              <span />
+              <span className="text-right font-heading text-[10px] font-semibold uppercase tracking-wide text-primary">
+                Mod
+              </span>
+              <span className="text-right font-heading text-[10px] font-semibold uppercase tracking-wide text-primary">
+                Save
+              </span>
+              {group.map((score) => {
+                const mod = calculateStatBonus(score.value);
+                const save =
+                  mod + (creature.saving_throws[score.key] ? pb : 0);
+                return (
+                  <Fragment key={score.key}>
+                    <span>
+                      <span className="font-heading font-semibold text-primary">
+                        {score.label}
+                      </span>{" "}
+                      {score.value || 0}
+                    </span>
+                    <span className="text-right tabular-nums">
+                      {formatMod(mod)}
+                    </span>
+                    <span className="text-right tabular-nums">
+                      {formatMod(save)}
+                    </span>
+                  </Fragment>
+                );
+              })}
+            </div>
+          ))}
+        </div>
+
+        <TaperedRule />
+
+        {/* Characteristics */}
+        <div>
+          {skillSaves.length > 0 && (
+            <StatLine label="Skills" value={skillSaves.join(", ")} />
+          )}
+          {resistances.length > 0 && (
+            <StatLine
+              label="Resistances"
+              value={
+                <span className="capitalize">{resistances.join(", ")}</span>
+              }
             />
-          </div>
-          <Description
-            title="HP"
-            description={hp.toString()}
-            placeholder="15 (2d8 + 6)"
-          />
-          <Description
-            title="Speed"
-            description={movements.join(", ")}
-            placeholder="30 ft."
-          />
-        </div>
-        {/* Ability Scores */}
-        <div className="grid lg:grid-cols-2 w-full border-carrara-600  overflow-hidden gap-px border bg-carrara-200 mb-2">
-          <div className="grid lg:col-span-2 bg-carrara-200 lg:grid-cols-2 text-xs font-semibold">
-            <div className="hidden lg:grid px-4 grid-cols-4 py-0.5 gap-3">
-              <span className="col-start-3">MOD</span>
-              <span className="col-start-4">SAVE</span>
-            </div>
-            <div className="grid px-4 grid-cols-4 py-0.5 gap-3">
-              <span className="col-start-3">MOD</span>
-              <span className="col-start-4">SAVE</span>
-            </div>
-          </div>
-          {abilityScores.map((score) => {
-            const mod = calculateStatBonus(score.value);
-            const save = mod + (creature.saving_throws[score.key] ? pb : 0);
-            return (
-              <div
-                key={score.label}
-                className="grid grid-cols-4 w-full bg-white gap-3 px-4 py-1"
-              >
-                <h4>{score.label}</h4>
-                <p>{score.value || "0"}</p>
-                <p>{formatMod(mod)}</p>
-                <p>{formatMod(save)}</p>
-              </div>
-            );
-          })}
-        </div>
-        {/* Features */}
-        <div className="mb-4">
-          <Description
-            title="Skills"
-            description={skillSaves.join(", ")}
-            show={skillSaves.length > 0}
-          />
-          <Description
-            className="capitalize"
-            title="Resistances"
-            description={resistances.join(", ")}
-            show={resistances.length > 0}
-          />
-          <Description
-            className="capitalize"
-            title="Immunities"
-            description={immunities.join(", ")}
-            show={immunities.length > 0}
-          />
-          <Description
-            className="capitalize"
-            title="Vulnerabilities"
-            description={vulnerabilities.join(", ")}
-            show={vulnerabilities.length > 0}
-          />
-          <Description
-            title="Senses"
-            description={`${senses
-              .map((l) => titleCase(l))
-              .join(", ")} Passive perception ${
+          )}
+          {immunities.length > 0 && (
+            <StatLine
+              label="Immunities"
+              value={
+                <span className="capitalize">{immunities.join(", ")}</span>
+              }
+            />
+          )}
+          {vulnerabilities.length > 0 && (
+            <StatLine
+              label="Vulnerabilities"
+              value={
+                <span className="capitalize">{vulnerabilities.join(", ")}</span>
+              }
+            />
+          )}
+          <StatLine
+            label="Senses"
+            value={`${senses.map((l) => titleCase(l)).join(", ")} Passive Perception ${
               creature.passive_perception || 10
             }`}
           />
-          <Description
-            title="Languages"
-            description={[
-              ...creature.languages.map((l) => titleCase(l)),
-              ...(creature.custom_languages ?? []),
-            ].join(", ")}
-            show={
-              creature.languages.length > 0 ||
-              (creature.custom_languages?.length ?? 0) > 0
-            }
-          />
-          <Description
-            title="CR"
-            description={`${creature.cr.challenge_rating} (XP ${new Intl.NumberFormat().format(
+          {(creature.languages.length > 0 ||
+            (creature.custom_languages?.length ?? 0) > 0) && (
+            <StatLine
+              label="Languages"
+              value={[
+                ...creature.languages.map((l) => titleCase(l)),
+                ...(creature.custom_languages ?? []),
+              ].join(", ")}
+            />
+          )}
+          <StatLine
+            label="CR"
+            value={`${creature.cr.challenge_rating} (XP ${new Intl.NumberFormat().format(
               creature.cr.experience,
             )}; PB ${formatMod(pb)})`}
-            className="mt-1.5 whitespace-nowrap"
           />
         </div>
-        <div className="flex flex-col gap-6 my-3">
-          <FeatureSection title="Traits" features={creature.traits} />
+
+        {/* Traits — 5e 2024 shows these with no heading, above Actions */}
+        {creature.traits.length > 0 && (
+          <div className="mt-1 flex flex-col gap-3">
+            <TaperedRule />
+            <TraitList features={creature.traits} />
+          </div>
+        )}
+
+        {/* Actions & reactions */}
+        <div className="mt-3 flex flex-col gap-5">
           <FeatureSection title="Actions" features={creature.actions} />
           <FeatureSection
             title="Bonus Actions"
