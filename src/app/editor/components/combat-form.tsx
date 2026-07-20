@@ -24,7 +24,7 @@ import { CHALLENGE_RATINGS } from "@/lib/constants";
 import { calculateHitPoints, calculateStatBonus } from "@/lib/utils";
 import { abilityScoresSchema, Monster } from "@/schema/monster-schema";
 import { useEffect } from "react";
-import { Controller, useFormContext } from "react-hook-form";
+import { Controller, useFormContext, useWatch } from "react-hook-form";
 
 type ChallengeRating = Monster["cr"];
 
@@ -40,18 +40,19 @@ const MOVEMENTS = [
 
 export const CombatForm = () => {
   const form = useFormContext<Monster>();
-  const abilityScoreValues = form.watch("ability_scores");
-  const customHp = form.watch("custom_hp");
-  const hitDice = form.watch("hit_dice");
-  const size = form.watch("size");
+  const { control, getValues } = form;
+  const [ability_scores, custom_hp, hit_dice, size] = useWatch({
+    control,
+    name: ["ability_scores", "custom_hp", "hit_dice", "size"],
+  });
 
-  // Keep the derived HP in sync while not overriding. When "Set HP manually" is
-  // on, the user owns `hit_points`; otherwise it's derived from hit dice + size
-  // + CON so the stored record matches the statblock.
   useEffect(() => {
-    if (customHp) return;
-    form.setValue("hit_points", calculateHitPoints(hitDice, size, abilityScoreValues?.con));
-  }, [customHp, hitDice, size, abilityScoreValues?.con, form]);
+    if (custom_hp) return;
+    const next = calculateHitPoints(hit_dice, size, ability_scores?.con);
+    if (next !== getValues("hit_points")) {
+      form.setValue("hit_points", next);
+    }
+  }, [custom_hp, hit_dice, size, ability_scores?.con, getValues]);
 
   return (
     <FieldSet>
@@ -64,7 +65,7 @@ export const CombatForm = () => {
       <FieldGroup>
         <Controller
           name="cr"
-          control={form.control}
+          control={control}
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
               <FieldLabel htmlFor="form-rhf-input-cr">
@@ -117,7 +118,7 @@ export const CombatForm = () => {
       <FieldGroup className="grid grid-cols-2">
         <Controller
           name="armor_class"
-          control={form.control}
+          control={control}
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
               <FieldLabel htmlFor="form-rhf-input-armor-class">
@@ -137,7 +138,7 @@ export const CombatForm = () => {
         />
         <Controller
           name="armor_description"
-          control={form.control}
+          control={control}
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
               <FieldLabel htmlFor="form-rhf-input-armor-description">
@@ -159,7 +160,7 @@ export const CombatForm = () => {
       <FieldGroup className="grid grid-cols-2">
         <Controller
           name="hit_points"
-          control={form.control}
+          control={control}
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
               <div className="flex items-center justify-between gap-2">
@@ -168,9 +169,12 @@ export const CombatForm = () => {
                 </FieldLabel>
                 <Controller
                   name="custom_hp"
-                  control={form.control}
+                  control={control}
                   render={({ field: customField }) => (
-                    <Field orientation="horizontal" className="w-auto items-center">
+                    <Field
+                      orientation="horizontal"
+                      className="w-auto items-center"
+                    >
                       <Switch
                         id="form-rhf-input-custom-hp"
                         size="sm"
@@ -190,7 +194,7 @@ export const CombatForm = () => {
               <Input
                 {...field}
                 id="form-rhf-input-hit-points"
-                disabled={!customHp}
+                disabled={!custom_hp}
                 aria-invalid={fieldState.invalid}
                 placeholder="ex. 195"
               />
@@ -200,7 +204,7 @@ export const CombatForm = () => {
         />
         <Controller
           name="hit_dice"
-          control={form.control}
+          control={control}
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
               <FieldLabel htmlFor="form-rhf-input-hit-dice">
@@ -224,14 +228,14 @@ export const CombatForm = () => {
       {/* Ability Scores */}
       <FieldGroup className="grid grid-cols-3 xl:grid-cols-6">
         {ABILITY_SCORES.map((ability) => {
-          const score = abilityScoreValues?.[ability];
+          const score = ability_scores?.[ability];
           const modifier =
             score !== undefined ? calculateStatBonus(score) : undefined;
           return (
             <Controller
               key={ability}
               name={`ability_scores.${ability}`}
-              control={form.control}
+              control={control}
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
                   <FieldLabel htmlFor={`form-rhf-input-${ability}`}>
@@ -266,7 +270,7 @@ export const CombatForm = () => {
           <Controller
             key={movement.name}
             name={movement.name}
-            control={form.control}
+            control={control}
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
                 <FieldLabel htmlFor={`form-rhf-input-${movement.name}`}>
@@ -281,14 +285,16 @@ export const CombatForm = () => {
                   aria-invalid={fieldState.invalid}
                   placeholder="ex. 0"
                 />
-                {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
               </Field>
             )}
           />
         ))}
         <Controller
           name="movements.hover"
-          control={form.control}
+          control={control}
           render={({ field }) => (
             <Field orientation="horizontal" className="items-center xl:pb-2">
               <Checkbox
@@ -296,7 +302,10 @@ export const CombatForm = () => {
                 checked={field.value}
                 onCheckedChange={field.onChange}
               />
-              <FieldLabel htmlFor="form-rhf-input-hover" className="font-normal">
+              <FieldLabel
+                htmlFor="form-rhf-input-hover"
+                className="font-normal"
+              >
                 Can hover
               </FieldLabel>
             </Field>

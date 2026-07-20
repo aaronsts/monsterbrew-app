@@ -15,15 +15,18 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { Upload } from "lucide-react";
 import { IdentityForm } from "./identity-form";
 import { CombatForm } from "./combat-form";
 import { DefenseForm } from "./defense-form";
 import { ActionsForm } from "./actions-form";
+import { ImportDialog } from "./import-dialog";
 
 export const MonsterForm = () => {
   const params = useSearchParams();
   const router = useRouter();
   const [creatureId, setCreatureId] = useState<string | undefined>();
+  const [showImport, setShowImport] = useState(false);
 
   const form = useForm({
     resolver: zodResolver(monsterSchema),
@@ -119,7 +122,16 @@ export const MonsterForm = () => {
   return (
     <Form {...form}>
       <div className="space-y-4">
-        <div className="flex fixed bottom-2 z-50 inset-x-4 lg:sticky lg:top-18 justify-end">
+        <div className="flex fixed bottom-2 z-50 inset-x-4 lg:sticky lg:top-18 justify-end gap-2">
+          <Button
+            type="button"
+            variant="secondary"
+            size="lg"
+            onClick={() => setShowImport(true)}
+          >
+            <Upload className="size-4" />
+            Import
+          </Button>
           <Button
             type="button"
             className="w-full lg:w-fit"
@@ -141,6 +153,7 @@ export const MonsterForm = () => {
           </div>
         </div>
       </div>
+      <ImportDialog open={showImport} onOpenChange={setShowImport} />
     </Form>
   );
 };

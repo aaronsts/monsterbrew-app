@@ -1,0 +1,181 @@
+{
+  "name": "Arch-hag",
+  "source": "XMM",
+  "page": 21,
+  "referenceSources": ["RHW"],
+  "size": ["L"],
+  "type": "fey",
+  "alignment": ["N", "E"],
+  "ac": [20],
+  "hp": {
+    "average": 333,
+    "formula": "29d10 + 174"
+  },
+  "speed": {
+    "walk": 40
+  },
+  "initiative": {
+    "proficiency": 2
+  },
+  "str": 24,
+  "dex": 15,
+  "con": 23,
+  "int": 19,
+  "wis": 19,
+  "cha": 25,
+  "save": {
+    "dex": "+9",
+    "wis": "+11"
+  },
+  "skill": {
+    "deception": "+14",
+    "perception": "+11",
+    "persuasion": "+21"
+  },
+  "senses": ["Truesight 60 ft."],
+  "passive": 21,
+  "resist": ["cold", "fire", "psychic"],
+  "conditionImmune": ["charmed", "exhaustion", "frightened"],
+  "languages": ["all"],
+  "cr": {
+    "cr": "21",
+    "xpLair": 41000
+  },
+  "spellcasting": [
+    {
+      "name": "Coven Magic",
+      "type": "spellcasting",
+      "headerEntries": [
+        "While within 30 feet of at least two hag allies, the hag can cast one of the following spells, requiring no Material components, using the spell's normal casting time, and using Intelligence as the spellcasting ability (spell save {@dc 19}): {@spell Augury|XPHB}, {@spell Find Familiar|XPHB}, {@spell Identify|XPHB}, {@spell Locate Object|XPHB}, {@spell Scrying|XPHB}, or {@spell Unseen Servant|XPHB}. The hag must finish a {@variantrule Long Rest|XPHB} before using this trait to cast that spell again."
+      ],
+      "restLong": {
+        "1": [
+          "{@spell Augury|XPHB}",
+          "{@spell Find Familiar|XPHB}",
+          "{@spell Identify|XPHB}",
+          "{@spell Locate Object|XPHB}",
+          "{@spell Scrying|XPHB}",
+          "{@spell Unseen Servant|XPHB}"
+        ]
+      },
+      "ability": "int",
+      "hidden": ["restLong"]
+    },
+    {
+      "name": "Spellcasting",
+      "type": "spellcasting",
+      "headerEntries": [
+        "The hag casts one of the following spells, requiring no Material components and using Charisma as the spellcasting ability (spell save {@dc 22}):"
+      ],
+      "will": [
+        "{@spell Detect Thoughts|XPHB}",
+        "{@spell Dimension Door|XPHB}",
+        "{@spell Dispel Magic|XPHB}",
+        "{@spell Hypnotic Pattern|XPHB}"
+      ],
+      "daily": {
+        "2e": [
+          "{@spell Mass Suggestion|XPHB}",
+          "{@spell Modify Memory|XPHB}",
+          "{@spell Plane Shift|XPHB}"
+        ]
+      },
+      "ability": "cha",
+      "displayAs": "action"
+    },
+    {
+      "name": "Tongue Twister",
+      "type": "spellcasting",
+      "headerEntries": [
+        "The hag casts {@spell Counterspell|XPHB} in response to that spell's trigger, using the same spellcasting ability as Spellcasting. If the target fails its saving throw, it is cursed until the end of its next turn. Until the curse ends, the target can't cast spells with a Verbal component, and when it speaks, it says the opposite of what it means."
+      ],
+      "will": ["{@spell Counterspell|XPHB}"],
+      "ability": "cha",
+      "displayAs": "reaction",
+      "hidden": ["will"]
+    }
+  ],
+  "trait": [
+    {
+      "name": "Legendary Resistance (4/Day, or 5/Day in Lair)",
+      "entries": [
+        "If the hag fails a saving throw, it can choose to succeed instead."
+      ]
+    },
+    {
+      "name": "Magic Resistance",
+      "entries": [
+        "The hag has {@variantrule Advantage|XPHB} on saving throws against spells and other magical effects."
+      ]
+    },
+    {
+      "name": "Spiteful Escape",
+      "entries": [
+        "When the hag drops to 0 {@variantrule Hit Points|XPHB}, it dies only if it is within 30 feet of its anathema (a thing the DM chooses as the hag's most hated thing). Otherwise, the hag drops to 1 {@variantrule Hit Points|XPHB|Hit Point} and teleports to a harmless demiplane, and it can't return to the plane it left for {@dice 2d6} days. When the hag teleports away, each creature within 60 feet of the space it left is cursed. Until the curse ends, a creature has {@variantrule Disadvantage|XPHB} on ability checks and saving throws, and the hag knows its location anywhere in the multiverse."
+      ]
+    }
+  ],
+  "action": [
+    {
+      "name": "Multiattack",
+      "entries": [
+        "The hag makes two Spectral Claw attacks and uses Crackling Wave."
+      ]
+    },
+    {
+      "name": "Spectral Claw",
+      "entries": [
+        "{@atkr m,r} {@hit 14}, reach 10 ft. or range 60 ft. {@h}17 ({@damage 3d6 + 7}) Force damage. If the target is a Large or smaller creature, it has the {@condition Prone|XPHB} condition."
+      ]
+    },
+    {
+      "name": "Crackling Wave",
+      "entries": [
+        "{@actSave dex} {@dc 22}, each creature in a 60-foot {@variantrule Cone [Area of Effect]|XPHB|Cone}. {@actSaveFail} 32 ({@damage 5d12}) Lightning damage. {@actSaveSuccess} Half damage. {@actSaveSuccessOrFail} The target is cursed until the end of the hag's next turn. The target can't take Reactions until the curse ends."
+      ]
+    }
+  ],
+  "bonus": [
+    {
+      "name": "Witch Strike",
+      "entries": [
+        "Each creature cursed by the hag and within 60 feet of it takes 14 ({@damage 4d6}) Lightning damage."
+      ]
+    }
+  ],
+  "legendaryActionsLair": 4,
+  "legendary": [
+    {
+      "name": "Hag's Swipe",
+      "entries": ["The hag makes one Spectral Claw attack."]
+    },
+    {
+      "name": "Malicious Magic",
+      "entries": [
+        "The hag uses Spellcasting to cast {@spell Dimension Door|XPHB} or {@spell Hypnotic Pattern|XPHB}. The hag can't take this action again until the start of its next turn."
+      ]
+    }
+  ],
+  "legendaryGroup": {
+    "name": "Arch-hag",
+    "source": "XMM"
+  },
+  "environment": ["any"],
+  "treasure": ["arcana"],
+  "traitTags": ["Legendary Resistances", "Magic Resistance"],
+  "senseTags": ["U"],
+  "actionTags": ["Multiattack"],
+  "languageTags": ["XX"],
+  "damageTags": ["L", "O"],
+  "damageTagsSpell": ["O"],
+  "spellcastingTags": ["O"],
+  "miscTags": ["AOE", "CUR", "MA", "RA", "RCH"],
+  "conditionInflict": ["prone"],
+  "conditionInflictSpell": ["charmed", "incapacitated"],
+  "savingThrowForced": ["dexterity"],
+  "savingThrowForcedLegendary": ["wisdom"],
+  "savingThrowForcedSpell": ["constitution", "wisdom"],
+  "hasToken": true,
+  "hasFluff": true,
+  "hasFluffImages": true
+}

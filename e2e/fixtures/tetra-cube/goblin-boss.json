@@ -1,0 +1,82 @@
+{
+  "name": "Goblin Boss",
+  "size": "small",
+  "type": "Humanoid",
+  "tag": "goblinoid",
+  "alignment": "neutral evil",
+  "hitDice": 6,
+  "armorName": "leather armor, shield",
+  "shieldBonus": 2,
+  "natArmorBonus": 0,
+  "otherArmorDesc": "17 (leather armor, shield)",
+  "speed": 30,
+  "burrowSpeed": 0,
+  "climbSpeed": 0,
+  "flySpeed": 0,
+  "hover": false,
+  "swimSpeed": 0,
+  "customHP": false,
+  "customSpeed": false,
+  "hpText": "21 (6d6)",
+  "speedDesc": "",
+  "strPoints": 10,
+  "dexPoints": 15,
+  "conPoints": 10,
+  "intPoints": 10,
+  "wisPoints": 8,
+  "chaPoints": 10,
+  "blindsight": 0,
+  "blind": false,
+  "darkvision": 60,
+  "tremorsense": 0,
+  "truesight": 0,
+  "telepathy": 0,
+  "cr": "1",
+  "customCr": "",
+  "customProf": 2,
+  "isLegendary": false,
+  "legendariesDescription": "",
+  "isLair": true,
+  "lairDescription": "The goblin warren twists with traps.",
+  "lairDescriptionEnd": "",
+  "isMythic": false,
+  "mythicDescription": "",
+  "isRegional": false,
+  "regionalDescription": "",
+  "regionalDescriptionEnd": "",
+  "properties": [],
+  "abilities": [
+    { "name": "Nimble Escape", "desc": "The goblin can take the Disengage or Hide action as a bonus action on each of its turns." }
+  ],
+  "actions": [
+    { "name": "Scimitar", "desc": "Melee Weapon Attack: +2 to hit, reach 5 ft., one target. Hit: 5 (1d6 + 2) slashing damage." }
+  ],
+  "bonusActions": [
+    { "name": "Command", "desc": "The goblin boss commands a nearby ally to attack." }
+  ],
+  "reactions": [],
+  "legendaries": [],
+  "mythics": [],
+  "lairs": [
+    { "name": "Collapsing Tunnel", "desc": "The ceiling collapses on a chosen point." }
+  ],
+  "regionals": [],
+  "sthrows": [{ "name": "dex", "order": "1" }],
+  "skills": [{ "name": "stealth", "stat": "dex", "note": "ex" }],
+  "damagetypes": [
+    { "name": "fire", "stat": "", "type": "r" },
+    { "name": "poison", "stat": "", "type": "i" }
+  ],
+  "specialdamage": [],
+  "conditions": [{ "name": "charmed" }],
+  "languages": [
+    { "name": "common", "speaks": true },
+    { "name": "goblin", "speaks": true }
+  ],
+  "understandsBut": "",
+  "shortName": "goblin boss",
+  "pluralName": "goblin bosses",
+  "doubleColumns": false,
+  "separationPoint": 0,
+  "damage": []
+}

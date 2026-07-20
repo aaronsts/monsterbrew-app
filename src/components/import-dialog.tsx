@@ -55,7 +55,7 @@ export function ImportDialog({ open, onOpenChange }: ImportDialogProps) {
       } catch (err: unknown) {
         const message = err instanceof Error ? err.message : String(err);
         toast.error(message);
-        throw Error(message);
+        throw new Error(message);
       }
     };
     if (uploadedFile !== undefined) fileReader.readAsText(uploadedFile);
