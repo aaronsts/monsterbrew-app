@@ -7,17 +7,18 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 This project uses **pnpm** (pinned via the `packageManager` field; run `corepack enable` if you don't have it). Do not use `npm`/`yarn` — they'd create a competing lockfile.
 
 - `pnpm install` — install dependencies (`--frozen-lockfile` in CI)
-- `pnpm dev` — start the Next.js dev server (Turbopack not enabled)
-- `pnpm build` — production build
-- `pnpm lint` — ESLint (`next lint`); `no-unused-vars` is an **error**, so unused imports/vars fail the build
+- `pnpm dev` — start the TanStack Start (Vite) dev server on port 3000 (SSR-capable)
+- `pnpm build` — production build (Vite → `dist/client` + `dist/server`)
+- `pnpm start` — run the built production server (`node dist/server/server.js`)
+- `pnpm lint` — ESLint (flat config, `eslint.config.js`); `no-unused-vars` is an **error**, so unused imports/vars fail lint
 - `pnpm test` — run Vitest in watch mode
 - `pnpm exec vitest run` — run tests once (CI-style)
 - `pnpm exec vitest run src/tests/converters/fiveETools.test.ts` — run a single test file
 - `pnpm exec vitest run -t "some name"` — run tests matching a name
 
-Path alias: `@/*` → `src/*` (configured in both `tsconfig.json` and `vitest.config.mts` via `vite-tsconfig-paths`).
+Path alias: `@/*` → `src/*` (configured in `tsconfig.json`, `vite.config.ts`, and `vitest.config.mts` via `vite-tsconfig-paths`).
 
-pnpm blocks dependency build scripts by default; the ones this project needs (`esbuild`, `sharp`, `supabase`, `unrs-resolver`) are allowlisted in `pnpm-workspace.yaml` under `allowBuilds`. If a build-time tool misbehaves after a dependency change, check whether it needs adding there.
+pnpm blocks dependency build scripts by default; the ones this project needs (`esbuild`, `unrs-resolver`) are allowlisted in `pnpm-workspace.yaml` under `allowBuilds`. If a build-time tool misbehaves after a dependency change, check whether it needs adding there.
 
 ## Commits & releases
 
@@ -27,7 +28,7 @@ CI deploys PR previews and production to Vercel. There is no test-run step in CI
 
 ## Architecture
 
-Monsterbrew is a **client-side-only** D&D 5e monster statblock builder. Next.js App Router + React 19, but there is no backend: all creature data persists to **IndexedDB in the browser** (via `idb`). Despite `supabase` being a dev dependency, `src/types/database.types.ts` existing, and a `user_id` field in the schema, there is **no active Supabase/server persistence** — treat those as vestigial unless you are deliberately adding a backend.
+Monsterbrew is a **client-side-only** D&D 5e monster statblock builder. **TanStack Start** (TanStack Router on Vite, with SSR) + React 19, but there is no backend and no server functions: all creature data persists to **IndexedDB in the browser** (via `idb`). File-based routes live in `src/routes/` (`__root.tsx` holds the document shell, providers, header/footer, and SEO head/meta); page-specific components still live under `src/app/*/components/`. The marketing routes (`/`, `/privacy`, `/changelog`) server-render for SEO; `/legacy-editor` is marked `ssr: false` because it depends on the browser-only `react-to-print`. Client navigation uses `Link`/`useNavigate`/`useSearch` from `@tanstack/react-router`. Despite `supabase` being a dev dependency, `src/types/database.types.ts` existing, and a `user_id` field in the schema, there is **no active Supabase/server persistence** — treat those as vestigial unless you are deliberately adding a backend.
 
 ### The creature model is the center of everything
 
@@ -46,7 +47,7 @@ Derived values are computed with `useEffect` + `form.setValue` rather than store
 
 ### Persistence
 
-`src/services/database.ts` opens the versioned `monsterbrewDB` (object store `creatures`, `keyPath: "id"`). IDs are generated client-side in `save-dialog.tsx` (`Date.now()-<random>`), not by the store. `save-dialog.tsx` is `dynamic(..., { ssr: false })` because it touches IndexedDB. Bumping the DB version means adding a `case` to the `upgrade` switch in `database.ts`. `/my-creatures` lists and manages saved creatures.
+`src/services/database.ts` opens the versioned `monsterbrewDB` (object store `creatures`, `keyPath: "id"`). IDs are generated client-side in `save-dialog.tsx` (`Date.now()-<random>`), not by the store. `save-dialog.tsx` only touches IndexedDB inside event handlers (not during render), so it renders fine under SSR. Bumping the DB version means adding a `case` to the `upgrade` switch in `database.ts`. `/my-creatures` lists and manages saved creatures.
 
 ### Import / export converters
 

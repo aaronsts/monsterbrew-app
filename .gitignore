@@ -9,9 +9,13 @@
 # testing
 /coverage
 
-# next.js
-/.next/
-/out/
+# vite / tanstack start
+/dist
+/.output
+/.nitro
+/.tanstack
+# generated route tree (TanStack Router)
+/src/routeTree.gen.ts
 
 # production
 /build

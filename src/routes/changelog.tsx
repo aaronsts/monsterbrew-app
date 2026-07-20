@@ -1,6 +1,11 @@
+import { createFileRoute } from "@tanstack/react-router";
 import { CornerBrackets } from "@/components/home/corner-brackets";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+
+export const Route = createFileRoute("/changelog")({
+  component: Changelog,
+});
 
 type Release = {
   version: string;
@@ -66,7 +71,7 @@ const releases: Release[] = [
   },
 ];
 
-export default function Changelog() {
+function Changelog() {
   return (
     <div className="mx-auto flex w-full max-w-4xl flex-col gap-12 px-6 py-8">
       {/* Header */}

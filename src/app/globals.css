@@ -6,6 +6,16 @@
 
 @plugin "@tailwindcss/typography";
 
+/* Nippo is a local variable font served from /public/fonts.
+   Oxanium and JetBrains Mono come from @fontsource-variable (imported in __root). */
+@font-face {
+  font-family: "Nippo";
+  src: url("/fonts/Nippo-Variable.ttf") format("truetype");
+  font-weight: 100 900;
+  font-display: swap;
+  font-style: normal;
+}
+
 :root,
 [data-theme="memphis"] {
   --accent-base: #4c0a18;
@@ -62,7 +72,9 @@
   --ring: var(--primary-base);
 
   --radius: 0px;
-  --font-mono: "JetBrains Mono", monospace;
+  --font-mono: "JetBrains Mono Variable", "JetBrains Mono", monospace;
+  --font-heading: "Oxanium Variable", "Oxanium", sans-serif;
+  --font-nippo: "Nippo", sans-serif;
 }
 
 .dark {

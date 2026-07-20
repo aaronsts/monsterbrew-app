@@ -1,8 +1,7 @@
 "use client";
 
 import * as React from "react";
-import Link, { LinkProps } from "next/link";
-import { useRouter } from "next/navigation";
+import { Link } from "@tanstack/react-router";
 
 import { cn } from "@/lib/utils";
 import { Button } from "./button";
@@ -20,7 +19,7 @@ export function MobileNavigation() {
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <div className="w-full bg-carrara-100 flex justify-between items-center md:hidden shadow-xs h-14 rounded-lg mx-3 px-6">
-        <Link href="/" className="mr-4 flex w-fit items-center gap-2 lg:mr-6">
+        <Link to="/" className="mr-4 flex w-fit items-center gap-2 lg:mr-6">
           <h1 className="text-xl font-bold">Monsterbrew</h1>
         </Link>
         <div className="flex items-center gap-2">
@@ -35,13 +34,13 @@ export function MobileNavigation() {
         <SheetTitle></SheetTitle>
         <div className="overflow-auto p-6">
           <div className="flex flex-col gap-4 items-center">
-            <MobileLink href="/" onOpenChange={setOpen}>
+            <MobileLink to="/" onOpenChange={setOpen}>
               Home
             </MobileLink>
-            <MobileLink href="/editor" onOpenChange={setOpen}>
+            <MobileLink to="/editor" onOpenChange={setOpen}>
               Editor
             </MobileLink>
-            <MobileLink href="/my-creatures" onOpenChange={setOpen}>
+            <MobileLink to="/my-creatures" onOpenChange={setOpen}>
               My Creatures
             </MobileLink>
           </div>
@@ -51,29 +50,26 @@ export function MobileNavigation() {
   );
 }
 
-interface MobileLinkProps extends LinkProps {
+interface MobileLinkProps {
+  to: string;
   onOpenChange?: (open: boolean) => void;
   children: React.ReactNode;
   className?: string;
 }
 
 function MobileLink({
-  href,
+  to,
   onOpenChange,
   className,
   children,
-  ...props
 }: MobileLinkProps) {
-  const router = useRouter();
   return (
     <Link
-      href={href}
+      to={to}
       onClick={() => {
-        router.push(href.toString());
         onOpenChange?.(false);
       }}
       className={cn("text-xl font-medium", className)}
-      {...props}
     >
       {children}
     </Link>

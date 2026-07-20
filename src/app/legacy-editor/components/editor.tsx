@@ -8,7 +8,7 @@ import {
 import { createMarkdownPage } from "@/services/converters/markdown";
 import { monsterbrewDB } from "@/services/database";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useSearchParams } from "next/navigation";
+import { useSearch } from "@tanstack/react-router";
 import { useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -17,7 +17,7 @@ import CreatureForm from "./creature-form";
 import CreatureStatblock from "./creature-statblock";
 
 export default function Editor() {
-  const params = useSearchParams();
+  const { id: creatureIdParam } = useSearch({ from: "/legacy-editor" });
   const form = useForm<z.infer<typeof createCreatureSchema>>({
     resolver: zodResolver(createCreatureSchema),
     defaultValues: defaultCreature,
@@ -26,7 +26,7 @@ export default function Editor() {
   const pdfRef = useRef<HTMLDivElement>(null);
 
   async function getLocalCreature() {
-    const creatureId = params.get("id");
+    const creatureId = creatureIdParam;
     if (creatureId) {
       const db = await monsterbrewDB();
       const storedCreature = await db.get("creatures", creatureId);

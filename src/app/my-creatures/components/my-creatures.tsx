@@ -35,7 +35,7 @@ import {
   Eye,
   Trash,
 } from "lucide-react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useNavigate, useSearch } from "@tanstack/react-router";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -53,13 +53,13 @@ import { MigrateDialog } from "./migrate-dialog";
 type MonsterbrewCreature = z.infer<typeof createCreatureSchema>;
 
 export default function MyCreatures() {
-  const id = useSearchParams().get("id");
+  const { id = null } = useSearch({ from: "/my-creatures" });
   const [myCreatures, setMyCreatures] = useState<MonsterbrewCreature[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [expandedRows, setExpandedRows] = useState<Record<string, boolean>>({});
   const [migrateTarget, setMigrateTarget] =
     useState<MonsterbrewCreature | null>(null);
-  const router = useRouter();
+  const navigate = useNavigate();
   const toggleRowExpansion = (creatureId: string) => {
     setExpandedRows((prev) => ({
       ...prev,
@@ -124,7 +124,7 @@ export default function MyCreatures() {
         // Store the creature in localStorage to pass it to the editor
         localStorage.setItem("editCreature", JSON.stringify(creature));
         // Navigate to the editor page
-        router.push("/editor");
+        navigate({ to: "/editor" });
         resolve();
       }),
       {
@@ -144,7 +144,7 @@ export default function MyCreatures() {
 
     localStorage.setItem("editCreature", JSON.stringify(creatureCopy));
 
-    router.push("/editor");
+    navigate({ to: "/editor" });
   };
 
   // Function to delete a creature

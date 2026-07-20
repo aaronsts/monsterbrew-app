@@ -1,10 +1,14 @@
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
 import { ArrowRight, FileText, HardDriveDownload, Library } from "lucide-react";
 import { FeatureCard } from "@/components/home/feature-card";
 import { CornerBrackets } from "@/components/home/corner-brackets";
 
-export default function Home() {
+export const Route = createFileRoute("/")({
+  component: Home,
+});
+
+function Home() {
   return (
     <div className="w-full flex flex-col gap-24 py-8 px-6">
       {/* Hero */}
@@ -33,12 +37,12 @@ export default function Home() {
           drop a statblock ready to customize into the editor.
         </p>
         <div className="flex flex-col gap-3 pt-2 sm:flex-row">
-          <Link href="/editor">
+          <Link to="/editor">
             <Button size="lg" variant="default">
               Start Brewing <ArrowRight />
             </Button>
           </Link>
-          <Link href="/my-creatures">
+          <Link to="/my-creatures">
             <Button size="lg" variant="outline">
               View Library
             </Button>
@@ -128,7 +132,7 @@ export default function Home() {
           <p className="mx-auto mb-8 max-w-xl text-primary-foreground/80">
             Jump into the editor and start brewing!
           </p>
-          <Link href="/editor">
+          <Link to="/editor">
             <Button
               size="lg"
               className="bg-accent text-accent-foreground hover:bg-accent/80"
