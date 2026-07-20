@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 import {
   statblock,
-  abilityRow,
+  abilitySave,
   selectCombo,
   toggleSave,
   cycleSkill,
@@ -145,7 +145,7 @@ test.describe("Monster editor — full round-trip", () => {
     ).toHaveValue("80");
 
     // Saving throws: CON 21 → mod +5, +2 PB → +7 save.
-    await expect(abilityRow(page, "CON").locator("p").nth(2)).toHaveText("+7");
+    await expect(abilitySave(page, "CON")).toHaveText("+7");
 
     // Statblock-backed fields
     const sb = statblock(page);
