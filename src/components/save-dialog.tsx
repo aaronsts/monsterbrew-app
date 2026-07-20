@@ -6,16 +6,11 @@ import { useFormContext } from "react-hook-form";
 import { z } from "zod";
 import { createCreatureSchema } from "@/schema/createCreatureSchema";
 import { monsterbrewDB } from "@/services/database";
-import { useRouter } from "next/navigation";
+import { useNavigate } from "@tanstack/react-router";
 import { useCallback } from "react";
-import dynamic from "next/dynamic";
-
-const DynamicSaveButton = dynamic(() => Promise.resolve(SaveDialogComponent), {
-  ssr: false,
-});
 
 function SaveDialogComponent() {
-  const router = useRouter();
+  const navigate = useNavigate();
   const formContext = useFormContext<z.infer<typeof createCreatureSchema>>();
 
   const creature = formContext.watch();
@@ -38,7 +33,7 @@ function SaveDialogComponent() {
       if (creature.id) {
         await db.put("creatures", creature);
         toast.success(`Saved ${creature.name}`);
-        router.push(`/my-creatures?id=${creature.id}`);
+        navigate({ to: "/my-creatures", search: { id: creature.id } });
       } else {
         const creatureToSave = {
           ...creature,
@@ -46,7 +41,7 @@ function SaveDialogComponent() {
         };
         await db.add("creatures", creatureToSave);
         toast.success(`Saved ${creature.name}`);
-        router.push(`/my-creatures?id=${creatureToSave.id}`);
+        navigate({ to: "/my-creatures", search: { id: creatureToSave.id } });
       }
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : String(err);
@@ -70,5 +65,5 @@ function SaveDialogComponent() {
 }
 
 export function SaveDialog() {
-  return <DynamicSaveButton />;
+  return <SaveDialogComponent />;
 }

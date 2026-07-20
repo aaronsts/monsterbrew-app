@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 import {
   statblock,
-  abilityRow,
+  abilitySave,
   cycleSkill,
   cycleDamage,
   toggleSave,
@@ -19,14 +19,14 @@ test.describe("Monster editor — defense form", () => {
 
   test("saving-throw proficiency updates the SAVE column", async ({ page }) => {
     await page.locator("#form-rhf-input-con").fill("12"); // mod +1
-    // Row cells: [score, mod, save]. Without proficiency, save === mod.
-    await expect(abilityRow(page, "CON").locator("p").nth(2)).toHaveText("+1");
+    // Without proficiency, save === mod.
+    await expect(abilitySave(page, "CON")).toHaveText("+1");
 
     await toggleSave(page, "con");
-    await expect(abilityRow(page, "CON").locator("p").nth(2)).toHaveText("+3"); // 1 + PB(2)
+    await expect(abilitySave(page, "CON")).toHaveText("+3"); // 1 + PB(2)
 
     await toggleSave(page, "con"); // toggling off reverts
-    await expect(abilityRow(page, "CON").locator("p").nth(2)).toHaveText("+1");
+    await expect(abilitySave(page, "CON")).toHaveText("+1");
   });
 
   test("skill tri-state drives aria state and the statblock", async ({

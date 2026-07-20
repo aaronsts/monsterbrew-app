@@ -174,7 +174,10 @@ export function MonsterStatblock({ creature }: { creature: Monster }) {
     <Card className="h-fit gap-0 py-0 text-[13px]/relaxed">
       {/* Name banner */}
       <CardHeader className="pt-4">
-        <h2 className="mb-0 font-heading text-2xl leading-none font-bold tracking-wide text-primary">
+        <h2
+          data-slot="card-title"
+          className="mb-0 font-heading text-2xl leading-none font-bold tracking-wide text-primary"
+        >
           {creature.name || "Example Creature"}
         </h2>
         <p className="mt-1 capitalize italic text-muted-foreground">

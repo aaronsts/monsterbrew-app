@@ -47,7 +47,8 @@ test.describe("Monster editor — live preview", () => {
       .fill("Advantage on Wisdom (Perception) checks that rely on smell.");
 
     const sb = statblock(page);
-    await expect(sb.getByRole("heading", { name: "Traits" })).toBeVisible();
+    // Traits render with no section heading (5e 2024 style), so assert the
+    // trait itself appears in the statblock.
     await expect(sb.getByText("Keen Smell.")).toBeVisible();
   });
 
@@ -60,7 +61,6 @@ test.describe("Monster editor — live preview", () => {
 
     await page.getByRole("button", { name: "Remove trait" }).click();
     await expect(sb.getByText("Pack Tactics.")).toHaveCount(0);
-    await expect(sb.getByRole("heading", { name: "Traits" })).toHaveCount(0);
   });
 
   test("legendary actions are hidden until enabled, then render", async ({

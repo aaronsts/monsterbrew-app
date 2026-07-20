@@ -23,14 +23,25 @@ export async function selectCombo(page: Page, inputId: string, option: string) {
 }
 
 /**
- * The statblock ability-score row for a given ability (e.g. "DEX"). Its three
- * `<p>` cells are, in order: score, modifier, save. Header rows are excluded
- * because only real rows carry `bg-white`.
+ * The statblock renders each ability as three consecutive grid cells: a score
+ * cell (`<span><span>DEX</span> 10</span>`) followed by the modifier and save
+ * `<span>` cells. These helpers resolve the modifier / save cell for a given
+ * ability abbreviation (e.g. "DEX") by walking from its label span.
  */
-export function abilityRow(page: Page, label: string): Locator {
-  return statblock(page).locator("div.bg-white", {
-    has: page.getByRole("heading", { level: 4, name: label, exact: true }),
-  });
+function abilityCell(page: Page, label: string, sibling: 1 | 2): Locator {
+  return statblock(page).locator(
+    `xpath=.//span[normalize-space(text())="${label}"]/parent::span/following-sibling::span[${sibling}]`,
+  );
+}
+
+/** The derived modifier cell for an ability (e.g. "DEX"). */
+export function abilityMod(page: Page, label: string): Locator {
+  return abilityCell(page, label, 1);
+}
+
+/** The derived saving-throw cell for an ability (e.g. "DEX"). */
+export function abilitySave(page: Page, label: string): Locator {
+  return abilityCell(page, label, 2);
 }
 
 /** Toggle a saving-throw checkbox via its (visually-hidden) label. */

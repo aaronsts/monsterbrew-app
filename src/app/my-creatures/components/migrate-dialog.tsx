@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { AlertTriangle, CheckCircle2, Download, XCircle } from "lucide-react";
 
@@ -40,7 +40,7 @@ export function MigrateDialog({
   onOpenChange,
   onMigrated,
 }: MigrateDialogProps) {
-  const router = useRouter();
+  const navigate = useNavigate();
   const [phase, setPhase] = useState<Phase>({ status: "prompt" });
 
   // Reset back to the prompt whenever a fresh creature/dialog is opened.
@@ -87,7 +87,7 @@ export function MigrateDialog({
     if (!creature) return;
     localStorage.setItem("editCreature", JSON.stringify(creature));
     onOpenChange(false);
-    router.push("/legacy-editor");
+    navigate({ to: "/legacy-editor" });
   }
 
   return (

@@ -3,9 +3,10 @@ import { defineConfig, devices } from "@playwright/test";
 /**
  * E2E tests for the monster editor. See `e2e/`.
  *
- * We run against the Next dev server for fast local iteration. For CI you can
- * swap the `webServer.command` to `pnpm build && pnpm start` for a more
- * production-faithful (and warm, non-lazy-compiled) run.
+ * We run against the TanStack Start (Vite) dev server for fast local
+ * iteration. For CI you can swap the `webServer.command` to
+ * `pnpm build && pnpm start` for a more production-faithful (and warm,
+ * non-lazy-compiled) run.
  */
 export default defineConfig({
   testDir: "./e2e",

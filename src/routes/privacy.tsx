@@ -1,3 +1,4 @@
+import { createFileRoute } from "@tanstack/react-router";
 import {
   BarChart3,
   Database,
@@ -7,6 +8,10 @@ import {
 } from "lucide-react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { CornerBrackets } from "@/components/home/corner-brackets";
+
+export const Route = createFileRoute("/privacy")({
+  component: Privacy,
+});
 
 const LAST_UPDATED = "20 July 2026";
 
@@ -97,7 +102,7 @@ const sections: Section[] = [
   },
 ];
 
-export default function Privacy() {
+function Privacy() {
   return (
     <div className="mx-auto flex w-full max-w-4xl flex-col gap-12 px-6 py-8">
       {/* Header */}

@@ -1,10 +1,8 @@
 # pnpm blocks dependency build scripts by default (a security measure).
 # These packages need their build/install scripts to work correctly:
-#   esbuild / unrs-resolver -> vitest + vite-tsconfig-paths resolver
-#   sharp                   -> Next.js image optimization
+#   esbuild / unrs-resolver -> vite + vitest + vite-tsconfig-paths resolver
 allowBuilds:
   esbuild: true
-  sharp: true
   unrs-resolver: true
 minimumReleaseAgeExclude:
   - vite@6.3.4 || 6.3.6 || 6.4.1 || 6.4.2 || 6.4.3

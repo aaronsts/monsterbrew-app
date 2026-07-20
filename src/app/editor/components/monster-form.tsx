@@ -11,7 +11,7 @@ import { MonsterStatblock } from "@/components/monster-statblock";
 import { calculateStatBonus, generateId } from "@/lib/utils";
 import { monsterbrewDB } from "@/services/database";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useNavigate, useSearch } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -23,8 +23,8 @@ import { ActionsForm } from "./actions-form";
 import { ImportDialog } from "./import-dialog";
 
 export const MonsterForm = () => {
-  const params = useSearchParams();
-  const router = useRouter();
+  const { id: idParam } = useSearch({ from: "/editor" });
+  const navigate = useNavigate();
   const [creatureId, setCreatureId] = useState<string | undefined>();
   const [showImport, setShowImport] = useState(false);
 
@@ -35,7 +35,7 @@ export const MonsterForm = () => {
 
   useEffect(() => {
     async function loadMonster() {
-      const id = params.get("id");
+      const id = idParam;
       if (id) {
         const db = await monsterbrewDB();
         const stored = await db.get("creatures", id);
@@ -107,7 +107,7 @@ export const MonsterForm = () => {
       );
       setCreatureId(id);
       toast.success(`Saved ${values.name}`);
-      router.push(`/my-creatures?id=${id}`);
+      navigate({ to: "/my-creatures", search: { id } });
     } catch (err) {
       toast.error(
         `Something went wrong: ${err instanceof Error ? err.message : String(err)}`,
