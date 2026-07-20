@@ -164,6 +164,25 @@ describe("creatureToMonster", () => {
     expect(result.id).toMatch(/^\d+-[a-z0-9]+$/);
   });
 
+  it("routes non-enum languages into custom_languages, keeping enum members", () => {
+    const result = creatureToMonster(
+      legacy({
+        languages: [
+          "common",
+          "telepathy 120 ft.",
+          "draconic",
+          "Void Speech",
+        ] as unknown as LegacyCreature["languages"],
+      }),
+    );
+
+    expect(result.languages).toEqual(["common", "draconic"]);
+    expect(result.custom_languages).toEqual([
+      "telepathy 120 ft.",
+      "Void Speech",
+    ]);
+  });
+
   it("does not throw when legacy collection fields are missing (defensive guards)", () => {
     const broken = { ...defaultCreature } as Record<string, unknown>;
     for (const key of [

@@ -1,4 +1,4 @@
-import { defaultCreature } from "@/schema/createCreatureSchema";
+import { defaultCreature, Languages } from "@/schema/createCreatureSchema";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { CREATURE_SIZES } from "./constants";
@@ -60,4 +60,26 @@ export function calculateHitPoints(
 
 export function generateId(): string {
   return `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+}
+
+const KNOWN_LANGUAGES = new Set<string>(Object.values(Languages));
+
+/**
+ * Splits a flat list of language strings into the known `Languages` enum
+ * members and everything else.
+ */
+export function partitionLanguages(values: string[]): {
+  languages: Languages[];
+  custom_languages: string[];
+} {
+  const languages: Languages[] = [];
+  const custom_languages: string[] = [];
+  for (const value of values) {
+    if (KNOWN_LANGUAGES.has(value)) {
+      languages.push(value as Languages);
+    } else {
+      custom_languages.push(value);
+    }
+  }
+  return { languages, custom_languages };
 }

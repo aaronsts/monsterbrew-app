@@ -64,6 +64,7 @@ export const monsterSchema = z.object({
   description: z.string().optional(),
   senses: sensesSchema,
   languages: z.array(languagesSchema),
+  custom_languages: z.array(z.string()),
   passive_perception: z.coerce.number(),
   custom_passive_perception: z.boolean().optional(),
 
@@ -124,6 +125,7 @@ export const defaultMonster: Monster = {
     is_blind_beyond: false,
   },
   languages: [],
+  custom_languages: [],
   passive_perception: 0,
   custom_passive_perception: false,
 

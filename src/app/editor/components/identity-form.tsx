@@ -1,4 +1,8 @@
 "use client";
+import { useState } from "react";
+import { X } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   Combobox,
@@ -18,6 +22,7 @@ import {
   FieldSet,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
 import {
   Item,
   ItemContent,
@@ -29,7 +34,7 @@ import { CREATURE_SIZES, CREATURE_TYPES } from "@/lib/constants";
 import { titleCase } from "@/lib/utils";
 import { Languages } from "@/schema/createCreatureSchema";
 import { Monster } from "@/schema/monster-schema";
-import { Controller, useFormContext } from "react-hook-form";
+import { Controller, useFormContext, useWatch } from "react-hook-form";
 
 const SENSES = [
   { name: "senses.blindsight", label: "Blindsight" },
@@ -41,7 +46,13 @@ const SENSES = [
 const LANGUAGES = Object.values(Languages);
 
 export const IdentityForm = () => {
-  const form = useFormContext<Monster>();
+  const { control } = useFormContext<Monster>();
+  const customPassivePerception = useWatch({
+    control,
+    name: "custom_passive_perception",
+  });
+
+  const [customLanguageInput, setCustomLanguageInput] = useState("");
   return (
     <FieldSet>
       <FieldLegend>Identity</FieldLegend>
@@ -51,7 +62,7 @@ export const IdentityForm = () => {
 
       <Controller
         name="name"
-        control={form.control}
+        control={control}
         render={({ field, fieldState }) => (
           <Field data-invalid={fieldState.invalid}>
             <FieldLabel htmlFor="form-rhf-input-name">Name</FieldLabel>
@@ -69,7 +80,7 @@ export const IdentityForm = () => {
       <FieldGroup className="grid grid-cols-2">
         <Controller
           name="type"
-          control={form.control}
+          control={control}
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
               <FieldLabel htmlFor="form-rhf-input-type">Type</FieldLabel>
@@ -110,7 +121,7 @@ export const IdentityForm = () => {
         />
         <Controller
           name="size"
-          control={form.control}
+          control={control}
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
               <FieldLabel htmlFor="form-rhf-input-size">Size</FieldLabel>
@@ -149,7 +160,7 @@ export const IdentityForm = () => {
         />
         <Controller
           name="sub_type"
-          control={form.control}
+          control={control}
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
               <FieldLabel htmlFor="form-rhf-input-sub-type">Subtype</FieldLabel>
@@ -165,7 +176,7 @@ export const IdentityForm = () => {
         />
         <Controller
           name="alignment"
-          control={form.control}
+          control={control}
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
               <FieldLabel htmlFor="form-rhf-input-alignment">
@@ -191,7 +202,7 @@ export const IdentityForm = () => {
             <Controller
               key={sense.name}
               name={sense.name}
-              control={form.control}
+              control={control}
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
                   <FieldLabel htmlFor={`form-rhf-input-${sense.name}`}>
@@ -206,14 +217,16 @@ export const IdentityForm = () => {
                     aria-invalid={fieldState.invalid}
                     placeholder="ex. 0"
                   />
-                  {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
                 </Field>
               )}
             />
           ))}
           <Controller
             name="senses.is_blind_beyond"
-            control={form.control}
+            control={control}
             render={({ field }) => (
               <Field orientation="horizontal" className="items-center md:pb-2">
                 <Checkbox
@@ -231,12 +244,59 @@ export const IdentityForm = () => {
             )}
           />
         </div>
+
+        <Controller
+          name="passive_perception"
+          control={control}
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid}>
+              <div className="flex items-center justify-between gap-2">
+                <FieldLabel htmlFor="form-rhf-input-passive-perception">
+                  Passive Perception
+                </FieldLabel>
+                <Controller
+                  name="custom_passive_perception"
+                  control={control}
+                  render={({ field: customField }) => (
+                    <Field
+                      orientation="horizontal"
+                      className="w-auto items-center"
+                    >
+                      <Switch
+                        id="form-rhf-input-custom-passive-perception"
+                        size="sm"
+                        checked={customField.value}
+                        onCheckedChange={customField.onChange}
+                      />
+                      <FieldLabel
+                        htmlFor="form-rhf-input-custom-passive-perception"
+                        className="text-xs font-normal text-muted-foreground"
+                      >
+                        Manual
+                      </FieldLabel>
+                    </Field>
+                  )}
+                />
+              </div>
+              <Input
+                {...field}
+                id="form-rhf-input-passive-perception"
+                type="number"
+                onFocus={(e) => e.target.select()}
+                disabled={!customPassivePerception}
+                aria-invalid={fieldState.invalid}
+                placeholder="ex. 10"
+              />
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+            </Field>
+          )}
+        />
       </FieldGroup>
 
       {/* Languages */}
       <Controller
         name="languages"
-        control={form.control}
+        control={control}
         render={({ field }) => {
           const selected = field.value ?? [];
           return (
@@ -270,6 +330,77 @@ export const IdentityForm = () => {
                   );
                 })}
               </div>
+            </FieldGroup>
+          );
+        }}
+      />
+
+      {/* Custom languages */}
+      <Controller
+        name="custom_languages"
+        control={control}
+        render={({ field }) => {
+          const custom = field.value ?? [];
+          const addCustomLanguage = () => {
+            const value = customLanguageInput.trim();
+            if (!value || custom.includes(value)) {
+              setCustomLanguageInput("");
+              return;
+            }
+            field.onChange([...custom, value]);
+            setCustomLanguageInput("");
+          };
+          return (
+            <FieldGroup>
+              <FieldLabel
+                htmlFor="form-rhf-input-custom-language"
+                className="-mb-1"
+              >
+                Custom languages
+              </FieldLabel>
+              <div className="flex gap-2">
+                <Input
+                  id="form-rhf-input-custom-language"
+                  value={customLanguageInput}
+                  onChange={(e) => setCustomLanguageInput(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      addCustomLanguage();
+                    }
+                  }}
+                  placeholder="ex. telepathy"
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={addCustomLanguage}
+                  disabled={!customLanguageInput.trim()}
+                >
+                  Add
+                </Button>
+              </div>
+              {custom.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {custom.map((language) => (
+                    <Badge key={language} variant="secondary">
+                      {language}
+                      <Button
+                        variant="transparent"
+                        size="icon-xs"
+                        type="button"
+                        aria-label={`Remove ${language}`}
+                        onClick={() =>
+                          field.onChange(custom.filter((l) => l !== language))
+                        }
+                        className="-mr-2 hover:text-destructive "
+                      >
+                        <X />
+                      </Button>
+                    </Badge>
+                  ))}
+                </div>
+              )}
             </FieldGroup>
           );
         }}

@@ -207,8 +207,14 @@ export function MonsterStatblock({ creature }: { creature: Monster }) {
           />
           <Description
             title="Languages"
-            description={creature.languages.map((l) => titleCase(l)).join(", ")}
-            show={creature.languages.length > 0}
+            description={[
+              ...creature.languages.map((l) => titleCase(l)),
+              ...(creature.custom_languages ?? []),
+            ].join(", ")}
+            show={
+              creature.languages.length > 0 ||
+              (creature.custom_languages?.length ?? 0) > 0
+            }
           />
           <Description
             title="CR"

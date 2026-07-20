@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { createCreatureSchema } from "@/schema/createCreatureSchema";
 import { abilityScoresSchema, Monster } from "@/schema/monster-schema";
+import { partitionLanguages } from "@/lib/utils";
 
 type LegacyCreature = z.infer<typeof createCreatureSchema>;
 
@@ -33,6 +34,10 @@ export function creatureToMonster(creature: LegacyCreature): StoredMonster {
     }
   }
 
+  const { languages, custom_languages } = partitionLanguages(
+    (creature.languages ?? []) as unknown as string[],
+  );
+
   const damage_modifiers: NonNullable<Monster["damage_modifiers"]> = {};
   for (const type of creature.damage_vulnerabilities ?? []) {
     damage_modifiers[type] = "vulnerable";
@@ -56,7 +61,8 @@ export function creatureToMonster(creature: LegacyCreature): StoredMonster {
     alignment: creature.alignment,
     description: creature.description ?? undefined,
     senses: creature.senses,
-    languages: creature.languages ?? [],
+    languages,
+    custom_languages,
     passive_perception: creature.passive_perception,
     custom_passive_perception: creature.custom_passive_perception,
 

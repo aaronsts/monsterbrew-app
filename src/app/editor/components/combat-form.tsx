@@ -19,9 +19,11 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Item, ItemContent, ItemMedia, ItemTitle } from "@/components/ui/item";
+import { Switch } from "@/components/ui/switch";
 import { CHALLENGE_RATINGS } from "@/lib/constants";
-import { calculateStatBonus } from "@/lib/utils";
+import { calculateHitPoints, calculateStatBonus } from "@/lib/utils";
 import { abilityScoresSchema, Monster } from "@/schema/monster-schema";
+import { useEffect } from "react";
 import { Controller, useFormContext } from "react-hook-form";
 
 type ChallengeRating = Monster["cr"];
@@ -39,6 +41,17 @@ const MOVEMENTS = [
 export const CombatForm = () => {
   const form = useFormContext<Monster>();
   const abilityScoreValues = form.watch("ability_scores");
+  const customHp = form.watch("custom_hp");
+  const hitDice = form.watch("hit_dice");
+  const size = form.watch("size");
+
+  // Keep the derived HP in sync while not overriding. When "Set HP manually" is
+  // on, the user owns `hit_points`; otherwise it's derived from hit dice + size
+  // + CON so the stored record matches the statblock.
+  useEffect(() => {
+    if (customHp) return;
+    form.setValue("hit_points", calculateHitPoints(hitDice, size, abilityScoreValues?.con));
+  }, [customHp, hitDice, size, abilityScoreValues?.con, form]);
 
   return (
     <FieldSet>
@@ -149,12 +162,35 @@ export const CombatForm = () => {
           control={form.control}
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor="form-rhf-input-hit-points">
-                Hit Points
-              </FieldLabel>
+              <div className="flex items-center justify-between gap-2">
+                <FieldLabel htmlFor="form-rhf-input-hit-points">
+                  Hit Points
+                </FieldLabel>
+                <Controller
+                  name="custom_hp"
+                  control={form.control}
+                  render={({ field: customField }) => (
+                    <Field orientation="horizontal" className="w-auto items-center">
+                      <Switch
+                        id="form-rhf-input-custom-hp"
+                        size="sm"
+                        checked={customField.value}
+                        onCheckedChange={customField.onChange}
+                      />
+                      <FieldLabel
+                        htmlFor="form-rhf-input-custom-hp"
+                        className="text-xs font-normal text-muted-foreground"
+                      >
+                        Manual
+                      </FieldLabel>
+                    </Field>
+                  )}
+                />
+              </div>
               <Input
                 {...field}
                 id="form-rhf-input-hit-points"
+                disabled={!customHp}
                 aria-invalid={fieldState.invalid}
                 placeholder="ex. 195"
               />
