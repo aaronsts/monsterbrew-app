@@ -8,8 +8,8 @@
 
 :root,
 [data-theme="memphis"] {
-  --primary-base: #4c0a18;
-  --accent-base: #c89065;
+  --accent-base: #4c0a18;
+  --primary-base: #d59d61;
   --bg-base: #f4f0e5;
   --ink-base: #160e0b;
 }
