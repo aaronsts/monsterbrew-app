@@ -1,6 +1,6 @@
 "use client";
 
-import { Card, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { StandAloneDescription as Description } from "@/components/ui/stand-alone-description";
 import { calculateHitPoints, calculateStatBonus, titleCase } from "@/lib/utils";
 import { SKILLS } from "@/lib/skills";
@@ -110,9 +110,9 @@ export function MonsterStatblock({ creature }: { creature: Monster }) {
   });
 
   return (
-    <Card className="h-fit bg-carrara-100 text-carrara-900">
-      <div className="p-2 md:columns-2">
-        <div className="mb-4 border-b border-carrara-600 pb-2">
+    <Card className="h-fit">
+      <CardContent className="md:columns-2">
+        <div className="mb-4 border-b pb-2">
           <CardTitle>{creature.name || "Example Creature"}</CardTitle>
           <p className="capitalize italic font-medium text-carrara-600">
             {creature.size || "Size"} {creature.type || "Type"},{" "}
@@ -248,7 +248,7 @@ export function MonsterStatblock({ creature }: { creature: Monster }) {
             />
           )}
         </div>
-      </div>
+      </CardContent>
     </Card>
   );
 }
