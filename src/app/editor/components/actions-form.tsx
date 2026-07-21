@@ -4,10 +4,12 @@ import {
   Controller,
   useFieldArray,
   useFormContext,
+  useWatch,
 } from "react-hook-form";
-import type {
-  Control} from "react-hook-form";
+import { MarkupField } from "./markup-field";
+import type { Control } from "react-hook-form";
 import type { Monster } from "@/schema/monster-schema";
+import type { MarkupContext } from "@/lib/statblock-markup";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -44,6 +46,7 @@ interface FeatureListProps {
   title?: string;
   descriptionName?: DescriptionName;
   descriptionLabel?: string;
+  ctx: MarkupContext;
 }
 
 function FeatureList({
@@ -54,6 +57,7 @@ function FeatureList({
   title,
   descriptionName,
   descriptionLabel,
+  ctx,
 }: FeatureListProps) {
   const { fields, append, remove, swap } = useFieldArray({ control, name });
 
@@ -165,10 +169,14 @@ function FeatureList({
                     >
                       Description
                     </FieldLabel>
-                    <Textarea
-                      {...field}
+                    <MarkupField
                       id={`form-rhf-${name}-${index}-description`}
-                      placeholder="Describe the effect…"
+                      name={field.name}
+                      value={field.value}
+                      onChange={field.onChange}
+                      onBlur={field.onBlur}
+                      placeholder="Describe the effect…  e.g. {@atkr m} {@hit str}, reach 5 ft. {@h}{@damage 2d8 + str} slashing damage."
+                      ctx={ctx}
                     />
                   </Field>
                 )}
@@ -187,6 +195,13 @@ export const ActionsForm = () => {
   const isLegendary = form.watch("is_legendary");
   const isMythic = form.watch("is_mythic");
 
+  const ability_scores = useWatch({
+    control: form.control,
+    name: "ability_scores",
+  });
+  const cr = useWatch({ control: form.control, name: "cr" });
+  const ctx: MarkupContext = { ability_scores, cr };
+
   return (
     <FieldSet>
       <FieldLegend>Actions</FieldLegend>
@@ -200,6 +215,7 @@ export const ActionsForm = () => {
         title="Traits"
         itemLabel="Trait"
         addLabel="Add trait"
+        ctx={ctx}
       />
       <FeatureList
         control={form.control}
@@ -207,6 +223,7 @@ export const ActionsForm = () => {
         title="Actions"
         itemLabel="Action"
         addLabel="Add action"
+        ctx={ctx}
       />
       <FeatureList
         control={form.control}
@@ -214,6 +231,7 @@ export const ActionsForm = () => {
         title="Reactions"
         itemLabel="Reaction"
         addLabel="Add reaction"
+        ctx={ctx}
       />
       <FeatureList
         control={form.control}
@@ -221,6 +239,7 @@ export const ActionsForm = () => {
         title="Bonus Actions"
         itemLabel="Bonus Action"
         addLabel="Add bonus action"
+        ctx={ctx}
       />
 
       <FieldSeparator />
@@ -251,6 +270,7 @@ export const ActionsForm = () => {
             addLabel="Add lair action"
             descriptionName="lair_description"
             descriptionLabel="Lair Description"
+            ctx={ctx}
           />
         )}
       </FieldGroup>
@@ -281,6 +301,7 @@ export const ActionsForm = () => {
             addLabel="Add legendary action"
             descriptionName="legendary_description"
             descriptionLabel="Legendary Description"
+            ctx={ctx}
           />
         )}
       </FieldGroup>
@@ -311,6 +332,7 @@ export const ActionsForm = () => {
             addLabel="Add mythic action"
             descriptionName="mythic_description"
             descriptionLabel="Mythic Description"
+            ctx={ctx}
           />
         )}
       </FieldGroup>
