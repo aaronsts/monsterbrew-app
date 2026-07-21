@@ -1,4 +1,5 @@
 import { expect } from "@playwright/test";
+import { defaultCreature } from "../src/schema/createCreatureSchema";
 import type { Locator, Page} from "@playwright/test";
 
 export function statblock(page: Page): Locator {
@@ -13,6 +14,72 @@ export function creatureIdFromUrl(page: Page): string | null {
 
 export function editorForm(page: Page): Locator {
   return page.locator("form");
+}
+
+/**
+ * Fill the editor with a minimal creature and save it. Returns the new id
+ * (parsed from the `/library/<id>` URL the Save button navigates to).
+ */
+export async function saveCreature(
+  page: Page,
+  opts: { name: string; size?: string; type?: string },
+): Promise<string> {
+  await page.goto("/editor");
+  await page.getByLabel("Name").fill(opts.name);
+  if (opts.size) await selectCombo(page, "form-rhf-input-size", opts.size);
+  if (opts.type) await selectCombo(page, "form-rhf-input-type", opts.type);
+  await page.getByRole("button", { name: "Save" }).click();
+  await expect(page).toHaveURL(/\/library\/[^/]+$/);
+  const id = creatureIdFromUrl(page);
+  if (!id) throw new Error("save did not navigate to a library detail page");
+  return id;
+}
+
+/**
+ * A legacy-format creature record, ready to seed into IndexedDB. The legacy
+ * shape is exactly `defaultCreature` — `saving_throws` and the damage/condition
+ * fields are arrays (that's what `getCreatureFormat` keys on). Editor-saved
+ * creatures are always the new "monster" shape, so seeding is the only way to
+ * reach the legacy statblock / migration paths from an e2e test.
+ */
+export function legacyCreature(
+  overrides: Record<string, unknown> = {},
+): Record<string, unknown> {
+  return {
+    ...defaultCreature,
+    id: `legacy-${Date.now()}-${Math.random().toString(36).slice(2)}`,
+    name: "Old Goblin",
+    ...overrides,
+  };
+}
+
+/**
+ * Write a record straight into the `creatures` store, bypassing the editor.
+ * Creates the store if the DB doesn't exist yet, so it works from a cold start.
+ */
+export async function seedCreature(page: Page, record: Record<string, unknown>) {
+  await page.evaluate(async (rec) => {
+    const db: IDBDatabase = await new Promise((resolve, reject) => {
+      const req = indexedDB.open("monsterbrewDB", 1);
+      req.onupgradeneeded = () => {
+        if (!req.result.objectStoreNames.contains("creatures")) {
+          req.result.createObjectStore("creatures", { keyPath: "id" });
+        }
+      };
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => reject(req.error);
+    });
+    try {
+      await new Promise<void>((resolve, reject) => {
+        const tx = db.transaction("creatures", "readwrite");
+        tx.objectStore("creatures").put(rec);
+        tx.oncomplete = () => resolve();
+        tx.onerror = () => reject(tx.error);
+      });
+    } finally {
+      db.close();
+    }
+  }, record);
 }
 
 export async function selectCombo(page: Page, inputId: string, option: string) {
