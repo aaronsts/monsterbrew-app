@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { selectCombo, statblock } from "./helpers";
+import { creatureIdFromUrl, selectCombo, statblock } from "./helpers";
 
 test.describe("Monster editor — persistence", () => {
   test("warns and does not save when the name is empty", async ({ page }) => {
@@ -12,7 +12,9 @@ test.describe("Monster editor — persistence", () => {
     await expect(page).toHaveURL(/\/editor$/);
   });
 
-  test("saves a creature and lists it under My Creatures", async ({ page }) => {
+  test("saves a creature and opens its library detail page", async ({
+    page,
+  }) => {
     await page.goto("/editor");
     await page.getByLabel("Name").fill("Test Owlbear");
     await selectCombo(page, "form-rhf-input-size", "Large");
@@ -20,12 +22,11 @@ test.describe("Monster editor — persistence", () => {
 
     await page.getByRole("button", { name: "Save" }).click();
 
-    // Save navigates to the list, anchored on the new creature's id.
-    await expect(page).toHaveURL(/\/my-creatures\?id=/);
-    // exact:true targets the name cell, not the expanded statblock detail row.
+    // Save navigates to the creature's detail page.
+    await expect(page).toHaveURL(/\/library\/[^/]+$/);
     await expect(
-      page.getByRole("cell", { name: "Test Owlbear", exact: true }),
-    ).toBeVisible();
+      statblock(page).locator('[data-slot="card-title"]'),
+    ).toHaveText("Test Owlbear");
   });
 
   test("reloads a saved creature back into the editor via ?id=", async ({
@@ -35,8 +36,8 @@ test.describe("Monster editor — persistence", () => {
     await page.getByLabel("Name").fill("Reloadable Wyrm");
     await page.getByRole("button", { name: "Save" }).click();
 
-    await expect(page).toHaveURL(/\/my-creatures\?id=/);
-    const id = new URL(page.url()).searchParams.get("id");
+    await expect(page).toHaveURL(/\/library\/[^/]+$/);
+    const id = creatureIdFromUrl(page);
     expect(id).toBeTruthy();
 
     // IndexedDB persists across same-origin navigations within this context.

@@ -116,9 +116,9 @@ test.describe("Import fixtures", () => {
         await nameField.fill(`E2E ${fixture.name}`);
       }
       await page.getByRole("button", { name: "Save" }).click();
-      await expect(page).toHaveURL(/\/my-creatures\?id=/);
+      await expect(page).toHaveURL(/\/library\/[^/]+$/);
 
-      const id = new URL(page.url()).searchParams.get("id");
+      const id = new URL(page.url()).pathname.split("/library/")[1] || null;
       expect(id).toBeTruthy();
 
       const stored = (await readStoredCreature(page, id!)) as Record<

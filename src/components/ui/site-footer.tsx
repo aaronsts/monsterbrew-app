@@ -4,7 +4,7 @@ import { GithubLogo } from "@/components/images/GithubLogo";
 
 const navigation = [
   { href: "/editor", label: "Editor" },
-  { href: "/my-creatures", label: "Library" },
+  { href: "/library", label: "Library" },
   { href: "/changelog", label: "Changelog" },
   { href: "/privacy", label: "Privacy Policy" },
 ] as const;

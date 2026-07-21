@@ -33,7 +33,7 @@ function SaveDialogComponent() {
       if (creature.id) {
         await db.put("creatures", creature);
         toast.success(`Saved ${creature.name}`);
-        navigate({ to: "/my-creatures", search: { id: creature.id } });
+        navigate({ to: "/library/$id", params: { id: creature.id } });
       } else {
         const creatureToSave = {
           ...creature,
@@ -41,7 +41,7 @@ function SaveDialogComponent() {
         };
         await db.add("creatures", creatureToSave);
         toast.success(`Saved ${creature.name}`);
-        navigate({ to: "/my-creatures", search: { id: creatureToSave.id } });
+        navigate({ to: "/library/$id", params: { id: creatureToSave.id } });
       }
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : String(err);

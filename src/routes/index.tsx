@@ -43,7 +43,7 @@ function Home() {
               Start Brewing <ArrowRight />
             </Button>
           </Link>
-          <Link to="/my-creatures">
+          <Link to="/library">
             <Button size="lg" variant="outline">
               View Library
             </Button>
