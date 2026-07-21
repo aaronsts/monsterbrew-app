@@ -100,7 +100,14 @@ function FeatureSection({
   );
 }
 
-export function MonsterStatblock({ creature }: { creature: Monster }) {
+export function MonsterStatblock({
+  creature,
+  columns = false,
+}: {
+  creature: Monster;
+  /** Flow the statblock body into two columns on desktop (single column on mobile). */
+  columns?: boolean;
+}) {
   const pb = creature.cr.proficiency_bonus || 0;
   const initMod = calculateStatBonus(creature.ability_scores.dex);
 
@@ -186,7 +193,14 @@ export function MonsterStatblock({ creature }: { creature: Monster }) {
         </p>
       </CardHeader>
 
-      <CardContent className="flex flex-col gap-2 pb-4">
+      <CardContent
+        className={cn(
+          "pb-4",
+          columns
+            ? "md:columns-2 md:gap-x-8 [&>*+*]:mt-2 md:[&>*]:break-inside-avoid"
+            : "flex flex-col gap-2",
+        )}
+      >
         <TaperedRule />
 
         {/* Defenses & speed */}

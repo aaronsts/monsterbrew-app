@@ -9,6 +9,7 @@ import {
   toggleCondition,
   toggleLanguage,
   addFeature,
+  creatureIdFromUrl,
 } from "./helpers";
 
 /**
@@ -110,8 +111,8 @@ test.describe("Monster editor — full round-trip", () => {
 
     // --- Save ---
     await page.getByRole("button", { name: "Save" }).click();
-    await expect(page).toHaveURL(/\/my-creatures\?id=/);
-    const id = new URL(page.url()).searchParams.get("id");
+    await expect(page).toHaveURL(/\/library\/[^/]+$/);
+    const id = creatureIdFromUrl(page);
     expect(id).toBeTruthy();
 
     // --- Reload & assert fidelity ---

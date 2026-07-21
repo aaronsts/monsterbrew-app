@@ -107,7 +107,7 @@ export const MonsterForm = () => {
       );
       setCreatureId(id);
       toast.success(`Saved ${values.name}`);
-      navigate({ to: "/my-creatures", search: { id } });
+      navigate({ to: "/library/$id", params: { id } });
     } catch (err) {
       toast.error(
         `Something went wrong: ${err instanceof Error ? err.message : String(err)}`,
