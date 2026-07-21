@@ -41,7 +41,7 @@ describe("MonsterStatblock markup resolution", () => {
 
     const { container } = render(<MonsterStatblock creature={monster} />);
     expect(container.textContent).toContain("nonmagical attacks");
-    expect(container.textContent).toContain("nonmagical, nonsilvered attacks");
+    expect(container.textContent).toContain("nonsilvered attacks");
   });
 
   it("recomputes when the ability score changes", () => {

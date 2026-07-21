@@ -45,7 +45,7 @@ describe("NonmagicalDefensesField", () => {
   it("reflects a pre-existing state with its colour class", () => {
     renderField({ nonmagical_attack_modifiers: { silvered: "immune" } });
     expect(
-      screen.getByRole("button", { name: "Nonmagical, nonsilvered attacks" })
+      screen.getByRole("button", { name: "Nonsilvered attacks" })
         .className,
     ).toContain("text-green-500");
   });
@@ -58,10 +58,10 @@ describe("NonmagicalDefensesField", () => {
       screen.getByRole("button", { name: "Nonmagical attacks" }),
     );
     await user.click(
-      screen.getByRole("button", { name: "Nonmagical, nonsilvered attacks" }),
+      screen.getByRole("button", { name: "Nonsilvered attacks" }),
     );
     await user.click(
-      screen.getByRole("button", { name: "Nonmagical, nonsilvered attacks" }),
+      screen.getByRole("button", { name: "Nonsilvered attacks" }),
     );
 
     expect(getForm().getValues("nonmagical_attack_modifiers")).toEqual({
