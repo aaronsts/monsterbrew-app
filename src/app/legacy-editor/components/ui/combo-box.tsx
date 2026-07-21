@@ -20,9 +20,9 @@ import {
 } from "@/components/ui/popover";
 
 interface ComboboxProps {
-  options: { value: string; label: string }[];
+  options: Array<{ value: string; label: string }>;
   value: string | undefined;
-  // eslint-disable-next-line no-unused-vars -- false positive on callback param type
+   
   onChange: (next: string) => void;
   placeholder?: string;
 }

@@ -1,5 +1,5 @@
 diff --git a/dist/CommitParser.js b/dist/CommitParser.js
-index 2447be2e4e16440568b1519d26ff716c6454329f..00518a389b91b6a9b85b0d37332d24264a1f42bc 100644
+index b63ffb1e7259e4c0194ceb2933f536f24ed9597e..3b75f888ff5f202041183b694073b37b7e61b26c 100644
 --- a/dist/CommitParser.js
 +++ b/dist/CommitParser.js
 @@ -74,6 +74,9 @@ export class CommitParser {

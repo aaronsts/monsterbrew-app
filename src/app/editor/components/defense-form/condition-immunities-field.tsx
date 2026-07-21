@@ -1,8 +1,8 @@
+import { Controller, useFormContext } from "react-hook-form";
+import type { Monster } from "@/schema/monster-schema";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
-import { Monster } from "@/schema/monster-schema";
 import { CONDITIONS } from "@/types/types";
-import { Controller, useFormContext } from "react-hook-form";
 
 export function ConditionImmunitiesField() {
   const form = useFormContext<Monster>();

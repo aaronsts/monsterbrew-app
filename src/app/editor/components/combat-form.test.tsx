@@ -6,7 +6,7 @@ import { renderWithForm } from "./test-utils";
 import { calculateHitPoints } from "@/lib/utils";
 import { defaultMonster } from "@/schema/monster-schema";
 
-const hpInput = () => screen.getByLabelText("Hit Points") as HTMLInputElement;
+const hpInput = () => screen.getByLabelText<HTMLInputElement>("Hit Points");
 const manualToggle = () => screen.getByRole("switch", { name: "Manual" });
 
 describe("CombatForm — custom HP", () => {

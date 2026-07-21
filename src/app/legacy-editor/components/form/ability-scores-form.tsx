@@ -1,3 +1,7 @@
+import { useFormContext } from "react-hook-form";
+import type { z } from "zod";
+import type {
+  createCreatureSchema} from "@/schema/createCreatureSchema";
 import {
   FormControl,
   FormField,
@@ -9,11 +13,8 @@ import { Input } from "@/components/ui/input";
 
 import { calculateStatBonus } from "@/lib/utils";
 import {
-  abilityScoresSchema,
-  createCreatureSchema,
+  abilityScoresSchema
 } from "@/schema/createCreatureSchema";
-import { useFormContext } from "react-hook-form";
-import { z } from "zod";
 
 function AbilityScoresForm() {
   const form = useFormContext<z.infer<typeof createCreatureSchema>>();

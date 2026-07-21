@@ -1,3 +1,7 @@
+import { useEffect } from "react";
+import { useFormContext } from "react-hook-form";
+import type { z } from "zod";
+import type { createCreatureSchema } from "@/schema/createCreatureSchema";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   FormControl,
@@ -8,16 +12,12 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { titleCase } from "@/lib/utils";
-import {
-  createCreatureSchema,
-  sensesSchema,
-} from "@/schema/createCreatureSchema";
-import { useEffect } from "react";
-import { useFormContext } from "react-hook-form";
-import { z } from "zod";
+import { sensesSchema } from "@/schema/createCreatureSchema";
 
 function SensesForm() {
   const form = useFormContext<z.infer<typeof createCreatureSchema>>();
+
+  const { setValue } = form;
 
   const customPassivePerception = form.watch("custom_passive_perception");
 
@@ -27,9 +27,9 @@ function SensesForm() {
 
   useEffect(() => {
     if (!customPassivePerception) {
-      form.setValue("passive_perception", 10);
+      setValue("passive_perception", 10);
     }
-  }, [customPassivePerception]);
+  }, [customPassivePerception, setValue]);
 
   return (
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 pt-3">

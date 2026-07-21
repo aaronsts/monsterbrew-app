@@ -1,6 +1,7 @@
-import { z } from "zod";
-import { createCreatureSchema } from "@/schema/createCreatureSchema";
-import { abilityScoresSchema, Monster } from "@/schema/monster-schema";
+import type { z } from "zod";
+import type { createCreatureSchema } from "@/schema/createCreatureSchema";
+import type { Monster } from "@/schema/monster-schema";
+import { abilityScoresSchema } from "@/schema/monster-schema";
 import { partitionLanguages } from "@/lib/utils";
 
 type LegacyCreature = z.infer<typeof createCreatureSchema>;
@@ -35,7 +36,7 @@ export function creatureToMonster(creature: LegacyCreature): StoredMonster {
   }
 
   const { languages, custom_languages } = partitionLanguages(
-    (creature.languages ?? []) as unknown as string[],
+    creature.languages ?? [],
   );
 
   const damage_modifiers: NonNullable<Monster["damage_modifiers"]> = {};

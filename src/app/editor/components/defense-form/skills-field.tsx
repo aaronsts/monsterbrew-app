@@ -1,16 +1,17 @@
-import { FieldGroup, FieldLabel } from "@/components/ui/field";
-import { calculateStatBonus, cn } from "@/lib/utils";
-import { Monster } from "@/schema/monster-schema";
 import { Controller, useFormContext } from "react-hook-form";
 import { CheckSquare } from "./check-square";
 import {
   FOCUS_RING,
   SKILLS_BY_ABILITY,
-  SkillProficiency,
   formatModifier,
   nextSkillState,
   setSkill,
 } from "./helpers";
+import type {
+  SkillProficiency} from "./helpers";
+import type { Monster } from "@/schema/monster-schema";
+import { FieldGroup, FieldLabel } from "@/components/ui/field";
+import { calculateStatBonus, cn } from "@/lib/utils";
 
 export function SkillsField() {
   const form = useFormContext<Monster>();

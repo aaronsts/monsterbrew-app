@@ -1,13 +1,13 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { defaultCreature } from "@/schema/createCreatureSchema";
+
+import { migrateCreature } from "@/services/migrations/migrateCreature";
+import { creatureToMonster } from "@/services/migrations/creatureToMonster";
 
 // Force the converter to throw so we exercise migrateCreature's defensive catch.
 vi.mock("@/services/migrations/creatureToMonster", () => ({
   creatureToMonster: vi.fn(),
 }));
-
-import { migrateCreature } from "@/services/migrations/migrateCreature";
-import { creatureToMonster } from "@/services/migrations/creatureToMonster";
 
 const mockedConvert = vi.mocked(creatureToMonster);
 

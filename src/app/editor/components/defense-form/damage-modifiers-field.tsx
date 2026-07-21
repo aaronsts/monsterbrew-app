@@ -1,3 +1,13 @@
+import { Info } from "lucide-react";
+import { Controller, useFormContext } from "react-hook-form";
+import {
+  damageStateStyles,
+  nextDamageState,
+  setDamage,
+} from "./helpers";
+import type {
+  DamageState} from "./helpers";
+import type { Monster } from "@/schema/monster-schema";
 import { Button } from "@/components/ui/button";
 import { FieldGroup, FieldLabel } from "@/components/ui/field";
 import {
@@ -6,16 +16,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
-import { Monster } from "@/schema/monster-schema";
 import { DAMAGE_TYPES } from "@/types/types";
-import { Info } from "lucide-react";
-import { Controller, useFormContext } from "react-hook-form";
-import {
-  DamageState,
-  damageStateStyles,
-  nextDamageState,
-  setDamage,
-} from "./helpers";
 
 export function DamageModifiersField() {
   const form = useFormContext<Monster>();

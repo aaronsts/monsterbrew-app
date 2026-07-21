@@ -1,9 +1,9 @@
+import { Controller, useFormContext } from "react-hook-form";
+import { ABILITY_SCORES, formatModifier } from "./helpers";
+import type { Monster } from "@/schema/monster-schema";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { calculateStatBonus, cn } from "@/lib/utils";
-import { Monster } from "@/schema/monster-schema";
-import { Controller, useFormContext } from "react-hook-form";
-import { ABILITY_SCORES, formatModifier } from "./helpers";
 
 export function SavingThrowsField() {
   const form = useFormContext<Monster>();

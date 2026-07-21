@@ -1,20 +1,20 @@
 "use client";
 
-import { Form } from "@/components/ui/form";
-import {
-  createCreatureSchema,
-  defaultCreature,
-} from "@/schema/createCreatureSchema";
-import { createMarkdownPage } from "@/services/converters/markdown";
-import { monsterbrewDB } from "@/services/database";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useSearch } from "@tanstack/react-router";
 import { useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { z } from "zod";
 import CreatureForm from "./creature-form";
 import CreatureStatblock from "./creature-statblock";
+import type { z } from "zod";
+import { monsterbrewDB } from "@/services/database";
+import { createMarkdownPage } from "@/services/converters/markdown";
+import {
+  createCreatureSchema,
+  defaultCreature,
+} from "@/schema/createCreatureSchema";
+import { Form } from "@/components/ui/form";
 
 export default function Editor() {
   const { id: creatureIdParam } = useSearch({ from: "/legacy-editor" });
@@ -34,11 +34,13 @@ export default function Editor() {
         toast.promise(
           (async () => {
             try {
-              form.reset(storedCreature);
+              await form.reset(storedCreature);
               return storedCreature.name;
             } catch (error) {
               console.error("Error loading stored creature:", error);
-              throw new Error("Could not load the creature for editing");
+              throw new Error("Could not load the creature for editing", {
+                cause: error,
+              });
             }
           })(),
           {
@@ -58,11 +60,13 @@ export default function Editor() {
               const parsedCreature = JSON.parse(storedCreature);
               form.reset(parsedCreature);
               // Clear the localStorage after loading
-              localStorage.removeItem("editCreature");
+              await localStorage.removeItem("editCreature");
               return parsedCreature.name; // Return the name for the success message
             } catch (error) {
               console.error("Error parsing stored creature:", error);
-              throw new Error("Could not load the creature for editing");
+              throw new Error("Could not load the creature for editing", {
+                cause: error,
+              });
             }
           })(),
           {

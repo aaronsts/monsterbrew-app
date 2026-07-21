@@ -8,6 +8,7 @@
 
 # testing
 /coverage
+/coverage-e2e
 
 # vite / tanstack start
 /dist

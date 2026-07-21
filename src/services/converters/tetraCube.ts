@@ -1,6 +1,6 @@
+import type { Languages, defaultCreature } from "@/schema/createCreatureSchema";
+import type { TetraCubeCreature } from "@/types/tetra-cube";
 import { CHALLENGE_RATINGS } from "@/lib/constants";
-import { defaultCreature, Languages } from "@/schema/createCreatureSchema";
-import { TetraCubeCreature } from "@/types/tetra-cube";
 
 export function fromTetacube(
   source: TetraCubeCreature
@@ -79,7 +79,7 @@ export function fromTetacube(
     damage_resistances: damageResistances,
     damage_vulnerabilities: damageVulnerabilities,
     skill_bonuses: skills,
-    languages: source.languages.map((l) => l.name) as Languages[],
+    languages: source.languages.map((l) => l.name) as Array<Languages>,
     passive_perception: passivePerception,
     senses: {
       blindsight: source.blindsight,
@@ -111,7 +111,7 @@ export function fromTetacube(
 }
 
 function convertToNameAndDescription(
-  actions: { name: string; desc: string }[]
+  actions: Array<{ name: string; desc: string }>
 ) {
   return actions.map((a) => ({ name: a.name, description: a.desc }));
 }

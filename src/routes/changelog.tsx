@@ -13,10 +13,10 @@ type Release = {
   badge?: string;
   title?: string;
   summary?: string;
-  changes: string[];
+  changes: Array<string>;
 };
 
-const releases: Release[] = [
+const releases: Array<Release> = [
   {
     version: "3.1.2",
     date: "2026-07-21",
@@ -98,6 +98,7 @@ const releases: Release[] = [
   },
 ];
 
+// eslint-disable-next-line react-refresh/only-export-components
 function Changelog() {
   return (
     <div className="mx-auto flex w-full max-w-4xl flex-col gap-12 px-6 py-8">

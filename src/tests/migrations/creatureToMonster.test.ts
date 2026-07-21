@@ -1,14 +1,16 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
+import type {
+  StoredMonster} from "@/services/migrations/creatureToMonster";
+import type {
+  createCreatureSchema} from "@/schema/createCreatureSchema";
+import type { z } from "zod";
 import {
-  creatureToMonster,
-  StoredMonster,
+  creatureToMonster
 } from "@/services/migrations/creatureToMonster";
 import {
-  createCreatureSchema,
   defaultCreature,
 } from "@/schema/createCreatureSchema";
 import { monsterSchema } from "@/schema/monster-schema";
-import { z } from "zod";
 
 type LegacyCreature = z.infer<typeof createCreatureSchema>;
 

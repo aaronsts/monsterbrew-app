@@ -1,6 +1,6 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { Button } from "@/components/ui/button";
+import { Link, createFileRoute } from "@tanstack/react-router";
 import { ArrowRight, FileText, HardDriveDownload, Library } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { FeatureCard } from "@/components/home/feature-card";
 import { CornerBrackets } from "@/components/home/corner-brackets";
 
@@ -8,6 +8,7 @@ export const Route = createFileRoute("/")({
   component: Home,
 });
 
+// eslint-disable-next-line react-refresh/only-export-components
 function Home() {
   return (
     <div className="w-full flex flex-col gap-24 py-8 px-6">

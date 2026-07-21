@@ -1,6 +1,3 @@
-import { Monster } from "@/schema/monster-schema";
-import { open5eSchema, Open5eCreature } from "@/types/open-5e";
-import { calculateStatBonus } from "@/lib/utils";
 import {
   findChallengeRating,
   parseOrThrow,
@@ -11,16 +8,20 @@ import {
   toSavingThrows,
   toSkills,
 } from "./monster-mappers";
+import type { Monster } from "@/schema/monster-schema";
+import type { Open5eCreature } from "@/types/open-5e";
+import { open5eSchema } from "@/types/open-5e";
+import { calculateStatBonus } from "@/lib/utils";
 
 type Action = NonNullable<Open5eCreature["reactions"]>[number];
 
-function toFeatures(entries: Action[] | null | undefined): Monster["traits"] {
+function toFeatures(entries: Array<Action> | null | undefined): Monster["traits"] {
   if (!entries) return [];
   return entries.map((entry) => ({ name: entry.name, description: entry.desc }));
 }
 
 /** Split a comma-separated Open5e list ("fire, cold") into a trimmed array. */
-function splitList(value: string): string[] {
+function splitList(value: string): Array<string> {
   return value
     .split(",")
     .map((item) => item.trim())

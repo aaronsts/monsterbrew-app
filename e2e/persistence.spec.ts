@@ -1,5 +1,5 @@
-import { test, expect } from "@playwright/test";
-import { statblock, selectCombo, creatureIdFromUrl } from "./helpers";
+import { expect, test } from "./fixtures";
+import { creatureIdFromUrl, selectCombo, statblock } from "./helpers";
 
 test.describe("Monster editor — persistence", () => {
   test("warns and does not save when the name is empty", async ({ page }) => {

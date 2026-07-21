@@ -1,11 +1,13 @@
+import { creatureToMonster } from "./creatureToMonster";
+import type { ZodError } from "zod";
+import type { StoredMonster } from "./creatureToMonster";
 import { createCreatureSchema } from "@/schema/createCreatureSchema";
-import { creatureToMonster, StoredMonster } from "./creatureToMonster";
 
 export type MigrateResult =
   | { status: "ok"; creature: StoredMonster }
   | { status: "error"; reason: string };
 
-function formatIssues(error: import("zod").ZodError): string {
+function formatIssues(error: ZodError): string {
   return error.issues
     .map((issue) => {
       const path = issue.path.join(".") || "(root)";

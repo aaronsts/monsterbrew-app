@@ -1,8 +1,8 @@
+import { useFormContext } from "react-hook-form";
+import type { z } from "zod";
+import type { createCreatureSchema } from "@/schema/createCreatureSchema";
 import { Description } from "@/components/ui/description";
 import { titleCase } from "@/lib/utils";
-import { createCreatureSchema } from "@/schema/createCreatureSchema";
-import { useFormContext } from "react-hook-form";
-import { z } from "zod";
 
 export function Features() {
   const { watch } = useFormContext<z.infer<typeof createCreatureSchema>>();
@@ -26,14 +26,14 @@ export function Features() {
       })
     : [];
 
-  const senses: string[] = [];
+  const senses: Array<string> = [];
   if (creature.senses) {
     Object.entries(creature.senses).forEach((m) => {
       const isBlindBeyond = watch("senses.is_blind_beyond");
-      if (!!m[1]) {
+      if (m[1]) {
         switch (m[0]) {
           case "blindsight":
-            return !!isBlindBeyond
+            return isBlindBeyond
               ? senses.push(`${m[0]} ${m[1]} ft. (blind beyond this radius)`)
               : senses.push(`${m[0]} ${m[1]} ft.`);
           case "is_blind_beyond":

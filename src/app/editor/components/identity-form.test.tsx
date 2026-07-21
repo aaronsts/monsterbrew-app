@@ -6,10 +6,10 @@ import { renderWithForm } from "./test-utils";
 import { Languages } from "@/schema/createCreatureSchema";
 
 const ppInput = () =>
-  screen.getByLabelText("Passive Perception") as HTMLInputElement;
+  screen.getByLabelText<HTMLInputElement>("Passive Perception");
 const manualToggle = () => screen.getByRole("switch", { name: "Manual" });
 const languageInput = () =>
-  screen.getByLabelText("Custom languages") as HTMLInputElement;
+  screen.getByLabelText<HTMLInputElement>("Custom languages");
 const addButton = () => screen.getByRole("button", { name: "Add" });
 
 describe("IdentityForm — custom passive perception", () => {

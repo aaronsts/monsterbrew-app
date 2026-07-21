@@ -1,7 +1,4 @@
-import { Card, CardTitle } from "@/components/ui/card";
-import { createCreatureSchema } from "@/schema/createCreatureSchema";
 import { useFormContext, useWatch } from "react-hook-form";
-import { z } from "zod";
 import { AbilityScores } from "./statblock/ability-scores";
 import { Actions } from "./statblock/actions";
 import { Reactions } from "./statblock/reactions";
@@ -9,8 +6,11 @@ import { Traits } from "./statblock/traits";
 import { Features } from "./statblock/features";
 import { LegendaryActions } from "./statblock/legendary-actions";
 import { BasicInfo } from "./statblock/general-info";
-import { RefObject } from "react";
 import { MythicActions } from "./statblock/mythic-actions";
+import type { RefObject } from "react";
+import type { z } from "zod";
+import type { createCreatureSchema } from "@/schema/createCreatureSchema";
+import { Card, CardTitle } from "@/components/ui/card";
 
 function CreatureStatblock({
   pdfRef,

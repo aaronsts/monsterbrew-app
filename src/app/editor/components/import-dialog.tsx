@@ -1,9 +1,13 @@
 "use client";
 
-import { ChangeEvent, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useFormContext } from "react-hook-form";
 import { toast } from "sonner";
+import type { ChangeEvent} from "react";
 
+import type { Monster } from "@/schema/monster-schema";
+import type {
+  ImportFormat} from "@/services/converters/detect-import-format";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -16,11 +20,9 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Monster } from "@/schema/monster-schema";
 import {
-  detectImportFormat,
-  ImportFormat,
   IMPORT_FORMAT_LABELS,
+  detectImportFormat,
 } from "@/services/converters/detect-import-format";
 import { convertImport } from "@/services/converters/import-to-monster";
 
@@ -149,7 +151,7 @@ export function ImportDialog({
   );
 }
 
-const ALL_FORMATS = Object.keys(IMPORT_FORMAT_LABELS) as ImportFormat[];
+const ALL_FORMATS = Object.keys(IMPORT_FORMAT_LABELS) as Array<ImportFormat>;
 
 function ImportStatus({
   parsed,

@@ -28,7 +28,7 @@ interface MigrateDialogProps {
   /** The legacy creature to migrate, or null when the dialog is closed. */
   creature: { id?: string; name?: string } | null;
   open: boolean;
-  // eslint-disable-next-line no-unused-vars -- false positive on callback param type
+   
   onOpenChange: (open: boolean) => void;
   /** Called after a successful migration so the caller can refresh its list. */
   onMigrated: () => void;
@@ -45,6 +45,7 @@ export function MigrateDialog({
 
   // Reset back to the prompt whenever a fresh creature/dialog is opened.
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (open) setPhase({ status: "prompt" });
   }, [open, creature]);
 

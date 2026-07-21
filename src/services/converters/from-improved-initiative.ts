@@ -1,6 +1,3 @@
-import { Monster } from "@/schema/monster-schema";
-import { SKILLS } from "@/lib/skills";
-import { improvedInitiativeSchema } from "@/types/improved-initiative";
 import {
   findChallengeRating,
   parseOrThrow,
@@ -9,14 +6,18 @@ import {
   toDamageModifiers,
   toLanguages,
   toSavingThrows,
-  toSkills,
-  SkillEntry,
+  toSkills
 } from "./monster-mappers";
+import type {
+  SkillEntry} from "./monster-mappers";
+import type { Monster } from "@/schema/monster-schema";
+import { SKILLS } from "@/lib/skills";
+import { improvedInitiativeSchema } from "@/types/improved-initiative";
 
 const SKILL_NAME_SET = new Set<string>(SKILLS.map((s) => s.skill_name));
 
 function toFeatures(
-  entries: { Name: string; Content: string }[],
+  entries: Array<{ Name: string; Content: string }>,
 ): Monster["traits"] {
   return entries.map((entry) => ({
     name: entry.Name,
@@ -52,7 +53,7 @@ export function fromImprovedInitiative(raw: unknown): Monster {
     else if (label.includes("walk")) movements.walk = value;
   }
 
-  const skills: SkillEntry[] = source.Skills.filter((skl) =>
+  const skills: Array<SkillEntry> = source.Skills.filter((skl) =>
     SKILL_NAME_SET.has(skl.Name.trim().toLowerCase()),
   ).map((skl) => ({
     name: skl.Name,

@@ -1,10 +1,10 @@
-import type { ReactNode } from "react";
 import {
-  Outlet,
-  createRootRoute,
   HeadContent,
+  Outlet,
   Scripts,
+  createRootRoute,
 } from "@tanstack/react-router";
+import type { ReactNode } from "react";
 
 import "@/app/globals.css";
 import "@fontsource-variable/oxanium";
@@ -82,6 +82,7 @@ export const Route = createRootRoute({
   component: RootComponent,
 });
 
+// eslint-disable-next-line react-refresh/only-export-components
 function RootComponent() {
   return (
     <RootDocument>
@@ -90,6 +91,7 @@ function RootComponent() {
   );
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
   return (
     <html

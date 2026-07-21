@@ -1,7 +1,7 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
+import type { Open5eCreature } from "@/types/open-5e";
 import { fromOpen5e } from "@/services/converters/from-open-5e";
 import { monsterSchema } from "@/schema/monster-schema";
-import { Open5eCreature } from "@/types/open-5e";
 
 const owlbear = {
   slug: "owlbear",

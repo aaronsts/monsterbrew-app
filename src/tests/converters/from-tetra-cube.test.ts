@@ -1,7 +1,7 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
+import type { TetraCubeCreature } from "@/types/tetra-cube";
 import { fromTetraCube } from "@/services/converters/from-tetra-cube";
 import { monsterSchema } from "@/schema/monster-schema";
-import { TetraCubeCreature } from "@/types/tetra-cube";
 
 const goblin = {
   name: "Goblin Boss",

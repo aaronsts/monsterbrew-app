@@ -7,5 +7,12 @@ import { nitro } from "nitro/vite";
 export default defineConfig({
   server: { port: 3000 },
   resolve: { tsconfigPaths: true },
+  build: { sourcemap: !!process.env.COVERAGE },
+  optimizeDeps: {
+    include: [
+      "use-sync-external-store/shim",
+      "use-sync-external-store/shim/with-selector",
+    ],
+  },
   plugins: [tailwindcss(), tanstackStart(), nitro(), viteReact()],
 });

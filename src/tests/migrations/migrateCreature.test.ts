@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
 import { migrateCreature } from "@/services/migrations/migrateCreature";
 import { defaultCreature } from "@/schema/createCreatureSchema";
 import { monsterSchema } from "@/schema/monster-schema";

@@ -1,9 +1,9 @@
+import { useFormContext } from "react-hook-form";
+import type { z } from "zod";
+import type { createCreatureSchema } from "@/schema/createCreatureSchema";
 import { Description } from "@/components/ui/description";
 import { CREATURE_SIZES } from "@/lib/constants";
 import { calculateStatBonus } from "@/lib/utils";
-import { createCreatureSchema } from "@/schema/createCreatureSchema";
-import { useFormContext } from "react-hook-form";
-import { z } from "zod";
 
 export function BasicInfo() {
   const { watch } = useFormContext<z.infer<typeof createCreatureSchema>>();
@@ -26,16 +26,16 @@ export function BasicInfo() {
   );
   const hp = creature.custom_hp ? creature.hit_points : medianHP;
 
-  const movements: string[] = [];
+  const movements: Array<string> = [];
   Object.entries(creature.movements).forEach((m) => {
     const hover = watch("movements.hover");
-    if (!!m[1]) {
+    if (m[1]) {
       switch (m[0]) {
         case "walk":
           movements.push(`${m[1]} ft.`);
           break;
         case "fly":
-          return !!hover
+          return hover
             ? movements.push(`${m[0]} ${m[1]} ft. (hover)`)
             : movements.push(`${m[0]} ${m[1]} ft.`);
         case "hover":

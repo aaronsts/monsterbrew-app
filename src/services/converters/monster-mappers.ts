@@ -1,5 +1,6 @@
-import { z } from "zod";
-import { abilityScoresSchema, Monster } from "@/schema/monster-schema";
+import type { z } from "zod";
+import type { Monster } from "@/schema/monster-schema";
+import { abilityScoresSchema } from "@/schema/monster-schema";
 import { CHALLENGE_RATINGS } from "@/lib/constants";
 import { SKILLS } from "@/lib/skills";
 import { partitionLanguages } from "@/lib/utils";
@@ -9,11 +10,11 @@ import { partitionLanguages } from "@/lib/utils";
  * throwing a concise, human-readable error naming the offending fields (so the
  * import dialog can surface it in a toast instead of a raw ZodError dump).
  */
-export function parseOrThrow<S extends z.ZodTypeAny>(
-  schema: S,
+export function parseOrThrow<T extends z.ZodTypeAny>(
+  schema: T,
   raw: unknown,
   format: string,
-): z.infer<S> {
+): z.infer<T> {
   const result = schema.safeParse(raw);
   if (!result.success) {
     const fields = [
@@ -62,7 +63,7 @@ export interface SkillEntry {
 
 /** `[{ name: "Perception", isExpert: true }]` -> `{ perception: "expert" }`. */
 export function toSkills(
-  entries: SkillEntry[],
+  entries: Array<SkillEntry>,
 ): NonNullable<Monster["skills"]> {
   const result: NonNullable<Monster["skills"]> = {};
   for (const { name, isExpert } of entries) {
@@ -74,9 +75,9 @@ export function toSkills(
 }
 
 export interface DamageGroups {
-  immune?: string[];
-  resistant?: string[];
-  vulnerable?: string[];
+  immune?: Array<string>;
+  resistant?: Array<string>;
+  vulnerable?: Array<string>;
 }
 
 export function toDamageModifiers(
@@ -84,7 +85,7 @@ export function toDamageModifiers(
 ): NonNullable<Monster["damage_modifiers"]> {
   const result: NonNullable<Monster["damage_modifiers"]> = {};
   const assign = (
-    types: string[] | undefined,
+    types: Array<string> | undefined,
     state: "vulnerable" | "resistant" | "immune",
   ) => {
     for (const type of types ?? []) {

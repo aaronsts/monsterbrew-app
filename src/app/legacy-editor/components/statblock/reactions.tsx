@@ -1,7 +1,7 @@
-import { Description } from "@/components/ui/description";
-import { createCreatureSchema } from "@/schema/createCreatureSchema";
 import { useFormContext } from "react-hook-form";
-import { z } from "zod";
+import type { z } from "zod";
+import type { createCreatureSchema } from "@/schema/createCreatureSchema";
+import { Description } from "@/components/ui/description";
 
 export function Reactions() {
   const { watch } = useFormContext<z.infer<typeof createCreatureSchema>>();

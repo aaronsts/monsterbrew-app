@@ -1,5 +1,7 @@
 "use client";
 
+import type { z } from "zod";
+import type { createCreatureSchema } from "@/schema/createCreatureSchema";
 import { Card, CardTitle } from "@/components/ui/card";
 import { StandAloneDescription as Description } from "@/components/ui/stand-alone-description";
 import {
@@ -8,8 +10,6 @@ import {
   calculateStatBonus,
   titleCase,
 } from "@/lib/utils";
-import { createCreatureSchema } from "@/schema/createCreatureSchema";
-import { z } from "zod";
 
 type MonsterbrewCreature = z.infer<typeof createCreatureSchema>;
 
@@ -28,10 +28,10 @@ export function StandaloneStatblock({
 
   const hp = creature.custom_hp || medianHP || creature.hit_points.toString();
 
-  const movements: string[] = [];
+  const movements: Array<string> = [];
   if (creature.movements) {
     Object.entries(creature.movements).forEach((m) => {
-      if (!!m[1]) {
+      if (m[1]) {
         switch (m[0]) {
           case "walk":
             movements.push(`${m[1]} ft.`);
@@ -71,14 +71,14 @@ export function StandaloneStatblock({
       })
     : [];
 
-  const senses: string[] = [];
+  const senses: Array<string> = [];
   if (creature.senses) {
     Object.entries(creature.senses).forEach((m) => {
       const isBlindBeyond = creature.senses?.is_blind_beyond;
-      if (!!m[1]) {
+      if (m[1]) {
         switch (m[0]) {
           case "blindsight":
-            return !!isBlindBeyond
+            return isBlindBeyond
               ? senses.push(`${m[0]} ${m[1]} ft. (blind beyond this radius)`)
               : senses.push(`${m[0]} ${m[1]} ft.`);
           case "is_blind_beyond":

@@ -1,9 +1,9 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
+import type { z } from "zod";
+import type { fiveECreatureSchema } from "@/types/5e-tools";
 import { from5ETools } from "@/services/converters/fiveETools";
 import { defaultCreature } from "@/schema/createCreatureSchema";
 import { CHALLENGE_RATINGS } from "@/lib/constants";
-import { z } from "zod";
-import { fiveECreatureSchema } from "@/types/5e-tools";
 
 // Mock the toast function
 vi.mock("sonner", () => ({
