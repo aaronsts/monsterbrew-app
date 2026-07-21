@@ -98,6 +98,13 @@ describe("resolveMarkup — damage", () => {
     expect(render("{@damage 2d8 + str}")).toBe("14 (2d8 + 5)"); // 9 + 5
   });
 
+  it("tidies the sign when a linked ability modifier is negative or zero", () => {
+    // CHA 8 -> -1 mod: "2d6 + cha" should read "2d6 - 1", not "2d6 + -1".
+    expect(render("{@damage 2d6 + cha}")).toBe("6 (2d6 - 1)"); // 7 - 1
+    // INT 10 -> +0 mod: the term drops out entirely.
+    expect(render("{@damage 2d6 + int}")).toBe("7 (2d6)");
+  });
+
   it("strips 5eTools' redundant literal average around the tag", () => {
     expect(render("{@h}10 ({@damage 2d8 + 1}) Acid damage.")).toBe(
       "Hit: 10 (2d8 + 1) Acid damage.",
@@ -113,7 +120,9 @@ describe("resolveMarkup — saves, recharge, dice", () => {
   });
 
   it("renders recharge ranges", () => {
+    expect(render("{@recharge 4}")).toBe("(Recharge 4–6)");
     expect(render("{@recharge 5}")).toBe("(Recharge 5–6)");
+    expect(render("{@recharge 6}")).toBe("(Recharge 6)");
     expect(render("{@recharge}")).toBe("(Recharge 6)");
   });
 

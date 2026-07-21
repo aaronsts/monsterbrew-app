@@ -70,7 +70,9 @@ function isAbility(value: string): value is Ability {
 }
 
 function abilityMod(ctx: MarkupContext, ability: string): number {
-  return calculateStatBonus(ctx.ability_scores[ability.toLowerCase() as Ability]);
+  return calculateStatBonus(
+    ctx.ability_scores[ability.toLowerCase() as Ability],
+  );
 }
 
 /** Split a description into literal-text and `{@…}` tag segments. */
@@ -107,7 +109,10 @@ function averageDice(expr: string): number {
     const term = rawTerm.replace(/\s+/g, "");
     const dice = term.match(/^([+-]?\d*)d(\d+)$/);
     if (dice) {
-      const count = Number.parseInt(dice[1] === "" || dice[1] === "+" ? "1" : dice[1], 10);
+      const count = Number.parseInt(
+        dice[1] === "" || dice[1] === "+" ? "1" : dice[1],
+        10,
+      );
       const sides = Number.parseInt(dice[2], 10);
       total += count * ((sides + 1) / 2);
     } else {
@@ -122,6 +127,19 @@ function resolveDiceAbilities(expr: string, ctx: MarkupContext): string {
   return expr.replace(/[a-z]{3}/gi, (word) =>
     isAbility(word) ? `${abilityMod(ctx, word)}` : word,
   );
+}
+
+/**
+ * Tidy operator/sign sequences left after an ability keyword resolves to a
+ * negative or zero modifier: `2d8 + -1` -> `2d8 - 1`, `2d8 + 0` -> `2d8`.
+ */
+function normalizeSigns(expr: string): string {
+  return expr
+    .replace(/\+\s*-\s*/g, "- ")
+    .replace(/-\s*-\s*/g, "+ ")
+    .replace(/([+-])\s*0\b/g, "")
+    .replace(/\s{2,}/g, " ")
+    .trim();
 }
 
 /** Strip a `|SOURCE` suffix and honour an explicit `|display` override. */
@@ -165,8 +183,8 @@ export function resolveTag(tag: TagSegment, ctx: MarkupContext): string {
         ? `DC ${8 + pb + abilityMod(ctx, args)}`
         : `DC ${Number.parseInt(args, 10) || 0}`;
     case "damage": {
-      const resolved = resolveDiceAbilities(args, ctx);
-      return `${averageDice(resolved)} (${resolved})`;
+      const expr = normalizeSigns(resolveDiceAbilities(args, ctx));
+      return `${averageDice(expr)} (${expr})`;
     }
     case "dice":
     case "scaledice":
@@ -184,8 +202,9 @@ export function resolveTag(tag: TagSegment, ctx: MarkupContext): string {
     case "actSaveSuccessOrFail":
       return "Failure or Success:";
     case "recharge": {
+      // {@recharge 5} -> "(Recharge 5–6)"; {@recharge}/{@recharge 6} -> only on a 6.
       const low = Number.parseInt(args, 10);
-      return low >= 2 && low <= 6 ? `(Recharge ${low}–6)` : "(Recharge 6)";
+      return low >= 2 && low < 6 ? `(Recharge ${low}–6)` : "(Recharge 6)";
     }
     case "i":
     case "italic":
