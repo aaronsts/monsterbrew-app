@@ -40,8 +40,8 @@ export function MobileNavigation() {
             <MobileLink to="/editor" onOpenChange={setOpen}>
               Editor
             </MobileLink>
-            <MobileLink to="/my-creatures" onOpenChange={setOpen}>
-              My Creatures
+            <MobileLink to="/library" onOpenChange={setOpen}>
+              Library
             </MobileLink>
           </div>
         </div>

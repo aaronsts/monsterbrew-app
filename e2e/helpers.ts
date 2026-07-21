@@ -4,6 +4,12 @@ export function statblock(page: Page): Locator {
   return page.locator('[data-slot="card"]');
 }
 
+/** Saving navigates to `/library/<id>`; pull the id back off the path. */
+export function creatureIdFromUrl(page: Page): string | null {
+  const id = new URL(page.url()).pathname.split("/library/")[1];
+  return id ? decodeURIComponent(id) : null;
+}
+
 export function editorForm(page: Page): Locator {
   return page.locator("form");
 }

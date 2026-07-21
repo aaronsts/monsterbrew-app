@@ -35,10 +35,10 @@ export function MainNavigation() {
           Editor
         </Link>
         <Link
-          to="/my-creatures"
+          to="/library"
           className={cn(
             "transition-colors  hover:text-secondary",
-            pathname === "/my-creatures" ? "text-primary " : "text-foreground",
+            pathname.startsWith("/library") ? "text-primary " : "text-foreground",
           )}
         >
           Library
