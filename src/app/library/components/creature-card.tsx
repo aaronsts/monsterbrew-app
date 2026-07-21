@@ -1,23 +1,29 @@
 "use client";
 import { Link } from "@tanstack/react-router";
 import { Footprints, Heart, Shield } from "lucide-react";
-import { z } from "zod";
-
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { createCreatureSchema } from "@/schema/createCreatureSchema";
-import { getCreatureFormat } from "@/services/migrations/creatureFormat";
-import { calculateHitPoints, titleCase } from "@/lib/utils";
 import { CreatureStat } from "./creature-stat";
+import type { z } from "zod";
+
+import type { createCreatureSchema } from "@/schema/createCreatureSchema";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { calculateHitPoints, titleCase } from "@/lib/utils";
+import { getCreatureFormat } from "@/services/migrations/creatureFormat";
 
 type MonsterbrewCreature = z.infer<typeof createCreatureSchema>;
 
-export function CreatureCard({ creature }: { creature: MonsterbrewCreature }) {
+export function CreatureCard({
+  creature,
+  srdKey,
+}: Readonly<{
+  creature: MonsterbrewCreature;
+  srdKey?: string;
+}>) {
   const legacy = getCreatureFormat(creature) === "legacy";
 
   const typeLine = [creature.size, creature.type]
     .filter(Boolean)
-    .map((part) => titleCase(part as string))
+    .map((part) => titleCase(part))
     .join(" ");
 
   const median = calculateHitPoints(
@@ -31,10 +37,13 @@ export function CreatureCard({ creature }: { creature: MonsterbrewCreature }) {
   const hp = Number.parseInt(hpRaw ?? "", 10);
   const speed = creature.movements?.walk ?? 0;
 
+  const linkProps = srdKey
+    ? ({ to: "/library/srd/$key", params: { key: srdKey } } as const)
+    : ({ to: "/library/$id", params: { id: creature.id ?? "" } } as const);
+
   return (
     <Link
-      to="/library/$id"
-      params={{ id: creature.id ?? "" }}
+      {...linkProps}
       className="group/link block focus-visible:outline-none"
     >
       <Card className="h-full cursor-pointer gap-3 py-4 ring-foreground/10 transition-all duration-200 group-hover/link:-translate-y-0.5 group-hover/link:border-l-accent group-hover/link:shadow-md group-hover/link:ring-primary group-focus-visible/link:ring-2 group-focus-visible/link:ring-primary">
