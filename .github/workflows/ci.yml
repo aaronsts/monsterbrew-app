@@ -29,6 +29,57 @@ jobs:
       - name: Audit dependencies
         run: pnpm audit --audit-level=high
         continue-on-error: true
+  unit-tests:
+    name: Unit tests (Vitest)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Run unit tests with coverage
+        run: pnpm test:coverage
+      - name: Upload unit test coverage
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit-coverage
+          path: coverage/
+          retention-days: 3
+  e2e-tests:
+    name: E2E tests (Playwright)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Install Playwright browsers
+        run: pnpm exec playwright install --with-deps chromium
+      - name: Run E2E tests with coverage
+        run: pnpm test:e2e:coverage
+      - name: Upload Playwright report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 3
+      - name: Upload E2E coverage
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-coverage
+          path: coverage-e2e/
+          retention-days: 7
   deploy-to-vercel-preview-env:
     name: Deploy to Vercel Preview environment
     runs-on: ubuntu-24.04
