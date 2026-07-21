@@ -18,6 +18,20 @@ type Release = {
 
 const releases: Release[] = [
   {
+    version: "3.1.2",
+    date: "2026-07-21",
+    summary:
+      "Under-the-hood build tooling upgrade to Vite 8 (with the Rolldown bundler). No visible changes — just a faster, more modern build pipeline that keeps Monsterbrew on solid footing.",
+    changes: ["Upgraded the build tooling to Vite 8 (Rolldown)"],
+  },
+  {
+    version: "3.1.1",
+    date: "2026-07-21",
+    summary:
+      "A behind-the-scenes fix to the build configuration so production builds output cleanly through Nitro. No user-facing changes.",
+    changes: ["Fixed the Vite/Nitro production build configuration"],
+  },
+  {
     version: "3.1.0",
     date: "2026-07-20",
     title: "New foundation",
