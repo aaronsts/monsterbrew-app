@@ -1,3 +1,7 @@
+import { useFormContext } from "react-hook-form";
+import type { z } from "zod";
+import type {
+  createCreatureSchema} from "@/schema/createCreatureSchema";
 import {
   Combobox,
   ComboboxChip,
@@ -17,11 +21,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import {
-  abilityScoresSchema,
-  createCreatureSchema,
+  abilityScoresSchema
 } from "@/schema/createCreatureSchema";
-import { useFormContext } from "react-hook-form";
-import { z } from "zod";
 
 function SavingThrowsForm() {
   const form = useFormContext<z.infer<typeof createCreatureSchema>>();

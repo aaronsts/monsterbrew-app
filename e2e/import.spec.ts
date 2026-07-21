@@ -1,11 +1,13 @@
-import { test, expect, Page } from "@playwright/test";
 import fs from "node:fs";
 import path from "node:path";
+import { expect, test } from "@playwright/test";
+import type { Page } from "@playwright/test";
+import type {
+  ImportFormat} from "@/services/converters/detect-import-format";
 import { monsterSchema } from "@/schema/monster-schema";
 import {
-  detectImportFormat,
-  ImportFormat,
   IMPORT_FORMAT_LABELS,
+  detectImportFormat,
 } from "@/services/converters/detect-import-format";
 
 /**
@@ -22,7 +24,7 @@ import {
 
 const FIXTURES_ROOT = path.resolve(process.cwd(), "e2e/fixtures");
 const UPDATE_EXPECTED = !!process.env.UPDATE_EXPECTED;
-const FORMATS = Object.keys(IMPORT_FORMAT_LABELS) as ImportFormat[];
+const FORMATS = Object.keys(IMPORT_FORMAT_LABELS) as Array<ImportFormat>;
 
 interface Fixture {
   format: ImportFormat;
@@ -31,8 +33,8 @@ interface Fixture {
   expectedFile: string; // absolute path to the sibling snapshot (may not exist)
 }
 
-function collectFixtures(): Fixture[] {
-  const fixtures: Fixture[] = [];
+function collectFixtures(): Array<Fixture> {
+  const fixtures: Array<Fixture> = [];
   for (const format of FORMATS) {
     const dir = path.join(FIXTURES_ROOT, format);
     if (!fs.existsSync(dir)) continue;

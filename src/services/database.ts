@@ -1,6 +1,7 @@
-import { createCreatureSchema } from "@/schema/createCreatureSchema";
-import { DBSchema, openDB } from "idb";
-import { z } from "zod";
+import { openDB } from "idb";
+import type { createCreatureSchema } from "@/schema/createCreatureSchema";
+import type { DBSchema } from "idb";
+import type { z } from "zod";
 
 type MonsterbrewCreature = z.infer<typeof createCreatureSchema>;
 

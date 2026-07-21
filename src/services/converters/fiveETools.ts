@@ -1,12 +1,13 @@
+import { toast } from "sonner";
+import type { z } from "zod";
+import type {
+  Languages,
+  createCreatureSchema} from "@/schema/createCreatureSchema";
+import type { fiveECreatureSchema } from "@/types/5e-tools";
 import { CHALLENGE_RATINGS } from "@/lib/constants";
 import {
-  createCreatureSchema,
-  defaultCreature,
-  Languages,
+  defaultCreature
 } from "@/schema/createCreatureSchema";
-import { fiveECreatureSchema } from "@/types/5e-tools";
-import { toast } from "sonner";
-import { z } from "zod";
 
 // Converter function to transform FiveEToolsCreature to defaultCreature
 export function from5ETools(
@@ -82,7 +83,7 @@ export function from5ETools(
           )
         : [],
       skill_bonuses: skills,
-      languages: (source.languages as Languages[]) || [],
+      languages: (source.languages as Array<Languages>) || [],
       passive_perception: Number(source.passive) || 0,
       senses: parseSenses(source.senses),
       cr: cr,
@@ -130,7 +131,7 @@ function extractType(
   return "";
 }
 
-function convertSize(sizes: string[] | undefined): string {
+function convertSize(sizes: Array<string> | undefined): string {
   if (!sizes || sizes.length === 0) {
     throw new Error("Size information is missing");
   }
@@ -179,17 +180,17 @@ function convertAlignment(
   if (alignment.length === 1) {
     // If only one alignment value is provided
     return typeof alignment[0] === "string"
-      ? alignmentMap[alignment[0] as string] || alignment[0]
+      ? alignmentMap[alignment[0]] || alignment[0]
       : "Neutral";
   } else if (alignment.length === 2) {
     // For normal combinations like Lawful Good
     return `${
       typeof alignment[0] === "string"
-        ? alignmentMap[alignment[0] as string] || alignment[0]
+        ? alignmentMap[alignment[0]] || alignment[0]
         : "Neutral"
     } ${
       typeof alignment[1] === "string"
-        ? alignmentMap[alignment[1] as string] || alignment[1]
+        ? alignmentMap[alignment[1]] || alignment[1]
         : "Neutral"
     }`;
   }
@@ -350,7 +351,7 @@ function convertTraits(
         // Add daily spells
         if (spellcasting.daily) {
           for (const [times, spells] of Object.entries(spellcasting.daily)) {
-            description += `${times}/day: ${(spells as string[]).join(", ")}\n`;
+            description += `${times}/day: ${(spells as Array<string>).join(", ")}\n`;
           }
         }
 
@@ -441,7 +442,7 @@ function convertMythivActions(
   }));
 }
 
-function convertEnvironment(environment: string[] | undefined): string {
+function convertEnvironment(environment: Array<string> | undefined): string {
   if (!environment || environment.length === 0) return "";
 
   // In a real implementation, you would map environment IDs to your system's environment IDs

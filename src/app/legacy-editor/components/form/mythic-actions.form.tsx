@@ -1,3 +1,6 @@
+import { useFieldArray, useFormContext } from "react-hook-form";
+import type { z } from "zod";
+import type { createCreatureSchema } from "@/schema/createCreatureSchema";
 import { FieldArrayButtons } from "@/components/field-array-buttons";
 import { Button } from "@/components/ui/button";
 import {
@@ -9,9 +12,6 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { createCreatureSchema } from "@/schema/createCreatureSchema";
-import { useFieldArray, useFormContext } from "react-hook-form";
-import { z } from "zod";
 
 export function MythicActionsForm() {
   const form = useFormContext<z.infer<typeof createCreatureSchema>>();

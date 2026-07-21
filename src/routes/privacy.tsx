@@ -21,7 +21,7 @@ type Section = {
   body: React.ReactNode;
 };
 
-const sections: Section[] = [
+const sections: Array<Section> = [
   {
     icon: <BarChart3 />,
     title: "Analytics",
@@ -102,6 +102,7 @@ const sections: Section[] = [
   },
 ];
 
+// eslint-disable-next-line react-refresh/only-export-components
 function Privacy() {
   return (
     <div className="mx-auto flex w-full max-w-4xl flex-col gap-12 px-6 py-8">

@@ -1,7 +1,7 @@
-import { calculateSavingThrow, calculateStatBonus } from "@/lib/utils";
-import { createCreatureSchema } from "@/schema/createCreatureSchema";
 import { useFormContext } from "react-hook-form";
-import { z } from "zod";
+import type { z } from "zod";
+import type { createCreatureSchema } from "@/schema/createCreatureSchema";
+import { calculateSavingThrow, calculateStatBonus } from "@/lib/utils";
 
 export function AbilityScores() {
   const { watch } = useFormContext<z.infer<typeof createCreatureSchema>>();

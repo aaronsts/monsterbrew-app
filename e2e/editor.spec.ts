@@ -1,5 +1,5 @@
-import { test, expect } from "@playwright/test";
-import { statblock, editorForm, selectCombo } from "./helpers";
+import { expect, test } from "@playwright/test";
+import { editorForm, selectCombo, statblock } from "./helpers";
 
 test.describe("Monster editor — live preview", () => {
   test.beforeEach(async ({ page }) => {

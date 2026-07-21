@@ -1,13 +1,13 @@
 "use client";
 
-import { Button } from "./ui/button";
 import { toast } from "sonner";
 import { useFormContext } from "react-hook-form";
-import { z } from "zod";
-import { createCreatureSchema } from "@/schema/createCreatureSchema";
-import { monsterbrewDB } from "@/services/database";
 import { useNavigate } from "@tanstack/react-router";
 import { useCallback } from "react";
+import { Button } from "./ui/button";
+import type { z } from "zod";
+import type { createCreatureSchema } from "@/schema/createCreatureSchema";
+import { monsterbrewDB } from "@/services/database";
 
 function SaveDialogComponent() {
   const navigate = useNavigate();

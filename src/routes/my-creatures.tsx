@@ -15,6 +15,7 @@ export const Route = createFileRoute("/my-creatures")({
   component: MyCreaturesPage,
 });
 
+// eslint-disable-next-line react-refresh/only-export-components
 function MyCreaturesPage() {
   return <MyCreatures />;
 }

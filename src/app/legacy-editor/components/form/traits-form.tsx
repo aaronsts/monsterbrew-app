@@ -1,6 +1,10 @@
+import { useState } from "react";
+import { useFieldArray, useFormContext } from "react-hook-form";
+import { Combobox } from "../ui/combo-box";
+import type { createCreatureSchema } from "@/schema/createCreatureSchema";
+import type { z } from "zod";
 import { FieldArrayButtons } from "@/components/field-array-buttons";
 import { Button } from "@/components/ui/button";
-import { Combobox } from "../ui/combo-box";
 import {
   FormControl,
   FormField,
@@ -11,10 +15,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { ACTION_PRESETS } from "@/lib/constants/actionPresets";
-import { createCreatureSchema } from "@/schema/createCreatureSchema";
-import { useState } from "react";
-import { useFieldArray, useFormContext } from "react-hook-form";
-import { z } from "zod";
 
 export function TraitsForm() {
   const [selectedTrait, setSelectedTrait] = useState<string | undefined>();

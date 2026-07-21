@@ -1,6 +1,3 @@
-import { Monster } from "@/schema/monster-schema";
-import { tetraCubeSchema } from "@/types/tetra-cube";
-import { calculateStatBonus } from "@/lib/utils";
 import {
   findChallengeRating,
   parseOrThrow,
@@ -9,9 +6,12 @@ import {
   toSavingThrows,
   toSkills,
 } from "./monster-mappers";
+import type { Monster } from "@/schema/monster-schema";
+import { tetraCubeSchema } from "@/types/tetra-cube";
+import { calculateStatBonus } from "@/lib/utils";
 
 function toFeatures(
-  entries: { name: string; desc: string }[],
+  entries: Array<{ name: string; desc: string }>,
 ): Monster["traits"] {
   return entries.map((entry) => ({ name: entry.name, description: entry.desc }));
 }

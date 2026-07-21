@@ -1,19 +1,9 @@
 "use client";
 
-import { Form } from "@/components/ui/form";
-import { Button } from "@/components/ui/button";
-import {
-  defaultMonster,
-  monsterSchema,
-  Monster,
-} from "@/schema/monster-schema";
-import { MonsterStatblock } from "@/components/monster-statblock";
-import { calculateStatBonus, generateId } from "@/lib/utils";
-import { monsterbrewDB } from "@/services/database";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate, useSearch } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 import { Upload } from "lucide-react";
 import { IdentityForm } from "./identity-form";
@@ -21,6 +11,13 @@ import { CombatForm } from "./combat-form";
 import { DefenseForm } from "./defense-form";
 import { ActionsForm } from "./actions-form";
 import { ImportDialog } from "./import-dialog";
+import type { Monster } from "@/schema/monster-schema";
+import { monsterbrewDB } from "@/services/database";
+import { calculateStatBonus, generateId } from "@/lib/utils";
+import { defaultMonster, monsterSchema } from "@/schema/monster-schema";
+import { MonsterStatblock } from "@/components/monster-statblock";
+import { Button } from "@/components/ui/button";
+import { Form } from "@/components/ui/form";
 
 export const MonsterForm = () => {
   const { id: idParam } = useSearch({ from: "/editor" });
@@ -33,6 +30,17 @@ export const MonsterForm = () => {
     defaultValues: defaultMonster,
   });
 
+  const { control, setValue, reset, getValues, trigger } = form;
+
+  const preview = useWatch({ control }) as Monster;
+  const wis = useWatch({ control, name: "ability_scores.wis" });
+  const skills = useWatch({ control, name: "skills" });
+  const proficiencyBonus = useWatch({ control, name: "cr.proficiency_bonus" });
+  const customPassivePerception = useWatch({
+    control,
+    name: "custom_passive_perception",
+  });
+
   useEffect(() => {
     async function loadMonster() {
       const id = idParam;
@@ -42,7 +50,7 @@ export const MonsterForm = () => {
         db.close();
         if (stored) {
           setCreatureId(id);
-          form.reset(stored as unknown as Monster);
+          reset(stored as unknown as Monster);
         }
         return;
       }
@@ -52,7 +60,7 @@ export const MonsterForm = () => {
         try {
           const parsed = JSON.parse(handoff);
           if (parsed.id) setCreatureId(parsed.id);
-          form.reset(parsed as Monster);
+          reset(parsed as Monster);
         } catch (error) {
           console.error("Error parsing stored creature:", error);
         } finally {
@@ -64,11 +72,6 @@ export const MonsterForm = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const wis = form.watch("ability_scores.wis");
-  const skills = form.watch("skills");
-  const proficiencyBonus = form.watch("cr.proficiency_bonus");
-  const customPassivePerception = form.watch("custom_passive_perception");
-
   useEffect(() => {
     if (customPassivePerception) return;
     let perception = calculateStatBonus(wis);
@@ -79,11 +82,11 @@ export const MonsterForm = () => {
           ? proficiencyBonus * 2
           : proficiencyBonus;
     }
-    form.setValue("passive_perception", 10 + perception);
-  }, [wis, skills, proficiencyBonus, customPassivePerception, form]);
+    setValue("passive_perception", 10 + perception);
+  }, [wis, skills, proficiencyBonus, customPassivePerception, setValue]);
 
   async function save() {
-    const values = form.getValues();
+    const values = getValues();
     if (!values.name || values.name.trim().length === 0) {
       toast.warning("Please provide a name for the creature");
       return;
@@ -91,7 +94,7 @@ export const MonsterForm = () => {
 
     const parsed = monsterSchema.safeParse(values);
     if (!parsed.success) {
-      form.trigger();
+      trigger();
       toast.warning("Please fix the highlighted fields before saving");
       return;
     }
@@ -116,8 +119,6 @@ export const MonsterForm = () => {
       db.close();
     }
   }
-
-  const preview = form.watch();
 
   return (
     <Form {...form}>

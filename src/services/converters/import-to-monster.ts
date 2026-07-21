@@ -1,9 +1,9 @@
-import { Monster } from "@/schema/monster-schema";
-import { ImportFormat } from "./detect-import-format";
 import { fromImprovedInitiative } from "./from-improved-initiative";
 import { fromTetraCube } from "./from-tetra-cube";
 import { fromOpen5e } from "./from-open-5e";
 import { from5eTools } from "./from-5e-tools";
+import type { ImportFormat } from "./detect-import-format";
+import type { Monster } from "@/schema/monster-schema";
 
 /** Route parsed JSON to the matching format converter. */
 export function convertImport(format: ImportFormat, data: unknown): Monster {

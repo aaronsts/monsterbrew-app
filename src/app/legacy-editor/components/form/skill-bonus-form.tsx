@@ -1,14 +1,15 @@
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { MultiSelect } from "../ui/multi-select";
-import { SkillModifier, SKILLS } from "@/lib/skills";
-import { titleCase } from "@/lib/utils";
-import { createCreatureSchema } from "@/schema/createCreatureSchema";
 import { X } from "lucide-react";
 import { useState } from "react";
 import { useFieldArray, useFormContext } from "react-hook-form";
-import { z } from "zod";
+import { MultiSelect } from "../ui/multi-select";
+import type { createCreatureSchema } from "@/schema/createCreatureSchema";
+import type { z } from "zod";
+import type { SkillModifier } from "@/lib/skills";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { SKILLS } from "@/lib/skills";
+import { titleCase } from "@/lib/utils";
 
 function SkillBonusForm() {
   const [selectedSkills, setSelectedSkills] = useState<Set<string>>();
@@ -23,7 +24,7 @@ function SkillBonusForm() {
   const skills = Object.groupBy(
     SKILLS,
     ({ skill_modifier }) => skill_modifier
-  ) as Record<SkillModifier, (typeof SKILLS)[number][]>;
+  ) as Record<SkillModifier, Array<(typeof SKILLS)[number]>>;
 
   const skillsForMultiSelect = Object.entries(skills).reduce(
     (acc, [modifier, skillsArray]) => {
@@ -33,7 +34,7 @@ function SkillBonusForm() {
       }));
       return acc;
     },
-    {} as Record<string, { label: string; value: string }[]>
+    {} as Record<string, Array<{ label: string; value: string }>>
   );
 
   function addSkill(event: React.MouseEvent<HTMLElement>) {

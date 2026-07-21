@@ -1,3 +1,8 @@
+import { Info } from "lucide-react";
+import { useFormContext } from "react-hook-form";
+import AbilityScoresForm from "./ability-scores-form";
+import type { z } from "zod";
+import type { createCreatureSchema } from "@/schema/createCreatureSchema";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   FormControl,
@@ -19,11 +24,6 @@ import {
   CREATURE_SIZES,
   CREATURE_TYPES,
 } from "@/lib/constants";
-import { createCreatureSchema } from "@/schema/createCreatureSchema";
-import { Info } from "lucide-react";
-import { useFormContext } from "react-hook-form";
-import { z } from "zod";
-import AbilityScoresForm from "./ability-scores-form";
 import {
   Combobox,
   ComboboxContent,

@@ -1,8 +1,10 @@
-import { defaultMonster, Monster } from "@/schema/monster-schema";
 import { cleanup, render } from "@testing-library/react";
-import { ReactNode } from "react";
-import { FormProvider, useForm, UseFormReturn } from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
 import { afterEach } from "vitest";
+import type { ReactNode } from "react";
+import type { UseFormReturn } from "react-hook-form";
+import type { Monster } from "@/schema/monster-schema";
+import { defaultMonster } from "@/schema/monster-schema";
 
 // Vitest isn't configured with `globals: true`, so testing-library's automatic
 // afterEach cleanup never registers. Register it here since every field test

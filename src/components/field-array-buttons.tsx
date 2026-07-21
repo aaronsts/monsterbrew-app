@@ -1,19 +1,19 @@
 import { Trash2 } from "lucide-react";
 import { Button } from "./ui/button";
-import { FieldArrayWithId } from "react-hook-form";
-import { z } from "zod";
-import { createCreatureSchema } from "@/schema/createCreatureSchema";
+import type { FieldArrayWithId } from "react-hook-form";
+import type { z } from "zod";
+import type { createCreatureSchema } from "@/schema/createCreatureSchema";
 
 interface FieldArrayButtonsProps {
   index: number;
   moveUp: (index: number) => void;
   moveDown: (index: number) => void;
   remove: (index: number) => void;
-  fields: FieldArrayWithId<
+  fields: Array<FieldArrayWithId<
     z.infer<typeof createCreatureSchema>,
     "traits" | "actions" | "reactions" | "legendary_actions",
     "id"
-  >[];
+  >>;
 }
 
 export function FieldArrayButtons({

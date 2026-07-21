@@ -1,30 +1,6 @@
 "use client";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { monsterbrewDB } from "@/services/database";
-import { downloadCreatureBackup } from "@/services/backup";
 import React, { useEffect, useState } from "react";
-import { StandaloneStatblock } from "@/components/standalone-statblock";
-import { MonsterStatblock } from "@/components/monster-statblock";
-import { Monster } from "@/schema/monster-schema";
 import { toast } from "sonner";
-import { createCreatureSchema } from "@/schema/createCreatureSchema";
-import { z } from "zod";
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
 import {
   ChevronDown,
   ChevronRight,
@@ -36,6 +12,31 @@ import {
   Trash,
 } from "lucide-react";
 import { useNavigate, useSearch } from "@tanstack/react-router";
+import { MigrateDialog } from "./migrate-dialog";
+import type { Monster } from "@/schema/monster-schema";
+import type { createCreatureSchema } from "@/schema/createCreatureSchema";
+import type { z } from "zod";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { monsterbrewDB } from "@/services/database";
+import { downloadCreatureBackup } from "@/services/backup";
+import { StandaloneStatblock } from "@/components/standalone-statblock";
+import { MonsterStatblock } from "@/components/monster-statblock";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -48,13 +49,12 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { calculateHitPoints } from "@/lib/utils";
 import { getCreatureFormat } from "@/services/migrations/creatureFormat";
-import { MigrateDialog } from "./migrate-dialog";
 
 type MonsterbrewCreature = z.infer<typeof createCreatureSchema>;
 
 export default function MyCreatures() {
   const { id = null } = useSearch({ from: "/my-creatures" });
-  const [myCreatures, setMyCreatures] = useState<MonsterbrewCreature[]>([]);
+  const [myCreatures, setMyCreatures] = useState<Array<MonsterbrewCreature>>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [expandedRows, setExpandedRows] = useState<Record<string, boolean>>({});
   const [migrateTarget, setMigrateTarget] =
@@ -108,11 +108,15 @@ export default function MyCreatures() {
   };
 
   useEffect(() => {
+    // Load persisted creatures from IndexedDB on mount.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     getLocalCreatures();
   }, []);
 
   useEffect(() => {
+    // Expand the row matching the ?id search param when arriving from a link.
     if (id) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setExpandedRows({ [id]: true });
     }
   }, [id]);

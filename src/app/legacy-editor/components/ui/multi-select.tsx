@@ -1,5 +1,6 @@
 "use client";
 
+import { CheckIcon, ChevronsUpDown, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -16,7 +17,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { CheckIcon, ChevronsUpDown, X } from "lucide-react";
 
 type Option = {
   label: string;
@@ -25,15 +25,15 @@ type Option = {
 };
 
 type GroupedOptions = {
-  [key: string]: Option[];
+  [key: string]: Array<Option>;
 };
 
 interface MultiSelectProps {
   title?: string;
-  options?: Option[];
+  options?: Array<Option>;
   groupedOptions?: GroupedOptions;
   selectedValues: Set<string>;
-  // eslint-disable-next-line no-unused-vars -- false positive on callback param type
+   
   onSelectionChange: (next: Set<string>) => void;
   className?: string;
   search?: boolean;
@@ -71,7 +71,7 @@ export function MultiSelect({
     onSelectionChange(next);
   };
 
-  const renderOptions = (opts: Option[]) =>
+  const renderOptions = (opts: Array<Option>) =>
     opts.map((option) => {
       const isSelected = selectedValues.has(option.value);
       return (

@@ -15,6 +15,7 @@ export const Route = createFileRoute("/legacy-editor")({
   component: LegacyCreatureEditor,
 });
 
+// eslint-disable-next-line react-refresh/only-export-components
 function LegacyCreatureEditor() {
   return <Editor />;
 }

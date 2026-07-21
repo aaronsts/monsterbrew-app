@@ -1,6 +1,6 @@
+import type { z } from "zod";
+import type { createCreatureSchema } from "@/schema/createCreatureSchema";
 import { calculateStatBonus, titleCase } from "@/lib/utils";
-import { createCreatureSchema } from "@/schema/createCreatureSchema";
-import { z } from "zod";
 
 export function createMarkdownPage(
   creature: z.infer<typeof createCreatureSchema>
@@ -17,18 +17,18 @@ export function createMarkdownPage(
 }
 
 function generateMarkdown(creature: z.infer<typeof createCreatureSchema>) {
-  const markdownLines: string[] = [];
+  const markdownLines: Array<string> = [];
 
-  const movements: string[] = [];
+  const movements: Array<string> = [];
   Object.entries(creature.movements).forEach((m) => {
     const hover = creature.movements.hover;
-    if (!!m[1]) {
+    if (m[1]) {
       switch (m[0]) {
         case "walk":
           movements.push(`${m[1]} ft.`);
           break;
         case "fly":
-          return !!hover
+          return hover
             ? movements.push(`${m[0]} ${m[1]} ft. (hover)`)
             : movements.push(`${m[0]} ${m[1]} ft.`);
         case "hover":
@@ -74,7 +74,7 @@ function generateMarkdown(creature: z.infer<typeof createCreatureSchema>) {
   );
   markdownLines.push("___");
 
-  const savingThrows: string[] = creature.saving_throws
+  const savingThrows: Array<string> = creature.saving_throws
     ? creature.saving_throws?.map((save) => {
         const bonus =
           Math.floor(
@@ -129,14 +129,14 @@ function generateMarkdown(creature: z.infer<typeof createCreatureSchema>) {
       `**Condition Immunities** :: ${creature.condition_immunities}`
     );
 
-  const senses: string[] = [];
+  const senses: Array<string> = [];
   if (creature.senses) {
     Object.entries(creature.senses).forEach((m) => {
       const isBlindBeyond = creature.senses?.is_blind_beyond;
-      if (!!m[1]) {
+      if (m[1]) {
         switch (m[0]) {
           case "blindsight":
-            return !!isBlindBeyond
+            return isBlindBeyond
               ? senses.push(`${m[0]} ${m[1]} ft. (blind beyond this radius)`)
               : senses.push(`${m[0]} ${m[1]} ft.`);
           case "is_blind_beyond":
@@ -250,9 +250,9 @@ function generateMarkdown(creature: z.infer<typeof createCreatureSchema>) {
   return markdownToHtml(markdownLines);
 }
 
-function markdownToHtml(markdownLines: string[]) {
+function markdownToHtml(markdownLines: Array<string>) {
   // Add line breaks and code tags
-  const lines: string[] = [];
+  const lines: Array<string> = [];
   markdownLines.forEach((line) => {
     line.split("<br>").forEach((subLine) => {
       lines.push(`${subLine}<br>`);

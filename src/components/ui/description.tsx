@@ -1,8 +1,8 @@
-import { calculateStatBonus } from "@/lib/utils";
-import { createCreatureSchema } from "@/schema/createCreatureSchema";
 import { useFormContext } from "react-hook-form";
 import Markdown from "react-markdown";
-import { z } from "zod";
+import type { z } from "zod";
+import type { createCreatureSchema } from "@/schema/createCreatureSchema";
+import { calculateStatBonus } from "@/lib/utils";
 
 interface DescriptionProps extends Partial<HTMLParagraphElement> {
   title: string;

@@ -1,14 +1,14 @@
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { MultiSelect } from "../ui/multi-select";
-import { titleCase } from "@/lib/utils";
-import { createCreatureSchema } from "@/schema/createCreatureSchema";
-import { DAMAGE_TYPES } from "@/types/types";
 import { X } from "lucide-react";
 import { useState } from "react";
 import { useFormContext } from "react-hook-form";
-import { z } from "zod";
+import { MultiSelect } from "../ui/multi-select";
+import type { createCreatureSchema } from "@/schema/createCreatureSchema";
+import type { z } from "zod";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { titleCase } from "@/lib/utils";
+import { DAMAGE_TYPES } from "@/types/types";
 
 type DamageType =
   | "damage_immunities"
@@ -19,7 +19,7 @@ const arrays = [
   "damage_immunities",
   "damage_resistances",
   "damage_vulnerabilities",
-] as DamageType[];
+] as Array<DamageType>;
 
 function DamageTypesForm() {
   const [selectedDamageTypes, setSelectedDamageTypes] = useState<Set<string>>(

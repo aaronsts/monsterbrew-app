@@ -1,4 +1,6 @@
-import { ChangeEvent, Dispatch, SetStateAction, useState } from "react";
+import { useState } from "react";
+import { toast } from "sonner";
+import { useFormContext } from "react-hook-form";
 import { Button } from "./ui/button";
 import {
   Dialog,
@@ -11,10 +13,6 @@ import {
 } from "./ui/dialog";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
-import { toast } from "sonner";
-import { useFormContext } from "react-hook-form";
-import { z } from "zod";
-import { createCreatureSchema } from "@/schema/createCreatureSchema";
 import {
   Select,
   SelectContent,
@@ -22,6 +20,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
+import type { z } from "zod";
+import type { ChangeEvent, Dispatch, SetStateAction } from "react";
+import type { createCreatureSchema } from "@/schema/createCreatureSchema";
 import { fromImprovedInitiative } from "@/services/converters/improvedInitiative";
 import { fromTetacube } from "@/services/converters/tetraCube";
 import { ImportTypes } from "@/lib/constants";
@@ -55,7 +56,7 @@ export function ImportDialog({ open, onOpenChange }: ImportDialogProps) {
       } catch (err: unknown) {
         const message = err instanceof Error ? err.message : String(err);
         toast.error(message);
-        throw new Error(message);
+        throw new Error(message, { cause: err });
       }
     };
     if (uploadedFile !== undefined) fileReader.readAsText(uploadedFile);

@@ -1,14 +1,16 @@
-import { defaultCreature, Languages } from "@/schema/createCreatureSchema";
-import { clsx, type ClassValue } from "clsx";
+import {  clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { CREATURE_SIZES } from "./constants";
+import type {ClassValue} from "clsx";
+import type { defaultCreature} from "@/schema/createCreatureSchema";
+import { Languages } from "@/schema/createCreatureSchema";
 
 interface Option {
   label: string;
   value: number;
 }
 
-export function cn(...inputs: ClassValue[]) {
+export function cn(...inputs: Array<ClassValue>) {
   return twMerge(clsx(inputs));
 }
 
@@ -68,12 +70,12 @@ const KNOWN_LANGUAGES = new Set<string>(Object.values(Languages));
  * Splits a flat list of language strings into the known `Languages` enum
  * members and everything else.
  */
-export function partitionLanguages(values: string[]): {
-  languages: Languages[];
-  custom_languages: string[];
+export function partitionLanguages(values: Array<string>): {
+  languages: Array<Languages>;
+  custom_languages: Array<string>;
 } {
-  const languages: Languages[] = [];
-  const custom_languages: string[] = [];
+  const languages: Array<Languages> = [];
+  const custom_languages: Array<string> = [];
   for (const value of values) {
     if (KNOWN_LANGUAGES.has(value)) {
       languages.push(value as Languages);

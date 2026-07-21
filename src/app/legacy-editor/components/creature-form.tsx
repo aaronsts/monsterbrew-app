@@ -1,5 +1,23 @@
 "use client";
 
+import { useFormContext } from "react-hook-form";
+import { useReactToPrint } from "react-to-print";
+import { useEffect, useState } from "react";
+import { EllipsisVertical, RotateCcw } from "lucide-react";
+import MovementForm from "./form/movements-form";
+import SensesForm from "./form/senses-form";
+import SavingThrowsForm from "./form/saving-throws-form";
+import LanguagesForm from "./form/languages-form";
+import { GeneralInfoForm } from "./form/general-info-form";
+import { ActionsForm } from "./form/actions-form";
+import { ReactionsForm } from "./form/reactions-form";
+import { LegendaryActionsForm } from "./form/legendary-actions-form";
+import ConditionTypesForm from "./form/condition-types-form";
+import { MythicActionsForm } from "./form/mythic-actions.form";
+import type { createCreatureSchema } from "@/schema/createCreatureSchema";
+import type { z } from "zod";
+import type { ImprovedInitiativeCreature } from "@/types/improved-initiative";
+import type { RefObject } from "react";
 import {
   Card,
   CardAction,
@@ -9,24 +27,15 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-import MovementForm from "./form/movements-form";
-import SensesForm from "./form/senses-form";
-import SavingThrowsForm from "./form/saving-throws-form";
-import LanguagesForm from "./form/languages-form";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { GeneralInfoForm } from "./form/general-info-form";
-import { ActionsForm } from "./form/actions-form";
 import { Button } from "@/components/ui/button";
-import { ReactionsForm } from "./form/reactions-form";
-import { LegendaryActionsForm } from "./form/legendary-actions-form";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import ConditionTypesForm from "./form/condition-types-form";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -36,19 +45,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useFormContext } from "react-hook-form";
 import { createMarkdownPage } from "@/services/converters/markdown";
-import { createCreatureSchema } from "@/schema/createCreatureSchema";
-import { z } from "zod";
 import { ImportDialog } from "@/components/import-dialog";
 import { toImprovedInitiative } from "@/services/converters/improvedInitiative";
-import { ImprovedInitiativeCreature } from "@/types/improved-initiative";
-import { useReactToPrint } from "react-to-print";
-import { RefObject, useEffect, useState } from "react";
 import { SaveDialog } from "@/components/save-dialog";
-import { EllipsisVertical, RotateCcw } from "lucide-react";
 import { calculateStatBonus } from "@/lib/utils";
-import { MythicActionsForm } from "./form/mythic-actions.form";
 
 function CreatureForm({
   pdfRef,
@@ -58,6 +59,7 @@ function CreatureForm({
   const [showModal, setShowModal] = useState(false);
 
   const formContext = useFormContext<z.infer<typeof createCreatureSchema>>();
+  const { setValue } = formContext;
 
   const isLegendary = formContext.watch("is_legendary");
   const isMythic = formContext.watch("is_mythic");
@@ -85,18 +87,20 @@ function CreatureForm({
     const isProficientOrExpert = creature.skill_bonuses.find(
       (s) => s.skill_name === "perception",
     );
-    if (!!isProficientOrExpert) {
+    if (isProficientOrExpert) {
       passivePerception += isProficientOrExpert.is_expert
         ? creature.cr.proficiency_bonus * 2
         : creature.cr.proficiency_bonus;
     }
     if (!customPassivePerception) {
-      formContext.setValue("passive_perception", 10 + passivePerception);
+      setValue("passive_perception", 10 + passivePerception);
     }
   }, [
     creature.ability_scores.wis,
     creature.skill_bonuses,
+    creature.cr,
     customPassivePerception,
+    setValue,
   ]);
 
   return (
@@ -293,7 +297,7 @@ function CreatureForm({
                   id="isLegendary"
                   checked={isLegendary}
                   onCheckedChange={(e) =>
-                    formContext.setValue("is_legendary", e as boolean)
+                    formContext.setValue("is_legendary", e)
                   }
                 />
                 <Label
@@ -307,9 +311,7 @@ function CreatureForm({
                 <Checkbox
                   id="isMythic"
                   checked={isMythic}
-                  onCheckedChange={(e) =>
-                    formContext.setValue("is_mythic", e as boolean)
-                  }
+                  onCheckedChange={(e) => formContext.setValue("is_mythic", e)}
                 />
                 <Label
                   htmlFor="isMythic"

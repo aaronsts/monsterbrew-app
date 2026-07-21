@@ -1,6 +1,3 @@
-import { z } from "zod";
-import { Monster } from "@/schema/monster-schema";
-import { fiveECreatureSchema } from "@/types/5e-tools";
 import {
   findChallengeRating,
   parseOrThrow,
@@ -10,6 +7,9 @@ import {
   toSavingThrows,
   toSkills,
 } from "./monster-mappers";
+import type { z } from "zod";
+import type { Monster } from "@/schema/monster-schema";
+import { fiveECreatureSchema } from "@/types/5e-tools";
 
 /**
  * Real 5eTools bestiary entries carry dozens of fields we don't use (initiative,
@@ -220,21 +220,21 @@ function extractCr(cr: Source["cr"]): string {
 function flattenDamage(
   items: Array<string | Record<string, unknown>> | undefined,
   key: string,
-): string[] {
+): Array<string> {
   if (!items) return [];
   return items.flatMap((item) => {
     if (typeof item === "string") return item;
     const nested = item[key];
-    return Array.isArray(nested) ? (nested as string[]) : [];
+    return Array.isArray(nested) ? (nested as Array<string>) : [];
   });
 }
 
 function convertFeatures(
   entries:
-    | Array<{ name?: string; entries?: string[] | string }>
+    | Array<{ name?: string; entries?: Array<string> | string }>
     | null
     | undefined,
-): Feature[] {
+): Array<Feature> {
   if (!entries) return [];
   return entries.map((entry, i) => ({
     name: entry.name || `Entry ${i + 1}`,
@@ -244,8 +244,8 @@ function convertFeatures(
   }));
 }
 
-function convertTraits(source: Source): Feature[] {
-  const traits: Feature[] = convertFeatures(source.trait);
+function convertTraits(source: Source): Array<Feature> {
+  const traits: Array<Feature> = convertFeatures(source.trait);
 
   for (const spellcasting of source.spellcasting ?? []) {
     if (
@@ -253,12 +253,12 @@ function convertTraits(source: Source): Feature[] {
       spellcasting.displayAs !== "action" &&
       spellcasting.displayAs !== "reaction"
     ) {
-      const lines: string[] = [];
+      const lines: Array<string> = [];
       if (spellcasting.headerEntries) lines.push(spellcasting.headerEntries.join("\n"));
       if (spellcasting.will?.length) lines.push(`At will: ${spellcasting.will.join(", ")}`);
       if (spellcasting.daily) {
         for (const [times, spells] of Object.entries(spellcasting.daily)) {
-          lines.push(`${times}/day: ${(spells as string[]).join(", ")}`);
+          lines.push(`${times}/day: ${(spells as Array<string>).join(", ")}`);
         }
       }
       traits.push({

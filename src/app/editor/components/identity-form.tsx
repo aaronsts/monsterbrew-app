@@ -1,6 +1,8 @@
 "use client";
 import { useState } from "react";
 import { X } from "lucide-react";
+import { Controller, useFormContext, useWatch } from "react-hook-form";
+import type { Monster } from "@/schema/monster-schema";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -26,15 +28,13 @@ import { Switch } from "@/components/ui/switch";
 import {
   Item,
   ItemContent,
-  ItemTitle,
   ItemDescription,
   ItemMedia,
+  ItemTitle,
 } from "@/components/ui/item";
 import { CREATURE_SIZES, CREATURE_TYPES } from "@/lib/constants";
 import { titleCase } from "@/lib/utils";
 import { Languages } from "@/schema/createCreatureSchema";
-import { Monster } from "@/schema/monster-schema";
-import { Controller, useFormContext, useWatch } from "react-hook-form";
 
 const SENSES = [
   { name: "senses.blindsight", label: "Blindsight" },

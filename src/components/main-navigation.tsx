@@ -2,8 +2,8 @@
 
 import { Link, useRouterState } from "@tanstack/react-router";
 
-import { cn } from "@/lib/utils";
 import { ThemeToggle } from "./theme-toggle";
+import { cn } from "@/lib/utils";
 
 export function MainNavigation() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });

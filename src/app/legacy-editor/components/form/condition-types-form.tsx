@@ -1,3 +1,6 @@
+import { useFormContext } from "react-hook-form";
+import type { z } from "zod";
+import type { createCreatureSchema } from "@/schema/createCreatureSchema";
 import {
   Combobox,
   ComboboxChip,
@@ -16,10 +19,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { createCreatureSchema } from "@/schema/createCreatureSchema";
 import { CONDITIONS } from "@/types/types";
-import { useFormContext } from "react-hook-form";
-import { z } from "zod";
 
 function ConditionTypesForm() {
   const form = useFormContext<z.infer<typeof createCreatureSchema>>();

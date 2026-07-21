@@ -1,10 +1,10 @@
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { DAMAGE_TYPES } from "@/types/types";
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 import { DamageModifiersField } from "./damage-modifiers-field";
 import { renderWithForm } from "./test-utils";
+import { DAMAGE_TYPES } from "@/types/types";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 const renderField = (defaults = {}) =>
   renderWithForm(

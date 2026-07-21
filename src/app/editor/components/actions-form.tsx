@@ -1,4 +1,13 @@
 "use client";
+import { ArrowDown, ArrowUp, Plus, Trash2 } from "lucide-react";
+import {
+  Controller,
+  useFieldArray,
+  useFormContext,
+} from "react-hook-form";
+import type {
+  Control} from "react-hook-form";
+import type { Monster } from "@/schema/monster-schema";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -12,14 +21,6 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Monster } from "@/schema/monster-schema";
-import { ArrowDown, ArrowUp, Plus, Trash2 } from "lucide-react";
-import {
-  Control,
-  Controller,
-  useFieldArray,
-  useFormContext,
-} from "react-hook-form";
 
 type FeatureArrayName =
   | "traits"

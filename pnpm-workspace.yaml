@@ -27,4 +27,4 @@ minimumReleaseAgeExclude:
   - vitest@3.2.6
   - "@babel/core@7.29.1"
 patchedDependencies:
-  conventional-commits-parser@6.1.0: patches/conventional-commits-parser@6.1.0.patch
+  conventional-commits-parser@7.1.0: patches/conventional-commits-parser@7.1.0.patch

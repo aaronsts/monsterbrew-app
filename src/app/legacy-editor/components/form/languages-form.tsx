@@ -1,3 +1,6 @@
+import { useFormContext } from "react-hook-form";
+import type { z } from "zod";
+import type { createCreatureSchema} from "@/schema/createCreatureSchema";
 import {
   Combobox,
   ComboboxChip,
@@ -18,9 +21,7 @@ import {
 } from "@/components/ui/form";
 
 import { cn, titleCase } from "@/lib/utils";
-import { createCreatureSchema, Languages } from "@/schema/createCreatureSchema";
-import { useFormContext } from "react-hook-form";
-import { z } from "zod";
+import { Languages } from "@/schema/createCreatureSchema";
 
 function LanguagesForm() {
   const form = useFormContext<z.infer<typeof createCreatureSchema>>();

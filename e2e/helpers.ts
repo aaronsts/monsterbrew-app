@@ -1,4 +1,5 @@
-import { Page, Locator, expect } from "@playwright/test";
+import { expect } from "@playwright/test";
+import type { Locator, Page} from "@playwright/test";
 
 export function statblock(page: Page): Locator {
   return page.locator('[data-slot="card"]');

@@ -1,8 +1,8 @@
 "use client";
 
-import { PropsWithChildren } from "react";
 import { ThemeProvider } from "next-themes";
 import { ReactQueryClientProvider } from "./ReactQueryClientProvider";
+import type { PropsWithChildren } from "react";
 
 export function Providers({ children }: PropsWithChildren) {
   return (

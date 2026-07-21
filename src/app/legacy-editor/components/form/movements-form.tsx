@@ -1,3 +1,6 @@
+import { useFormContext } from "react-hook-form";
+import type { z } from "zod";
+import type { createCreatureSchema } from "@/schema/createCreatureSchema";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   FormControl,
@@ -7,9 +10,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { createCreatureSchema } from "@/schema/createCreatureSchema";
-import { useFormContext } from "react-hook-form";
-import { z } from "zod";
 
 function MovementForm() {
   const form = useFormContext<z.infer<typeof createCreatureSchema>>();

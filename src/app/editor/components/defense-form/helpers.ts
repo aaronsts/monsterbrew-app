@@ -1,10 +1,11 @@
+import type { z } from "zod";
+import type { Monster } from "@/schema/monster-schema";
 import { SKILLS } from "@/lib/skills";
-import { abilityScoresSchema, Monster } from "@/schema/monster-schema";
-import { z } from "zod";
+import { abilityScoresSchema } from "@/schema/monster-schema";
 
 export type AbilityKey = keyof z.infer<typeof abilityScoresSchema>;
 export const ABILITY_SCORES = abilityScoresSchema.keyof()._def
-  .values as AbilityKey[];
+  .values as Array<AbilityKey>;
 
 export type SkillProficiency = "proficient" | "expert" | "";
 export type DamageState = "resistant" | "vulnerable" | "immune" | "";

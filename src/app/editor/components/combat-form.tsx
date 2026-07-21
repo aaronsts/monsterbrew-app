@@ -1,4 +1,7 @@
 "use client";
+import { useEffect } from "react";
+import { Controller, useFormContext, useWatch } from "react-hook-form";
+import type { Monster } from "@/schema/monster-schema";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   Combobox,
@@ -22,9 +25,7 @@ import { Item, ItemContent, ItemMedia, ItemTitle } from "@/components/ui/item";
 import { Switch } from "@/components/ui/switch";
 import { CHALLENGE_RATINGS } from "@/lib/constants";
 import { calculateHitPoints, calculateStatBonus } from "@/lib/utils";
-import { abilityScoresSchema, Monster } from "@/schema/monster-schema";
-import { useEffect } from "react";
-import { Controller, useFormContext, useWatch } from "react-hook-form";
+import { abilityScoresSchema } from "@/schema/monster-schema";
 
 type ChallengeRating = Monster["cr"];
 
@@ -40,7 +41,7 @@ const MOVEMENTS = [
 
 export const CombatForm = () => {
   const form = useFormContext<Monster>();
-  const { control, getValues } = form;
+  const { control, getValues, setValue } = form;
   const [ability_scores, custom_hp, hit_dice, size] = useWatch({
     control,
     name: ["ability_scores", "custom_hp", "hit_dice", "size"],
@@ -50,9 +51,9 @@ export const CombatForm = () => {
     if (custom_hp) return;
     const next = calculateHitPoints(hit_dice, size, ability_scores?.con);
     if (next !== getValues("hit_points")) {
-      form.setValue("hit_points", next);
+      setValue("hit_points", next);
     }
-  }, [custom_hp, hit_dice, size, ability_scores?.con, getValues]);
+  }, [custom_hp, hit_dice, size, ability_scores?.con, setValue, getValues]);
 
   return (
     <FieldSet>
@@ -228,7 +229,7 @@ export const CombatForm = () => {
       {/* Ability Scores */}
       <FieldGroup className="grid grid-cols-3 xl:grid-cols-6">
         {ABILITY_SCORES.map((ability) => {
-          const score = ability_scores?.[ability];
+          const score = ability_scores[ability];
           const modifier =
             score !== undefined ? calculateStatBonus(score) : undefined;
           return (

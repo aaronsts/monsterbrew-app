@@ -1,7 +1,7 @@
+import type { Languages, defaultCreature } from "@/schema/createCreatureSchema";
+import type { Open5eCreature } from "@/types/open-5e";
 import { CHALLENGE_RATINGS } from "@/lib/constants";
 import { SKILLS } from "@/lib/skills";
-import { defaultCreature, Languages } from "@/schema/createCreatureSchema";
-import { Open5eCreature } from "@/types/open-5e";
 
 export function fromOpen5e(source: Open5eCreature): typeof defaultCreature {
   const conversionIssues = [];
@@ -13,8 +13,10 @@ export function fromOpen5e(source: Open5eCreature): typeof defaultCreature {
   switch (source.cr) {
     case 0.125:
       cr = CHALLENGE_RATINGS[1];
+      break;
     case 0.25:
       cr = CHALLENGE_RATINGS[2];
+      break;
     case 0.5:
       cr = CHALLENGE_RATINGS[3];
   }
@@ -25,18 +27,18 @@ export function fromOpen5e(source: Open5eCreature): typeof defaultCreature {
   }
 
   const savingThrows = [
-    !!source.strength_save ? "str" : "",
-    !!source.dexterity_save ? "dex" : "",
-    !!source.constitution_save ? "con" : "",
-    !!source.intelligence_save ? "int" : "",
-    !!source.wisdom_save ? "wis" : "",
-    !!source.charisma_save ? "cha" : "",
+    source.strength_save ? "str" : "",
+    source.dexterity_save ? "dex" : "",
+    source.constitution_save ? "con" : "",
+    source.intelligence_save ? "int" : "",
+    source.wisdom_save ? "wis" : "",
+    source.charisma_save ? "cha" : "",
   ];
 
   const skills = Object.entries(source.skills)
     .map((skl) => {
       const foundSkill = SKILLS.find(
-        (s) => s.skill_name.toLowerCase() === skl[0].toLowerCase()
+        (s) => s.skill_name.toLowerCase() === skl[0].toLowerCase(),
       );
 
       if (!foundSkill) {
@@ -124,7 +126,7 @@ export function fromOpen5e(source: Open5eCreature): typeof defaultCreature {
         : [],
 
     skill_bonuses: skills,
-    languages: source.languages.split(", ") as Languages[],
+    languages: source.languages.split(", ") as Array<Languages>,
     passive_perception: parseInt(source.senses.split("passive Perception ")[1]),
 
     cr: cr,

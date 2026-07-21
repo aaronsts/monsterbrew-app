@@ -1,8 +1,9 @@
+import type { defaultCreature} from "@/schema/createCreatureSchema";
+import type { ImprovedInitiativeCreature } from "@/types/improved-initiative";
 import { CHALLENGE_RATINGS } from "@/lib/constants";
 import { SKILLS } from "@/lib/skills";
 import { calculateStatBonus, titleCase } from "@/lib/utils";
-import { defaultCreature, Languages } from "@/schema/createCreatureSchema";
-import { ImprovedInitiativeCreature } from "@/types/improved-initiative";
+import { Languages } from "@/schema/createCreatureSchema";
 
 export function fromImprovedInitiative(
   source: ImprovedInitiativeCreature
@@ -257,7 +258,7 @@ export function toImprovedInitiative(
 }
 
 function convertToNameAndDescription(
-  actions: { Name: string; Content: string }[]
+  actions: Array<{ Name: string; Content: string }>
 ) {
   return actions.map((a) => ({ name: a.Name, description: a.Content }));
 }

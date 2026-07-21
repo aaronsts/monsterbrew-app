@@ -1,6 +1,7 @@
 "use client";
 
 import { Fragment } from "react";
+import type { Monster } from "@/schema/monster-schema";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { StandAloneDescription as Description } from "@/components/ui/stand-alone-description";
 import {
@@ -10,7 +11,7 @@ import {
   titleCase,
 } from "@/lib/utils";
 import { SKILLS } from "@/lib/skills";
-import { abilityScoresSchema, Monster } from "@/schema/monster-schema";
+import { abilityScoresSchema } from "@/schema/monster-schema";
 
 type Feature = Monster["traits"][number];
 
@@ -65,7 +66,7 @@ function StatLine({
   );
 }
 
-function TraitList({ features }: { features: Feature[] }) {
+function TraitList({ features }: { features: Array<Feature> }) {
   return (
     <div className="flex flex-col gap-3">
       {features.map((feature, i) => (
@@ -85,7 +86,7 @@ function FeatureSection({
   description,
 }: {
   title: string;
-  features: Feature[];
+  features: Array<Feature>;
   description?: string;
 }) {
   if (features.length === 0) return null;
@@ -113,7 +114,7 @@ export function MonsterStatblock({ creature }: { creature: Monster }) {
     ? creature.hit_points
     : medianHP || creature.hit_points;
 
-  const movements: string[] = [];
+  const movements: Array<string> = [];
   Object.entries(creature.movements).forEach(([key, value]) => {
     if (!value) return;
     movements.push(
@@ -140,9 +141,9 @@ export function MonsterStatblock({ creature }: { creature: Monster }) {
     },
   );
 
-  const resistances: string[] = [];
-  const damageImmunities: string[] = [];
-  const vulnerabilities: string[] = [];
+  const resistances: Array<string> = [];
+  const damageImmunities: Array<string> = [];
+  const vulnerabilities: Array<string> = [];
   Object.entries(creature.damage_modifiers ?? {}).forEach(([type, state]) => {
     if (state === "resistant") resistances.push(type);
     else if (state === "immune") damageImmunities.push(type);
@@ -155,7 +156,7 @@ export function MonsterStatblock({ creature }: { creature: Monster }) {
 
   const immunities = [...damageImmunities, ...creature.condition_immunities];
 
-  const senses: string[] = [];
+  const senses: Array<string> = [];
   Object.entries(creature.senses).forEach(([key, value]) => {
     if (!value) return;
     if (key === "is_blind_beyond") return;
