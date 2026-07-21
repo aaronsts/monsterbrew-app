@@ -18,29 +18,74 @@ type Release = {
 
 const releases: Array<Release> = [
   {
-    version: "3.1.2",
+    version: "3.5.0",
+    date: "2026-07-21",
+    title: "Dynamic attack tokens",
+    summary:
+      "Action and trait descriptions now speak 5eTools' {@…} tag markup natively. Attack bonuses, save DCs, and damage can be linked to a creature's ability scores so they recompute automatically as you tweak stats — and imported bestiary text renders without any conversion. Every description field gets an Insert menu with a live preview.",
+    changes: [
+      "Stat-linked attack tokens: tags like {@hit str}, {@dc con}, and {@damage 2d8+str} recompute from ability modifiers and proficiency bonus",
+      "5eTools {@…} markup now renders natively in the statblock, so imported text needs no conversion",
+      "New Insert menu and live preview on every action and trait description",
+    ],
+  },
+  {
+    version: "3.4.0",
+    date: "2026-07-21",
+    title: "SRD monsters",
+    summary:
+      "The full D&D 2024 SRD bestiary is now built in. Browse and filter the official monsters right inside the library, open any one to view its statblock, and copy it into the editor as a starting point for your own homebrew.",
+    changes: [
+      "Added the D&D 2024 SRD bestiary as a browsable, filterable collection in the library",
+      "Read-only statblock view for each SRD monster",
+      "Copy any SRD monster into the editor to customize",
+    ],
+  },
+  {
+    version: "3.3.0",
+    date: "2026-07-21",
+    title: "New creature library",
+    summary:
+      "Your saved creatures now live in a redesigned, filterable library that replaces the old table. Search and filter your collection at a glance, with a toggle to switch between your creatures and other sources.",
+    changes: [
+      "Replaced the My Creatures table with a filterable library grid",
+      "Search and filter your saved creatures",
+      "Source toggle to switch between your creatures and other collections",
+    ],
+  },
+  {
+    version: "3.2.2",
     date: "2026-07-21",
     summary:
       "Under-the-hood build tooling upgrade to Vite 8 (with the Rolldown bundler). No visible changes — just a faster, more modern build pipeline that keeps Monsterbrew on solid footing.",
     changes: ["Upgraded the build tooling to Vite 8 (Rolldown)"],
   },
   {
-    version: "3.1.1",
+    version: "3.2.1",
     date: "2026-07-21",
     summary:
       "A behind-the-scenes fix to the build configuration so production builds output cleanly through Nitro. No user-facing changes.",
     changes: ["Fixed the Vite/Nitro production build configuration"],
   },
   {
-    version: "3.1.0",
+    version: "3.2.0",
     date: "2026-07-20",
     title: "New foundation",
     summary:
-      "Monsterbrew now runs on TanStack Start. It's a mostly under-the-hood change that sets up a faster, more resilient app: the marketing pages are server-rendered for better SEO, in-app navigation is snappier, and the footer has been rebuilt. Your saved creatures and the editor keep working exactly as before.",
+      "Monsterbrew now runs on TanStack Start. It's a mostly under-the-hood change that sets up a faster, more resilient app: the marketing pages are server-rendered for better SEO and in-app navigation is snappier. Your saved creatures and the editor keep working exactly as before.",
     changes: [
       "Migrated the app from Next.js to TanStack Start (Vite) with server-side rendering",
       "Server-rendered marketing pages (home, privacy, changelog) for better SEO",
       "Faster client-side navigation between pages",
+    ],
+  },
+  {
+    version: "3.1.0",
+    date: "2026-07-20",
+    summary:
+      "Reorganized the main pages and gave the site footer a fresh rebuild.",
+    changes: [
+      "Restructured the main marketing pages",
       "Rebuilt site footer",
     ],
   },
