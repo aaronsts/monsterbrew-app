@@ -1,7 +1,20 @@
 import { describe, expect, it } from "vitest";
+import srdData from "@/data/srd-monsters.json";
 import { fromSrd } from "@/services/converters/from-srd";
 import { getSrdMonsters } from "@/services/srd";
 import { monsterSchema } from "@/schema/monster-schema";
+import { calculateHitPoints } from "@/lib/utils";
+
+/** Replicates how the statblock derives the displayed HP number. */
+function displayedHp(monster: ReturnType<typeof fromSrd>): number {
+  const median = calculateHitPoints(
+    monster.hit_dice,
+    monster.size,
+    monster.ability_scores.con,
+  );
+  const raw = monster.custom_hp ? monster.hit_points : median || monster.hit_points;
+  return Number.parseInt(raw, 10);
+}
 
 const aboleth = {
   key: "srd-2024_aboleth",
@@ -127,5 +140,18 @@ describe("getSrdMonsters", () => {
   it("has a unique key for every entry (routing depends on it)", () => {
     const keys = new Set(entries.map((e) => e.key));
     expect(keys.size).toBe(entries.length);
+  });
+
+  it("displays the exact SRD hit points for every monster", () => {
+    const source = srdData as Array<{ key: string; hit_points: number }>;
+    const hpByKey = new Map(source.map((m) => [m.key, m.hit_points]));
+    const wrong = entries
+      .map((entry) => ({
+        name: entry.monster.name,
+        expected: hpByKey.get(entry.key),
+        actual: displayedHp(entry.monster),
+      }))
+      .filter((row) => row.expected !== row.actual);
+    expect(wrong).toEqual([]);
   });
 });

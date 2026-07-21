@@ -9,7 +9,7 @@ import {
 import type { Monster } from "@/schema/monster-schema";
 import type { SrdMonster } from "@/types/srd";
 import { srdMonsterSchema } from "@/types/srd";
-import { calculateStatBonus } from "@/lib/utils";
+import { calculateHitPoints, calculateStatBonus } from "@/lib/utils";
 
 const ABILITY_KEYS: Record<keyof SrdMonster["ability_scores"], string> = {
   strength: "str",
@@ -31,7 +31,10 @@ function splitDisplay(value: string | undefined): Array<string> {
 function toFeatures(
   entries: Array<{ name: string; desc: string }>,
 ): Monster["traits"] {
-  return entries.map((entry) => ({ name: entry.name, description: entry.desc }));
+  return entries.map((entry) => ({
+    name: entry.name,
+    description: entry.desc,
+  }));
 }
 
 /** Convert a D&D 2024 SRD monster entry into the canonical `Monster` shape. */
@@ -69,11 +72,19 @@ export function fromSrd(raw: unknown): Monster {
 
   const res = source.resistances_and_immunities;
 
+  const hitDiceCount = source.hit_dice.split("d")[0].trim();
+  const size = source.size.toLowerCase();
+  const recomputedHp = Number.parseInt(
+    calculateHitPoints(hitDiceCount, size, source.ability_scores.constitution),
+    10,
+  );
+  const customHp = recomputedHp !== source.hit_points;
+
   return {
     // Identity
     name: source.name,
     type: source.type.toLowerCase(),
-    size: source.size.toLowerCase(),
+    size,
     sub_type: source.subcategory ?? "",
     alignment: source.alignment,
     description: "",
@@ -93,8 +104,8 @@ export function fromSrd(raw: unknown): Monster {
     armor_class: source.armor_class,
     armor_description: source.armor_detail,
     hit_points: source.hit_points.toString(),
-    hit_dice: source.hit_dice.split("d")[0].trim(),
-    custom_hp: false,
+    hit_dice: hitDiceCount,
+    custom_hp: customHp,
     ability_scores: {
       str: source.ability_scores.strength,
       dex: source.ability_scores.dexterity,
