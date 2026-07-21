@@ -1,6 +1,7 @@
 "use client";
 import { ConditionImmunitiesField } from "./condition-immunities-field";
 import { DamageModifiersField } from "./damage-modifiers-field";
+import { NonmagicalDefensesField } from "./nonmagical-defenses-field";
 import { SavingThrowsField } from "./saving-throws-field";
 import { SkillsField } from "./skills-field";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -22,6 +23,7 @@ export const DefenseForm = () => {
         <SavingThrowsField />
         <SkillsField />
         <DamageModifiersField />
+        <NonmagicalDefensesField />
         <ConditionImmunitiesField />
       </FieldSet>
     </TooltipProvider>

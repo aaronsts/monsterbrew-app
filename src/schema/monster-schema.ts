@@ -84,8 +84,9 @@ export const monsterSchema = z.object({
   damage_modifiers: z
     .record(z.string(), z.enum(["resistant", "vulnerable", "immune"]))
     .optional(),
-  nonmagical_attack_immunity: z.boolean().optional(),
-  nonmagical_attack_resistance: z.boolean().optional(),
+  nonmagical_attack_modifiers: z
+    .record(z.string(), z.enum(["resistant", "immune"]))
+    .optional(),
   condition_immunities: z.array(z.string()),
 
   // Actions
@@ -166,8 +167,7 @@ export const defaultMonster: Monster = {
   saving_throws: {},
   skills: {},
   damage_modifiers: {},
-  nonmagical_attack_immunity: false,
-  nonmagical_attack_resistance: false,
+  nonmagical_attack_modifiers: {},
   condition_immunities: [],
 
   // Actions
