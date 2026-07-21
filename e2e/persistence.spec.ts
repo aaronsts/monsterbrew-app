@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./fixtures";
 import { creatureIdFromUrl, selectCombo, statblock } from "./helpers";
 
 test.describe("Monster editor — persistence", () => {

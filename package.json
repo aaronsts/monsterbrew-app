@@ -14,7 +14,8 @@
     "test": "vitest",
     "test:coverage": "vitest run --coverage",
     "test:e2e": "playwright test",
-    "test:e2e:ui": "playwright test --ui"
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:coverage": "COVERAGE=1 playwright test"
   },
   "dependencies": {
     "@base-ui/react": "^1.6.0",
@@ -70,6 +71,7 @@
     "globals": "^17.7.0",
     "husky": "^9.1.7",
     "jsdom": "^29.1.1",
+    "monocart-reporter": "^2.12.2",
     "semantic-release": "^25.0.8",
     "typescript": "^5.8.3",
     "vite": "^8.1.5",

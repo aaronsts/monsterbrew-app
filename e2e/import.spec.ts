@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./fixtures";
 import type { Page } from "@playwright/test";
 import type {
   ImportFormat} from "@/services/converters/detect-import-format";
