@@ -1,9 +1,9 @@
 "use client";
 import { Search } from "lucide-react";
 
+import { CR_FILTER_ITEMS, TYPE_OPTIONS, crFilterLabel } from "./filters";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Slider } from "@/components/ui/slider";
 import {
   Select,
   SelectContent,
@@ -11,14 +11,25 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { CR_MAX, CR_VALUES, TYPE_OPTIONS } from "./filters";
+import {
+  Combobox,
+  ComboboxChip,
+  ComboboxChips,
+  ComboboxChipsInput,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxItem,
+  ComboboxList,
+  ComboboxValue,
+  useComboboxAnchor,
+} from "@/components/ui/combobox";
 
 export function FilterBar({
   search,
   onSearchChange,
   typeFilter,
   onTypeChange,
-  crRange,
+  cr,
   onCrChange,
   resultCount,
   totalCount,
@@ -27,11 +38,13 @@ export function FilterBar({
   onSearchChange: (value: string) => void;
   typeFilter: string;
   onTypeChange: (value: string) => void;
-  crRange: [number, number];
-  onCrChange: (value: [number, number]) => void;
+  cr: Array<string>;
+  onCrChange: (value: Array<string>) => void;
   resultCount: number;
   totalCount: number;
 }) {
+  const crAnchor = useComboboxAnchor();
+
   return (
     <div>
       <div className="flex flex-col gap-4 rounded-none bg-muted/40 p-4 ring-1 ring-foreground/10 md:flex-row md:items-end">
@@ -67,23 +80,40 @@ export function FilterBar({
             </SelectContent>
           </Select>
         </div>
-        <div className="space-y-1.5 md:w-56">
-          <div className="flex justify-between">
-            <Label>Challenge rating</Label>
-            <span className="text-xs leading-none tabular-nums text-muted-foreground">
-              {CR_VALUES[crRange[0]]}
-              {crRange[0] !== crRange[1] ? `–${CR_VALUES[crRange[1]]}` : ""}
-            </span>
-          </div>
-          <div className="flex items-center h-8">
-            <Slider
-              min={0}
-              max={CR_MAX}
-              step={1}
-              value={crRange}
-              onValueChange={(value) => onCrChange(value as [number, number])}
-            />
-          </div>
+        <div className="space-y-1.5">
+          <Label>Challenge rating</Label>
+          <Combobox
+            multiple
+            items={CR_FILTER_ITEMS}
+            value={cr}
+            onValueChange={(value) => onCrChange(value)}
+            itemToStringLabel={crFilterLabel}
+          >
+            <ComboboxChips ref={crAnchor} className="w-full mb-0  md:w-56">
+              <ComboboxValue>
+                {(selected: Array<string>) =>
+                  selected.map((value) => (
+                    <ComboboxChip key={value} aria-label={crFilterLabel(value)}>
+                      {crFilterLabel(value)}
+                    </ComboboxChip>
+                  ))
+                }
+              </ComboboxValue>
+              <ComboboxChipsInput
+                placeholder={cr.length === 0 ? "Any CR" : ""}
+              />
+            </ComboboxChips>
+            <ComboboxContent anchor={crAnchor}>
+              <ComboboxEmpty>No challenge rating found.</ComboboxEmpty>
+              <ComboboxList>
+                {(value: string) => (
+                  <ComboboxItem key={value} value={value}>
+                    {crFilterLabel(value)}
+                  </ComboboxItem>
+                )}
+              </ComboboxList>
+            </ComboboxContent>
+          </Combobox>
         </div>
       </div>
       <p className="text-[11px] mt-2 float-right text-muted-foreground">

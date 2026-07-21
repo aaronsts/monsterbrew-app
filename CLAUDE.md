@@ -49,6 +49,10 @@ Derived values are computed with `useEffect` + `form.setValue` rather than store
 
 `src/services/database.ts` opens the versioned `monsterbrewDB` (object store `creatures`, `keyPath: "id"`). IDs are generated client-side in `save-dialog.tsx` (`Date.now()-<random>`), not by the store. `save-dialog.tsx` only touches IndexedDB inside event handlers (not during render), so it renders fine under SSR. Bumping the DB version means adding a `case` to the `upgrade` switch in `database.ts`. `/my-creatures` lists and manages saved creatures.
 
+### SRD monsters
+
+The D&D 2024 SRD bestiary ships as static data in `src/data/srd-monsters.json` (its external shape is `src/types/srd.ts`). `src/services/converters/from-srd.ts` (`fromSrd`) maps each entry onto the canonical `Monster`, and `src/services/srd.ts` (`getSrdMonsters` / `getSrdMonster`) converts + memoizes the list, keyed by the SRD `key`. `/library?source=srd` shows a read-only, filterable grid (the "My creatures" ↔ "SRD monsters" toggle in `library-grid.tsx`); `/library/srd/$key` is the read-only detail with a single "Copy to editor" action that hands the converted monster to the editor via the `localStorage.editCreature` key. Because the JSON is large it code-splits into its own bundle chunk (only loaded on the library route).
+
 ### Import / export converters
 
 `src/services/converters/*` translate between the internal creature shape and external tools; each external format has a matching type file in `src/types/*`:

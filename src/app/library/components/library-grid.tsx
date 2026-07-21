@@ -1,28 +1,42 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { Download, Library } from "lucide-react";
-import { z } from "zod";
-
-import { Button } from "@/components/ui/button";
-import { monsterbrewDB } from "@/services/database";
-import { downloadCreatureBackup } from "@/services/backup";
-import { createCreatureSchema } from "@/schema/createCreatureSchema";
-import { CR_MAX, CR_VALUES } from "./filters";
 import { FilterBar } from "./filter-bar";
 import { CreatureCard } from "./creature-card";
 import { EmptyState } from "./empty-state";
 import { NoMatches } from "./no-matches";
+import type { z } from "zod";
+
+import type { createCreatureSchema } from "@/schema/createCreatureSchema";
+import { Button } from "@/components/ui/button";
+import { monsterbrewDB } from "@/services/database";
+import { downloadCreatureBackup } from "@/services/backup";
+import { getSrdMonsters } from "@/services/srd";
 
 type MonsterbrewCreature = z.infer<typeof createCreatureSchema>;
+type LibrarySource = "mine" | "srd";
 
-export default function LibraryGrid() {
-  const [myCreatures, setMyCreatures] = useState<MonsterbrewCreature[]>([]);
+interface LibraryItem {
+  creature: MonsterbrewCreature;
+  srdKey?: string;
+}
+
+export default function LibraryGrid({
+  source = "mine",
+}: {
+  source?: LibrarySource;
+}) {
+  const navigate = useNavigate();
+  const [myCreatures, setMyCreatures] = useState<Array<MonsterbrewCreature>>(
+    [],
+  );
   const [isLoading, setIsLoading] = useState(true);
 
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState("all");
-  const [crRange, setCrRange] = useState<[number, number]>([0, CR_MAX]);
+  const [crFilter, setCrFilter] = useState<Array<string>>([]);
 
   async function getLocalCreatures() {
     setIsLoading(true);
@@ -44,6 +58,11 @@ export default function LibraryGrid() {
     getLocalCreatures();
   }, []);
 
+  const setSource = (next: LibrarySource) => {
+    if (next === source) return;
+    navigate({ to: "/library", search: { source: next } });
+  };
+
   const backupCreatures = () => {
     toast.promise(downloadCreatureBackup(), {
       loading: "Preparing backup...",
@@ -55,10 +74,27 @@ export default function LibraryGrid() {
     });
   };
 
+  // SRD monsters are static; convert once and reuse.
+  const srdItems = useMemo<Array<LibraryItem>>(
+    () =>
+      getSrdMonsters().map((entry) => ({
+        creature: entry.monster as unknown as MonsterbrewCreature,
+        srdKey: entry.key,
+      })),
+    [],
+  );
+
+  const items = useMemo<Array<LibraryItem>>(
+    () =>
+      source === "srd"
+        ? srdItems
+        : myCreatures.map((creature) => ({ creature })),
+    [source, srdItems, myCreatures],
+  );
+
   const filtered = useMemo(() => {
     const query = search.trim().toLowerCase();
-    const [minCr, maxCr] = crRange;
-    return myCreatures.filter((creature) => {
+    return items.filter(({ creature }) => {
       if (query && !(creature.name ?? "").toLowerCase().includes(query)) {
         return false;
       }
@@ -68,19 +104,24 @@ export default function LibraryGrid() {
       ) {
         return false;
       }
-      const crIndex = CR_VALUES.indexOf(creature.cr.challenge_rating);
-      if (crIndex !== -1 && (crIndex < minCr || crIndex > maxCr)) {
+      if (
+        crFilter.length > 0 &&
+        !crFilter.includes(creature.cr.challenge_rating)
+      ) {
         return false;
       }
       return true;
     });
-  }, [myCreatures, search, typeFilter, crRange]);
+  }, [items, search, typeFilter, crFilter]);
 
   const clearFilters = () => {
     setSearch("");
     setTypeFilter("all");
-    setCrRange([0, CR_MAX]);
+    setCrFilter([]);
   };
+
+  const isSrd = source === "srd";
+  const loading = isSrd ? false : isLoading;
 
   return (
     <div className="flex flex-col gap-6">
@@ -94,26 +135,49 @@ export default function LibraryGrid() {
               Library
             </h1>
             <p className="text-muted-foreground">
-              Manage your locally saved creatures
+              {isSrd
+                ? "Browse the D&D 2024 SRD monsters"
+                : "Manage your locally saved creatures"}
             </p>
           </div>
         </div>
+        {!isSrd && (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={backupCreatures}
+            disabled={isLoading || myCreatures.length === 0}
+          >
+            <Download className="mr-2 h-4 w-4" />
+            Download backup
+          </Button>
+        )}
+      </div>
+
+      <div className="inline-flex self-start ring-1 ring-foreground/15">
         <Button
-          variant="outline"
+          variant={isSrd ? "ghost" : "default"}
           size="sm"
-          onClick={backupCreatures}
-          disabled={isLoading || myCreatures.length === 0}
+          className="rounded-none"
+          onClick={() => setSource("mine")}
         >
-          <Download className="mr-2 h-4 w-4" />
-          Download backup
+          My creatures
+        </Button>
+        <Button
+          variant={isSrd ? "default" : "ghost"}
+          size="sm"
+          className="rounded-none"
+          onClick={() => setSource("srd")}
+        >
+          SRD monsters
         </Button>
       </div>
 
-      {isLoading ? (
+      {loading ? (
         <div className="flex h-40 items-center justify-center text-muted-foreground">
           <p>Loading creatures...</p>
         </div>
-      ) : myCreatures.length === 0 ? (
+      ) : !isSrd && myCreatures.length === 0 ? (
         <EmptyState />
       ) : (
         <>
@@ -122,18 +186,22 @@ export default function LibraryGrid() {
             onSearchChange={setSearch}
             typeFilter={typeFilter}
             onTypeChange={setTypeFilter}
-            crRange={crRange}
-            onCrChange={setCrRange}
+            cr={crFilter}
+            onCrChange={setCrFilter}
             resultCount={filtered.length}
-            totalCount={myCreatures.length}
+            totalCount={items.length}
           />
 
           {filtered.length === 0 ? (
             <NoMatches onClear={clearFilters} />
           ) : (
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {filtered.map((creature) => (
-                <CreatureCard key={creature.id} creature={creature} />
+              {filtered.map(({ creature, srdKey }) => (
+                <CreatureCard
+                  key={srdKey ?? creature.id}
+                  creature={creature}
+                  srdKey={srdKey}
+                />
               ))}
             </div>
           )}
