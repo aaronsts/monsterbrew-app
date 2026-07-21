@@ -2,6 +2,7 @@
 
 import { Fragment } from "react";
 import type { Monster } from "@/schema/monster-schema";
+import type { MarkupContext } from "@/lib/statblock-markup";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { StandAloneDescription as Description } from "@/components/ui/stand-alone-description";
 import {
@@ -10,6 +11,7 @@ import {
   cn,
   titleCase,
 } from "@/lib/utils";
+import { resolveMarkup } from "@/lib/statblock-markup";
 import { SKILLS } from "@/lib/skills";
 import { abilityScoresSchema } from "@/schema/monster-schema";
 
@@ -66,14 +68,20 @@ function StatLine({
   );
 }
 
-function TraitList({ features }: { features: Array<Feature> }) {
+function TraitList({
+  features,
+  ctx,
+}: {
+  features: Array<Feature>;
+  ctx: MarkupContext;
+}) {
   return (
     <div className="flex flex-col gap-3">
       {features.map((feature, i) => (
         <Description
           key={feature.name + i}
           title={feature.name}
-          description={feature.description}
+          description={resolveMarkup(feature.description, ctx)}
         />
       ))}
     </div>
@@ -84,19 +92,23 @@ function FeatureSection({
   title,
   features,
   description,
+  ctx,
 }: {
   title: string;
   features: Array<Feature>;
   description?: string;
+  ctx: MarkupContext;
 }) {
   if (features.length === 0) return null;
   return (
     <div className="flex flex-col gap-3">
       <SectionHeading>{title}</SectionHeading>
       {description && (
-        <p className="italic mb-1 whitespace-pre-wrap">{description}</p>
+        <p className="italic mb-1 whitespace-pre-wrap">
+          {resolveMarkup(description, ctx)}
+        </p>
       )}
-      <TraitList features={features} />
+      <TraitList features={features} ctx={ctx} />
     </div>
   );
 }
@@ -322,23 +334,33 @@ export function MonsterStatblock({
         {creature.traits.length > 0 && (
           <div className="mt-1 flex flex-col gap-3">
             <TaperedRule />
-            <TraitList features={creature.traits} />
+            <TraitList features={creature.traits} ctx={creature} />
           </div>
         )}
 
         {/* Actions & reactions */}
         <div className="mt-3 flex flex-col gap-5">
-          <FeatureSection title="Actions" features={creature.actions} />
+          <FeatureSection
+            title="Actions"
+            features={creature.actions}
+            ctx={creature}
+          />
           <FeatureSection
             title="Bonus Actions"
             features={creature.bonus_actions}
+            ctx={creature}
           />
-          <FeatureSection title="Reactions" features={creature.reactions} />
+          <FeatureSection
+            title="Reactions"
+            features={creature.reactions}
+            ctx={creature}
+          />
           {creature.is_legendary && (
             <FeatureSection
               title="Legendary Actions"
               features={creature.legendary_actions}
               description={creature.legendary_description}
+              ctx={creature}
             />
           )}
           {creature.is_mythic && (
@@ -346,6 +368,7 @@ export function MonsterStatblock({
               title="Mythic Actions"
               features={creature.mythic_actions}
               description={creature.mythic_description}
+              ctx={creature}
             />
           )}
           {creature.has_lair && (
@@ -353,6 +376,7 @@ export function MonsterStatblock({
               title="Lair Actions"
               features={creature.lair_actions}
               description={creature.lair_description}
+              ctx={creature}
             />
           )}
         </div>
