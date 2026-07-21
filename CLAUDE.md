@@ -8,15 +8,15 @@ This project uses **pnpm** (pinned via the `packageManager` field; run `corepack
 
 - `pnpm install` — install dependencies (`--frozen-lockfile` in CI)
 - `pnpm dev` — start the TanStack Start (Vite) dev server on port 3000 (SSR-capable)
-- `pnpm build` — production build (Vite → `dist/client` + `dist/server`)
-- `pnpm start` — run the built production server (`node dist/server/server.js`)
+- `pnpm build` — production build (Vite 8/Rolldown → Nitro emits `.output/`, a Vercel Build Output)
+- `pnpm start` — run the built production server (`node .output/server/index.mjs`)
 - `pnpm lint` — ESLint (flat config, `eslint.config.js`); `no-unused-vars` is an **error**, so unused imports/vars fail lint
 - `pnpm test` — run Vitest in watch mode
 - `pnpm exec vitest run` — run tests once (CI-style)
 - `pnpm exec vitest run src/tests/converters/fiveETools.test.ts` — run a single test file
 - `pnpm exec vitest run -t "some name"` — run tests matching a name
 
-Path alias: `@/*` → `src/*` (configured in `tsconfig.json`, `vite.config.ts`, and `vitest.config.mts` via `vite-tsconfig-paths`).
+Path alias: `@/*` → `src/*` (defined in `tsconfig.json`; Vite 8 resolves it natively via `resolve.tsconfigPaths: true` in `vite.config.ts` and `vitest.config.mts`).
 
 pnpm blocks dependency build scripts by default; the ones this project needs (`esbuild`, `unrs-resolver`) are allowlisted in `pnpm-workspace.yaml` under `allowBuilds`. If a build-time tool misbehaves after a dependency change, check whether it needs adding there.
 
