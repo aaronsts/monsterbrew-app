@@ -5,6 +5,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { AlertTriangle, CheckCircle2, Download, XCircle } from "lucide-react";
 
+import type { StoredCreature } from "@/services/creatures";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -14,7 +15,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { monsterbrewDB } from "@/services/database";
+import { useSaveCreature } from "@/hooks/use-creatures";
 import { downloadCreatureBackup } from "@/services/backup";
 import { migrateCreature } from "@/services/migrations/migrateCreature";
 
@@ -41,6 +42,7 @@ export function MigrateDialog({
   onMigrated,
 }: MigrateDialogProps) {
   const navigate = useNavigate();
+  const saveCreature = useSaveCreature();
   const [phase, setPhase] = useState<Phase>({ status: "prompt" });
 
   // Reset back to the prompt whenever a fresh creature/dialog is opened.
@@ -62,17 +64,11 @@ export function MigrateDialog({
     }
 
     try {
-      const db = await monsterbrewDB();
-      try {
-        // The store is typed for the legacy shape; the migrated record shares
-        // the same `id` keyPath and overwrites it in place.
-        await db.put(
-          "creatures",
-          result.creature as unknown as Parameters<typeof db.put>[1],
-        );
-      } finally {
-        db.close();
-      }
+      // The migrated record shares the same `id` keyPath and overwrites the
+      // stored creature in place.
+      await saveCreature.mutateAsync(
+        result.creature as unknown as StoredCreature,
+      );
       setPhase({ status: "success", name: result.creature.name || name });
       toast.success(`Migrated ${result.creature.name || name}`);
       onMigrated();

@@ -1,8 +1,5 @@
-import type { z } from "zod";
-import type { createCreatureSchema } from "@/schema/createCreatureSchema";
-import { monsterbrewDB } from "@/services/database";
-
-type MonsterbrewCreature = z.infer<typeof createCreatureSchema>;
+import type { StoredCreature } from "@/services/creatures";
+import { getAllCreatures } from "@/services/creatures";
 
 /** Envelope written to disk so backups are self-describing and future-proof. */
 export interface CreatureBackup {
@@ -11,20 +8,10 @@ export interface CreatureBackup {
   version: number;
   exportedAt: string;
   count: number;
-  creatures: Array<MonsterbrewCreature>;
+  creatures: Array<StoredCreature>;
 }
 
 export const BACKUP_VERSION = 1;
-
-/** Read every creature currently stored in IndexedDB. */
-export async function getAllCreatures(): Promise<Array<MonsterbrewCreature>> {
-  const db = await monsterbrewDB();
-  try {
-    return await db.getAll("creatures");
-  } finally {
-    db.close();
-  }
-}
 
 /** Build the backup envelope from the current IndexedDB contents. */
 export async function buildCreatureBackup(): Promise<CreatureBackup> {

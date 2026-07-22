@@ -7,11 +7,12 @@ import { useCallback } from "react";
 import { Button } from "./ui/button";
 import type { z } from "zod";
 import type { createCreatureSchema } from "@/schema/createCreatureSchema";
-import { monsterbrewDB } from "@/services/database";
+import { useSaveCreature } from "@/hooks/use-creatures";
 
 function SaveDialogComponent() {
   const navigate = useNavigate();
   const formContext = useFormContext<z.infer<typeof createCreatureSchema>>();
+  const saveCreature = useSaveCreature();
 
   const creature = formContext.watch();
 
@@ -27,28 +28,17 @@ function SaveDialogComponent() {
       return;
     }
 
-    const db = await monsterbrewDB();
+    const creatureToSave = creature.id
+      ? creature
+      : { ...creature, id: generateUniqueId() };
 
     try {
-      if (creature.id) {
-        await db.put("creatures", creature);
-        toast.success(`Saved ${creature.name}`);
-        navigate({ to: "/library/$id", params: { id: creature.id } });
-      } else {
-        const creatureToSave = {
-          ...creature,
-          id: generateUniqueId(),
-        };
-        await db.add("creatures", creatureToSave);
-        toast.success(`Saved ${creature.name}`);
-        navigate({ to: "/library/$id", params: { id: creatureToSave.id } });
-      }
+      const saved = await saveCreature.mutateAsync(creatureToSave);
+      toast.success(`Saved ${saved.name}`);
+      navigate({ to: "/library/$id", params: { id: saved.id! } });
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : String(err);
       toast.error(`Something went wrong: ${message}`);
-      return;
-    } finally {
-      db.close();
     }
   }
 
