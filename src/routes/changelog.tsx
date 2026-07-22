@@ -21,6 +21,17 @@ type Release = {
 
 const releases: Array<Release> = [
   {
+    version: "3.5.4",
+    date: "2026-07-22",
+    summary:
+      "The changelog page is easier to get around now. A sidebar lists every release, highlights the one you're reading as you scroll, and jumps you straight to any version when you click it.",
+    changes: [
+      "Added an on-this-page sidebar to the changelog that lists every release",
+      "The release you're reading highlights automatically as you scroll",
+      "Click any version to jump straight to it",
+    ],
+  },
+  {
     version: "3.5.3",
     date: "2026-07-22",
     summary:
