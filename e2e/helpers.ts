@@ -1,6 +1,6 @@
 import { expect } from "@playwright/test";
 import { defaultCreature } from "../src/schema/createCreatureSchema";
-import type { Locator, Page} from "@playwright/test";
+import type { Locator, Page } from "@playwright/test";
 
 export function statblock(page: Page): Locator {
   return page.locator('[data-slot="card"]');
@@ -35,13 +35,6 @@ export async function saveCreature(
   return id;
 }
 
-/**
- * A legacy-format creature record, ready to seed into IndexedDB. The legacy
- * shape is exactly `defaultCreature` — `saving_throws` and the damage/condition
- * fields are arrays (that's what `getCreatureFormat` keys on). Editor-saved
- * creatures are always the new "monster" shape, so seeding is the only way to
- * reach the legacy statblock / migration paths from an e2e test.
- */
 export function legacyCreature(
   overrides: Record<string, unknown> = {},
 ): Record<string, unknown> {
@@ -57,7 +50,10 @@ export function legacyCreature(
  * Write a record straight into the `creatures` store, bypassing the editor.
  * Creates the store if the DB doesn't exist yet, so it works from a cold start.
  */
-export async function seedCreature(page: Page, record: Record<string, unknown>) {
+export async function seedCreature(
+  page: Page,
+  record: Record<string, unknown>,
+) {
   await page.evaluate(async (rec) => {
     const db: IDBDatabase = await new Promise((resolve, reject) => {
       const req = indexedDB.open("monsterbrewDB", 1);
