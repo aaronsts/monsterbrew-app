@@ -18,6 +18,17 @@ type Release = {
 
 const releases: Array<Release> = [
   {
+    version: "3.6.0",
+    date: "2026-07-22",
+    title: "Export is back",
+    summary:
+      "Homebrewery and PDF export return, now on the creature detail page. Open any saved creature and use the Export menu to hand off your statblock — as Homebrewery V3 markdown you can copy or download, or as a print-ready PDF styled like an official 2024 statblock.",
+    changes: [
+      "Export any saved creature to Homebrewery V3 markdown — copy it to the clipboard or save it as a .md file",
+      "Export a PDF that mirrors the classic 2024 statblock look, with parchment background, red headings, and a two-column layout that fits a page",
+    ],
+  },
+  {
     version: "3.5.3",
     date: "2026-07-22",
     summary:
