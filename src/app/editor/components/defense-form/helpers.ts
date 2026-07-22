@@ -9,6 +9,12 @@ export const ABILITY_SCORES = abilityScoresSchema.keyof()._def
 
 export type SkillProficiency = "proficient" | "expert" | "";
 export type DamageState = "resistant" | "vulnerable" | "immune" | "";
+export type NonmagicalState = "resistant" | "immune" | "";
+
+export const NONMAGICAL_ATTACK_TYPES = [
+  { key: "nonmagical", label: "Nonmagical attacks" },
+  { key: "silvered", label: "Nonsilvered attacks" },
+] as const;
 
 export const ABILITY_LABELS: Record<AbilityKey, string> = {
   str: "STR",
@@ -62,6 +68,24 @@ export function setDamage(
   name: string,
   next: DamageState,
 ): Monster["damage_modifiers"] {
+  const updated = { ...current };
+  if (next === "") {
+    delete updated[name];
+  } else {
+    updated[name] = next;
+  }
+  return updated;
+}
+
+export function nextNonmagicalState(state: NonmagicalState): NonmagicalState {
+  return state === "" ? "resistant" : state === "resistant" ? "immune" : "";
+}
+
+export function setNonmagical(
+  current: NonNullable<Monster["nonmagical_attack_modifiers"]>,
+  name: string,
+  next: NonmagicalState,
+): Monster["nonmagical_attack_modifiers"] {
   const updated = { ...current };
   if (next === "") {
     delete updated[name];

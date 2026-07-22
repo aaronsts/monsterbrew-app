@@ -168,10 +168,17 @@ export function MonsterStatblock({
     else if (state === "immune") damageImmunities.push(type);
     else if (state === "vulnerable") vulnerabilities.push(type);
   });
-  if (creature.nonmagical_attack_resistance)
-    resistances.push("nonmagical attacks");
-  if (creature.nonmagical_attack_immunity)
-    damageImmunities.push("nonmagical attacks");
+  const NONMAGICAL_LABELS: Record<string, string> = {
+    nonmagical: "nonmagical attacks",
+    silvered: "nonsilvered attacks",
+  };
+  Object.entries(creature.nonmagical_attack_modifiers ?? {}).forEach(
+    ([type, state]) => {
+      const label = NONMAGICAL_LABELS[type] ?? "nonmagical attacks";
+      if (state === "resistant") resistances.push(label);
+      else if (state === "immune") damageImmunities.push(label);
+    },
+  );
 
   const immunities = [...damageImmunities, ...creature.condition_immunities];
 
@@ -238,9 +245,7 @@ export function MonsterStatblock({
               key={gi}
               className={cn(
                 "grid grid-cols-[1fr_auto_auto] items-center gap-x-3 gap-y-1",
-                gi === 1
-                  ? "border-l border-primary/20 pl-4"
-                  : "pr-4",
+                gi === 1 ? "border-l border-primary/20 pl-4" : "pr-4",
               )}
             >
               <span />
@@ -252,8 +257,7 @@ export function MonsterStatblock({
               </span>
               {group.map((score) => {
                 const mod = calculateStatBonus(score.value);
-                const save =
-                  mod + (creature.saving_throws[score.key] ? pb : 0);
+                const save = mod + (creature.saving_throws[score.key] ? pb : 0);
                 return (
                   <Fragment key={score.key}>
                     <span>
