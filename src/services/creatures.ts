@@ -1,22 +1,17 @@
 import { monsterbrewDB } from "./database";
-import type { createCreatureSchema } from "@/schema/createCreatureSchema";
-import type { z } from "zod";
-
-/**
- * The canonical stored-creature shape. Everything that talks to the creature
- * store speaks this one type — see `createCreatureSchema`.
- */
-export type StoredCreature = z.infer<typeof createCreatureSchema>;
+import type { StoredMonster } from "@/schema/monster-schema";
 
 /**
  * Creature repository: the single place that touches the underlying database.
  *
- * The rest of the app goes through these functions (via the `use-creatures`
- * query hooks) rather than opening IndexedDB directly, so swapping the storage
- * backend later only means rewriting this file.
+ * Every record is stored in the canonical `Monster` shape (`StoredMonster`) —
+ * legacy records are converted once on DB upgrade (see `database.ts`). The rest
+ * of the app goes through these functions (via the `use-creatures` query hooks)
+ * rather than opening IndexedDB directly, so swapping the storage backend later
+ * only means rewriting this file.
  */
 
-export async function getAllCreatures(): Promise<Array<StoredCreature>> {
+export async function getAllCreatures(): Promise<Array<StoredMonster>> {
   const db = await monsterbrewDB();
   try {
     return await db.getAll("creatures");
@@ -27,7 +22,7 @@ export async function getAllCreatures(): Promise<Array<StoredCreature>> {
 
 export async function getCreature(
   id: string,
-): Promise<StoredCreature | undefined> {
+): Promise<StoredMonster | undefined> {
   const db = await monsterbrewDB();
   try {
     return await db.get("creatures", id);
@@ -37,8 +32,8 @@ export async function getCreature(
 }
 
 export async function saveCreature(
-  creature: StoredCreature,
-): Promise<StoredCreature> {
+  creature: StoredMonster,
+): Promise<StoredMonster> {
   const db = await monsterbrewDB();
   try {
     await db.put("creatures", creature);

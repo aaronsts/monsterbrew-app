@@ -8,17 +8,19 @@ import { CreatureCard } from "./creature-card";
 import { EmptyState } from "./empty-state";
 import { NoMatches } from "./no-matches";
 
-import type { StoredCreature } from "@/services/creatures";
+import type { Monster } from "@/schema/monster-schema";
 import { Button } from "@/components/ui/button";
 import { useCreatures } from "@/hooks/use-creatures";
 import { downloadCreatureBackup } from "@/services/backup";
 import { getSrdMonsters } from "@/services/srd";
 
-type MonsterbrewCreature = StoredCreature;
 type LibrarySource = "mine" | "srd";
 
+/** Saved creatures always carry an `id`; SRD entries are keyed by `srdKey`. */
+type LibraryCreature = Monster & { id?: string };
+
 interface LibraryItem {
-  creature: MonsterbrewCreature;
+  creature: LibraryCreature;
   srdKey?: string;
 }
 
@@ -66,7 +68,7 @@ export default function LibraryGrid({
   const srdItems = useMemo<Array<LibraryItem>>(
     () =>
       getSrdMonsters().map((entry) => ({
-        creature: entry.monster as unknown as MonsterbrewCreature,
+        creature: entry.monster,
         srdKey: entry.key,
       })),
     [],

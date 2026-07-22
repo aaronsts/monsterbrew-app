@@ -15,6 +15,8 @@ import type { Monster } from "@/schema/monster-schema";
 import { useCreature, useSaveCreature } from "@/hooks/use-creatures";
 import { calculateStatBonus, generateId } from "@/lib/utils";
 import { defaultMonster, monsterSchema } from "@/schema/monster-schema";
+import { isLegacyCreature } from "@/services/migrations/creatureFormat";
+import { creatureToMonster } from "@/services/migrations/creatureToMonster";
 import { MonsterStatblock } from "@/components/monster-statblock";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
@@ -24,8 +26,8 @@ export const MonsterForm = () => {
   const navigate = useNavigate();
   const [creatureId, setCreatureId] = useState<string | undefined>();
   const [showImport, setShowImport] = useState(false);
-  const { data: loadedCreature } = useCreature<Monster>(idParam);
-  const saveCreature = useSaveCreature<Monster>();
+  const { data: loadedCreature } = useCreature(idParam);
+  const saveCreature = useSaveCreature();
 
   // Reactively populate the form once the query resolves the saved creature.
   const form = useForm({
@@ -56,7 +58,12 @@ export const MonsterForm = () => {
       const parsed = JSON.parse(handoff);
       // eslint-disable-next-line react-hooks/set-state-in-effect
       if (parsed.id) setCreatureId(parsed.id);
-      reset(parsed as Monster);
+      // Handoffs (SRD copy, duplicate, library edit) normally already emit
+      // `Monster`, but normalize any stale legacy-shaped payload just in case.
+      const monster: Monster = isLegacyCreature(parsed)
+        ? creatureToMonster(parsed)
+        : (parsed as Monster);
+      reset(monster);
     } catch (error) {
       console.error("Error parsing stored creature:", error);
     } finally {

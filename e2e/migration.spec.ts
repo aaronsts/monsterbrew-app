@@ -2,42 +2,43 @@ import { expect, test } from "./fixtures";
 import { legacyCreature, seedCreature, statblock } from "./helpers";
 
 test.describe("Legacy creature migration", () => {
-  test("renders a legacy creature with the Legacy badge", async ({ page }) => {
+  test("auto-migrates a seeded legacy creature on open (no Legacy badge)", async ({
+    page,
+  }) => {
     const creature = legacyCreature({ name: "Old Goblin" });
-    await page.goto("/library");
+
+    // Land on a page that doesn't touch the creatures DB, then seed a legacy
+    // record into a fresh v1 store.
+    await page.goto("/");
     await seedCreature(page, creature);
 
+    // Opening the detail page opens the store at v2, which converts the seeded
+    // legacy record to the Monster shape once — it renders with no migrate
+    // prompt and no "Legacy" badge.
     await page.goto(`/library/${creature.id}`);
 
-    await expect(page.getByText("Legacy").first()).toBeVisible();
     await expect(
       statblock(page).locator('[data-slot="card-title"]'),
     ).toHaveText("Old Goblin");
+    await expect(page.getByText("Legacy")).toHaveCount(0);
+    await expect(
+      page.getByRole("heading", { name: "Legacy format" }),
+    ).toHaveCount(0);
   });
 
-  test("migrates a legacy creature to the new format", async ({ page }) => {
+  test("opens a migrated legacy creature straight in the editor", async ({
+    page,
+  }) => {
     const creature = legacyCreature({ name: "Old Goblin" });
-    await page.goto("/library");
+
+    await page.goto("/");
     await seedCreature(page, creature);
     await page.goto(`/library/${creature.id}`);
 
+    // No migrate dialog — Edit hands the already-migrated creature to the editor.
     await page.getByRole("button", { name: "Edit" }).click();
 
-    // The migrate dialog warns before the destructive in-place migration.
-    await expect(
-      page.getByRole("heading", { name: "Legacy format" }),
-    ).toBeVisible();
-
-    await page.getByRole("button", { name: "Migrate", exact: true }).click();
-
-    // The success toast confirms the record was rewritten. (The dialog's own
-    // success screen is racy: onMigrated reloads the parent creature, which
-    // resets the dialog's phase — so we assert the durable outcomes instead.)
-    await expect(page.getByText(/Migrated Old Goblin/)).toBeVisible();
-
-    // Reloading the detail page now shows the new format — no Legacy badge.
-    await page.goto(`/library/${creature.id}`);
-    await expect(statblock(page)).toBeVisible();
-    await expect(page.getByText("Legacy")).toHaveCount(0);
+    await expect(page).toHaveURL(/\/editor/);
+    await expect(page.getByLabel("Name")).toHaveValue("Old Goblin");
   });
 });

@@ -2,25 +2,19 @@
 import { Link } from "@tanstack/react-router";
 import { Footprints, Heart, Shield } from "lucide-react";
 import { CreatureStat } from "./creature-stat";
-import type { z } from "zod";
 
-import type { createCreatureSchema } from "@/schema/createCreatureSchema";
+import type { Monster } from "@/schema/monster-schema";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { calculateHitPoints, titleCase } from "@/lib/utils";
-import { getCreatureFormat } from "@/services/migrations/creatureFormat";
-
-type MonsterbrewCreature = z.infer<typeof createCreatureSchema>;
 
 export function CreatureCard({
   creature,
   srdKey,
 }: Readonly<{
-  creature: MonsterbrewCreature;
+  creature: Monster & { id?: string };
   srdKey?: string;
 }>) {
-  const legacy = getCreatureFormat(creature) === "legacy";
-
   const typeLine = [creature.size, creature.type]
     .filter(Boolean)
     .map((part) => titleCase(part))
@@ -53,7 +47,6 @@ export function CreatureCard({
               {creature.name || "Unknown Creature"}
             </CardTitle>
             <div className="flex shrink-0 items-center gap-1.5">
-              {legacy && <Badge variant="outline">Legacy</Badge>}
               <Badge>CR {creature.cr.challenge_rating}</Badge>
             </div>
           </div>

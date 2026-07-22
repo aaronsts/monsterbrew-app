@@ -1,4 +1,4 @@
-import type { StoredCreature } from "@/services/creatures";
+import type { StoredMonster } from "@/schema/monster-schema";
 import { getAllCreatures } from "@/services/creatures";
 
 /** Envelope written to disk so backups are self-describing and future-proof. */
@@ -8,7 +8,7 @@ export interface CreatureBackup {
   version: number;
   exportedAt: string;
   count: number;
-  creatures: Array<StoredCreature>;
+  creatures: Array<StoredMonster>;
 }
 
 export const BACKUP_VERSION = 1;

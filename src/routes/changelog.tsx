@@ -18,6 +18,27 @@ type Release = {
 
 const releases: Array<Release> = [
   {
+    version: "3.5.3",
+    date: "2026-07-22",
+    summary:
+      "Saved creatures from before the 3.0 rebuild now upgrade to the current format automatically the first time you open the app — no more per-creature migrate prompt or “Legacy” badges. With every creature on one model, the transitional legacy editor has been retired.",
+    changes: [
+      "Legacy creatures are migrated once, automatically, when the app loads — the migrate dialog and Legacy badges are gone",
+      "Retired the transitional /legacy-editor now that every creature uses the current editor",
+      "Homebrewery and PDF export are temporarily unavailable and will return on the creature detail page",
+    ],
+  },
+  {
+    version: "3.5.2",
+    date: "2026-07-22",
+    summary:
+      "An under-the-hood change to how Monsterbrew loads and saves your creatures. The library and editor now share a single cached data layer, so pages stay in sync and refresh instantly after you save, duplicate, or delete a creature.",
+    changes: [
+      "Routed every creature read and write through a single cached data layer (TanStack Query)",
+      "Library and detail pages now update immediately after saving, duplicating, or deleting",
+    ],
+  },
+  {
     version: "3.5.1",
     date: "2026-07-21",
     summary:
