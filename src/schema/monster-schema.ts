@@ -110,6 +110,13 @@ export const monsterSchema = z.object({
 
 export type Monster = z.infer<typeof monsterSchema>;
 
+/**
+ * The shape persisted to IndexedDB: a `Monster` plus the storage-only fields
+ * (`id` keyPath, optional `is_public`). This is the canonical stored type used
+ * by the `creatures` object store, backups, and the library.
+ */
+export type StoredMonster = Monster & { id: string; is_public?: boolean };
+
 export const defaultMonster: Monster = {
   // Identity
   name: "",

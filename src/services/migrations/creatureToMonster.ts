@@ -1,19 +1,14 @@
 import type { z } from "zod";
 import type { createCreatureSchema } from "@/schema/createCreatureSchema";
-import type { Monster } from "@/schema/monster-schema";
+import type { Monster, StoredMonster } from "@/schema/monster-schema";
 import { abilityScoresSchema } from "@/schema/monster-schema";
-import { partitionLanguages } from "@/lib/utils";
+import { generateId, partitionLanguages } from "@/lib/utils";
 
 type LegacyCreature = z.infer<typeof createCreatureSchema>;
 
-export type StoredMonster = Monster & { id: string; is_public?: boolean };
+export type { StoredMonster };
 
 const ABILITY_KEYS = abilityScoresSchema.keyof().options;
-
-/** Mirrors `generateUniqueId()` in `src/components/save-dialog.tsx`. */
-function generateId(): string {
-  return `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
-}
 
 export function creatureToMonster(creature: LegacyCreature): StoredMonster {
   // saving_throws: ["str", "dex", …] -> { str: true, dex: true, … }

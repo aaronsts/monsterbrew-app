@@ -15,6 +15,8 @@ import type { Monster } from "@/schema/monster-schema";
 import { monsterbrewDB } from "@/services/database";
 import { calculateStatBonus, generateId } from "@/lib/utils";
 import { defaultMonster, monsterSchema } from "@/schema/monster-schema";
+import { isLegacyCreature } from "@/services/migrations/creatureFormat";
+import { creatureToMonster } from "@/services/migrations/creatureToMonster";
 import { MonsterStatblock } from "@/components/monster-statblock";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
@@ -50,7 +52,7 @@ export const MonsterForm = () => {
         db.close();
         if (stored) {
           setCreatureId(id);
-          reset(stored as unknown as Monster);
+          reset(stored);
         }
         return;
       }
@@ -60,7 +62,12 @@ export const MonsterForm = () => {
         try {
           const parsed = JSON.parse(handoff);
           if (parsed.id) setCreatureId(parsed.id);
-          reset(parsed as Monster);
+          // Handoffs (SRD copy, duplicate, library edit) normally already emit
+          // `Monster`, but normalize any stale legacy-shaped payload just in case.
+          const monster: Monster = isLegacyCreature(parsed)
+            ? creatureToMonster(parsed)
+            : (parsed as Monster);
+          reset(monster);
         } catch (error) {
           console.error("Error parsing stored creature:", error);
         } finally {
@@ -104,10 +111,7 @@ export const MonsterForm = () => {
 
     const db = await monsterbrewDB();
     try {
-      await db.put(
-        "creatures",
-        record as unknown as Parameters<typeof db.put>[1],
-      );
+      await db.put("creatures", record);
       setCreatureId(id);
       toast.success(`Saved ${values.name}`);
       navigate({ to: "/library/$id", params: { id } });

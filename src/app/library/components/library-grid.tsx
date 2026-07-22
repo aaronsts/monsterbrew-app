@@ -7,19 +7,20 @@ import { FilterBar } from "./filter-bar";
 import { CreatureCard } from "./creature-card";
 import { EmptyState } from "./empty-state";
 import { NoMatches } from "./no-matches";
-import type { z } from "zod";
 
-import type { createCreatureSchema } from "@/schema/createCreatureSchema";
+import type { Monster, StoredMonster } from "@/schema/monster-schema";
 import { Button } from "@/components/ui/button";
 import { monsterbrewDB } from "@/services/database";
 import { downloadCreatureBackup } from "@/services/backup";
 import { getSrdMonsters } from "@/services/srd";
 
-type MonsterbrewCreature = z.infer<typeof createCreatureSchema>;
 type LibrarySource = "mine" | "srd";
 
+/** Saved creatures always carry an `id`; SRD entries are keyed by `srdKey`. */
+type LibraryCreature = Monster & { id?: string };
+
 interface LibraryItem {
-  creature: MonsterbrewCreature;
+  creature: LibraryCreature;
   srdKey?: string;
 }
 
@@ -29,9 +30,7 @@ export default function LibraryGrid({
   source?: LibrarySource;
 }) {
   const navigate = useNavigate();
-  const [myCreatures, setMyCreatures] = useState<Array<MonsterbrewCreature>>(
-    [],
-  );
+  const [myCreatures, setMyCreatures] = useState<Array<StoredMonster>>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   const [search, setSearch] = useState("");
@@ -78,7 +77,7 @@ export default function LibraryGrid({
   const srdItems = useMemo<Array<LibraryItem>>(
     () =>
       getSrdMonsters().map((entry) => ({
-        creature: entry.monster as unknown as MonsterbrewCreature,
+        creature: entry.monster,
         srdKey: entry.key,
       })),
     [],
