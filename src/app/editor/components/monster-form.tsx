@@ -12,7 +12,7 @@ import { DefenseForm } from "./defense-form";
 import { ActionsForm } from "./actions-form";
 import { ImportDialog } from "./import-dialog";
 import type { Monster } from "@/schema/monster-schema";
-import { monsterbrewDB } from "@/services/database";
+import { useCreature, useSaveCreature } from "@/hooks/use-creatures";
 import { calculateStatBonus, generateId } from "@/lib/utils";
 import { defaultMonster, monsterSchema } from "@/schema/monster-schema";
 import { MonsterStatblock } from "@/components/monster-statblock";
@@ -24,13 +24,19 @@ export const MonsterForm = () => {
   const navigate = useNavigate();
   const [creatureId, setCreatureId] = useState<string | undefined>();
   const [showImport, setShowImport] = useState(false);
+  const { data: loadedCreature } = useCreature<Monster>(idParam);
+  const saveCreature = useSaveCreature<Monster>();
 
+  // Reactively populate the form once the query resolves the saved creature.
   const form = useForm({
     resolver: zodResolver(monsterSchema),
-    defaultValues: defaultMonster,
+    values: loadedCreature ?? defaultMonster,
   });
 
   const { control, setValue, reset, getValues, trigger } = form;
+
+  // Treat as an existing creature when loaded by id (URL) or via handoff.
+  const effectiveId = idParam ?? creatureId;
 
   const preview = useWatch({ control }) as Monster;
   const wis = useWatch({ control, name: "ability_scores.wis" });
@@ -41,34 +47,21 @@ export const MonsterForm = () => {
     name: "custom_passive_perception",
   });
 
+  // Fallback handoff (no id in the URL): hydrate from localStorage once.
   useEffect(() => {
-    async function loadMonster() {
-      const id = idParam;
-      if (id) {
-        const db = await monsterbrewDB();
-        const stored = await db.get("creatures", id);
-        db.close();
-        if (stored) {
-          setCreatureId(id);
-          reset(stored as unknown as Monster);
-        }
-        return;
-      }
-
-      const handoff = localStorage.getItem("editCreature");
-      if (handoff) {
-        try {
-          const parsed = JSON.parse(handoff);
-          if (parsed.id) setCreatureId(parsed.id);
-          reset(parsed as Monster);
-        } catch (error) {
-          console.error("Error parsing stored creature:", error);
-        } finally {
-          localStorage.removeItem("editCreature");
-        }
-      }
+    if (idParam) return;
+    const handoff = localStorage.getItem("editCreature");
+    if (!handoff) return;
+    try {
+      const parsed = JSON.parse(handoff);
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      if (parsed.id) setCreatureId(parsed.id);
+      reset(parsed as Monster);
+    } catch (error) {
+      console.error("Error parsing stored creature:", error);
+    } finally {
+      localStorage.removeItem("editCreature");
     }
-    loadMonster();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -99,15 +92,11 @@ export const MonsterForm = () => {
       return;
     }
 
-    const id = creatureId ?? generateId();
+    const id = effectiveId ?? generateId();
     const record = { ...parsed.data, id };
 
-    const db = await monsterbrewDB();
     try {
-      await db.put(
-        "creatures",
-        record as unknown as Parameters<typeof db.put>[1],
-      );
+      await saveCreature.mutateAsync(record);
       setCreatureId(id);
       toast.success(`Saved ${values.name}`);
       navigate({ to: "/library/$id", params: { id } });
@@ -115,8 +104,6 @@ export const MonsterForm = () => {
       toast.error(
         `Something went wrong: ${err instanceof Error ? err.message : String(err)}`,
       );
-    } finally {
-      db.close();
     }
   }
 
@@ -139,7 +126,7 @@ export const MonsterForm = () => {
             size="lg"
             onClick={save}
           >
-            {creatureId ? "Update" : "Save"}
+            {effectiveId ? "Update" : "Save"}
           </Button>
         </div>
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">

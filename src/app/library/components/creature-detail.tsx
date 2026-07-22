@@ -3,47 +3,38 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { ArrowLeft, Copy, Edit, Trash } from "lucide-react";
-import { z } from "zod";
 
+import { MigrateDialog } from "./migrate-dialog";
+import type { StoredCreature } from "@/services/creatures";
+import type { Monster } from "@/schema/monster-schema";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { StandaloneStatblock } from "@/components/standalone-statblock";
 import { MonsterStatblock } from "@/components/monster-statblock";
-import { Monster } from "@/schema/monster-schema";
-import { createCreatureSchema } from "@/schema/createCreatureSchema";
-import { monsterbrewDB } from "@/services/database";
+import { useCreature, useDeleteCreature } from "@/hooks/use-creatures";
 import { getCreatureFormat } from "@/services/migrations/creatureFormat";
-import { MigrateDialog } from "./migrate-dialog";
 
-type MonsterbrewCreature = z.infer<typeof createCreatureSchema>;
+type MonsterbrewCreature = StoredCreature;
 
 export default function CreatureDetail() {
   const { id } = useParams({ from: "/library/$id" });
   const navigate = useNavigate();
-  const [creature, setCreature] = useState<MonsterbrewCreature | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const {
+    data: creature = null,
+    isPending: isLoading,
+    error,
+    refetch,
+  } = useCreature(id);
+  const deleteCreature = useDeleteCreature();
   const [migrateOpen, setMigrateOpen] = useState(false);
 
-  async function loadCreature() {
-    setIsLoading(true);
-    try {
-      const db = await monsterbrewDB();
-      const stored = await db.get("creatures", id);
-      setCreature(stored ?? null);
-      db.close();
-    } catch (err) {
-      toast.error(
-        `Something went wrong: ${err instanceof Error ? err.message : String(err)}`,
-      );
-    } finally {
-      setIsLoading(false);
-    }
-  }
-
   useEffect(() => {
-    loadCreature();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id]);
+    if (error) {
+      toast.error(
+        `Something went wrong: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
+  }, [error]);
 
   const legacy = creature ? getCreatureFormat(creature) === "legacy" : false;
 
@@ -88,16 +79,11 @@ export default function CreatureDetail() {
     if (!creature) return;
     toast.promise(
       (async () => {
-        const db = await monsterbrewDB();
-        try {
-          if (!creature.id) {
-            throw new Error("Could not find creature to delete");
-          }
-          await db.delete("creatures", creature.id);
-          return creature.name;
-        } finally {
-          db.close();
+        if (!creature.id) {
+          throw new Error("Could not find creature to delete");
         }
+        await deleteCreature.mutateAsync(creature.id);
+        return creature.name;
       })(),
       {
         loading: `Deleting ${creature.name}...`,
@@ -177,7 +163,7 @@ export default function CreatureDetail() {
         creature={migrateOpen ? creature : null}
         open={migrateOpen}
         onOpenChange={setMigrateOpen}
-        onMigrated={loadCreature}
+        onMigrated={() => refetch()}
       />
     </div>
   );
