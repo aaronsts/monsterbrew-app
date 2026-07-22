@@ -31,6 +31,19 @@ describe("MonsterStatblock markup resolution", () => {
     expect(container.textContent).not.toContain("{@");
   });
 
+  it("lists nonmagical attack modifiers under resistances and immunities", () => {
+    const monster = makeMonster({
+      nonmagical_attack_modifiers: {
+        nonmagical: "resistant",
+        silvered: "immune",
+      },
+    });
+
+    const { container } = render(<MonsterStatblock creature={monster} />);
+    expect(container.textContent).toContain("nonmagical attacks");
+    expect(container.textContent).toContain("nonsilvered attacks");
+  });
+
   it("recomputes when the ability score changes", () => {
     const base = makeMonster({
       cr: { ...defaultMonster.cr, proficiency_bonus: 4 },

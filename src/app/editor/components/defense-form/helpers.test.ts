@@ -1,12 +1,15 @@
 import { describe, expect, it } from "vitest";
 import {
   ABILITY_SCORES,
+  NONMAGICAL_ATTACK_TYPES,
   SKILLS_BY_ABILITY,
   damageStateStyles,
   formatModifier,
   nextDamageState,
+  nextNonmagicalState,
   nextSkillState,
   setDamage,
+  setNonmagical,
   setSkill,
 } from "./helpers";
 
@@ -110,6 +113,43 @@ describe("setDamage", () => {
     const original = { fire: "resistant" } as const;
     setDamage(original, "cold", "immune");
     expect(original).toEqual({ fire: "resistant" });
+  });
+});
+
+describe("nextNonmagicalState", () => {
+  it("cycles none -> resistant -> immune -> none (no vulnerable)", () => {
+    expect(nextNonmagicalState("")).toBe("resistant");
+    expect(nextNonmagicalState("resistant")).toBe("immune");
+    expect(nextNonmagicalState("immune")).toBe("");
+  });
+});
+
+describe("setNonmagical", () => {
+  it("adds a nonmagical attack modifier", () => {
+    expect(setNonmagical({}, "silvered", "immune")).toEqual({
+      silvered: "immune",
+    });
+  });
+
+  it("removes a qualifier when the next state is empty", () => {
+    expect(setNonmagical({ nonmagical: "resistant" }, "nonmagical", "")).toEqual(
+      {},
+    );
+  });
+
+  it("does not mutate the original object", () => {
+    const original = { nonmagical: "resistant" } as const;
+    setNonmagical(original, "silvered", "immune");
+    expect(original).toEqual({ nonmagical: "resistant" });
+  });
+});
+
+describe("NONMAGICAL_ATTACK_TYPES", () => {
+  it("covers the nonmagical and silvered qualifiers", () => {
+    expect(NONMAGICAL_ATTACK_TYPES.map((t) => t.key)).toEqual([
+      "nonmagical",
+      "silvered",
+    ]);
   });
 });
 

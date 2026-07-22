@@ -18,6 +18,16 @@ type Release = {
 
 const releases: Array<Release> = [
   {
+    version: "3.5.1",
+    date: "2026-07-21",
+    summary:
+      "The Defense section can now capture the classic “resistant or immune to bludgeoning, piercing, and slashing from nonmagical weapons” defenses — including the non-silvered variant — and they show up in the statblock automatically.",
+    changes: [
+      "Added nonmagical and nonsilvered attack defenses to the Defense form",
+      "Toggle each between resistant and immune; they render in the statblock's resistances and immunities",
+    ],
+  },
+  {
     version: "3.5.0",
     date: "2026-07-21",
     title: "Dynamic attack tokens",

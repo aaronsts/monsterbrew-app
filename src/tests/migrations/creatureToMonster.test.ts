@@ -131,6 +131,41 @@ describe("creatureToMonster", () => {
     });
   });
 
+  it("maps the legacy nonmagical immunity boolean to a modifier record", () => {
+    const result = creatureToMonster(
+      legacy({
+        nonmagical_attack_immunity: true,
+        nonmagical_attack_resistance: false,
+      }),
+    );
+
+    expect(result.nonmagical_attack_modifiers).toEqual({ nonmagical: "immune" });
+  });
+
+  it("maps the legacy nonmagical resistance boolean to a modifier record", () => {
+    const result = creatureToMonster(
+      legacy({
+        nonmagical_attack_immunity: false,
+        nonmagical_attack_resistance: true,
+      }),
+    );
+
+    expect(result.nonmagical_attack_modifiers).toEqual({
+      nonmagical: "resistant",
+    });
+  });
+
+  it("prefers immunity over resistance when both legacy booleans are set", () => {
+    const result = creatureToMonster(
+      legacy({
+        nonmagical_attack_immunity: true,
+        nonmagical_attack_resistance: true,
+      }),
+    );
+
+    expect(result.nonmagical_attack_modifiers).toEqual({ nonmagical: "immune" });
+  });
+
   it("defaults the new-only fields that have no legacy source", () => {
     const result = creatureToMonster(legacy());
 
