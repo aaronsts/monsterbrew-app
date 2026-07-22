@@ -1,5 +1,5 @@
 "use client";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { Link, useNavigate, useParams } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { ArrowLeft, Copy, Edit, Trash } from "lucide-react";
@@ -7,6 +7,7 @@ import type { StoredMonster } from "@/schema/monster-schema";
 
 import { Button } from "@/components/ui/button";
 import { MonsterStatblock } from "@/components/monster-statblock";
+import { CreatureExportMenu } from "@/app/library/components/creature-export-menu";
 import { useCreature, useDeleteCreature } from "@/hooks/use-creatures";
 
 export default function CreatureDetail() {
@@ -18,6 +19,8 @@ export default function CreatureDetail() {
     error,
   } = useCreature(id);
   const deleteCreature = useDeleteCreature();
+
+  const statblockRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (error) {
@@ -119,6 +122,7 @@ export default function CreatureDetail() {
             <Copy className="mr-2 h-4 w-4" />
             Duplicate
           </Button>
+          <CreatureExportMenu creature={creature} statblockRef={statblockRef} />
           <Button
             variant="outline"
             size="sm"
@@ -131,7 +135,9 @@ export default function CreatureDetail() {
         </div>
       </div>
 
-      <MonsterStatblock creature={creature} columns />
+      <div ref={statblockRef}>
+        <MonsterStatblock creature={creature} columns />
+      </div>
     </div>
   );
 }
