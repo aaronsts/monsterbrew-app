@@ -1,5 +1,5 @@
 import type { StoredMonster } from "@/schema/monster-schema";
-import { monsterbrewDB } from "@/services/database";
+import { getAllCreatures } from "@/services/creatures";
 
 /** Envelope written to disk so backups are self-describing and future-proof. */
 export interface CreatureBackup {
@@ -12,16 +12,6 @@ export interface CreatureBackup {
 }
 
 export const BACKUP_VERSION = 1;
-
-/** Read every creature currently stored in IndexedDB. */
-export async function getAllCreatures(): Promise<Array<StoredMonster>> {
-  const db = await monsterbrewDB();
-  try {
-    return await db.getAll("creatures");
-  } finally {
-    db.close();
-  }
-}
 
 /** Build the backup envelope from the current IndexedDB contents. */
 export async function buildCreatureBackup(): Promise<CreatureBackup> {

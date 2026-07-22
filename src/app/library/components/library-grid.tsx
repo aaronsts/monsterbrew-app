@@ -8,9 +8,9 @@ import { CreatureCard } from "./creature-card";
 import { EmptyState } from "./empty-state";
 import { NoMatches } from "./no-matches";
 
-import type { Monster, StoredMonster } from "@/schema/monster-schema";
+import type { Monster } from "@/schema/monster-schema";
 import { Button } from "@/components/ui/button";
-import { monsterbrewDB } from "@/services/database";
+import { useCreatures } from "@/hooks/use-creatures";
 import { downloadCreatureBackup } from "@/services/backup";
 import { getSrdMonsters } from "@/services/srd";
 
@@ -30,32 +30,23 @@ export default function LibraryGrid({
   source?: LibrarySource;
 }) {
   const navigate = useNavigate();
-  const [myCreatures, setMyCreatures] = useState<Array<StoredMonster>>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const {
+    data: myCreatures = [],
+    isPending: isLoading,
+    error,
+  } = useCreatures();
 
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState("all");
   const [crFilter, setCrFilter] = useState<Array<string>>([]);
 
-  async function getLocalCreatures() {
-    setIsLoading(true);
-    try {
-      const db = await monsterbrewDB();
-      const creatures = await db.getAll("creatures");
-      setMyCreatures(creatures);
-      db.close();
-    } catch (err) {
-      toast.error(
-        `Something went wrong: ${err instanceof Error ? err.message : String(err)}`,
-      );
-    } finally {
-      setIsLoading(false);
-    }
-  }
-
   useEffect(() => {
-    getLocalCreatures();
-  }, []);
+    if (error) {
+      toast.error(
+        `Something went wrong: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
+  }, [error]);
 
   const setSource = (next: LibrarySource) => {
     if (next === source) return;
