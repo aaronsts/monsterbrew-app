@@ -30,15 +30,15 @@ const sections: Array<Section> = [
         <p className="text-muted-foreground">
           We use{" "}
           <a
-            href="https://plausible.io/privacy"
+            href="https://umami.is/privacy"
             target="_blank"
             rel="noreferrer"
             className="text-primary underline underline-offset-4"
           >
-            Plausible Analytics
+            Umami Analytics
           </a>
           , a privacy-focused service, to understand how the Service is used in
-          aggregate. Plausible is designed to be privacy-first:
+          aggregate. Umami is designed to be privacy-first:
         </p>
         <ul className="mt-3 space-y-1.5 text-muted-foreground">
           <li>It does not use cookies or any persistent identifiers.</li>
@@ -82,7 +82,7 @@ const sections: Array<Section> = [
     title: "Third-Party Services",
     body: (
       <p className="text-muted-foreground">
-        The Service relies on third-party providers, including Plausible
+        The Service relies on third-party providers, including Umami
         Analytics and our hosting provider, to operate. These providers process
         only the limited, anonymous technical information necessary to deliver
         the Service. Their handling of that information is governed by their own
