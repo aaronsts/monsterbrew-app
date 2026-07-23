@@ -33,18 +33,17 @@ if (typeof Range !== "undefined") {
       [Symbol.iterator]: Array.prototype[Symbol.iterator],
     };
   };
-  Range.prototype.getBoundingClientRect = () =>
-    ({
-      x: 0,
-      y: 0,
-      top: 0,
-      left: 0,
-      bottom: 0,
-      right: 0,
-      width: 0,
-      height: 0,
-      toJSON: () => ({}),
-    });
+  Range.prototype.getBoundingClientRect = () => ({
+    x: 0,
+    y: 0,
+    top: 0,
+    left: 0,
+    bottom: 0,
+    right: 0,
+    width: 0,
+    height: 0,
+    toJSON: () => ({}),
+  });
 }
 if (typeof Element !== "undefined") {
   Element.prototype.scrollIntoView ??= () => {};
@@ -90,10 +89,12 @@ describe("MarkupField (CodeMirror)", () => {
     const view = getView(container);
     expect(view.state.doc.toString()).toBe("Bites once.");
 
-    act(() => view.dispatch({
-      changes: { from: 11, insert: " Hard." },
-      userEvent: "input.type",
-    }));
+    act(() =>
+      view.dispatch({
+        changes: { from: 11, insert: " Hard." },
+        userEvent: "input.type",
+      }),
+    );
     expect(fieldValue()).toBe("Bites once. Hard.");
   });
 
@@ -109,8 +110,13 @@ describe("MarkupField (CodeMirror)", () => {
       }),
     );
 
-    // CM's completion tooltip lists our catalog entry by title.
-    await screen.findByText("Attack line");
+    // CM's completion tooltip opens with our catalog options. (The insert
+    // buttons also say "Attack line", so wait on the tooltip itself.)
+    await waitFor(() => {
+      expect(document.querySelector(".cm-tooltip-autocomplete li")).not.toBe(
+        null,
+      );
+    });
     // acceptCompletion refuses within the (default 75ms) interactionDelay
     // that guards against accidental Enter right as the list opens.
     await new Promise((resolve) => setTimeout(resolve, 100));
@@ -124,12 +130,13 @@ describe("MarkupField (CodeMirror)", () => {
     expect(await screen.findByLabelText("Damage dice")).toBeDefined();
   });
 
-  it("reference list inserts a tag on click and opens composite editors", async () => {
+  it("insert buttons add a tag on click and open composite editors", async () => {
     const user = userEvent.setup();
     render(<Harness />);
 
-    await user.click(screen.getByText(/Tag reference/i));
-    await user.click(screen.getByRole("button", { name: /full save/i }));
+    await user.click(
+      screen.getByRole("button", { name: /saving throw line/i }),
+    );
 
     expect(fieldValue()).toBe("{@save dex|con|2d6|fire|half}");
     expect(await screen.findByLabelText("Failure damage dice")).toBeDefined();
@@ -157,9 +164,7 @@ describe("MarkupField (CodeMirror)", () => {
   });
 
   it("keeps an invalid composite raw so its squiggle stays visible", () => {
-    const { container } = render(
-      <Harness initial="x {@attack q|banana} y" />,
-    );
+    const { container } = render(<Harness initial="x {@attack q|banana} y" />);
     expect(container.querySelector(".cm-content .mb-chip")).toBeNull();
     expect(container.querySelector(".cm-content")?.textContent).toContain(
       "{@attack q|banana}",
@@ -177,7 +182,9 @@ describe("MarkupField (CodeMirror)", () => {
     expect(await screen.findByLabelText("Damage dice")).toBeDefined();
     // Chip expanded: raw tag text visible, chip gone for this token.
     const content = container.querySelector(".cm-content");
-    expect(content?.textContent).toContain("{@attack m|con|5|1d6+str|slashing}");
+    expect(content?.textContent).toContain(
+      "{@attack m|con|5|1d6+str|slashing}",
+    );
   });
 
   it("splices popover field edits back into the markup by exact offsets", async () => {
@@ -301,8 +308,7 @@ describe("MarkupField (CodeMirror)", () => {
     const view = getView(container);
     act(() => view.dispatch({ selection: { anchor: 10 } })); // caret inside the token
 
-    await user.click(screen.getByText(/Tag reference/i));
-    await user.click(screen.getByRole("button", { name: /full attack/i }));
+    await user.click(screen.getByRole("button", { name: /attack line/i }));
     // The snippet nested itself inside the existing tag.
     expect(fieldValue()).not.toBe(initial);
 
@@ -315,14 +321,17 @@ describe("MarkupField (CodeMirror)", () => {
     const { container } = render(<Harness />);
     const view = getView(container);
 
-    await user.click(screen.getByText(/Tag reference/i));
-    await user.click(screen.getByRole("button", { name: /full save/i }));
+    await user.click(
+      screen.getByRole("button", { name: /saving throw line/i }),
+    );
     const snippet = fieldValue();
 
-    act(() => view.dispatch({
-      changes: { from: view.state.doc.length, insert: "!" },
-      userEvent: "input.type",
-    }));
+    act(() =>
+      view.dispatch({
+        changes: { from: view.state.doc.length, insert: "!" },
+        userEvent: "input.type",
+      }),
+    );
     expect(fieldValue()).toBe(`${snippet}!`);
 
     fireEvent.keyDown(view.contentDOM, { key: "z", ctrlKey: true });

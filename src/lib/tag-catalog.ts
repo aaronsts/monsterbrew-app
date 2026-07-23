@@ -6,7 +6,6 @@ export interface TagItem {
 }
 
 export const TAG_CATALOG: Array<TagItem> = [
-  // Composite-first: one tag = one full line, edited via its preview chip.
   {
     snippet: "{@attack m|str|5|1d6+str|slashing}",
     name: "attack",
@@ -18,23 +17,5 @@ export const TAG_CATALOG: Array<TagItem> = [
     name: "save",
     title: "Saving throw line",
     hint: "full save — edit via the preview chip",
-  },
-  {
-    snippet: "{@recharge 5}",
-    name: "recharge",
-    title: "Recharge",
-    hint: "(Recharge 5–6)",
-  },
-  {
-    snippet: "{@condition prone}",
-    name: "condition",
-    title: "Condition",
-    hint: "reference — source dropped",
-  },
-  {
-    snippet: "{@spell fireball}",
-    name: "spell",
-    title: "Spell",
-    hint: "reference — source dropped",
   },
 ];

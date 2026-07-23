@@ -2,8 +2,8 @@
 
 Status: proposed · Owner: — · Last updated: 2026-07-22
 
-A cluster of features that turn Monsterbrew from a statblock *typewriter* into a
-statblock *workbench* — tools that understand the creature's math and help you
+A cluster of features that turn Monsterbrew from a statblock _typewriter_ into a
+statblock _workbench_ — tools that understand the creature's math and help you
 balance it. They compose into one story:
 
 > The **estimator** tells you the creature's real CR → **scale-by-CR** retargets
@@ -41,7 +41,7 @@ _later, optional_ accuracy upgrade — see §5 — not a prerequisite.
 
 ---
 
-## 1. CR Estimator  ·  flagship, no schema change
+## 1. CR Estimator · flagship, no schema change
 
 Compute a **suggested** CR from the creature and surface it next to the CR
 picker, clearly labelled as an estimate.
@@ -89,11 +89,12 @@ picker, clearly labelled as an estimate.
   `CHALLENGE_RATINGS` row into `cr` (same action the picker already performs).
 
 ### Effort: **Medium.** No schema change. Defensive side is quick; the offensive
+
 breakdown UI is the bulk of the work.
 
 ---
 
-## 2. Scale by CR  ·  builds directly on §1
+## 2. Scale by CR · builds directly on §1
 
 Retarget an existing creature to a chosen CR: given a target row in
 `CHALLENGE_RATINGS`, adjust HP (`hit_dice` count / `con`), AC, and — where damage
@@ -112,7 +113,7 @@ is tag-driven — suggest scaled dice/bonuses so offense lands in the new
 
 ---
 
-## 3. Templates  ·  independent, low risk
+## 3. Templates · independent, low risk
 
 One-click thematic mutations that layer onto a `Monster`: e.g. _Undead_,
 _Fiendish_, _Elemental_, _Zombie_.
@@ -140,25 +141,7 @@ _Fiendish_, _Elemental_, _Zombie_.
 
 ---
 
-## 5. Structured damage — the deferred accuracy upgrade
-
-If/when the `{@damage}`-tag approach proves too lossy (hand-typed actions,
-multiattack frequency), add **optional** structured damage to `featureSchema`
-(e.g. `attacks?: { to_hit, reach/range, damage_dice, damage_type, count }[]`).
-
-- Unlocks exact offensive CR, precise scaling, and richer rendering.
-- But it ripples through schema + form + statblock + every converter +
-  IndexedDB migration — the whole blast radius. Optional/back-compat is
-  mandatory (old creatures have no `attacks`).
-- **Explicitly out of scope for v1.** Ship §1–§3 on the markup first; let real
-  usage tell us whether this is worth the cost.
-- §6 (composite line tags) makes this even less necessary: the composite tag
-  already holds attack type, dice, modifier, and damage type as structured args
-  — a schema field would duplicate what the markup carries.
-
----
-
-## 6. Token Inspector + composite line tags  ·  DECIDED: Option B
+## 5. Token Inspector + composite line tags · DECIDED: Option B
 
 Turn rendered statblock tokens into **hover-highlight → click → structured
 popover** editors, and introduce composite "line" tags so one token = one full
@@ -234,6 +217,7 @@ that emits a trait full of `{@spell …}` tags — not a composite line tag. The
 token inspector can still make individual `{@spell}` chips editable.
 
 ### Effort: **Medium–High.** Chip rendering + composite parser/serializer +
+
 the editor-registry UI + export audit + two-representation tests.
 
 ---

@@ -1,6 +1,7 @@
 "use client";
 
 import { Fragment } from "react";
+import type { PropsWithChildren } from "react";
 import type { Monster } from "@/schema/monster-schema";
 import type { MarkupContext } from "@/lib/statblock-markup";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -39,7 +40,7 @@ function TaperedRule({ thin = false }: { thin?: boolean }) {
   );
 }
 
-function SectionHeading({ children }: { children: React.ReactNode }) {
+function SectionHeading({ children }: Readonly<PropsWithChildren>) {
   return (
     <div className="mb-2">
       <h3 className="font-heading text-base font-semibold uppercase tracking-wide text-primary">
@@ -118,7 +119,6 @@ export function MonsterStatblock({
   columns = false,
 }: {
   creature: Monster;
-  /** Flow the statblock body into two columns on desktop (single column on mobile). */
   columns?: boolean;
 }) {
   const pb = creature.cr.proficiency_bonus || 0;
@@ -260,7 +260,7 @@ export function MonsterStatblock({
                 const save = mod + (creature.saving_throws[score.key] ? pb : 0);
                 return (
                   <Fragment key={score.key}>
-                    <span>
+                    <span className="flex  w-12 justify-between">
                       <span className="font-heading font-semibold text-primary">
                         {score.label}
                       </span>{" "}

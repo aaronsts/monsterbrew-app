@@ -1,8 +1,9 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { ChevronRight } from "lucide-react";
+import { Plus } from "lucide-react";
 import { MarkupEditor } from "./markup-editor";
+import { TagHelpDialog } from "./tag-help-dialog";
 import { TokenEditorPopover } from "./token-editor-popover";
 import { TOKEN_EDITORS } from "./token-editors";
 import type { MarkupEditorHandle } from "./markup-editor";
@@ -122,31 +123,22 @@ export function MarkupField({
         focusPopover={!openedByCaret}
       />
 
-      <details className="group text-xs [&_summary::-webkit-details-marker]:hidden">
-        <summary className="flex cursor-pointer list-none items-center gap-1 text-muted-foreground select-none hover:text-foreground">
-          <ChevronRight className="size-3 transition-transform group-open:rotate-90" />
-          Tag reference — click to insert
-        </summary>
-        <div className="mt-1.5 grid grid-cols-1 gap-1 sm:grid-cols-2">
-          {TAG_CATALOG.map((tag) => (
-            <Button
-              key={tag.snippet}
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => insertAtCaret(tag)}
-              className="flex justify-between gap-0.5 border px-2 py-1.5 text-left "
-            >
-              <span className="text-[11px] text-muted-foreground">
-                {tag.hint}
-              </span>
-              <code className="text-[11px] font-medium">
-                {tag.snippet.trim()}
-              </code>
-            </Button>
-          ))}
-        </div>
-      </details>
+      <div className="flex flex-wrap items-center gap-1">
+        {TAG_CATALOG.map((tag) => (
+          <Button
+            key={tag.name}
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => insertAtCaret(tag)}
+            className="h-7 gap-1 px-2 text-xs"
+          >
+            <Plus className="size-3" />
+            {tag.title}
+          </Button>
+        ))}
+        <TagHelpDialog />
+      </div>
     </div>
   );
 }
