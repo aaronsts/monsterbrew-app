@@ -171,7 +171,6 @@ function FeatureList({
                     </FieldLabel>
                     <MarkupField
                       id={`form-rhf-${name}-${index}-description`}
-                      name={field.name}
                       value={field.value}
                       onChange={field.onChange}
                       onBlur={field.onBlur}
