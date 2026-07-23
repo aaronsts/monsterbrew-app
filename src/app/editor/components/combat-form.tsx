@@ -23,13 +23,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { Item, ItemContent, ItemMedia, ItemTitle } from "@/components/ui/item";
 import { Switch } from "@/components/ui/switch";
+import { ABILITY_SCORES } from "@/lib/abilities";
 import { CHALLENGE_RATINGS } from "@/lib/constants";
 import { calculateHitPoints, calculateStatBonus } from "@/lib/utils";
-import { abilityScoresSchema } from "@/schema/monster-schema";
 
 type ChallengeRating = Monster["cr"];
-
-const ABILITY_SCORES = abilityScoresSchema.keyof()._def.values;
 
 const MOVEMENTS = [
   { name: "movements.walk", label: "Walking" },

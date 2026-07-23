@@ -7,10 +7,10 @@ import {
   FieldRow,
   OptionSelect,
 } from "./controls";
-import { ABILITY_OPTIONS } from "./options";
 import type { SaveFields } from "@/lib/statblock-markup";
 import type { TokenEditorProps } from "./index";
 import { Input } from "@/components/ui/input";
+import { ABILITY_OPTIONS } from "@/lib/abilities";
 
 const ON_SAVE_OPTIONS = [
   { value: "half", label: "Half damage" },

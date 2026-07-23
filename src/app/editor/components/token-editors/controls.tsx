@@ -1,8 +1,6 @@
 "use client";
 
 import { useId } from "react";
-import { ABILITY_OPTIONS } from "./options";
-import type { SelectOption } from "./options";
 import { FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,10 +12,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { ABILITY_OPTIONS } from "@/lib/abilities";
 import { cn } from "@/lib/utils";
 import { DAMAGE_TYPES } from "@/types/types";
 
-const ABILITY_VALUES = new Set(ABILITY_OPTIONS.map((o) => o.value));
+export interface SelectOption {
+  value: string;
+  label: string;
+}
+
+const ABILITY_VALUES = new Set<string>(ABILITY_OPTIONS.map((o) => o.value));
 
 export function FieldRow({
   label,
