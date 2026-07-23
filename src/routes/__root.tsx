@@ -74,8 +74,8 @@ export const Route = createRootRoute({
     scripts: [
       {
         defer: true,
-        "data-domain": "monsterbrew-app.vercel.app",
-        src: "https://plausible.io/js/script.js",
+        "data-website-id": "70fc204a-5fab-4a50-8d72-3df606b23ba3",
+        src: "https://cloud.umami.is/script.js",
       },
     ],
   }),
