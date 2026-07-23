@@ -6,8 +6,6 @@
 
 @plugin "@tailwindcss/typography";
 
-/* Nippo is a local variable font served from /public/fonts.
-   Oxanium and JetBrains Mono come from @fontsource-variable (imported in __root). */
 @font-face {
   font-family: "Nippo";
   src: url("/fonts/Nippo-Variable.ttf") format("truetype");
@@ -229,4 +227,73 @@
   [role="button"]:not(:disabled) {
     cursor: pointer;
   }
+}
+
+/* CodeMirror markup field (see docs/design/codemirror-field.md).
+   Editable {@…} tokens are mark decorations — real spans, so hover is CSS. */
+.mb-token,
+.mb-chip {
+  cursor: pointer;
+  background-color: color-mix(in srgb, var(--primary) 20%, transparent);
+  outline-width: 1px;
+  outline-style: solid;
+  outline-color: color-mix(in srgb, var(--primary) 80%, transparent);
+  transition: background-color 100ms;
+}
+.mb-token:hover,
+.mb-chip:hover {
+  background-color: color-mix(in srgb, var(--primary) 60%, transparent);
+}
+.mb-token-active,
+.mb-token-active:hover {
+  background-color: color-mix(in srgb, var(--primary) 20%, transparent);
+}
+
+/* Theme CodeMirror's autocomplete tooltip like PopoverContent in
+   src/components/ui/popover.tsx: flat corners, bg-popover, a foreground/10
+   hairline ring, and Tailwind's shadow-md. */
+.cm-tooltip.cm-tooltip-autocomplete,
+.cm-tooltip.cm-completionInfo {
+  background: var(--popover);
+  color: var(--popover-foreground);
+  border: 1px solid color-mix(in srgb, var(--foreground) 10%, transparent);
+  border-radius: 0;
+  box-shadow:
+    0 4px 6px -1px rgb(0 0 0 / 0.1),
+    0 2px 4px -2px rgb(0 0 0 / 0.1);
+  font-size: 12px;
+}
+.cm-editor .cm-tooltip.cm-tooltip-autocomplete > ul {
+  font-family: inherit;
+  padding: 4px;
+}
+.cm-tooltip.cm-tooltip-autocomplete > ul > li {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 4px 6px;
+}
+.cm-tooltip-autocomplete .cm-completionDetail {
+  margin-left: auto;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 11px;
+  font-style: normal;
+  color: var(--muted-foreground);
+}
+/* .cm-editor prefix outranks CM's runtime-injected base theme (blue row). */
+.cm-editor .cm-tooltip-autocomplete > ul > li[aria-selected] {
+  background: var(--accent);
+  color: var(--accent-foreground);
+}
+.cm-editor .cm-tooltip-autocomplete > ul > li[aria-selected] .cm-completionDetail {
+  color: inherit;
+}
+.cm-tooltip.cm-completionInfo {
+  padding: 8px 10px;
+  max-width: 240px;
+}
+
+/* Collapsed live-preview chip for an editable token (widget decoration). */
+.mb-chip {
+  padding: 1px 4px;
 }

@@ -32,16 +32,24 @@ Monsterbrew is a **client-side-only** D&D 5e monster statblock builder. **TanSta
 
 ### The creature model is the center of everything
 
-`src/schema/createCreatureSchema.ts` defines the canonical `createCreatureSchema` (Zod) and `defaultCreature`. `z.infer<typeof createCreatureSchema>` is *the* creature type used across the entire app — the form, IndexedDB values, every import/export converter, and the statblock renderers all speak this one shape. When you change a field, expect ripples through: the schema + default, the matching form section, the statblock renderer, every converter, and possibly the IndexedDB migration.
+`src/schema/monster-schema.ts` defines the canonical `monsterSchema` (Zod), its `Monster` type (`z.infer`), and `defaultMonster`. `Monster` is *the* creature type used across the entire app — the form, IndexedDB values, every import/export converter, and the statblock renderers all speak this one shape. `StoredMonster` is `Monster` plus the storage-only fields (`id` keyPath, optional `is_public`). When you change a field, expect ripples through: the schema + default, the matching form section, the statblock renderer, every converter, and possibly the IndexedDB migration.
+
+Note some structured fields: `damage_modifiers` and `nonmagical_attack_modifiers` are `Record<damageType, "resistant"|"vulnerable"|"immune">`; `saving_throws` and `skills` are ability/skill-keyed records; features (`traits`, `actions`, `reactions`, `bonus_actions`, `lair_actions`, `legendary_actions`, `mythic_actions`) are all `{ name, description }`.
+
+`src/schema/createCreatureSchema.ts` is the **legacy** shape (`createCreatureSchema` / `defaultCreature`) — retained only so old data and handoffs can be normalized. `src/services/migrations/creatureToMonster.ts` (`creatureToMonster`, guarded by `isLegacyCreature` in `creatureFormat.ts`) bridges legacy payloads to `Monster`. Don't build new features on the legacy schema.
+
+### Statblock markup: the `{@…}` tag system
+
+Action/trait `description` strings use 5eTools' `{@…}` tag syntax as Monsterbrew's *native* markup (e.g. `{@atkr m} {@hit str}, reach 5 ft. {@h}{@damage 2d8 + str} slashing damage.`). `src/lib/statblock-markup.ts` (`parseMarkup` / `resolveTag` / `resolveMarkup`) is the single source of truth that turns tagged text into display text — used by every render/export path. Monsterbrew's one extension over 5eTools: where 5eTools writes a number (`{@hit 3}`, `{@dc 15}`, `{@damage 2d8 + 1}`), the same slot also accepts an **ability keyword** (`{@hit str}`, `{@dc con}`, `{@damage 2d8 + str}`) meaning "derive from the creature's stats and recompute live." Because tags live inside the `description` string, they carry lightweight structure (attack type, dice, ability links) with **no schema field and no migration** — see `docs/design/attack-tokens.md` and `docs/roadmap-authoring-tools.md`.
 
 ### Editor data flow
 
-`src/app/editor/components/editor.tsx` is the hub. It creates a single `react-hook-form` form (`zodResolver(createCreatureSchema)`, `defaultValues: defaultCreature`) and renders two live-synced halves inside one `<Form>` provider:
+`src/app/editor/components/monster-form.tsx` (`MonsterForm`) is the hub. It creates a single `react-hook-form` form (`zodResolver(monsterSchema)`, `values: loadedCreature ?? defaultMonster`) and renders two live-synced halves inside one `<Form>` provider:
 
-- `creature-form.tsx` — the editing UI, an `Accordion` of section forms under `editor/components/form/*` (general info, movements, senses, languages, skills, damages, conditions, traits, actions, reactions, legendary/mythic). Each section reaches the shared form via `useFormContext()` — they take no props.
-- `creature-statblock.tsx` — a live preview built from `editor/components/statblock/*`, plus `pdf-statblock.tsx` for print/PDF (`react-to-print`).
+- The editing UI: four section components — `IdentityForm`, `CombatForm`, `DefenseForm`, `ActionsForm` (`identity-form.tsx`, `combat-form.tsx`, `defense-form/`, `actions-form.tsx`). Each reaches the shared form via `useFormContext()` — they take no props. `ImportDialog` (`editor/components/import-dialog.tsx`) is mounted here too.
+- `src/components/monster-statblock.tsx` (`MonsterStatblock`) — the live preview, fed the watched form value.
 
-Loading an existing creature: `/editor?id=<id>` reads it from IndexedDB and calls `form.reset(storedCreature)`. As a fallback (no `id`), it hydrates from a `localStorage.editCreature` handoff key (set when navigating "edit" from elsewhere) and then clears it.
+Loading an existing creature: `/editor?id=<id>` loads it via the `useCreature(id)` TanStack Query hook, which the form consumes reactively through RHF's `values:` prop (no manual `form.reset`). As a fallback (no `id`), it hydrates once from a `localStorage.editCreature` handoff key (set when navigating "edit"/"copy"/"duplicate" from elsewhere), normalizing any legacy-shaped payload through `creatureToMonster`, then clears the key. Saving goes through `useSaveCreature()` and navigates to `/library/$id`; IDs are generated with `generateId()` (`src/lib/utils.ts`).
 
 Derived values are computed with `useEffect` + `form.setValue` rather than stored as input — e.g. passive perception recomputes from WIS + perception proficiency unless `custom_passive_perception` is set. Game-rule math (ability modifiers, saving throws, HP dice) lives in `src/lib/utils.ts`; reference tables (challenge ratings, sizes, creature types) live in `src/lib/constants.ts`.
 

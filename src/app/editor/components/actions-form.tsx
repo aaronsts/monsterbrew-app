@@ -171,11 +171,10 @@ function FeatureList({
                     </FieldLabel>
                     <MarkupField
                       id={`form-rhf-${name}-${index}-description`}
-                      name={field.name}
                       value={field.value}
                       onChange={field.onChange}
                       onBlur={field.onBlur}
-                      placeholder="Describe the effect…  e.g. {@atkr m} {@hit str}, reach 5 ft. {@h}{@damage 2d8 + str} slashing damage."
+                      placeholder="Describe the effect…  e.g. {@attack m|str|5|2d8+str|slashing}"
                       ctx={ctx}
                     />
                   </Field>

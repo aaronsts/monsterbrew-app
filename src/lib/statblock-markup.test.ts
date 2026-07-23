@@ -1,5 +1,14 @@
 import { describe, expect, it } from "vitest";
-import { parseMarkup, resolveMarkup } from "./statblock-markup";
+import {
+  parseAttackArgs,
+  parseMarkup,
+  parseSaveArgs,
+  resolveMarkup,
+  serializeAttackArgs,
+  serializeSaveArgs,
+  validateAttackArgs,
+  validateSaveArgs,
+} from "./statblock-markup";
 import type { MarkupContext } from "./statblock-markup";
 
 /** STR 20 (+5), DEX 14 (+2), CON 16 (+3), PB +4. */
@@ -23,15 +32,58 @@ describe("parseMarkup", () => {
   it("splits text and tags", () => {
     const segs = parseMarkup("a {@hit str} b");
     expect(segs).toEqual([
-      { type: "text", value: "a " },
-      { type: "tag", name: "hit", args: "str", raw: "{@hit str}" },
-      { type: "text", value: " b" },
+      { type: "text", value: "a ", start: 0, end: 2 },
+      {
+        type: "tag",
+        name: "hit",
+        args: "str",
+        raw: "{@hit str}",
+        start: 2,
+        end: 12,
+      },
+      { type: "text", value: " b", start: 12, end: 14 },
     ]);
   });
 
   it("handles argument-less tags", () => {
     expect(parseMarkup("{@h}")).toEqual([
-      { type: "tag", name: "h", args: "", raw: "{@h}" },
+      { type: "tag", name: "h", args: "", raw: "{@h}", start: 0, end: 4 },
+    ]);
+  });
+
+  it("gives every segment offsets that reconstruct the source", () => {
+    const source = "before {@hit str}, mid {@damage 2d8 + str} after";
+    const segs = parseMarkup(source);
+    expect(segs.map((s) => source.slice(s.start, s.end)).join("")).toBe(source);
+  });
+
+  it("disambiguates identical tags by offset", () => {
+    const twice = "{@hit str} and {@hit str}";
+    const tags = parseMarkup(twice).filter((s) => s.type === "tag");
+    expect(tags).toHaveLength(2);
+    expect(tags[0].start).toBe(0);
+    expect(tags[1].start).toBe(15);
+    expect(twice.slice(tags[1].start, tags[1].end)).toBe("{@hit str}");
+  });
+
+  it("parses a tag whose args contain a nested tag", () => {
+    const source = "{@save dex|con|3d6|fire|the target is {@condition prone}}";
+    const segs = parseMarkup(source);
+    expect(segs).toHaveLength(1);
+    const tag = segs[0];
+    expect(tag.type).toBe("tag");
+    if (tag.type === "tag") {
+      expect(tag.name).toBe("save");
+      expect(tag.args).toBe(
+        "dex|con|3d6|fire|the target is {@condition prone}",
+      );
+      expect(tag.end).toBe(source.length);
+    }
+  });
+
+  it("treats unbalanced braces as plain text", () => {
+    expect(parseMarkup("take {@hit str damage")).toEqual([
+      { type: "text", value: "take {@hit str damage", start: 0, end: 21 },
     ]);
   });
 });
@@ -159,5 +211,152 @@ describe("resolveMarkup — robustness", () => {
     expect(out).not.toContain("{@");
     expect(out).toContain("Melee Attack Roll: +3, reach 5 ft. Hit: 10 (2d8 + 1) Acid damage.");
     expect(out).toContain("casting the Mending spell");
+  });
+});
+
+describe("resolveMarkup — {@attack} composite", () => {
+  it("renders a full melee attack line", () => {
+    expect(render("{@attack m|str|5|2d8+str|slashing}")).toBe(
+      "Melee Attack Roll: +9, reach 5 ft. Hit: 14 (2d8 + 5) Slashing damage.",
+    );
+  });
+
+  it("renders a ranged attack with normal/long range", () => {
+    expect(render("{@attack r|dex|30/120|1d8+dex|piercing}")).toBe(
+      "Ranged Attack Roll: +6, range 30/120 ft. Hit: 6 (1d8 + 2) Piercing damage.",
+    );
+  });
+
+  it("renders a melee-or-ranged attack with both distances", () => {
+    expect(render("{@attack m,r|str|5;20/60|1d6+str|piercing}")).toBe(
+      "Melee or Ranged Attack Roll: +9, reach 5 ft. or range 20/60 ft. Hit: 8 (1d6 + 5) Piercing damage.",
+    );
+  });
+
+  it("accepts a flat hit bonus and flat dice", () => {
+    expect(render("{@attack m|3|5|2d8+1|acid}")).toBe(
+      "Melee Attack Roll: +3, reach 5 ft. Hit: 10 (2d8 + 1) Acid damage.",
+    );
+  });
+
+  it("drops the reach clause when reach is omitted", () => {
+    expect(render("{@attack m|str||2d8+str|slashing}")).toBe(
+      "Melee Attack Roll: +9. Hit: 14 (2d8 + 5) Slashing damage.",
+    );
+  });
+
+  it("drops the Hit clause when dice are omitted", () => {
+    expect(render("{@attack m|str|5}")).toBe(
+      "Melee Attack Roll: +9, reach 5 ft.",
+    );
+  });
+
+  it("renders untyped damage when type is omitted", () => {
+    expect(render("{@attack m|str|5|2d8+str}")).toBe(
+      "Melee Attack Roll: +9, reach 5 ft. Hit: 14 (2d8 + 5) damage.",
+    );
+  });
+
+  it("never throws on malformed args", () => {
+    expect(render("{@attack}")).toBe("{@attack}");
+    expect(render("{@attack |||}")).toBe("Melee Attack Roll:");
+    expect(render("{@attack q|banana}")).toBe("Melee Attack Roll: +0.");
+  });
+});
+
+describe("resolveMarkup — {@save} composite", () => {
+  it("renders a full line, defaulting to a half-damage success clause", () => {
+    // onSave omitted but dice present -> defaults to half.
+    expect(render("{@save dex|con|3d6|fire}")).toBe(
+      "Dexterity Saving Throw: DC 15. Failure: 10 (3d6) Fire damage. Success: Half damage.",
+    );
+  });
+
+  it("accepts a flat DC and honours onSave=none", () => {
+    expect(render("{@save con|15|8d8|poison|none}")).toBe(
+      "Constitution Saving Throw: DC 15. Failure: 36 (8d8) Poison damage.",
+    );
+  });
+
+  it("renders custom success text, resolving nested tags", () => {
+    expect(
+      render("{@save str|con|||the target is {@condition prone|XPHB}}"),
+    ).toBe("Strength Saving Throw: DC 15. Success: the target is prone.");
+  });
+
+  it("drops the damage clause without dice and never throws when malformed", () => {
+    expect(render("{@save dex|con}")).toBe("Dexterity Saving Throw: DC 15.");
+    expect(render("{@save}")).toBe("{@save}");
+  });
+});
+
+describe("resolveMarkup — {@damage} with optional type", () => {
+  it("appends a capitalized damage type after a pipe", () => {
+    expect(render("{@damage 1d6|fire}")).toBe("3 (1d6) Fire damage");
+    expect(render("{@damage 2d8 + str|slashing}")).toBe(
+      "14 (2d8 + 5) Slashing damage",
+    );
+  });
+});
+
+describe("composite grammar round-trip", () => {
+  it.each([
+    "m|str|5|2d8+str|slashing",
+    "m|str||1d6+str",
+    "m|str||1d6+str|",
+    "r|4|30/120",
+    "m,r|str|5;20/60|1d6+str|piercing",
+  ])("serializeAttackArgs(parseAttackArgs(%j)) is idempotent", (args) => {
+    const once = serializeAttackArgs(parseAttackArgs(args));
+    expect(serializeAttackArgs(parseAttackArgs(once))).toBe(once);
+  });
+
+  it.each([
+    "dex|con|3d6|fire|half",
+    "dex|con|3d6|fire",
+    "con|15|8d8|poison|none",
+    "str|con|||the target is {@condition prone}",
+  ])("serializeSaveArgs(parseSaveArgs(%j)) is idempotent", (args) => {
+    const once = serializeSaveArgs(parseSaveArgs(args));
+    expect(serializeSaveArgs(parseSaveArgs(once))).toBe(once);
+  });
+
+  it("preserves nested-tag custom text through the save round-trip", () => {
+    const fields = parseSaveArgs(
+      "dex|con|3d6|fire|the target is {@condition prone}",
+    );
+    expect(fields.onSave).toBe("the target is {@condition prone}");
+    expect(serializeSaveArgs(fields)).toBe(
+      "dex|con|3d6|fire|the target is {@condition prone}",
+    );
+  });
+});
+
+describe("composite validation (editor diagnostics)", () => {
+  it("accepts well-formed attack and save args", () => {
+    expect(validateAttackArgs("m|str|5|2d8+str|slashing")).toEqual([]);
+    expect(validateAttackArgs("m,r|4|5;20/60")).toEqual([]);
+    expect(validateSaveArgs("dex|con|3d6|fire|half")).toEqual([]);
+    expect(validateSaveArgs("con|15")).toEqual([]);
+  });
+
+  it("flags missing or malformed attack slots", () => {
+    expect(validateAttackArgs("")).toHaveLength(2); // kind + hit missing
+    expect(validateAttackArgs("q|str").join()).toContain(
+      'unknown attack kind "q"',
+    );
+    expect(validateAttackArgs("m|banana").join()).toContain(
+      'to-hit "banana" is neither an ability nor a number',
+    );
+  });
+
+  it("flags missing or malformed save slots", () => {
+    expect(validateSaveArgs("")).toHaveLength(2); // ability + dc missing
+    expect(validateSaveArgs("luck|con").join()).toContain(
+      'unknown ability "luck"',
+    );
+    expect(validateSaveArgs("dex|banana").join()).toContain(
+      'DC "banana" is neither an ability nor a number',
+    );
   });
 });

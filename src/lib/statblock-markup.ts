@@ -23,6 +23,8 @@ export type MarkupContext = Pick<Monster, "ability_scores" | "cr">;
 export interface TextSegment {
   type: "text";
   value: string;
+  start: number;
+  end: number;
 }
 
 export interface TagSegment {
@@ -33,6 +35,10 @@ export interface TagSegment {
   args: string;
   /** The original `{@…}` text, used as the fallback when a tag can't resolve. */
   raw: string;
+  /** Start index (inclusive) into the source string. */
+  start: number;
+  /** End index (exclusive) into the source string. */
+  end: number;
 }
 
 export type Segment = TextSegment | TagSegment;
@@ -50,7 +56,26 @@ const ABILITY_NAMES: Record<Ability, string> = {
   cha: "Charisma",
 };
 
-const TAG_RE = /\{@(\w+)(?:\s+([^}]*))?\}/g;
+function isWordChar(code: number): boolean {
+  return (
+    (code >= 48 && code <= 57) || // 0-9
+    (code >= 65 && code <= 90) || // A-Z
+    (code >= 97 && code <= 122) || // a-z
+    code === 95 // _
+  );
+}
+
+/**
+ * Split a raw balanced tag (`{@name args}`) into name and args. A character
+ * scan instead of `/^\{@(\w+)([\s\S]*)\}$/` — that regex's adjacent
+ * overlapping quantifiers backtrack super-linearly on long inputs.
+ */
+function parseTagHead(raw: string): { name: string; args: string } | null {
+  let i = 2; // skip "{@"
+  while (i < raw.length - 1 && isWordChar(raw.charCodeAt(i))) i++;
+  if (i === 2) return null; // "{@}" or "{@ …}": no tag name
+  return { name: raw.slice(2, i), args: raw.slice(i, -1).trim() };
+}
 
 /**
  * 5eTools writes an attack's average damage as literal text wrapping the tag:
@@ -75,25 +100,63 @@ function abilityMod(ctx: MarkupContext, ability: string): number {
   );
 }
 
-/** Split a description into literal-text and `{@…}` tag segments. */
+/** Index of the `}` that closes the `{` at `start`, or -1 if unbalanced. */
+function findTagEnd(text: string, start: number): number {
+  let depth = 0;
+  for (let i = start; i < text.length; i++) {
+    if (text[i] === "{") depth++;
+    else if (text[i] === "}" && --depth === 0) return i;
+  }
+  return -1;
+}
+
+/**
+ * Split a description into literal-text and `{@…}` tag segments. Braces are
+ * counted, not regex-matched, so a tag's args may themselves contain tags
+ * (e.g. a composite `{@save …|the target is {@condition prone}}`). Each
+ * segment carries its `start`/`end` source offsets so editors can splice a
+ * rewritten tag back into the exact spot, even among identical tags.
+ */
 export function parseMarkup(text: string): Array<Segment> {
   const segments: Array<Segment> = [];
   let last = 0;
-  for (const match of text.matchAll(TAG_RE)) {
-    const index = match.index ?? 0;
-    if (index > last) {
-      segments.push({ type: "text", value: text.slice(last, index) });
+  let i = 0;
+  while (i < text.length) {
+    if (text[i] === "{" && text[i + 1] === "@") {
+      const close = findTagEnd(text, i);
+      const raw = close === -1 ? "" : text.slice(i, close + 1);
+      const head = raw ? parseTagHead(raw) : null;
+      if (head) {
+        if (i > last) {
+          segments.push({
+            type: "text",
+            value: text.slice(last, i),
+            start: last,
+            end: i,
+          });
+        }
+        segments.push({
+          type: "tag",
+          name: head.name,
+          args: head.args,
+          raw,
+          start: i,
+          end: close + 1,
+        });
+        last = close + 1;
+        i = close + 1;
+        continue;
+      }
     }
-    segments.push({
-      type: "tag",
-      name: match[1],
-      args: (match[2] ?? "").trim(),
-      raw: match[0],
-    });
-    last = index + match[0].length;
+    i++;
   }
   if (last < text.length) {
-    segments.push({ type: "text", value: text.slice(last) });
+    segments.push({
+      type: "text",
+      value: text.slice(last),
+      start: last,
+      end: text.length,
+    });
   }
   return segments;
 }
@@ -104,10 +167,12 @@ export function parseMarkup(text: string): Array<Segment> {
  */
 function averageDice(expr: string): number {
   let total = 0;
-  const terms = expr.match(/[+-]?\s*\d*d\d+|[+-]?\s*\d+/g) ?? [];
-  for (const rawTerm of terms) {
-    const term = rawTerm.replace(/\s+/g, "");
-    const dice = term.match(/^([+-]?\d*)d(\d+)$/);
+  // Compact once up front: without embedded whitespace the term regexes have
+  // no adjacent variable-width quantifiers left to backtrack over.
+  const compact = expr.replace(/\s+/g, "");
+  const terms = compact.match(/[+-]?\d*d\d+|[+-]?\d+/g) ?? [];
+  for (const term of terms) {
+    const dice = /^([+-]?\d*)d(\d+)$/.exec(term);
     if (dice) {
       const count = Number.parseInt(
         dice[1] === "" || dice[1] === "+" ? "1" : dice[1],
@@ -124,7 +189,10 @@ function averageDice(expr: string): number {
 
 /** Replace ability keywords inside a dice expression with their signed modifier. */
 function resolveDiceAbilities(expr: string, ctx: MarkupContext): string {
-  return expr.replace(/[a-z]{3}/gi, (word) =>
+  // Word boundaries: only whole three-letter words are candidates, so the
+  // callback no longer fires for every 3-letter run of longer words (and a
+  // "str" inside e.g. "strength" is left alone).
+  return expr.replace(/\b[a-z]{3}\b/gi, (word) =>
     isAbility(word) ? `${abilityMod(ctx, word)}` : word,
   );
 }
@@ -158,10 +226,268 @@ function attackRoll(args: string, weaponOrSpell: string | null): string {
   return `${prefix} ${suffix}:`;
 }
 
+function capitalize(s: string): string {
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
+/*
+ * Composite line tags — `{@attack …}` and `{@save …}`.
+ *
+ * One tag renders a whole 2024-SRD-style attack or saving-throw line. The
+ * pipe-separated arg order below is a STORED FORMAT (saved creature
+ * descriptions contain it): never reorder or remove slots; only append new
+ * optional ones at the end. `parse*Args`/`serialize*Args` are the single
+ * grammar implementation, shared by the resolvers here and the token-editor
+ * UI, and round-trip: serialize(parse(args)) is stable.
+ */
+
+/** `{@attack <kind>|<hit>|<reach>|<dice>|<type>}` — kind + hit required. */
+export interface AttackFields {
+  /** `m`, `r`, or `m,r`. */
+  kind: string;
+  /** Ability keyword (`str`) or flat bonus (`7`). */
+  hit: string;
+  /**
+   * Numbers only; the `reach`/`range` wording and ` ft.` come from `kind`.
+   * `m` → `5`; `r` → `30/120` (normal/long); `m,r` → `5;30/120`.
+   */
+  reach: string;
+  /** Dice expression, may embed ability keywords (`2d8+str`). */
+  dice: string;
+  /** Damage type (`slashing`); capitalized on output. */
+  type: string;
+}
+
+/** `{@save <ability>|<dc>|<dice>|<type>|<onSave>}` — ability + dc required. */
+export interface SaveFields {
+  /** Tested ability (`dex`). */
+  ability: string;
+  /** Ability keyword (`con`, meaning 8 + PB + mod) or flat DC (`15`). */
+  dc: string;
+  /** Failure damage dice (`3d6`). */
+  dice: string;
+  /** Failure damage type (`fire`). */
+  type: string;
+  /** `half` / `none` / custom success text. Defaults to `half` when dice set. */
+  onSave: string;
+}
+
+/**
+ * Split composite args on top-level `|` only — a nested tag may itself
+ * contain pipes (`the target is {@condition prone|XPHB}`).
+ */
+function splitArgs(args: string, count: number): Array<string> {
+  const parts: Array<string> = [];
+  let current = "";
+  let depth = 0;
+  for (const ch of args) {
+    if (ch === "{") depth++;
+    else if (ch === "}") depth--;
+    if (ch === "|" && depth === 0) {
+      parts.push(current.trim());
+      current = "";
+    } else {
+      current += ch;
+    }
+  }
+  parts.push(current.trim());
+  while (parts.length < count) parts.push("");
+  return parts;
+}
+
+export function parseAttackArgs(args: string): AttackFields {
+  const [kind, hit, reach, dice, type] = splitArgs(args, 5);
+  return { kind, hit, reach, dice, type };
+}
+
+export function serializeAttackArgs(fields: AttackFields): string {
+  const parts = [
+    fields.kind,
+    fields.hit,
+    fields.reach,
+    fields.dice,
+    fields.type,
+  ].map((p) => p.trim());
+  while (parts.length > 2 && parts[parts.length - 1] === "") parts.pop();
+  return parts.join("|");
+}
+
+export function parseSaveArgs(args: string): SaveFields {
+  const [ability, dc, dice, type, onSave] = splitArgs(args, 5);
+  return { ability, dc, dice, type, onSave };
+}
+
+export function serializeSaveArgs(fields: SaveFields): string {
+  const parts = [
+    fields.ability,
+    fields.dc,
+    fields.dice,
+    fields.type,
+    fields.onSave,
+  ].map((p) => p.trim());
+  while (parts.length > 2 && parts[parts.length - 1] === "") parts.pop();
+  return parts.join("|");
+}
+
+/** Flat-or-ability attack bonus: `str` → mod + PB, `7` → 7 (mirrors `@hit`). */
+function hitBonus(value: string, ctx: MarkupContext): number {
+  const pb = ctx.cr.proficiency_bonus || 0;
+  return isAbility(value)
+    ? abilityMod(ctx, value) + pb
+    : Number.parseInt(value, 10) || 0;
+}
+
+/** Flat-or-ability DC: `con` → 8 + PB + mod, `15` → 15 (mirrors `@dc`). */
+function dcValue(value: string, ctx: MarkupContext): number {
+  const pb = ctx.cr.proficiency_bonus || 0;
+  return isAbility(value)
+    ? 8 + pb + abilityMod(ctx, value)
+    : Number.parseInt(value, 10) || 0;
+}
+
+/** The `, reach 5 ft.` / `, range 30/120 ft.` clause, worded from `kind`. */
+function attackDistance(kind: string, reach: string): string {
+  if (!reach) return "";
+  const melee = /m/.test(kind);
+  const ranged = /r/.test(kind);
+  if (melee && ranged) {
+    const [near = "", far = ""] = reach.split(";").map((p) => p.trim());
+    const clauses = [];
+    if (near) clauses.push(`reach ${near} ft.`);
+    if (far) clauses.push(`range ${far} ft.`);
+    return clauses.join(" or ");
+  }
+  return ranged ? `range ${reach} ft.` : `reach ${reach} ft.`;
+}
+
+/** `13 (2d8 + 4)` with abilities resolved, or `""` for no dice. */
+function damageClause(dice: string, ctx: MarkupContext): string {
+  if (!dice) return "";
+  const expr = normalizeSigns(resolveDiceAbilities(dice, ctx))
+    // Uniform operator spacing so `2d8+str` renders as `2d8 + 4`.
+    .replace(/\s*([+-])\s*/g, " $1 ")
+    .trim();
+  return `${averageDice(expr)} (${expr})`;
+}
+
+/** e.g. `Melee Attack Roll: +7, reach 5 ft. Hit: 13 (2d8 + 4) Slashing damage.` */
+function resolveAttack(args: string, ctx: MarkupContext): string {
+  const f = parseAttackArgs(args);
+  let out = attackRoll(f.kind || "m", null);
+  if (f.hit) out += ` ${formatMod(hitBonus(f.hit, ctx))}`;
+  const distance = attackDistance(f.kind, f.reach);
+  if (distance) out += `${f.hit ? "," : ""} ${distance}`;
+  else if (f.hit) out += ".";
+  const damage = damageClause(f.dice, ctx);
+  if (damage) {
+    out += ` Hit: ${damage}${f.type ? ` ${capitalize(f.type)}` : ""} damage.`;
+  }
+  return out;
+}
+
+/** e.g. `Dexterity Saving Throw: DC 13. Failure: 10 (3d6) Fire damage. Success: Half damage.` */
+function resolveSave(args: string, ctx: MarkupContext): string {
+  const f = parseSaveArgs(args);
+  const key = f.ability.toLowerCase();
+  const label = isAbility(key) ? ABILITY_NAMES[key] : f.ability;
+  let out = label ? `${label} Saving Throw:` : "Saving Throw:";
+  if (f.dc) out += ` DC ${dcValue(f.dc, ctx)}.`;
+  const damage = damageClause(f.dice, ctx);
+  if (damage) {
+    out += ` Failure: ${damage}${f.type ? ` ${capitalize(f.type)}` : ""} damage.`;
+  }
+  const onSave = f.onSave || (damage ? "half" : "");
+  if (onSave === "half") {
+    out += " Success: Half damage.";
+  } else if (onSave && onSave !== "none") {
+    // Custom success text may itself contain tags ({@condition prone}, …).
+    const custom = resolveMarkup(onSave, ctx);
+    out += ` Success: ${custom}${/[.!?]$/.test(custom) ? "" : "."}`;
+  }
+  return out;
+}
+
+/** Every tag name `resolveTag` has a case for — keep in sync with its switch. */
+export const KNOWN_TAG_NAMES: ReadonlySet<string> = new Set([
+  "atkr",
+  "atk",
+  "hit",
+  "h",
+  "dc",
+  "damage",
+  "attack",
+  "save",
+  "dice",
+  "scaledice",
+  "actSave",
+  "actSaveFail",
+  "actSaveSuccess",
+  "actSaveSuccessOrFail",
+  "recharge",
+  "i",
+  "italic",
+  "b",
+  "bold",
+  "spell",
+  "condition",
+  "status",
+  "item",
+  "creature",
+  "variantrule",
+  "sense",
+  "skill",
+  "action",
+  "book",
+  "filter",
+  "quickref",
+  "hazard",
+  "disease",
+  "damage_type",
+  "note",
+]);
+
+/**
+ * Human-readable problems with an `{@attack}` tag's args (empty = valid).
+ * The resolvers never throw — these power editor diagnostics instead.
+ */
+export function validateAttackArgs(args: string): Array<string> {
+  const f = parseAttackArgs(args);
+  const problems: Array<string> = [];
+  if (!f.kind) {
+    problems.push("missing attack kind (m, r, or m,r)");
+  } else if (
+    !f.kind.split(",").every((k) => k.trim() === "m" || k.trim() === "r")
+  ) {
+    problems.push(`unknown attack kind "${f.kind}" (use m, r, or m,r)`);
+  }
+  if (!f.hit) {
+    problems.push("missing to-hit (an ability like str, or a number)");
+  } else if (!isAbility(f.hit) && !/^[+-]?\d+$/.test(f.hit)) {
+    problems.push(`to-hit "${f.hit}" is neither an ability nor a number`);
+  }
+  return problems;
+}
+
+/** Human-readable problems with a `{@save}` tag's args (empty = valid). */
+export function validateSaveArgs(args: string): Array<string> {
+  const f = parseSaveArgs(args);
+  const problems: Array<string> = [];
+  if (!f.ability) {
+    problems.push("missing saving-throw ability (str/dex/con/int/wis/cha)");
+  } else if (!isAbility(f.ability)) {
+    problems.push(`unknown ability "${f.ability}"`);
+  }
+  if (!f.dc) {
+    problems.push("missing DC (an ability like con, or a number)");
+  } else if (!isAbility(f.dc) && !/^\d+$/.test(f.dc)) {
+    problems.push(`DC "${f.dc}" is neither an ability nor a number`);
+  }
+  return problems;
+}
+
 /** Resolve a single tag to its display text. Never throws. */
 export function resolveTag(tag: TagSegment, ctx: MarkupContext): string {
   const { name, args, raw } = tag;
-  const pb = ctx.cr.proficiency_bonus || 0;
 
   switch (name) {
     case "atkr":
@@ -173,19 +499,23 @@ export function resolveTag(tag: TagSegment, ctx: MarkupContext): string {
       return attackRoll(args, isSpell ? "Spell" : "Weapon");
     }
     case "hit":
-      return isAbility(args)
-        ? formatMod(abilityMod(ctx, args) + pb)
-        : formatMod(Number.parseInt(args, 10) || 0);
+      return formatMod(hitBonus(args, ctx));
     case "h":
       return "Hit: ";
     case "dc":
-      return isAbility(args)
-        ? `DC ${8 + pb + abilityMod(ctx, args)}`
-        : `DC ${Number.parseInt(args, 10) || 0}`;
+      return `DC ${dcValue(args, ctx)}`;
     case "damage": {
-      const expr = normalizeSigns(resolveDiceAbilities(args, ctx));
-      return `${averageDice(expr)} (${expr})`;
+      // Optional structured damage type: {@damage 2d8 + str|slashing}.
+      const [dice, type = ""] = splitArgs(args, 2);
+      const base = damageClause(dice, ctx);
+      return type ? `${base} ${capitalize(type)} damage` : base;
     }
+    case "attack":
+      // Composite full attack line; see AttackFields for the grammar.
+      return args ? resolveAttack(args, ctx) : raw;
+    case "save":
+      // Composite full saving-throw line; see SaveFields for the grammar.
+      return args ? resolveSave(args, ctx) : raw;
     case "dice":
     case "scaledice":
       // Inline dice: show the (ability-resolved) expression only, no average.
