@@ -35,6 +35,16 @@ const releases: Array<Release> = [
     ],
   },
   {
+    version: "3.6.1",
+    date: "2026-07-22",
+    summary:
+      "We switched our privacy-friendly analytics provider to Umami. As before, there are no cookies, no cross-site tracking, and no personal data collected — only anonymous, aggregated stats that help us understand how Monsterbrew is used. The Privacy page has been updated to match.",
+    changes: [
+      "Moved analytics to Umami, a cookieless, privacy-first service",
+      "Updated the Privacy page to reflect the new provider",
+    ],
+  },
+  {
     version: "3.6.0",
     date: "2026-07-22",
     title: "Export is back",
