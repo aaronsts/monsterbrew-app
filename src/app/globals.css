@@ -1,20 +1,31 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
+
 @import "./colors.css";
-/*  ---break--- */
+@import "./typeset.css";
+
+@import "@fontsource-variable/jetbrains-mono";
+@import "@fontsource-variable/oxanium";
+
+/* prettier-ignore */
 @custom-variant dark (&:is([data-theme="dark"] *));
 
 @plugin "@tailwindcss/typography";
 
-/* Nippo is a local variable font served from /public/fonts.
-   Oxanium and JetBrains Mono come from @fontsource-variable (imported in __root). */
-@font-face {
-  font-family: "Nippo";
-  src: url("/fonts/Nippo-Variable.ttf") format("truetype");
-  font-weight: 100 900;
-  font-display: swap;
-  font-style: normal;
+:root {
+  --font-jetbrains-mono: "JetBrains Mono Variable", monospace;
+  --font-oxanium: "Oxanium Variable", sans-serif;
+
+  /* typeset.css reads `--color-*`/`--font-*` tokens at runtime, but
+     `@theme inline` inlines its values into utilities without emitting the
+     variables themselves — so alias the ones typeset needs to real tokens. */
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-ring: var(--ring);
+  --color-primary: var(--primary);
 }
 
 @theme inline {
@@ -52,10 +63,7 @@
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
 
-  --font-nippo: var(--font-nippo), "sans-serif";
-
   --font-mono: var(--font-mono);
-
   --font-heading: var(--font-heading);
 
   --color-sidebar-ring: var(--sidebar-ring);

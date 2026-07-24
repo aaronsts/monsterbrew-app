@@ -92,8 +92,10 @@
   --ring: var(--primary-500);
 
   --radius: 0px;
-  --font-mono: "JetBrains Mono", monospace;
-  --font-heading: "Oxanium", sans-serif;
+  /* the *-variable vars carry the registered @fontsource family names
+     ("JetBrains Mono Variable" / "Oxanium Variable"); defined in globals.css */
+  --font-mono: var(--font-jetbrains-mono, monospace);
+  --font-heading: var(--font-oxanium, sans-serif);
 }
 
 [data-theme="dark"] {

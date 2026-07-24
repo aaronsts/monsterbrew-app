@@ -228,6 +228,7 @@ const SECTIONS = [
   { id: "items", label: "Items" },
   { id: "accordion", label: "Accordion" },
   { id: "table", label: "Table" },
+  { id: "typeset", label: "Typeset" },
   { id: "overlays", label: "Overlays" },
   { id: "command", label: "Command" },
   { id: "misc", label: "Misc" },
@@ -714,6 +715,62 @@ export function ComponentLibrary() {
                 ))}
               </TableBody>
             </Table>
+          </Demo>
+        </Section>
+
+        <Section id="typeset" title="Typeset">
+          <Demo
+            label="Prose sample (.typeset)"
+            className="max-w-2xl border border-dashed p-6"
+          >
+            <div className="typeset">
+              <h1>The Ancient Red Dragon</h1>
+              <p>
+                The most covetous of the <strong>chromatic dragons</strong>,
+                red dragons tirelessly seek to increase their treasure hoards.
+                They are <em>exceptionally vain</em>, and this is reflected in
+                their <a href="#typeset">lairs</a>.
+              </p>
+              <h2>Lair actions</h2>
+              <p>
+                On initiative count <code>20</code> (losing ties), the dragon
+                takes a lair action:
+              </p>
+              <ul>
+                <li>Magma erupts from a point within 120 feet.</li>
+                <li>
+                  A tremor shakes the lair; each creature makes a{" "}
+                  <kbd>DC 15</kbd> Dexterity save.
+                </li>
+                <li>Volcanic gases fill a 20-foot-radius sphere.</li>
+              </ul>
+              <h3>Regional effects</h3>
+              <blockquote>
+                The region containing a legendary red dragon's lair is warped
+                by the dragon's magic.
+              </blockquote>
+              <pre>
+                <code>{`{ "name": "Ancient Red Dragon", "cr": 24 }`}</code>
+              </pre>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Die</th>
+                    <th>Effect</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>1–3</td>
+                    <td>Small earthquakes are common.</td>
+                  </tr>
+                  <tr>
+                    <td>4–6</td>
+                    <td>Water sources are warm and sulphurous.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </Demo>
         </Section>
 
