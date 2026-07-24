@@ -47,7 +47,7 @@ describe("NonmagicalDefensesField", () => {
     expect(
       screen.getByRole("button", { name: "Nonsilvered attacks" })
         .className,
-    ).toContain("text-green-500");
+    ).toContain("text-success-500");
   });
 
   it("tracks the two qualifiers independently", async () => {
