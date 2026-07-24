@@ -2,7 +2,6 @@
 
 import { Link, useRouterState } from "@tanstack/react-router";
 
-import { ThemeToggle } from "./theme-toggle";
 import { cn } from "@/lib/utils";
 
 export function MainNavigation() {
@@ -45,7 +44,6 @@ export function MainNavigation() {
         >
           Library
         </Link>
-        <ThemeToggle className="ml-2" />
       </nav>
     </div>
   );

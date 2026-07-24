@@ -53,7 +53,7 @@ function Home() {
 
       {/* What is Monsterbrew */}
       <section
-        className="relative overflow-hidden bg-primary ring-1 ring-foreground/10"
+        className="relative overflow-hidden bg-primary dark:bg-card ring-1 ring-foreground/10"
         style={{ color: "color-mix(in srgb, var(--bg-base) 96%, white 4%)" }}
       >
         <div
@@ -66,8 +66,8 @@ function Home() {
           }}
         />
         <div className="mx-auto max-w-5xl px-6 py-14 sm:px-12">
-          <p className="mb-8 flex items-center gap-2 text-xs font-medium tracking-widest text-primary-foreground uppercase">
-            <span aria-hidden className="size-1.5 bg-primary-foreground" />
+          <p className="mb-8 flex items-center gap-2 text-xs font-medium tracking-widest text-muted-foreground uppercase">
+            <span aria-hidden className="size-1.5 bg-muted-foreground" />
             What is Monsterbrew
           </p>
           <div className="grid gap-8 border-b border-white/15 pb-10 md:grid-cols-[1fr_1.15fr] md:gap-x-0">
@@ -118,7 +118,7 @@ function Home() {
       </section>
 
       {/* Closing CTA */}
-      <section className="relative overflow-hidden bg-accent p-10 text-center text-primary-foreground ring-1 ring-foreground/10 sm:p-16">
+      <section className="relative overflow-hidden bg-accent p-10 text-center text-primary-foreground dark:text-foreground ring-1 ring-foreground/10 sm:p-16">
         <div
           aria-hidden
           className="pointer-events-none absolute inset-0 opacity-15 mask-[radial-gradient(ellipse_70%_70%_at_50%_50%,#000,transparent)]"
@@ -130,7 +130,7 @@ function Home() {
         />
         <div className="relative">
           <h2 className="mb-3">Ready to brew your first monster?</h2>
-          <p className="mx-auto mb-8 max-w-xl text-primary-foreground/80">
+          <p className="mx-auto mb-8 max-w-xl text-primary-foreground/80 dark:text-foreground/80">
             Jump into the editor and start brewing!
           </p>
           <Link to="/editor">
