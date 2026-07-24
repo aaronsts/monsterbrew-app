@@ -66,8 +66,8 @@ function Home() {
           }}
         />
         <div className="mx-auto max-w-5xl px-6 py-14 sm:px-12">
-          <p className="mb-8 flex items-center gap-2 text-xs font-medium tracking-widest text-muted-foreground uppercase">
-            <span aria-hidden className="size-1.5 bg-muted-foreground" />
+          <p className="mb-8 flex items-center gap-2 text-xs font-medium tracking-widest text-primary-foreground uppercase">
+            <span aria-hidden className="size-1.5 bg-primary-foreground" />
             What is Monsterbrew
           </p>
           <div className="grid gap-8 border-b border-white/15 pb-10 md:grid-cols-[1fr_1.15fr] md:gap-x-0">
@@ -134,7 +134,7 @@ function Home() {
             Jump into the editor and start brewing!
           </p>
           <Link to="/editor">
-            <Button size="lg" color="neutral">
+            <Button size="lg" color="primary">
               Start Brewing <ArrowRight />
             </Button>
           </Link>
