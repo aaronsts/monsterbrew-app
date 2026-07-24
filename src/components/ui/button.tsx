@@ -1,6 +1,6 @@
 import { Button as ButtonPrimitive } from "@base-ui/react/button";
-import {  cva } from "class-variance-authority";
-import type {VariantProps} from "class-variance-authority";
+import { cva } from "class-variance-authority";
+import type { VariantProps } from "class-variance-authority";
 
 import { cn } from "@/lib/utils";
 
@@ -130,13 +130,13 @@ const buttonVariants = cva(
         color: "destructive",
         variant: "filled",
         class:
-          "bg-destructive text-destructive-foreground hover:bg-(--destructive-700) dark:hover:bg-(--destructive-100)",
+          "bg-destructive text-destructive-foreground hover:bg-(--destructive-700) dark:hover:bg-(--destructive-900)",
       },
       {
         color: "destructive",
         variant: "light",
         class:
-          "bg-destructive/10 text-destructive hover:bg-destructive/20 focus-visible:border-destructive/40 focus-visible:ring-destructive/20 dark:bg-destructive/20 dark:hover:bg-destructive/30 dark:focus-visible:ring-destructive/40",
+          "bg-destructive/10 text-destructive hover:bg-destructive/20 focus-visible:border-destructive/40 focus-visible:ring-destructive/20 dark:bg-destructive/80 dark:text-destructive-foreground dark:hover:bg-destructive/60 dark:focus-visible:ring-destructive/40",
       },
       {
         color: "destructive",
