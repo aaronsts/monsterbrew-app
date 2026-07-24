@@ -1,8 +1,9 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
+@import "./colors.css";
 /*  ---break--- */
-@custom-variant dark (&:is(.dark *));
+@custom-variant dark (&:is([data-theme="dark"] *));
 
 @plugin "@tailwindcss/typography";
 
@@ -16,101 +17,6 @@
   font-style: normal;
 }
 
-:root,
-[data-theme="memphis"] {
-  --accent-base: #4c0a18;
-  --primary-base: #d59d61;
-  --bg-base: #f4f0e5;
-  --ink-base: #160e0b;
-}
-/* [data-theme="memphis"] {
-  --primary-base: #d1473f;
-  --accent-base: #2fa0a8;
-  --bg-base: #f0ebe6;
-  --ink-base: #23202a;
-} */
-
-[data-theme="garnet-verdigris"] {
-  --primary-base: #8a2f34;
-  --accent-base: #2e6b68;
-  --bg-base: #eae3da;
-  --ink-base: #23211f;
-}
-
-:root,
-[data-theme] {
-  --background: color-mix(in srgb, var(--bg-base) 45%, white 55%);
-  --foreground: var(--ink-base);
-
-  --card: color-mix(in srgb, var(--bg-base) 85%, white 15%);
-  --card-foreground: var(--ink-base);
-
-  --popover: color-mix(in srgb, var(--bg-base) 75%, white 25%);
-  --popover-foreground: var(--ink-base);
-
-  --primary: var(--primary-base);
-  --primary-foreground: color-mix(in srgb, var(--bg-base) 96%, white 4%);
-
-  --secondary: color-mix(in srgb, var(--bg-base) 88%, var(--ink-base) 12%);
-  --secondary-foreground: var(--ink-base);
-
-  --muted: color-mix(in srgb, var(--bg-base) 70%, white 30%);
-  --muted-foreground: color-mix(
-    in srgb,
-    var(--ink-base) 65%,
-    var(--bg-base) 35%
-  );
-
-  --accent: var(--accent-base);
-  --accent-foreground: color-mix(in srgb, var(--bg-base) 96%, white 4%);
-
-  --destructive: #b3402a;
-  --destructive-foreground: color-mix(in srgb, var(--bg-base) 96%, white 4%);
-
-  --border: color-mix(in srgb, var(--ink-base) 22%, var(--bg-base) 78%);
-  --input: color-mix(in srgb, var(--ink-base) 22%, var(--bg-base) 78%);
-  --ring: var(--primary-base);
-
-  --radius: 0px;
-  --font-mono: "JetBrains Mono Variable", "JetBrains Mono", monospace;
-  --font-heading: "Oxanium Variable", "Oxanium", sans-serif;
-  --font-nippo: "Nippo", sans-serif;
-}
-
-.dark {
-  --background: color-mix(in srgb, var(--ink-base) 88%, black 2%);
-  --foreground: color-mix(in srgb, var(--bg-base) 92%, white 8%);
-
-  --card: color-mix(in srgb, var(--ink-base) 68%, black 32%);
-  --card-foreground: color-mix(in srgb, var(--bg-base) 92%, white 8%);
-
-  --popover: color-mix(in srgb, var(--ink-base) 78%, black 22%);
-  --popover-foreground: color-mix(in srgb, var(--bg-base) 92%, white 8%);
-
-  --primary: var(--primary-base);
-  --primary-foreground: color-mix(in srgb, var(--ink-base) 90%, black 10%);
-
-  --secondary: color-mix(in srgb, var(--ink-base) 60%, black 40%);
-  --secondary-foreground: color-mix(in srgb, var(--bg-base) 92%, white 8%);
-
-  --muted: color-mix(in srgb, var(--ink-base) 65%, black 35%);
-  --muted-foreground: color-mix(
-    in srgb,
-    var(--bg-base) 55%,
-    var(--ink-base) 45%
-  );
-
-  --accent: var(--accent-base);
-  --accent-foreground: color-mix(in srgb, var(--ink-base) 90%, black 10%);
-
-  --destructive: #b3402a;
-  --destructive-foreground: color-mix(in srgb, var(--bg-base) 96%, white 4%);
-
-  --border: color-mix(in srgb, var(--bg-base) 25%, var(--ink-base) 75%);
-  --input: color-mix(in srgb, var(--bg-base) 25%, var(--ink-base) 75%);
-  --ring: var(--accent-base);
-}
-
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -119,12 +25,20 @@
   --color-popover: var(--popover);
   --color-popover-foreground: var(--popover-foreground);
   --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
   --color-primary-foreground: var(--primary-foreground);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
   --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
 
   --color-proficient-foreground: var(--proficient-foreground);
   --color-destructive: var(--destructive);
@@ -178,7 +92,9 @@
 
   --radius-4xl: calc(var(--radius) * 2.6);
 }
-@theme {
+/* `static` keeps these variables in the compiled CSS even when no utility
+   class references them, so they stay usable via inline `var(--color-*)`. */
+@theme static {
   --color-aberration: #dd83fd;
   --color-beast: #a98dba;
   --color-celestial: #f7e64a;

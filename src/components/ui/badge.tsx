@@ -21,6 +21,22 @@ const badgeVariants = cva(
         ghost:
           "hover:bg-muted hover:text-muted-foreground dark:hover:bg-muted/50",
         link: "text-primary underline-offset-4 hover:underline",
+        /* creature type variants */
+        aberration: "border-aberration bg-aberration/20 text-foreground",
+        beast: "border-beast bg-beast/20 text-foreground",
+        celestial: "border-celestial bg-celestial/20 text-foreground",
+        construct: "border-construct bg-construct/20 text-foreground",
+        dragon: "border-dragon bg-dragon/20 text-foreground",
+        elemental: "border-elemental bg-elemental/20 text-foreground",
+        fey: "border-fey bg-fey/20 text-foreground",
+        fiend: "border-fiend bg-fiend/20 text-foreground",
+        giant: "border-giant bg-giant/20 text-foreground",
+        humanoid: "border-humanoid bg-humanoid/20 text-foreground",
+        monstrosity: "border-monstrosity bg-monstrosity/20 text-foreground",
+        ooze: "border-ooze bg-ooze/20 text-foreground",
+        plant: "border-plant bg-plant/20 text-foreground",
+        undead: "border-undead bg-undead/20 text-foreground",
+        other: "border-other bg-other/20 text-foreground",
       },
     },
     defaultVariants: {
