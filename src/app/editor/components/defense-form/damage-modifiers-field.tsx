@@ -1,12 +1,7 @@
 import { Info } from "lucide-react";
 import { Controller, useFormContext } from "react-hook-form";
-import {
-  damageStateStyles,
-  nextDamageState,
-  setDamage,
-} from "./helpers";
-import type {
-  DamageState} from "./helpers";
+import { damageStateStyles, nextDamageState, setDamage } from "./helpers";
+import type { DamageState } from "./helpers";
 import type { Monster } from "@/schema/monster-schema";
 import { Button } from "@/components/ui/button";
 import { FieldGroup, FieldLabel } from "@/components/ui/field";
@@ -47,17 +42,19 @@ export function DamageModifiersField() {
                   </p>
                   <ul className="space-y-0.5">
                     <li>
-                      <span className="font-semibold text-red-400">Red</span> —
-                      Vulnerable (double damage)
+                      <span className="font-semibold text-destructive-500">
+                        Red
+                      </span>{" "}
+                      — Vulnerable (double damage)
                     </li>
                     <li>
-                      <span className="font-semibold text-amber-400">
+                      <span className="font-semibold text-warning-500">
                         Amber
                       </span>{" "}
                       — Resistant (half damage)
                     </li>
                     <li>
-                      <span className="font-semibold text-green-500">
+                      <span className="font-semibold text-success-500">
                         Green
                       </span>{" "}
                       — Immune (no damage)
@@ -73,7 +70,8 @@ export function DamageModifiersField() {
                   <Button
                     key={type}
                     type="button"
-                    color="neutral" variant="outline"
+                    color="neutral"
+                    variant="outline"
                     size="sm"
                     className={cn("capitalize", damageStateStyles(state))}
                     onClick={() =>

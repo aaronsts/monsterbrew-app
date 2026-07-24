@@ -98,11 +98,11 @@ export function setNonmagical(
 export function damageStateStyles(state: DamageState): string {
   switch (state) {
     case "vulnerable":
-      return "border-red-400/50 bg-red-400/10 text-red-400 hover:bg-red-400/20 hover:text-red-400";
+      return "border-destructive-300 bg-destructive-100 text-destructive-500 hover:bg-destructive-300 hover:text-destructive-700";
     case "resistant":
-      return "border-amber-400/50 bg-amber-400/10 text-amber-400 hover:bg-amber-400/20 hover:text-amber-400";
+      return "border-warning-300 bg-warning-100 text-warning-500 hover:bg-warning-300 hover:text-warning-700";
     case "immune":
-      return "border-green-500/50 bg-green-500/10 text-green-500 hover:bg-green-500/20 hover:text-green-500";
+      return "border-success-300 bg-success-100 text-success-500 hover:bg-success-300 hover:text-success-700";
     default:
       return "border-input text-muted-foreground hover:bg-muted";
   }

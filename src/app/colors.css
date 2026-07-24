@@ -2,14 +2,14 @@
   /* base colors */
   --accent-base: #b23a24;
   --primary-base: #3a3128;
-  --bg-base: #e9ddc9;
+  --bg-base: #e9dbc9;
   --ink-base: #1a1810;
 
   /* neutral */
-  --neutral-100: color-mix(in oklab, #e9e1c9 35%, white);
-  --neutral-300: color-mix(in oklab, #1a1810 14%, #e9e1c9);
-  --neutral-500: color-mix(in oklab, #1a1810 42%, #e9e1c9);
-  --neutral-700: color-mix(in oklab, #1a1810 72%, #e9e1c9);
+  --neutral-100: color-mix(in oklab, #e9dbc9 35%, white);
+  --neutral-300: color-mix(in oklab, #1a1810 14%, #e9dbc9);
+  --neutral-500: color-mix(in oklab, #1a1810 42%, #e9dbc9);
+  --neutral-700: color-mix(in oklab, #1a1810 72%, #e9dbc9);
   --neutral-900: #1a1810;
 
   /* primary */
@@ -72,7 +72,7 @@
   --secondary-foreground: var(--neutral-900);
 
   --muted: var(--neutral-100);
-  --muted-foreground: var(--neutral-500);
+  --muted-foreground: var(--neutral-700);
 
   --accent: var(--accent-500);
   --accent-hover: var(--accent-700);
