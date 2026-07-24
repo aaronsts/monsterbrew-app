@@ -21,6 +21,15 @@ type Release = {
 
 const releases: Array<Release> = [
   {
+    version: "3.6.2",
+    date: "2026-07-24",
+    summary:
+      "A small fix for old links: the former My creatures page now sends you straight to the Library, where your saved creatures live today. Bookmarks and links from before the move keep working.",
+    changes: [
+      "Old /my-creatures links and bookmarks now redirect to the Library",
+    ],
+  },
+  {
     version: "3.6.1",
     date: "2026-07-22",
     summary:
