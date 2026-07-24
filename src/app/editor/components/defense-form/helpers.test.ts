@@ -155,9 +155,9 @@ describe("NONMAGICAL_ATTACK_TYPES", () => {
 
 describe("damageStateStyles", () => {
   it("returns distinct colour classes per state", () => {
-    expect(damageStateStyles("vulnerable")).toContain("text-red-400");
-    expect(damageStateStyles("resistant")).toContain("text-amber-400");
-    expect(damageStateStyles("immune")).toContain("text-green-500");
+    expect(damageStateStyles("vulnerable")).toContain("destructive");
+    expect(damageStateStyles("resistant")).toContain("warning");
+    expect(damageStateStyles("immune")).toContain("success");
   });
 
   it("returns the muted default for an empty state", () => {

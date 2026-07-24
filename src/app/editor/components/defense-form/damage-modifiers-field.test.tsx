@@ -49,7 +49,7 @@ describe("DamageModifiersField", () => {
   it("reflects a pre-existing state with its colour class", () => {
     renderField({ damage_modifiers: { cold: "immune" } });
     expect(screen.getByRole("button", { name: "cold" }).className).toContain(
-      "text-green-500",
+      "success",
     );
   });
 

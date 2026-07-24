@@ -117,10 +117,11 @@ export const MonsterForm = () => {
   return (
     <Form {...form}>
       <div className="space-y-4">
-        <div className="flex fixed bottom-2 z-50 inset-x-4 lg:sticky lg:top-18 justify-end gap-2">
+        <div className="flex fixed  bottom-2 z-50 inset-x-4 lg:sticky lg:top-18 justify-end gap-2">
           <Button
             type="button"
-            variant="secondary"
+            color="neutral"
+            variant="filled"
             size="lg"
             onClick={() => setShowImport(true)}
           >

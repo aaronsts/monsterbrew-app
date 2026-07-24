@@ -31,8 +31,8 @@ function TaperedRule({ thin = false }: { thin?: boolean }) {
   return (
     <div
       className={cn(
-        "w-full bg-linear-to-r from-primary to-transparent",
-        thin ? "h-[2px]" : "h-1",
+        "w-full bg-linear-to-r from-accent to-transparent",
+        thin ? "h-0.5" : "h-1",
       )}
       aria-hidden
     />
@@ -200,13 +200,14 @@ export function MonsterStatblock({
   return (
     <Card className="h-fit gap-0 py-0 text-[13px]/relaxed">
       {/* Name banner */}
-      <CardHeader className="pt-4">
+      <CardHeader className="pt-4 pb-2  gap-0">
         <h2
           data-slot="card-title"
-          className="mb-0 font-heading text-2xl leading-none font-bold tracking-wide text-primary"
+          className="mb-0 font-heading text-2xl leading-none font-bold tracking-wide text-accent"
         >
           {creature.name || "Example Creature"}
         </h2>
+
         <p className="mt-1 capitalize italic text-muted-foreground">
           {creature.size || "Size"} {creature.type || "Type"},{" "}
           {creature.alignment || "Alignment"}
@@ -217,7 +218,7 @@ export function MonsterStatblock({
         className={cn(
           "pb-4",
           columns
-            ? "md:columns-2 md:gap-x-8 [&>*+*]:mt-2 md:[&>*]:break-inside-avoid"
+            ? "md:columns-2 md:gap-x-8 [&>*+*]:mt-2 md:*:break-inside-avoid"
             : "flex flex-col gap-2",
         )}
       >
@@ -249,10 +250,10 @@ export function MonsterStatblock({
               )}
             >
               <span />
-              <span className="text-right font-heading text-[10px] font-semibold uppercase tracking-wide text-primary">
+              <span className="text-right font-heading text-[10px] font-semibold uppercase tracking-wide text-accent">
                 Mod
               </span>
-              <span className="text-right font-heading text-[10px] font-semibold uppercase tracking-wide text-primary">
+              <span className="text-right font-heading text-[10px] font-semibold uppercase tracking-wide text-accent">
                 Save
               </span>
               {group.map((score) => {

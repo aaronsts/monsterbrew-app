@@ -139,7 +139,7 @@ export function ImportDialog({
         <ImportStatus parsed={parsed} format={format} onPick={setOverride} />
 
         <DialogFooter>
-          <DialogClose render={<Button type="button" variant="outline" />}>
+          <DialogClose render={<Button type="button" color="neutral" variant="outline" />}>
             Cancel
           </DialogClose>
           <Button type="button" disabled={!format} onClick={handleImport}>
@@ -194,7 +194,7 @@ function ImportStatus({
             key={option}
             type="button"
             size="sm"
-            variant="outline"
+            color="neutral" variant="outline"
             onClick={() => onPick(option)}
           >
             {IMPORT_FORMAT_LABELS[option]}

@@ -2,7 +2,6 @@
 
 import { Link, useRouterState } from "@tanstack/react-router";
 
-import { ThemeToggle } from "./theme-toggle";
 import { cn } from "@/lib/utils";
 
 export function MainNavigation() {
@@ -20,7 +19,7 @@ export function MainNavigation() {
           to="/"
           className={cn(
             "transition-colors  hover:text-secondary",
-            pathname === "/" ? "text-primary " : "text-foreground",
+            pathname === "/" ? "text-accent " : "text-foreground",
           )}
         >
           Home
@@ -29,7 +28,7 @@ export function MainNavigation() {
           to="/editor"
           className={cn(
             "transition-colors  hover:text-secondary",
-            pathname === "/editor" ? "text-primary " : "text-foreground",
+            pathname === "/editor" ? "text-accent " : "text-foreground",
           )}
         >
           Editor
@@ -38,12 +37,13 @@ export function MainNavigation() {
           to="/library"
           className={cn(
             "transition-colors  hover:text-secondary",
-            pathname.startsWith("/library") ? "text-primary " : "text-foreground",
+            pathname.startsWith("/library")
+              ? "text-accent "
+              : "text-foreground",
           )}
         >
           Library
         </Link>
-        <ThemeToggle className="ml-2" />
       </nav>
     </div>
   );

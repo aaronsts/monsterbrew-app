@@ -95,7 +95,7 @@ export default function CreatureDetail() {
       <div className="flex flex-col items-center justify-center gap-4 py-16">
         <p>Creature not found.</p>
         <Link to="/library">
-          <Button variant="outline">
+          <Button color="neutral" variant="outline">
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back to library
           </Button>
@@ -108,23 +108,23 @@ export default function CreatureDetail() {
     <div className="flex flex-col gap-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <Link to="/library">
-          <Button variant="ghost" size="sm">
+          <Button color="neutral" variant="ghost" size="sm">
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back to library
           </Button>
         </Link>
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" onClick={handleEdit}>
+          <Button color="neutral" variant="outline" size="sm" onClick={handleEdit}>
             <Edit className="mr-2 h-4 w-4" />
             Edit
           </Button>
-          <Button variant="outline" size="sm" onClick={handleDuplicate}>
+          <Button color="neutral" variant="outline" size="sm" onClick={handleDuplicate}>
             <Copy className="mr-2 h-4 w-4" />
             Duplicate
           </Button>
           <CreatureExportMenu creature={creature} statblockRef={statblockRef} />
           <Button
-            variant="outline"
+            color="neutral" variant="outline"
             size="sm"
             onClick={handleDelete}
             className="text-destructive"

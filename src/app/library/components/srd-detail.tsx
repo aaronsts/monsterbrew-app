@@ -35,7 +35,7 @@ export default function SrdDetail() {
       <div className="flex flex-col items-center justify-center gap-4 py-16">
         <p>SRD monster not found.</p>
         <Link to="/library">
-          <Button variant="outline">
+          <Button color="neutral" variant="outline">
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back to library
           </Button>
@@ -48,14 +48,14 @@ export default function SrdDetail() {
     <div className="flex flex-col gap-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <Link to="/library" search={{ source: "srd" }}>
-          <Button variant="ghost" size="sm">
+          <Button color="neutral" variant="ghost" size="sm">
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back to library
           </Button>
         </Link>
         <div className="flex items-center gap-2">
           <Badge variant="outline">SRD</Badge>
-          <Button variant="default" size="sm" onClick={copyToEditor}>
+          <Button variant="filled" size="sm" onClick={copyToEditor}>
             <PencilRuler className="mr-2 h-4 w-4" />
             Copy to editor
           </Button>

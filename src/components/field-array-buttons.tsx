@@ -30,7 +30,7 @@ export function FieldArrayButtons({
         onClick={() => moveUp(index)}
         disabled={index === 0}
         className="disabled:opacity-20"
-        variant="transparent"
+        color="neutral" variant="transparent"
         size="icon"
       >
         ↑
@@ -40,14 +40,14 @@ export function FieldArrayButtons({
         onClick={() => moveDown(index)}
         disabled={index === fields.length - 1}
         className="disabled:opacity-20"
-        variant="transparent"
+        color="neutral" variant="transparent"
         size="icon"
       >
         ↓
       </Button>
       <Button
         type="button"
-        variant="transparent"
+        color="neutral" variant="transparent"
         size="icon"
         className="hover:text-destructive"
         onClick={() => remove(index)}
