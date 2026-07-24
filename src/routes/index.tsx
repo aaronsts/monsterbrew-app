@@ -17,7 +17,7 @@ function Home() {
         {/* Masked grid backdrop */}
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0 -z-10 opacity-25 [mask-image:radial-gradient(ellipse_60%_70%_at_50%_45%,#000,transparent)]"
+          className="pointer-events-none absolute inset-0 -z-10 opacity-25 mask-[radial-gradient(ellipse_60%_70%_at_50%_45%,#000,transparent)]"
           style={{
             backgroundImage:
               "linear-gradient(to right, var(--border) 1px, transparent 1px), linear-gradient(to bottom, var(--border) 1px, transparent 1px)",
@@ -31,7 +31,7 @@ function Home() {
         <h1 className="text-4xl font-bold tracking-tight md:text-6xl lg:text-7xl">
           Build D&D monsters,
           <br />
-          <span className="text-primary">In Minutes</span>
+          <span className="text-accent">In Minutes</span>
         </h1>
         <p className="max-w-2xl text-lg text-muted-foreground text-balance">
           Monsterbrew is a statblock builder for D&D 5e. Start from scratch or
@@ -39,12 +39,12 @@ function Home() {
         </p>
         <div className="flex flex-col gap-3 pt-2 sm:flex-row">
           <Link to="/editor">
-            <Button size="lg" variant="default">
+            <Button size="lg" color="accent" variant="filled">
               Start Brewing <ArrowRight />
             </Button>
           </Link>
           <Link to="/library">
-            <Button size="lg" variant="outline">
+            <Button size="lg" color="neutral" variant="outline">
               View Library
             </Button>
           </Link>
@@ -53,12 +53,12 @@ function Home() {
 
       {/* What is Monsterbrew */}
       <section
-        className="relative overflow-hidden bg-accent ring-1 ring-foreground/10"
+        className="relative overflow-hidden bg-primary ring-1 ring-foreground/10"
         style={{ color: "color-mix(in srgb, var(--bg-base) 96%, white 4%)" }}
       >
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0 opacity-[0.07] [mask-image:radial-gradient(ellipse_75%_75%_at_50%_50%,#000,transparent)]"
+          className="pointer-events-none absolute inset-0 opacity-[0.07] mask-[radial-gradient(ellipse_75%_75%_at_50%_50%,#000,transparent)]"
           style={{
             backgroundImage:
               "linear-gradient(to right, #fff 1px, transparent 1px), linear-gradient(to bottom, #fff 1px, transparent 1px)",
@@ -66,8 +66,8 @@ function Home() {
           }}
         />
         <div className="mx-auto max-w-5xl px-6 py-14 sm:px-12">
-          <p className="mb-8 flex items-center gap-2 text-xs font-medium tracking-widest text-primary uppercase">
-            <span aria-hidden className="size-1.5 bg-primary" />
+          <p className="mb-8 flex items-center gap-2 text-xs font-medium tracking-widest text-muted-foreground uppercase">
+            <span aria-hidden className="size-1.5 bg-muted-foreground" />
             What is Monsterbrew
           </p>
           <div className="grid gap-8 border-b border-white/15 pb-10 md:grid-cols-[1fr_1.15fr] md:gap-x-0">
@@ -118,10 +118,10 @@ function Home() {
       </section>
 
       {/* Closing CTA */}
-      <section className="relative overflow-hidden bg-primary p-10 text-center text-primary-foreground ring-1 ring-foreground/10 sm:p-16">
+      <section className="relative overflow-hidden bg-accent p-10 text-center text-primary-foreground ring-1 ring-foreground/10 sm:p-16">
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0 opacity-15 [mask-image:radial-gradient(ellipse_70%_70%_at_50%_50%,#000,transparent)]"
+          className="pointer-events-none absolute inset-0 opacity-15 mask-[radial-gradient(ellipse_70%_70%_at_50%_50%,#000,transparent)]"
           style={{
             backgroundImage:
               "linear-gradient(to right, var(--primary-foreground) 1px, transparent 1px), linear-gradient(to bottom, var(--primary-foreground) 1px, transparent 1px)",
@@ -134,10 +134,7 @@ function Home() {
             Jump into the editor and start brewing!
           </p>
           <Link to="/editor">
-            <Button
-              size="lg"
-              className="bg-accent text-accent-foreground hover:bg-accent/80"
-            >
+            <Button size="lg" color="neutral">
               Start Brewing <ArrowRight />
             </Button>
           </Link>

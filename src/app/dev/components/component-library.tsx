@@ -189,14 +189,14 @@ const CREATURE_TYPE_COLORS = [
   "other",
 ] as const;
 
-const BUTTON_VARIANTS = [
-  "default",
+const BUTTON_COLORS = ["neutral", "primary", "accent", "destructive"] as const;
+
+const BUTTON_STYLES = [
+  "filled",
+  "light",
   "outline",
-  "secondary",
   "ghost",
   "transparent",
-  "destructive",
-  "link",
 ] as const;
 
 const BADGE_VARIANTS = [
@@ -390,12 +390,26 @@ export function ComponentLibrary() {
         </Section>
 
         <Section id="buttons" title="Buttons">
-          <Demo label="Variants">
-            {BUTTON_VARIANTS.map((variant) => (
-              <Button key={variant} variant={variant}>
-                {variant}
-              </Button>
+          <Demo
+            label="Color × variant"
+            className="flex flex-col gap-3 border border-dashed p-4"
+          >
+            {BUTTON_COLORS.map((color) => (
+              <div key={color} className="flex flex-wrap items-center gap-3">
+                <span className="w-20 text-xs text-muted-foreground">
+                  {color}
+                </span>
+                {BUTTON_STYLES.map((variant) => (
+                  <Button key={variant} color={color} variant={variant}>
+                    {variant}
+                  </Button>
+                ))}
+              </div>
             ))}
+            <div className="flex flex-wrap items-center gap-3">
+              <span className="w-20 text-xs text-muted-foreground">link</span>
+              <Button variant="link">link</Button>
+            </div>
           </Demo>
           <Demo label="Sizes">
             <Button size="xs">xs</Button>
@@ -417,11 +431,11 @@ export function ComponentLibrary() {
           </Demo>
           <Demo label="States">
             <Button disabled>Disabled</Button>
-            <Button variant="outline">
+            <Button color="neutral" variant="outline">
               <Download data-icon="inline-start" />
               With icon
             </Button>
-            <Button variant="outline">
+            <Button color="neutral" variant="outline">
               <LoadingSpinner className="size-4" />
               Loading
             </Button>
@@ -609,7 +623,7 @@ export function ComponentLibrary() {
               </CardContent>
               <CardFooter className="gap-2">
                 <Button size="sm">Edit</Button>
-                <Button size="sm" variant="destructive">
+                <Button size="sm" color="destructive" variant="light">
                   <Trash2 data-icon="inline-start" />
                   Delete
                 </Button>
@@ -706,7 +720,7 @@ export function ComponentLibrary() {
         <Section id="overlays" title="Overlays">
           <Demo label="Dialog / Sheet / Popover / Dropdown / Tooltip / Toast">
             <Dialog>
-              <DialogTrigger render={<Button variant="outline">Dialog</Button>} />
+              <DialogTrigger render={<Button color="neutral" variant="outline">Dialog</Button>} />
               <DialogContent>
                 <DialogHeader>
                   <DialogTitle>Save creature</DialogTitle>
@@ -716,14 +730,14 @@ export function ComponentLibrary() {
                 </DialogHeader>
                 <Input placeholder="Creature name" />
                 <DialogFooter>
-                  <DialogClose render={<Button variant="ghost">Cancel</Button>} />
+                  <DialogClose render={<Button color="neutral" variant="ghost">Cancel</Button>} />
                   <DialogClose render={<Button>Save</Button>} />
                 </DialogFooter>
               </DialogContent>
             </Dialog>
 
             <Sheet>
-              <SheetTrigger render={<Button variant="outline">Sheet</Button>} />
+              <SheetTrigger render={<Button color="neutral" variant="outline">Sheet</Button>} />
               <SheetContent>
                 <SheetHeader>
                   <SheetTitle>Sheet title</SheetTitle>
@@ -732,13 +746,13 @@ export function ComponentLibrary() {
                   </SheetDescription>
                 </SheetHeader>
                 <SheetFooter>
-                  <SheetClose render={<Button variant="ghost">Close</Button>} />
+                  <SheetClose render={<Button color="neutral" variant="ghost">Close</Button>} />
                 </SheetFooter>
               </SheetContent>
             </Sheet>
 
             <Popover>
-              <PopoverTrigger render={<Button variant="outline">Popover</Button>} />
+              <PopoverTrigger render={<Button color="neutral" variant="outline">Popover</Button>} />
               <PopoverContent>
                 <PopoverHeader>
                   <PopoverTitle>Popover title</PopoverTitle>
@@ -751,7 +765,7 @@ export function ComponentLibrary() {
 
             <DropdownMenu>
               <DropdownMenuTrigger
-                render={<Button variant="outline">Dropdown</Button>}
+                render={<Button color="neutral" variant="outline">Dropdown</Button>}
               />
               <DropdownMenuContent>
                 <DropdownMenuGroup>
@@ -771,34 +785,34 @@ export function ComponentLibrary() {
 
             <Tooltip>
               <TooltipTrigger
-                render={<Button variant="outline">Tooltip</Button>}
+                render={<Button color="neutral" variant="outline">Tooltip</Button>}
               />
               <TooltipContent>Helpful hover hint.</TooltipContent>
             </Tooltip>
 
-            <Button variant="outline" onClick={() => toast("A plain toast.")}>
+            <Button color="neutral" variant="outline" onClick={() => toast("A plain toast.")}>
               Toast
             </Button>
             <Button
-              variant="outline"
+              color="neutral" variant="outline"
               onClick={() => toast.success("Creature saved.")}
             >
               Toast success
             </Button>
             <Button
-              variant="outline"
+              color="neutral" variant="outline"
               onClick={() => toast.error("Something went wrong.")}
             >
               Toast error
             </Button>
             <Button
-              variant="outline"
+              color="neutral" variant="outline"
               onClick={() => toast.warning("This creature has no actions.")}
             >
               Toast warning
             </Button>
             <Button
-              variant="outline"
+              color="neutral" variant="outline"
               onClick={() => toast.info("Import finished with 2 skips.")}
             >
               Toast info

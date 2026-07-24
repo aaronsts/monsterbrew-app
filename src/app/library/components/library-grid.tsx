@@ -133,7 +133,7 @@ export default function LibraryGrid({
         </div>
         {!isSrd && (
           <Button
-            variant="outline"
+            color="neutral" variant="outline"
             size="sm"
             onClick={backupCreatures}
             disabled={isLoading || myCreatures.length === 0}
@@ -146,7 +146,8 @@ export default function LibraryGrid({
 
       <div className="inline-flex self-start ring-1 ring-foreground/15">
         <Button
-          variant={isSrd ? "ghost" : "default"}
+          color={isSrd ? "neutral" : "primary"}
+          variant={isSrd ? "ghost" : "filled"}
           size="sm"
           className="rounded-none"
           onClick={() => setSource("mine")}
@@ -154,7 +155,8 @@ export default function LibraryGrid({
           My creatures
         </Button>
         <Button
-          variant={isSrd ? "default" : "ghost"}
+          color={isSrd ? "primary" : "neutral"}
+          variant={isSrd ? "filled" : "ghost"}
           size="sm"
           className="rounded-none"
           onClick={() => setSource("srd")}

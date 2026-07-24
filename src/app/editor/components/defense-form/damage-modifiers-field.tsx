@@ -73,7 +73,7 @@ export function DamageModifiersField() {
                   <Button
                     key={type}
                     type="button"
-                    variant="outline"
+                    color="neutral" variant="outline"
                     size="sm"
                     className={cn("capitalize", damageStateStyles(state))}
                     onClick={() =>

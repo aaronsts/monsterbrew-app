@@ -67,7 +67,7 @@ function FeatureList({
         {title ? <FieldLabel className="mb-0">{title}</FieldLabel> : <span />}
         <Button
           type="button"
-          variant="outline"
+          color="neutral" variant="outline"
           size="sm"
           onClick={() => append({ name: "", description: "" })}
         >
@@ -111,7 +111,7 @@ function FeatureList({
               <div className="flex gap-1">
                 <Button
                   type="button"
-                  variant="ghost"
+                  color="neutral" variant="ghost"
                   size="icon-sm"
                   disabled={index === 0}
                   onClick={() => swap(index, index - 1)}
@@ -121,7 +121,7 @@ function FeatureList({
                 </Button>
                 <Button
                   type="button"
-                  variant="ghost"
+                  color="neutral" variant="ghost"
                   size="icon-sm"
                   disabled={index === fields.length - 1}
                   onClick={() => swap(index, index + 1)}
@@ -131,7 +131,7 @@ function FeatureList({
                 </Button>
                 <Button
                   type="button"
-                  variant="ghost"
+                  color="neutral" variant="ghost"
                   size="icon-sm"
                   onClick={() => remove(index)}
                 >

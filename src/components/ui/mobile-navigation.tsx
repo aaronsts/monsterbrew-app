@@ -24,7 +24,7 @@ export function MobileNavigation() {
         </Link>
         <div className="flex items-center gap-2">
           <ThemeToggle />
-          <SheetTrigger render={<Button variant="transparent" size="icon" />}>
+          <SheetTrigger render={<Button color="neutral" variant="transparent" size="icon" />}>
             <Menu />
             <span className="sr-only">Toggle Menu</span>
           </SheetTrigger>

@@ -69,7 +69,7 @@ export function NonmagicalDefensesField() {
                   <Button
                     key={key}
                     type="button"
-                    variant="outline"
+                    color="neutral" variant="outline"
                     size="sm"
                     className={damageStateStyles(state)}
                     onClick={() =>
