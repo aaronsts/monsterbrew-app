@@ -21,6 +21,16 @@ type Release = {
 
 const releases: Array<Release> = [
   {
+    version: "3.6.2",
+    date: "2026-07-24",
+    summary:
+      "Monsterbrew now has a direct line for your ideas and bug reports. A new “Send feedback” form in the footer lets you share thoughts in a couple of clicks — no account needed — and lands straight in our inbox. Prefer GitHub? A “Report a bug” link takes you right to the issue tracker.",
+    changes: [
+      "Added a “Send feedback” form to the footer — leave your email if you'd like a reply, or send it anonymously",
+      "Added a “Report a bug” link to the footer that opens a new GitHub issue",
+    ],
+  },
+  {
     version: "3.6.1",
     date: "2026-07-22",
     summary:
