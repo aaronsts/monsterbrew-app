@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { MonsterForm } from "@/app/editor/components/monster-form";
+import { FeedbackCta } from "@/components/feedback-cta";
 
 type EditorSearch = {
   id?: string;
@@ -19,5 +20,10 @@ export const Route = createFileRoute("/editor")({
 
 // eslint-disable-next-line react-refresh/only-export-components
 function CreatureEditor() {
-  return <MonsterForm />;
+  return (
+    <>
+      <MonsterForm />
+      <FeedbackCta />
+    </>
+  );
 }
