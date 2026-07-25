@@ -2,14 +2,18 @@
 
 import { Link, useRouterState } from "@tanstack/react-router";
 
-import { ThemeToggle } from "./theme-toggle";
 import { cn } from "@/lib/utils";
 
 export function MainNavigation() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
   return (
-    <div className="max-w-8xl w-full shadow-xs h-14 rounded-lg mx-3 px-6 hidden md:flex justify-between">
+    <div
+      className={cn(
+        "max-w-8xl w-full shadow-xs h-14 rounded-lg mx-3 hidden md:flex justify-between",
+        pathname === "/" ? "px-6" : "",
+      )}
+    >
       <Link to="/" className="mr-4 flex items-center gap-2 lg:mr-6">
         <h1 className="hidden text-2xl font-bold md:inline-block">
           Monsterbrew
@@ -20,7 +24,7 @@ export function MainNavigation() {
           to="/"
           className={cn(
             "transition-colors  hover:text-secondary",
-            pathname === "/" ? "text-primary " : "text-foreground",
+            pathname === "/" ? "text-accent " : "text-foreground",
           )}
         >
           Home
@@ -29,7 +33,7 @@ export function MainNavigation() {
           to="/editor"
           className={cn(
             "transition-colors  hover:text-secondary",
-            pathname === "/editor" ? "text-primary " : "text-foreground",
+            pathname === "/editor" ? "text-accent " : "text-foreground",
           )}
         >
           Editor
@@ -38,12 +42,13 @@ export function MainNavigation() {
           to="/library"
           className={cn(
             "transition-colors  hover:text-secondary",
-            pathname.startsWith("/library") ? "text-primary " : "text-foreground",
+            pathname.startsWith("/library")
+              ? "text-accent "
+              : "text-foreground",
           )}
         >
           Library
         </Link>
-        <ThemeToggle className="ml-2" />
       </nav>
     </div>
   );

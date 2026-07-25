@@ -1,0 +1,11 @@
+---
+title: Smart attack and save lines
+---
+
+Writing attacks and saving throws is now a one-click affair. Insert a full attack or saving throw line into any description and it shows up as live preview text, computed from your creature's stats. Click the line to adjust the attack kind, to-hit, reach, damage, and more in a small popup — the numbers recompute whenever the creature's ability scores or proficiency bonus change.
+
+- Insert a complete attack or saving throw line with one click, or type {@ in a description to autocomplete one
+- Inserted lines render as readable preview text in the field — click one to edit its parts in a popup
+- To-hit bonuses, save DCs, and damage dice can link to an ability score and update live when stats change
+- Markup mistakes are underlined as you type
+- A “How tags work” dialog next to each description field explains the tag system

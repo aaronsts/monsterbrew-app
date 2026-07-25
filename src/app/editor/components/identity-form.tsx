@@ -373,7 +373,7 @@ export const IdentityForm = () => {
                 />
                 <Button
                   type="button"
-                  variant="outline"
+                  color="neutral" variant="outline"
                   onClick={addCustomLanguage}
                   disabled={!customLanguageInput.trim()}
                 >
@@ -386,7 +386,7 @@ export const IdentityForm = () => {
                     <Badge key={language} variant="secondary">
                       {language}
                       <Button
-                        variant="transparent"
+                        color="neutral" variant="transparent"
                         size="icon-xs"
                         type="button"
                         aria-label={`Remove ${language}`}

@@ -4,7 +4,6 @@ import * as React from "react";
 import { Link } from "@tanstack/react-router";
 
 import { Menu } from "lucide-react";
-import { ThemeToggle } from "../theme-toggle";
 import { Button } from "./button";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "./sheet";
 import { cn } from "@/lib/utils";
@@ -23,8 +22,7 @@ export function MobileNavigation() {
           <h1 className="text-xl font-bold">Monsterbrew</h1>
         </Link>
         <div className="flex items-center gap-2">
-          <ThemeToggle />
-          <SheetTrigger render={<Button variant="transparent" size="icon" />}>
+          <SheetTrigger render={<Button color="neutral" variant="transparent" size="icon" />}>
             <Menu />
             <span className="sr-only">Toggle Menu</span>
           </SheetTrigger>

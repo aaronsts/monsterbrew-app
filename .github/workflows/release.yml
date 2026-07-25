@@ -17,12 +17,20 @@ jobs:
       released: ${{ env.RELEASED }}
       newVersion: ${{ env.NEW_VERSION }}
     steps:
+      - name: Mint release bot token
+        id: release-bot-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.RELEASE_BOT_APP_ID }}
+          private-key: ${{ secrets.RELEASE_BOT_PRIVATE_KEY }}
+
       - uses: actions/checkout@v3
         name: Checkout code
         id: checkout
         with:
           # This is needed for semantic-release to work
           fetch-depth: 0
+          token: ${{ steps.release-bot-token.outputs.token }}
 
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
@@ -31,7 +39,6 @@ jobs:
           cache: pnpm
 
       - name: Install Package Dependencies
-        # needed for both commitlint and semantic-release to work
         run: pnpm install --frozen-lockfile
 
       - name: Lint commits on main since last version tag
@@ -68,7 +75,7 @@ jobs:
       - name: Create GitHub release
         id: semanticrelease
         env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          GH_TOKEN: ${{ steps.release-bot-token.outputs.token }}
         run: |
           echo "RELEASED=0" >> $GITHUB_ENV
           # Replaces `npm audit signatures`; pnpm has no signature-audit
@@ -90,6 +97,11 @@ jobs:
         run: |
           echo "New Version Number is: ${{ needs.create-release.outputs.newVersion }}"
       - uses: actions/checkout@v4
+        with:
+          # Build from the release tag, not the merge commit that triggered
+          # the workflow — the tag includes the changelog entries that
+          # semantic-release promoted and committed during the release.
+          ref: v${{ needs.create-release.outputs.newVersion }}
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:

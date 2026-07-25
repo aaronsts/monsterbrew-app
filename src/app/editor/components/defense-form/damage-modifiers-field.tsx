@@ -22,16 +22,18 @@ export function DamageModifiersField() {
               <FieldLabel>Damage Modifiers</FieldLabel>
               <div className="flex gap-2 text-muted-foreground italic text-[10px]">
                 <p>
-                  <span className="font-semibold text-red-400">Red</span> —
-                  Vulnerable (double damage)
+                  <span className="font-semibold text-destructive-500">
+                    Red
+                  </span>{" "}
+                  — Vulnerable (double damage)
                 </p>
                 <p>
-                  <span className="font-semibold text-amber-400">Amber</span> —
-                  Resistant (half damage)
+                  <span className="font-semibold text-warning-500">Amber</span>{" "}
+                  — Resistant (half damage)
                 </p>
                 <p>
-                  <span className="font-semibold text-green-500">Green</span> —
-                  Immune (no damage)
+                  <span className="font-semibold text-success-500">Green</span>{" "}
+                  — Immune (no damage)
                 </p>
               </div>
             </span>
@@ -42,6 +44,7 @@ export function DamageModifiersField() {
                   <Button
                     key={type}
                     type="button"
+                    color="neutral"
                     variant="outline"
                     size="sm"
                     className={cn("capitalize", damageStateStyles(state))}

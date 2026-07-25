@@ -77,10 +77,10 @@ export function ExportMarkdownDialog({
         />
 
         <DialogFooter>
-          <DialogClose render={<Button type="button" variant="outline" />}>
+          <DialogClose render={<Button type="button" color="neutral" variant="outline" />}>
             Close
           </DialogClose>
-          <Button type="button" variant="outline" onClick={handleSave}>
+          <Button type="button" color="neutral" variant="outline" onClick={handleSave}>
             <Download className="mr-2 h-4 w-4" />
             Save .md
           </Button>

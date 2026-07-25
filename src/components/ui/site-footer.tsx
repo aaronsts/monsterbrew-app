@@ -1,6 +1,11 @@
 import { Link } from "@tanstack/react-router";
+import { Bug } from "lucide-react";
+import { Button } from "./button";
 import { KofiLogo } from "@/components/images/KofiLogo";
 import { GithubLogo } from "@/components/images/GithubLogo";
+import { ThemeToggle } from "@/components/theme-toggle";
+import { FeedbackDialog } from "@/components/feedback-dialog";
+import { latestVersion } from "@/lib/version";
 
 const navigation = [
   { href: "/editor", label: "Editor" },
@@ -22,14 +27,17 @@ export function SiteFooter() {
             A free statblock builder for D&D 5e. Build, save, and export your
             homebrew creatures.
           </p>
-          <a
-            href="https://github.com/aaronsts/monsterbrew-app"
-            target="_blank"
-            referrerPolicy="no-referrer"
-            className="flex w-fit items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
-          >
-            <GithubLogo />
-          </a>
+          <div className="flex items-center gap-3">
+            <ThemeToggle />
+            <a
+              href="https://github.com/aaronsts/monsterbrew-app"
+              target="_blank"
+              referrerPolicy="no-referrer"
+              className="flex w-fit items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
+            >
+              <GithubLogo />
+            </a>
+          </div>
         </div>
 
         {/* Navigation */}
@@ -67,6 +75,20 @@ export function SiteFooter() {
                 Buy me a Coffee
               </a>
             </li>
+            <li>
+              <FeedbackDialog />
+            </li>
+            <li>
+              <a
+                href="https://github.com/aaronsts/monsterbrew-app/issues/new"
+                target="_blank"
+                referrerPolicy="no-referrer"
+                className="flex items-center gap-2 text-muted-foreground transition-colors hover:text-foreground"
+              >
+                <Bug className="size-4" />
+                Report a bug
+              </a>
+            </li>
           </ul>
         </nav>
       </div>
@@ -74,7 +96,14 @@ export function SiteFooter() {
       {/* Bottom bar */}
       <div className="border-t border-border/60">
         <div className="max-w-8xl mx-auto flex w-full flex-col items-center justify-between gap-2 px-6 py-4 text-xs text-muted-foreground sm:flex-row">
-          <p>© {new Date().getFullYear()} Monsterbrew</p>
+          <p className="flex items-center gap-2">
+            <span>{new Date().getFullYear()} Monsterbrew</span>
+            {latestVersion ? (
+              <Link to="/changelog">
+                <Button variant="link">v{latestVersion}</Button>
+              </Link>
+            ) : null}
+          </p>
           <p>
             Not affiliated with Wizards of the Coast. Made for Dungeon Masters.
           </p>
