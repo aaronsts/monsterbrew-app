@@ -17,27 +17,26 @@ jobs:
       released: ${{ env.RELEASED }}
       newVersion: ${{ env.NEW_VERSION }}
     steps:
-      - uses: actions/checkout@v3
-        name: Checkout code
-        id: checkout
-        with:
-          # This is needed for semantic-release to work
-          fetch-depth: 0
-          # Don't keep the workflow's GITHUB_TOKEN in git config
-          persist-credentials: false
-
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: pnpm
-
       - name: Mint release bot token
         id: release-bot-token
         uses: actions/create-github-app-token@v2
         with:
           app-id: ${{ secrets.RELEASE_BOT_APP_ID }}
           private-key: ${{ secrets.RELEASE_BOT_PRIVATE_KEY }}
+
+      - uses: actions/checkout@v3
+        name: Checkout code
+        id: checkout
+        with:
+          # This is needed for semantic-release to work
+          fetch-depth: 0
+          token: ${{ steps.release-bot-token.outputs.token }}
+
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
 
       - name: Install Package Dependencies
         run: pnpm install --frozen-lockfile
