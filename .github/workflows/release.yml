@@ -23,6 +23,8 @@ jobs:
         with:
           # This is needed for semantic-release to work
           fetch-depth: 0
+          # Don't keep the workflow's GITHUB_TOKEN in git config
+          persist-credentials: false
 
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
@@ -30,8 +32,14 @@ jobs:
           node-version: 22
           cache: pnpm
 
+      - name: Mint release bot token
+        id: release-bot-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.RELEASE_BOT_APP_ID }}
+          private-key: ${{ secrets.RELEASE_BOT_PRIVATE_KEY }}
+
       - name: Install Package Dependencies
-        # needed for both commitlint and semantic-release to work
         run: pnpm install --frozen-lockfile
 
       - name: Lint commits on main since last version tag
@@ -68,7 +76,7 @@ jobs:
       - name: Create GitHub release
         id: semanticrelease
         env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          GH_TOKEN: ${{ steps.release-bot-token.outputs.token }}
         run: |
           echo "RELEASED=0" >> $GITHUB_ENV
           # Replaces `npm audit signatures`; pnpm has no signature-audit
