@@ -5,20 +5,28 @@ import { CornerBrackets } from "@/components/home/corner-brackets";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { releases } from "@/lib/releases";
+import { releases, unreleased } from "@/lib/releases";
 
 export const Route = createFileRoute("/changelog")({
   component: Changelog,
 });
 
+const allReleases = unreleased ? [unreleased, ...releases] : releases;
+
+const versionLabel = (version: string) =>
+  version === "unreleased" ? "Unreleased" : `v${version}`;
+
+const sidebarLabel = (version: string) =>
+  version === "unreleased" ? "Unreleased" : version;
+
 // eslint-disable-next-line react-refresh/only-export-components
 function Changelog() {
   const [activeVersion, setActiveVersion] = useState<string>(
-    releases[0].version,
+    allReleases[0].version,
   );
 
   useEffect(() => {
-    const sections = releases
+    const sections = allReleases
       .map((release) => document.getElementById(release.version))
       .filter((el): el is HTMLElement => el !== null);
     if (sections.length === 0) return;
@@ -29,7 +37,7 @@ function Changelog() {
         for (const entry of entries) {
           visibility.set(entry.target.id, entry.isIntersecting);
         }
-        const current = releases.find((release) =>
+        const current = allReleases.find((release) =>
           visibility.get(release.version),
         );
         if (current) setActiveVersion(current.version);
@@ -92,7 +100,7 @@ function Changelog() {
               On this page
             </p>
             <ul className="flex flex-col border-l border-border">
-              {releases.map((release) => {
+              {allReleases.map((release) => {
                 const active = activeVersion === release.version;
                 return (
                   <li key={release.version}>
@@ -102,8 +110,8 @@ function Changelog() {
                       aria-current={active ? "true" : undefined}
                       title={
                         release.title
-                          ? `${release.version} · ${release.title}`
-                          : release.version
+                          ? `${sidebarLabel(release.version)} · ${release.title}`
+                          : sidebarLabel(release.version)
                       }
                       className={cn(
                         "-ml-px block truncate border-l py-1.5 pl-4 text-sm transition-colors",
@@ -112,7 +120,7 @@ function Changelog() {
                           : "border-transparent text-muted-foreground hover:border-muted-foreground/40 hover:text-foreground",
                       )}
                     >
-                      {release.version}
+                      {sidebarLabel(release.version)}
                       {release.title ? (
                         <span
                           className={
@@ -133,7 +141,7 @@ function Changelog() {
 
         {/* Releases */}
         <div className="flex min-w-0 flex-1 flex-col gap-6">
-          {releases.map((release) => (
+          {allReleases.map((release) => (
             <Card
               key={release.version}
               id={release.version}
@@ -142,7 +150,9 @@ function Changelog() {
               <CardHeader>
                 <div className="flex flex-wrap  items-center gap-3">
                   <h2 className="mb-0 text-2xl font-semibold tracking-tight">
-                    <span className="text-accent">v{release.version}</span>
+                    <span className="text-accent">
+                      {versionLabel(release.version)}
+                    </span>
                     {release.title ? (
                       <span className="text-accent">
                         {" — "}
@@ -150,17 +160,26 @@ function Changelog() {
                       </span>
                     ) : null}
                   </h2>
+                  {release.version === "unreleased" ? (
+                    <Badge variant="secondary">Pending release</Badge>
+                  ) : null}
                   {release.badge ? (
                     <Badge variant="secondary">{release.badge}</Badge>
                   ) : null}
                 </div>
-                <time className="text-xs text-muted-foreground italic">
-                  {release.date}
-                </time>
+                {release.date ? (
+                  <time className="text-xs text-muted-foreground italic">
+                    {release.date}
+                  </time>
+                ) : null}
               </CardHeader>
               <CardContent className="flex flex-col gap-4">
-                {release.summary ? (
-                  <p className="text-foreground">{release.summary}</p>
+                {release.summary.length > 0 ? (
+                  <div className="flex flex-col gap-3 text-foreground">
+                    {release.summary.map((paragraph) => (
+                      <p key={paragraph}>{paragraph}</p>
+                    ))}
+                  </div>
                 ) : null}
                 <ul className="space-y-1.5 text-foreground">
                   {release.changes.map((change) => (

@@ -1,7 +1,9 @@
 import { Link } from "@tanstack/react-router";
+import { Button } from "./button";
 import { KofiLogo } from "@/components/images/KofiLogo";
 import { GithubLogo } from "@/components/images/GithubLogo";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { latestVersion } from "@/lib/version";
 
 const navigation = [
   { href: "/editor", label: "Editor" },
@@ -78,7 +80,14 @@ export function SiteFooter() {
       {/* Bottom bar */}
       <div className="border-t border-border/60">
         <div className="max-w-8xl mx-auto flex w-full flex-col items-center justify-between gap-2 px-6 py-4 text-xs text-muted-foreground sm:flex-row">
-          <p>© {new Date().getFullYear()} Monsterbrew</p>
+          <p className="flex items-center gap-2">
+            <span>{new Date().getFullYear()} Monsterbrew</span>
+            {latestVersion ? (
+              <Link to="/changelog">
+                <Button variant="link">v{latestVersion}</Button>
+              </Link>
+            ) : null}
+          </p>
           <p>
             Not affiliated with Wizards of the Coast. Made for Dungeon Masters.
           </p>

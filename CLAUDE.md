@@ -22,7 +22,9 @@ pnpm blocks dependency build scripts by default; the ones this project needs (`e
 
 ## Commits & releases
 
-Commit messages must follow **Conventional Commits** — enforced locally by a Husky `commit-msg` hook (commitlint) and in CI on PR commits *and* the PR title/description. Releases are fully automated by `semantic-release` on merge to `main` (`fix:` → patch, `feat:` → minor, `feat!:`/`BREAKING CHANGE` → major; `refactor`/`style`/`ci`/`chore`/`docs(README)` also cut patches). The changelog lives at `docs/CHANGELOG.md` and is surfaced in-app at `/changelog`. Do not bump `package.json` version manually — it is `0.0.0-managed.by.semantic.release`.
+Commit messages must follow **Conventional Commits** — enforced locally by a Husky `commit-msg` hook (commitlint) and in CI on PR commits *and* the PR title/description. Releases are fully automated by `semantic-release` on merge to `main` (`fix:` → patch, `feat:` → minor, `feat!:`/`BREAKING CHANGE` → major; `refactor`/`style`/`ci`/`chore`/`docs(README)` also cut patches). Do not bump `package.json` version manually — it is `0.0.0-managed.by.semantic.release`.
+
+The user-facing changelog at `/changelog` is built from markdown files in `src/content/changelog/` (loaded via `import.meta.glob` in `src/lib/releases.ts`). Each PR adds its own file to `unreleased/` (use the `changelog-entry` skill — no version number, one file per PR, so parallel PRs never conflict). On release, `scripts/promote-changelog.mjs` (run by `@semantic-release/exec`) stamps the released version + date and moves the entry to `releases/`; `@semantic-release/git` commits that back to `main` with `[skip ci]`, and the deploy job builds from the release tag so the live site includes it. The raw conventional-commit changelog (`docs/CHANGELOG.md`) is generated in CI and attached to the GitHub release only — it is not tracked in git.
 
 CI deploys PR previews and production to Vercel. There is no test-run step in CI, so run tests locally before pushing.
 
