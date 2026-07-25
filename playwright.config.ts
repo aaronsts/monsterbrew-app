@@ -67,6 +67,13 @@ export default defineConfig({
     // coverage can't be mapped from Vite's on-the-fly dev modules back to src/.
     command: collectCoverage ? "pnpm build && pnpm start" : "pnpm dev",
     url: "http://localhost:3000",
+    // The feedback CTA (e2e/feedback-cta.spec.ts) only arms itself when an
+    // access key is configured. Always use a dummy one: it keeps the suite
+    // independent of a local .env and guarantees no test can ever submit
+    // through the real inbox (process env overrides .env in Vite).
+    env: {
+      VITE_WEB3FORMS_ACCESS_KEY: "e2e-dummy-key",
+    },
     reuseExistingServer: !process.env.CI && !collectCoverage,
     timeout: collectCoverage ? 240_000 : 120_000,
   },

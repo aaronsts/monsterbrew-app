@@ -9,8 +9,8 @@ type Release = {
 
 export const releases: Array<Release> = [
   {
-    version: "3.6.3",
-    date: "2026-07-24",
+    version: "3.6.4",
+    date: "2026-07-25",
     summary:
       "Monsterbrew has a new look. The whole app now draws from one carefully tuned color palette.",
     changes: [
@@ -18,6 +18,16 @@ export const releases: Array<Release> = [
       "Creature type badges now carry their own colors, so types are easier to spot at a glance",
       "Buttons, alerts, and notifications share one consistent set of styles in both themes",
       "New fonts: Oxanium for headings and JetBrains Mono for everything else",
+    ],
+  },
+  {
+    version: "3.6.3",
+    date: "2026-07-25",
+    summary:
+      "Monsterbrew now has a direct line for your ideas and bug reports. A new “Send feedback” form in the footer lets you share thoughts in a couple of clicks — no account needed — and lands straight in our inbox. Prefer GitHub? A “Report a bug” link takes you right to the issue tracker.",
+    changes: [
+      "Added a “Send feedback” form to the footer — leave your email if you'd like a reply, or send it anonymously",
+      "Added a “Report a bug” link to the footer that opens a new GitHub issue",
     ],
   },
   {
