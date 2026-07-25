@@ -42,8 +42,21 @@ const releaseConfig = {
     [
       "@semantic-release/exec",
       {
+        prepareCmd: "node scripts/promote-changelog.mjs ${nextRelease.version}",
         successCmd:
           "echo 'RELEASED=1' >> $GITHUB_ENV && echo 'NEW_VERSION=${nextRelease.version}' >> $GITHUB_ENV",
+      },
+    ],
+
+    // Commits the promoted changelog entries back to main; the release tag is
+    // created on this commit, and the deploy job builds from that tag so the
+    // deployed /changelog includes the freshly stamped entries.
+    [
+      "@semantic-release/git",
+      {
+        assets: ["src/content/changelog"],
+        message:
+          "chore(release): promote changelog entries for v${nextRelease.version} [skip ci]",
       },
     ],
   ],

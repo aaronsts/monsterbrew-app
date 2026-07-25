@@ -90,6 +90,11 @@ jobs:
         run: |
           echo "New Version Number is: ${{ needs.create-release.outputs.newVersion }}"
       - uses: actions/checkout@v4
+        with:
+          # Build from the release tag, not the merge commit that triggered
+          # the workflow — the tag includes the changelog entries that
+          # semantic-release promoted and committed during the release.
+          ref: v${{ needs.create-release.outputs.newVersion }}
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:
