@@ -4,6 +4,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { MessageSquare, Send } from "lucide-react";
 
+import { LoadingSpinner } from "./ui/loading-spinner";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -20,9 +21,20 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { isFeedbackConfigured, useSendFeedback } from "@/hooks/use-feedback";
 
-export function FeedbackDialog() {
-  const [open, setOpen] = useState(false);
-  const feedback = useSendFeedback();
+interface FeedbackDialogProps {
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+}
+
+export function FeedbackDialog({
+  open: openProp,
+  onOpenChange,
+}: FeedbackDialogProps = {}) {
+  const [internalOpen, setInternalOpen] = useState(false);
+  const isControlled = openProp !== undefined;
+  const open = isControlled ? openProp : internalOpen;
+  const setOpen = isControlled ? (onOpenChange ?? (() => {})) : setInternalOpen;
+  const { mutate, isPending } = useSendFeedback();
 
   function handleSubmit(event: React.SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -35,7 +47,7 @@ export function FeedbackDialog() {
     }
 
     const formData = new FormData(event.currentTarget);
-    feedback.mutate(
+    mutate(
       {
         email: formData.get("email")?.toString(),
         message: formData.get("message")?.toString() ?? "",
@@ -55,20 +67,22 @@ export function FeedbackDialog() {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger
-        render={
-          <button className="flex items-center gap-2 text-muted-foreground transition-colors hover:text-foreground" />
-        }
-      >
-        <MessageSquare className="size-4" />
-        Send feedback
-      </DialogTrigger>
+      {!isControlled && (
+        <DialogTrigger
+          render={
+            <button className="flex items-center gap-2 text-muted-foreground transition-colors hover:text-foreground" />
+          }
+        >
+          <MessageSquare className="size-4" />
+          Send feedback
+        </DialogTrigger>
+      )}
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Send feedback</DialogTitle>
           <DialogDescription>
-            Found a bug, missing a feature, or just want to share something? It
-            lands straight in my inbox.
+            Found a bug, have an idea for a feature, or just want to share
+            something? Let me know!
           </DialogDescription>
         </DialogHeader>
 
@@ -89,9 +103,6 @@ export function FeedbackDialog() {
               placeholder="you@example.com"
               autoComplete="email"
             />
-            <p className="text-xs text-muted-foreground">
-              Only if you'd like a reply.
-            </p>
           </div>
           <div className="flex flex-col gap-2">
             <Label htmlFor="feedback-message">Message</Label>
@@ -100,7 +111,6 @@ export function FeedbackDialog() {
               name="message"
               required
               minLength={10}
-              placeholder="What's on your mind?"
               className="min-h-28"
             />
           </div>
@@ -108,9 +118,10 @@ export function FeedbackDialog() {
             <DialogClose render={<Button type="button" variant="outline" />}>
               Cancel
             </DialogClose>
-            <Button type="submit" disabled={feedback.isPending}>
+            <Button type="submit" disabled={isPending}>
+              {isPending && <LoadingSpinner />}
               <Send className="size-3.5" />
-              {feedback.isPending ? "Sending…" : "Send"}
+              {isPending ? "Sending…" : "Send"}
             </Button>
           </DialogFooter>
         </form>
