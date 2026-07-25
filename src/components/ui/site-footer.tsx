@@ -1,8 +1,10 @@
 import { Link } from "@tanstack/react-router";
+import { Bug } from "lucide-react";
 import { Button } from "./button";
 import { KofiLogo } from "@/components/images/KofiLogo";
 import { GithubLogo } from "@/components/images/GithubLogo";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { FeedbackDialog } from "@/components/feedback-dialog";
 import { latestVersion } from "@/lib/version";
 
 const navigation = [
@@ -71,6 +73,20 @@ export function SiteFooter() {
               >
                 <KofiLogo />
                 Buy me a Coffee
+              </a>
+            </li>
+            <li>
+              <FeedbackDialog />
+            </li>
+            <li>
+              <a
+                href="https://github.com/aaronsts/monsterbrew-app/issues/new"
+                target="_blank"
+                referrerPolicy="no-referrer"
+                className="flex items-center gap-2 text-muted-foreground transition-colors hover:text-foreground"
+              >
+                <Bug className="size-4" />
+                Report a bug
               </a>
             </li>
           </ul>
