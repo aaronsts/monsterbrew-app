@@ -23,6 +23,12 @@ jobs:
         with:
           # This is needed for semantic-release to work
           fetch-depth: 0
+          # Don't keep the workflow's GITHUB_TOKEN in git config: it would
+          # make semantic-release push as github-actions[bot], which cannot
+          # bypass the main branch ruleset. Without ambient credentials,
+          # semantic-release authenticates pushes with GH_TOKEN (an admin
+          # PAT), which the ruleset's admin bypass allows.
+          persist-credentials: false
 
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
