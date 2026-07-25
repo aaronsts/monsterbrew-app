@@ -6,8 +6,17 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { releases, unreleased } from "@/lib/releases";
+import { seo } from "@/lib/seo";
 
 export const Route = createFileRoute("/changelog")({
+  head: () => ({
+    ...seo({
+      title: "Changelog | Monsterbrew",
+      description:
+        "What's new in Monsterbrew | release notes for the free D&D 5e monster statblock builder.",
+      path: "/changelog",
+    }),
+  }),
   component: Changelog,
 });
 

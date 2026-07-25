@@ -1,0 +1,7 @@
+Monsterbrew is now much easier to find — and to share. Every page has its own proper title and description, so links you paste into Discord or a group chat show what the page actually is instead of a generic blurb. SRD monster pages are now fully visible to search engines, each with its own title like “Aboleth – CR 10 Large Aberration”, so looking up a monster can land you straight on its statblock. The landing page also gained a short FAQ answering the most common questions about Monsterbrew.
+
+- Every page now has its own title, description, and link preview instead of one shared site-wide set
+- SRD monster pages are indexed by search engines with per-monster titles and summaries
+- Added a FAQ section to the landing page
+- Added a sitemap listing every page and SRD monster, so search engines can discover all of them
+- Added a Licenses & Attribution page covering the SRD's Creative Commons license — and confirming your homebrew creatures are yours

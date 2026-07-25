@@ -51,3 +51,6 @@ next-env.d.ts
 /playwright-report
 /blob-report
 /playwright/.cache
+
+# generated at build time by scripts/generate-sitemap.mjs
+/public/sitemap.xml

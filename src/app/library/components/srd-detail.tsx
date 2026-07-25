@@ -63,6 +63,27 @@ export default function SrdDetail() {
       </div>
 
       <MonsterStatblock creature={entry.monster} columns />
+
+      <p className="text-xs text-muted-foreground">
+        {entry.monster.name} is from the System Reference Document 5.2.1
+        (&ldquo;SRD 5.2.1&rdquo;) by Wizards of the Coast LLC, used under the{" "}
+        <a
+          href="https://creativecommons.org/licenses/by/4.0/legalcode"
+          target="_blank"
+          rel="noreferrer"
+          className="underline underline-offset-4 hover:text-foreground"
+        >
+          Creative Commons Attribution 4.0 International License
+        </a>
+        . Full attribution is on the{" "}
+        <Link
+          to="/legal"
+          className="underline underline-offset-4 hover:text-foreground"
+        >
+          Licenses &amp; Attribution
+        </Link>{" "}
+        page.
+      </p>
     </div>
   );
 }
