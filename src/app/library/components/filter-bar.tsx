@@ -24,6 +24,17 @@ import {
   useComboboxAnchor,
 } from "@/components/ui/combobox";
 
+interface FilterBarProps {
+  search: string;
+  onSearchChange: (value: string) => void;
+  typeFilter: string;
+  onTypeChange: (value: string) => void;
+  cr: Array<string>;
+  onCrChange: (value: Array<string>) => void;
+  resultCount: number;
+  totalCount: number;
+}
+
 export function FilterBar({
   search,
   onSearchChange,
@@ -33,16 +44,7 @@ export function FilterBar({
   onCrChange,
   resultCount,
   totalCount,
-}: {
-  search: string;
-  onSearchChange: (value: string) => void;
-  typeFilter: string;
-  onTypeChange: (value: string) => void;
-  cr: Array<string>;
-  onCrChange: (value: Array<string>) => void;
-  resultCount: number;
-  totalCount: number;
-}) {
+}: Readonly<FilterBarProps>) {
   const crAnchor = useComboboxAnchor();
 
   return (

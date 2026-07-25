@@ -71,7 +71,7 @@ export function CreatureExportMenu({
       <DropdownMenu>
         <DropdownMenuTrigger
           render={
-            <Button variant="outline" size="sm">
+            <Button color="neutral" variant="outline" size="sm">
               <Download className="mr-2 h-4 w-4" />
               Export
             </Button>

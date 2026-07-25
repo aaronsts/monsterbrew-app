@@ -67,6 +67,6 @@ Import wiring is in `src/components/import-dialog.tsx`, switching on `ImportType
 
 ### UI conventions
 
-shadcn/ui ("new-york" style) in `src/components/ui/`, Tailwind v4 (config-less, driven by `src/app/globals.css`), Lucide icons. Custom Button `color`/`variant` props (e.g. `color="carrara"`, `variant="filled"`, `"transparant"` — note spelling) come from CVA definitions in `button.tsx`. Toasts use `sonner` (`toast.*`); the `<Toaster>` is mounted in `layout.tsx`. Analytics is Plausible (wrapped in `providers.tsx`); React Query is provided but currently minimal.
+shadcn/ui ("new-york" style) in `src/components/ui/`, Tailwind v4 (config-less, driven by `src/app/globals.css`), Lucide icons. The Button has two style axes from CVA definitions in `button.tsx`: `color` (`neutral` | `primary` | `accent` | `destructive`, default `primary`) × `variant` (`filled` | `light` | `outline` | `ghost` | `transparent` | `link`, default `filled`); `link` ignores `color`. A visual inventory of all components lives at `/dev/components` (localhost-only route). Toasts use `sonner` (`toast.*`); the `<Toaster>` is mounted in `layout.tsx`. Analytics is Plausible (wrapped in `providers.tsx`); React Query is provided but currently minimal.
 
 Preset trait/action content for quick insertion lives in `src/lib/constants/actionPresets.ts`.

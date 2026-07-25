@@ -17,7 +17,7 @@ export function NoMatches({ onClear }: { onClear: () => void }) {
           Try a different name, type, or challenge rating range.
         </p>
       </div>
-      <Button variant="outline" size="sm" onClick={onClear}>
+      <Button color="neutral" variant="outline" size="sm" onClick={onClear}>
         Clear filters
       </Button>
     </div>

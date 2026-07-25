@@ -1,0 +1,136 @@
+:root {
+  /* base colors */
+  --accent-base: #b23a24;
+  --primary-base: #3a3128;
+  --bg-base: #e9dbc9;
+  --ink-base: #1a1810;
+
+  /* neutral */
+  --neutral-100: color-mix(in oklab, #e9dbc9 35%, white);
+  --neutral-300: color-mix(in oklab, #1a1810 14%, #e9dbc9);
+  --neutral-500: color-mix(in oklab, #1a1810 42%, #e9dbc9);
+  --neutral-700: color-mix(in oklab, #1a1810 72%, #e9dbc9);
+  --neutral-900: #1a1810;
+
+  /* primary */
+  --primary-100: color-mix(in oklab, #3a3128 18%, white);
+  --primary-300: color-mix(in oklab, #3a3128 52%, white);
+  --primary-500: #3a3128;
+  --primary-700: color-mix(in oklab, #3a3128 70%, black);
+  --primary-900: color-mix(in oklab, #3a3128 42%, black);
+
+  /* accent */
+  --accent-100: color-mix(in oklab, #b23a24 18%, white);
+  --accent-300: color-mix(in oklab, #b23a24 52%, white);
+  --accent-500: #b23a24;
+  --accent-700: color-mix(in oklab, #b23a24 70%, black);
+  --accent-900: color-mix(in oklab, #b23a24 42%, black);
+
+  /* success */
+  --success-100: color-mix(in oklab, #4f6a3c 18%, white);
+  --success-300: color-mix(in oklab, #4f6a3c 52%, white);
+  --success-500: #4f6a3c;
+  --success-700: color-mix(in oklab, #4f6a3c 70%, black);
+  --success-900: color-mix(in oklab, #4f6a3c 42%, black);
+
+  /* warning */
+  --warning-100: color-mix(in oklab, #c68a24 18%, white);
+  --warning-300: color-mix(in oklab, #c68a24 52%, white);
+  --warning-500: #c68a24;
+  --warning-700: color-mix(in oklab, #c68a24 70%, black);
+  --warning-900: color-mix(in oklab, #c68a24 42%, black);
+
+  /* info */
+  --info-100: color-mix(in oklab, #43679f 18%, white);
+  --info-300: color-mix(in oklab, #43679f 52%, white);
+  --info-500: #43679f;
+  --info-700: color-mix(in oklab, #43679f 70%, black);
+  --info-900: color-mix(in oklab, #43679f 42%, black);
+
+  /* destructive */
+  --destructive-100: color-mix(in oklab, #8f2d24 18%, white);
+  --destructive-300: color-mix(in oklab, #8f2d24 52%, white);
+  --destructive-500: #8f2d24;
+  --destructive-700: color-mix(in oklab, #8f2d24 70%, black);
+  --destructive-900: color-mix(in oklab, #8f2d24 42%, black);
+
+  /* semantic tokens — now sourced from the scale */
+  --background: var(--neutral-100);
+  --foreground: var(--neutral-900);
+
+  --card: var(--bg-base);
+  --card-foreground: var(--neutral-900);
+
+  --popover: var(--neutral-100);
+  --popover-foreground: var(--neutral-900);
+
+  --primary: var(--primary-500);
+  --primary-hover: var(--primary-700);
+  --primary-foreground: var(--neutral-100);
+
+  --secondary: var(--neutral-300);
+  --secondary-foreground: var(--neutral-900);
+
+  --muted: var(--neutral-100);
+  --muted-foreground: var(--neutral-700);
+
+  --accent: var(--accent-500);
+  --accent-hover: var(--accent-700);
+  --accent-foreground: var(--neutral-100);
+
+  --success: var(--success-100);
+  --success-foreground: var(--success-700);
+  --warning: var(--warning-100);
+  --warning-foreground: var(--warning-700);
+  --info: var(--info-100);
+  --info-foreground: var(--info-700);
+  --destructive: var(--destructive-100);
+  --destructive-foreground: var(--destructive-700);
+
+  --border: var(--neutral-300);
+  --input: var(--neutral-300);
+  --ring: var(--primary-500);
+
+  --radius: 0px;
+  --font-mono: "JetBrains Mono", monospace;
+  --font-heading: "Oxanium", sans-serif;
+}
+
+[data-theme="dark"] {
+  /* scales are identical — only the semantic mapping flips */
+  --background: var(--neutral-900);
+  --foreground: var(--neutral-100);
+
+  --card: color-mix(in oklab, var(--ink-base) 75%, black);
+  --card-foreground: var(--neutral-100);
+
+  --popover: color-mix(in oklab, var(--ink-base) 75%, black);
+  --popover-foreground: var(--neutral-100);
+
+  --primary: var(--primary-100);
+  --primary-hover: var(--primary-300);
+  --primary-foreground: var(--neutral-900);
+
+  --secondary: var(--neutral-700);
+  --secondary-foreground: var(--neutral-100);
+
+  --muted: var(--neutral-700);
+  --muted-foreground: var(--neutral-300);
+
+  --accent: var(--accent-500);
+  --accent-hover: var(--accent-700);
+  --accent-foreground: var(--accent-100);
+
+  --success: var(--success-700);
+  --success-foreground: var(--success-100);
+  --warning: var(--warning-700);
+  --warning-foreground: var(--warning-100);
+  --info: var(--info-700);
+  --info-foreground: var(--info-100);
+  --destructive: var(--destructive-500);
+  --destructive-foreground: var(--destructive-100);
+
+  --border: var(--neutral-700);
+  --input: var(--neutral-700);
+  --ring: var(--primary-300);
+}

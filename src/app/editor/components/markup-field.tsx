@@ -264,7 +264,7 @@ export function MarkupField({
             <Button
               key={tag.snippet}
               type="button"
-              variant="outline"
+              color="neutral" variant="outline"
               size="sm"
               onClick={() => insertAtCaret(tag.snippet)}
               className="flex justify-between gap-0.5 border px-2 py-1.5 text-left "

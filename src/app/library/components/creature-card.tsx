@@ -56,7 +56,7 @@ export function CreatureCard({
           </p>
         </CardHeader>
         <CardContent className="px-4">
-          <div className="h-0.5 w-full bg-linear-to-r from-primary to-transparent" />
+          <div className="h-0.5 w-full bg-linear-to-r from-accent to-transparent" />
           <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs">
             <CreatureStat
               icon={Shield}

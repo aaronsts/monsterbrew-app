@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { Bug } from "lucide-react";
 import { KofiLogo } from "@/components/images/KofiLogo";
 import { GithubLogo } from "@/components/images/GithubLogo";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { FeedbackDialog } from "@/components/feedback-dialog";
 
 const navigation = [
@@ -24,14 +25,17 @@ export function SiteFooter() {
             A free statblock builder for D&D 5e. Build, save, and export your
             homebrew creatures.
           </p>
-          <a
-            href="https://github.com/aaronsts/monsterbrew-app"
-            target="_blank"
-            referrerPolicy="no-referrer"
-            className="flex w-fit items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
-          >
-            <GithubLogo />
-          </a>
+          <div className="flex items-center gap-3">
+            <ThemeToggle />
+            <a
+              href="https://github.com/aaronsts/monsterbrew-app"
+              target="_blank"
+              referrerPolicy="no-referrer"
+              className="flex w-fit items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
+            >
+              <GithubLogo />
+            </a>
+          </div>
         </div>
 
         {/* Navigation */}
