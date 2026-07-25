@@ -1,11 +1,6 @@
-import type { z } from "zod";
 import type { Monster } from "@/schema/monster-schema";
+import { ABILITY_LABELS, ABILITY_SCORES } from "@/lib/abilities";
 import { SKILLS } from "@/lib/skills";
-import { abilityScoresSchema } from "@/schema/monster-schema";
-
-export type AbilityKey = keyof z.infer<typeof abilityScoresSchema>;
-export const ABILITY_SCORES = abilityScoresSchema.keyof()._def
-  .values as Array<AbilityKey>;
 
 export type SkillProficiency = "proficient" | "expert" | "";
 export type DamageState = "resistant" | "vulnerable" | "immune" | "";
@@ -15,15 +10,6 @@ export const NONMAGICAL_ATTACK_TYPES = [
   { key: "nonmagical", label: "Nonmagical attacks" },
   { key: "silvered", label: "Nonsilvered attacks" },
 ] as const;
-
-export const ABILITY_LABELS: Record<AbilityKey, string> = {
-  str: "STR",
-  dex: "DEX",
-  con: "CON",
-  int: "INT",
-  wis: "WIS",
-  cha: "CHA",
-};
 
 export const SKILLS_BY_ABILITY = ABILITY_SCORES.map((ability) => ({
   ability,
