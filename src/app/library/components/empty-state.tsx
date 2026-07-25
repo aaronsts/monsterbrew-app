@@ -20,7 +20,7 @@ export function EmptyState() {
         </p>
       </div>
       <Link to="/editor">
-        <Button size="lg">
+        <Button size="lg" color="accent">
           Create your first monster
           <ArrowRight className="ml-2 h-4 w-4" />
         </Button>

@@ -8,7 +8,12 @@ export function MainNavigation() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
   return (
-    <div className="max-w-8xl w-full shadow-xs h-14 rounded-lg mx-3 px-6 hidden md:flex justify-between">
+    <div
+      className={cn(
+        "max-w-8xl w-full shadow-xs h-14 rounded-lg mx-3 hidden md:flex justify-between",
+        pathname === "/" ? "px-6" : "",
+      )}
+    >
       <Link to="/" className="mr-4 flex items-center gap-2 lg:mr-6">
         <h1 className="hidden text-2xl font-bold md:inline-block">
           Monsterbrew
