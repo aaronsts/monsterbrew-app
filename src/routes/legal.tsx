@@ -1,5 +1,5 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { BookOpenText, ScrollText, ShieldCheck } from "lucide-react";
+import { Link, createFileRoute } from "@tanstack/react-router";
+import { BookOpenText, ScrollText, ShieldCheck, Users } from "lucide-react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { CornerBrackets } from "@/components/home/corner-brackets";
 import { seo } from "@/lib/seo";
@@ -56,6 +56,72 @@ const sections: Array<Section> = [
             https://creativecommons.org/licenses/by/4.0/legalcode
           </a>
           .
+        </p>
+      </div>
+    ),
+  },
+  {
+    icon: <Users />,
+    title: "Creature Building Guide Sources",
+    body: (
+      <div className="flex flex-col gap-3 text-muted-foreground">
+        <p>
+          The <Link to="/guide" className="text-primary underline underline-offset-4">creature building guide</Link>{" "}
+          adapts openly licensed community material.
+        </p>
+        {/* Wording mandated by the CC-BY-4.0 grant; keep the sentence verbatim. */}
+        <p>
+          This work includes material taken from the Lazy GM&rsquo;s 5e Monster
+          Builder Resource Document written by Teos Abadía of{" "}
+          <a
+            href="https://alphastream.org"
+            target="_blank"
+            rel="noreferrer"
+            className="text-primary underline underline-offset-4"
+          >
+            Alphastream.org
+          </a>
+          , Scott Fitzgerald Gray of{" "}
+          <a
+            href="https://insaneangel.com"
+            target="_blank"
+            rel="noreferrer"
+            className="text-primary underline underline-offset-4"
+          >
+            Insaneangel.com
+          </a>
+          , and Michael E. Shea of{" "}
+          <a
+            href="https://slyflourish.com"
+            target="_blank"
+            rel="noreferrer"
+            className="text-primary underline underline-offset-4"
+          >
+            SlyFlourish.com
+          </a>
+          , available under a Creative Commons Attribution 4.0 International
+          License.
+        </p>
+        <p>
+          The guide also draws on &ldquo;The 2024 Monster Manual on a business
+          card&rdquo; by Paul Hughes of{" "}
+          <a
+            href="https://www.blogofholding.com/?p=8469"
+            target="_blank"
+            rel="noreferrer"
+            className="text-primary underline underline-offset-4"
+          >
+            Blog of Holding
+          </a>{" "}
+          (CC-BY 4.0). See the guide&rsquo;s{" "}
+          <Link
+            to="/guide/$slug"
+            params={{ slug: "sources" }}
+            className="text-primary underline underline-offset-4"
+          >
+            sources &amp; attribution
+          </Link>{" "}
+          chapter for the full credits.
         </p>
       </div>
     ),

@@ -10,6 +10,7 @@ import { latestVersion } from "@/lib/version";
 const navigation = [
   { href: "/editor", label: "Editor" },
   { href: "/library", label: "Library" },
+  { href: "/guide", label: "Guide" },
   { href: "/changelog", label: "Changelog" },
   { href: "/privacy", label: "Privacy Policy" },
   { href: "/legal", label: "Licenses & Attribution" },

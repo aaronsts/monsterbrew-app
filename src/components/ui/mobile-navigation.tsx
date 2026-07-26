@@ -22,7 +22,11 @@ export function MobileNavigation() {
           <h1 className="text-xl font-bold">Monsterbrew</h1>
         </Link>
         <div className="flex items-center gap-2">
-          <SheetTrigger render={<Button color="neutral" variant="transparent" size="icon" />}>
+          <SheetTrigger
+            render={
+              <Button color="neutral" variant="transparent" size="icon" />
+            }
+          >
             <Menu />
             <span className="sr-only">Toggle Menu</span>
           </SheetTrigger>
@@ -34,6 +38,9 @@ export function MobileNavigation() {
           <div className="flex flex-col gap-4 items-center">
             <MobileLink to="/" onOpenChange={setOpen}>
               Home
+            </MobileLink>
+            <MobileLink to="/guide" onOpenChange={setOpen}>
+              Guide
             </MobileLink>
             <MobileLink to="/editor" onOpenChange={setOpen}>
               Editor

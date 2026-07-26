@@ -30,6 +30,15 @@ export function MainNavigation() {
           Home
         </Link>
         <Link
+          to="/guide"
+          className={cn(
+            "transition-colors  hover:text-secondary",
+            pathname.startsWith("/guide") ? "text-accent " : "text-foreground",
+          )}
+        >
+          Guide
+        </Link>
+        <Link
           to="/editor"
           className={cn(
             "transition-colors  hover:text-secondary",
