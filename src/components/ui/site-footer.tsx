@@ -12,6 +12,7 @@ const navigation = [
   { href: "/library", label: "Library" },
   { href: "/changelog", label: "Changelog" },
   { href: "/privacy", label: "Privacy Policy" },
+  { href: "/legal", label: "Licenses & Attribution" },
 ] as const;
 
 export function SiteFooter() {

@@ -3,8 +3,76 @@ import { ArrowRight, FileText, HardDriveDownload, Library } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { FeatureCard } from "@/components/home/feature-card";
 import { CornerBrackets } from "@/components/home/corner-brackets";
+import { SITE_URL, seo } from "@/lib/seo";
+
+const faq = [
+  {
+    question: "What is Monsterbrew?",
+    answer:
+      "Monsterbrew is a free, browser-based monster statblock builder for D&D 5e. You enter a creature's abilities and stats, and it produces a complete, correctly formatted 5e statblock with modifiers, saving throws, and hit points calculated for you.",
+  },
+  {
+    question: "Is Monsterbrew free to use?",
+    answer:
+      "Yes. Monsterbrew is completely free and requires no account or sign-up. Your creatures are saved locally in your browser.",
+  },
+  {
+    question: "Can I import monsters from other tools?",
+    answer:
+      "Yes. Monsterbrew imports statblocks from Improved Initiative, TetraCube, Open5e, and 5eTools, and exports to Homebrewery V3 markdown, Improved Initiative JSON, and PDF.",
+  },
+  {
+    question: "Does Monsterbrew include official D&D monsters?",
+    answer:
+      "Yes. The library includes the full D&D 2024 SRD bestiary — over 300 monsters you can browse and copy into the editor as a starting point for your own homebrew creatures. The SRD is published by Wizards of the Coast under the Creative Commons Attribution 4.0 license.",
+  },
+];
 
 export const Route = createFileRoute("/")({
+  head: () => {
+    const { meta, links } = seo({
+      title: "Monsterbrew | D&D 5e Monster Creator & Homebrew Tool",
+      description:
+        "Create, customize and manage D&D 5e monsters and creatures with Monsterbrew | a free, intuitive homebrew tool for Dungeon Masters. Design unique encounters for your tabletop RPG campaigns!",
+      path: "/",
+    });
+    return {
+      meta,
+      links,
+      scripts: [
+        {
+          type: "application/ld+json",
+          children: JSON.stringify({
+            "@context": "https://schema.org",
+            "@graph": [
+              {
+                "@type": "WebApplication",
+                name: "Monsterbrew",
+                url: SITE_URL,
+                description:
+                  "A free D&D 5e monster statblock builder for Dungeon Masters. Create, import, and export homebrew creatures.",
+                applicationCategory: "UtilityApplication",
+                operatingSystem: "Any",
+                offers: {
+                  "@type": "Offer",
+                  price: "0",
+                  priceCurrency: "USD",
+                },
+              },
+              {
+                "@type": "FAQPage",
+                mainEntity: faq.map(({ question, answer }) => ({
+                  "@type": "Question",
+                  name: question,
+                  acceptedAnswer: { "@type": "Answer", text: answer },
+                })),
+              },
+            ],
+          }),
+        },
+      ],
+    };
+  },
   component: Home,
 });
 
@@ -24,18 +92,16 @@ function Home() {
             backgroundSize: "34px 34px",
           }}
         />
-        {/* Soft glow behind the headline */}
-
-        <CornerBrackets size="size-8" />
 
         <h1 className="text-4xl font-bold tracking-tight md:text-6xl lg:text-7xl">
-          Build D&D monsters,
+          Build D&D 5e statblocks
           <br />
-          <span className="text-accent">In Minutes</span>
+          <span className="text-accent">the easy way</span>
         </h1>
         <p className="max-w-2xl text-lg text-muted-foreground text-balance">
-          Monsterbrew is a statblock builder for D&D 5e. Start from scratch or
-          drop a statblock ready to customize into the editor.
+          Monsterbrew is a free, intuitive monster maker and statblock generator
+          for D&D 5e. Start from scratch or drop a statblock ready to customize
+          into the editor.
         </p>
         <div className="flex flex-col gap-3 pt-2 sm:flex-row">
           <Link to="/editor">
@@ -66,18 +132,21 @@ function Home() {
           }}
         />
         <div className="mx-auto max-w-5xl px-6 py-14 sm:px-12">
-          <p className="mb-8 flex items-center gap-2 text-xs font-medium tracking-widest text-muted-foreground uppercase">
-            <span aria-hidden className="size-1.5 bg-muted-foreground" />
+          <p className="mb-8 flex items-center gap-2 text-xs font-medium tracking-widest text-primary-foreground dark:text-primary uppercase">
+            <span
+              aria-hidden
+              className="size-1.5 bg-primary-foreground dark:bg-primary"
+            />
             What is Monsterbrew
           </p>
           <div className="grid gap-8 border-b border-white/15 pb-10 md:grid-cols-[1fr_1.15fr] md:gap-x-0">
             <h2 className="mb-0 self-start md:pr-12">
-              A tool to make homebrewing feel like a breeze
+              A free D&D 5e monster statblock builder for Dungeon Masters
             </h2>
             <div className="md:border-l md:border-white/15 md:pl-12">
               <p className="text-lg opacity-80">
-                Enter a creature&apos;s abilities and we&apos;ll handles the
-                rest, modifiers, saving throws, passive scores, and HP all
+                Enter a creature&apos;s abilities and we&apos;ll handle the
+                rest. Modifiers, saving throws, passive scores, and HP all
                 update as you type. Import from tools you already use, and
                 export to well-known formats like Homebrewery or PDF when
                 you&apos;re done.
@@ -89,10 +158,9 @@ function Home() {
 
       {/* Features */}
       <section className="relative px-4 py-10 sm:px-8">
-        <CornerBrackets />
         <div className="mb-10 text-center">
-          <p className="mb-3 flex items-center justify-center gap-2 text-xs font-medium tracking-widest text-primary uppercase">
-            <span aria-hidden className="size-1.5 bg-primary" />
+          <p className="mb-3 flex items-center justify-center gap-2 text-xs font-medium tracking-widest text-accent uppercase">
+            <span aria-hidden className="size-1.5 bg-accent" />
             Features
           </p>
           <h2 className="mb-0">Everything you need to run the encounter</h2>
@@ -115,6 +183,29 @@ function Home() {
             description="Everything lives in your browser — no account and no sign-up required."
           />
         </div>
+      </section>
+
+      {/* FAQ */}
+      <section className="relative px-4 py-10 sm:px-8">
+        <CornerBrackets />
+        <div className="mb-10 text-center">
+          <p className="mb-3 flex items-center justify-center gap-2 text-xs font-medium tracking-widest text-accent uppercase">
+            <span aria-hidden className="size-1.5 bg-accent" />
+            FAQ
+          </p>
+          <h2 className="mb-0">Frequently asked questions</h2>
+        </div>
+        <dl className="mx-auto max-w-3xl">
+          {faq.map(({ question, answer }) => (
+            <div
+              key={question}
+              className="border-t border-foreground/10 py-6 last:border-b"
+            >
+              <dt className="mb-2 font-semibold">{question}</dt>
+              <dd className="text-muted-foreground">{answer}</dd>
+            </div>
+          ))}
+        </dl>
       </section>
 
       {/* Closing CTA */}

@@ -1,0 +1,20 @@
+# Monsterbrew
+
+> Monsterbrew is a free, browser-based monster statblock builder for D&D 5e. Dungeon Masters enter a creature's abilities and stats, and Monsterbrew produces a complete, correctly formatted 5e statblock — modifiers, saving throws, passive scores, and hit points are calculated automatically. No account or sign-up is required; creatures are stored locally in the browser.
+
+Key facts:
+
+- Free to use, no account needed, data stays in the user's browser (IndexedDB)
+- Imports statblocks from Improved Initiative, TetraCube, Open5e, and 5eTools
+- Exports to Homebrewery V3 markdown, Improved Initiative JSON, and PDF
+- Includes the full D&D 2024 SRD bestiary (329 monsters) as a browsable, copyable starting point
+- SRD content is used under the Creative Commons Attribution 4.0 license (SRD 5.2.1 by Wizards of the Coast LLC); Monsterbrew is not affiliated with Wizards of the Coast
+
+## Pages
+
+- [Statblock Editor](https://monsterbrew.app/editor): the monster builder itself — live preview, automatic math, import/export
+- [Monster Library](https://monsterbrew.app/library): saved homebrew creatures plus the full D&D 2024 SRD bestiary
+- [SRD monster pages](https://monsterbrew.app/library/srd/srd-2024_aboleth): each SRD monster has its own page at /library/srd/<key> with the complete statblock (all listed in the [sitemap](https://monsterbrew.app/sitemap.xml))
+- [Changelog](https://monsterbrew.app/changelog): release notes
+- [Licenses & Attribution](https://monsterbrew.app/legal): SRD licensing details
+- [Privacy Policy](https://monsterbrew.app/privacy): analytics and data handling

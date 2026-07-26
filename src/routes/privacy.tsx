@@ -8,8 +8,17 @@ import {
 } from "lucide-react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { CornerBrackets } from "@/components/home/corner-brackets";
+import { seo } from "@/lib/seo";
 
 export const Route = createFileRoute("/privacy")({
+  head: () => ({
+    ...seo({
+      title: "Privacy Policy | Monsterbrew",
+      description:
+        "How Monsterbrew handles your data: creatures are stored locally in your browser, with privacy-focused analytics and no account required.",
+      path: "/privacy",
+    }),
+  }),
   component: Privacy,
 });
 

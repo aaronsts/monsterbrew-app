@@ -20,55 +20,24 @@ const title = "Monsterbrew | D&D 5e Monster Creator & Homebrew Tool";
 const description =
   "Create, customize and manage D&D 5e monsters and creatures with Monsterbrew - the free, intuitive homebrew tool for Dungeon Masters. Design unique encounters for your tabletop RPG campaigns!";
 
-// JSON-LD structured data for SEO
-const structuredData = {
-  "@context": "https://schema.org",
-  "@type": "WebApplication",
-  name: "Monsterbrew",
-  url: "https://monsterbrew.app",
-  description:
-    "Create, customize and manage D&D 5e monsters and creatures with Monsterbrew - the free, intuitive homebrew tool for Dungeon Masters.",
-  applicationCategory: "UtilityApplication",
-  operatingSystem: "Any",
-  offers: {
-    "@type": "Offer",
-    price: "0",
-    priceCurrency: "USD",
-  },
-  keywords:
-    "D&D, DnD, Dungeons and Dragons, monster creator, homebrew, 5e, tabletop RPG",
-};
-
 export const Route = createRootRoute({
+  // Site-wide defaults; every public route overrides title/description/og:url
+  // with its own `head()` (deepest match wins in HeadContent).
   head: () => ({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title },
       { name: "description", content: description },
-      {
-        name: "keywords",
-        content:
-          "D&D monster creator, DnD 5e homebrew, D&D creature builder, Dungeons and Dragons monsters, tabletop RPG tools, DM resources, custom D&D creatures, monster statblock generator, 5e encounter design, fantasy creature creator",
-      },
       { name: "creator", content: "Monsterbrew" },
       { property: "og:title", content: title },
-      {
-        property: "og:description",
-        content:
-          "Create, customize and manage D&D 5e monsters and creatures with Monsterbrew - the free, intuitive homebrew tool for Dungeon Masters.",
-      },
-      { property: "og:url", content: "https://monsterbrew.app" },
+      { property: "og:description", content: description },
       { property: "og:site_name", content: "Monsterbrew" },
       { property: "og:locale", content: "en_US" },
       { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:card", content: "summary" },
       { name: "twitter:title", content: title },
-      {
-        name: "twitter:description",
-        content:
-          "Create, customize and manage D&D 5e monsters and creatures with Monsterbrew.",
-      },
+      { name: "twitter:description", content: description },
     ],
     links: [{ rel: "icon", href: "/icon.svg", type: "image/svg+xml" }],
     scripts: [
@@ -101,10 +70,6 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
     >
       <head>
         <HeadContent />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
-        />
       </head>
       <body className="font-nippo flex flex-col bg-background text-foreground h-dvh antialiased">
         <Providers>

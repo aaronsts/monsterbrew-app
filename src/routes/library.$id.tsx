@@ -2,12 +2,17 @@ import { createFileRoute } from "@tanstack/react-router";
 import CreatureDetail from "@/app/library/components/creature-detail";
 
 export const Route = createFileRoute("/library/$id")({
-  // Client-only: the detail view reads IndexedDB and is fully interactive with
-  // no SEO value. See the note in routes/editor.tsx.
   ssr: false,
+  head: () => ({
+    meta: [
+      { title: "My Creature | Monsterbrew" },
+      { name: "robots", content: "noindex" },
+    ],
+  }),
   component: CreatureDetailPage,
 });
 
+// eslint-disable-next-line react-refresh/only-export-components
 function CreatureDetailPage() {
   return <CreatureDetail />;
 }
