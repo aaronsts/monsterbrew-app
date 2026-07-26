@@ -145,11 +145,11 @@ function Home() {
             </h2>
             <div className="md:border-l md:border-white/15 md:pl-12">
               <p className="text-lg opacity-80">
-                Enter a creature&apos;s abilities and we&apos;ll handle the rest
-                — modifiers, saving throws, passive scores, and HP all update as
-                you type. Import from tools you already use, and export to
-                well-known formats like Homebrewery or PDF when you&apos;re
-                done.
+                Enter a creature&apos;s abilities and we&apos;ll handle the
+                rest. Modifiers, saving throws, passive scores, and HP all
+                update as you type. Import from tools you already use, and
+                export to well-known formats like Homebrewery or PDF when
+                you&apos;re done.
               </p>
             </div>
           </div>
