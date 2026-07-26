@@ -1,6 +1,5 @@
 import { describe, expect, it } from "vitest";
 import {
-  ABILITY_SCORES,
   NONMAGICAL_ATTACK_TYPES,
   SKILLS_BY_ABILITY,
   damageStateStyles,
@@ -12,6 +11,7 @@ import {
   setNonmagical,
   setSkill,
 } from "./helpers";
+import { ABILITY_SCORES } from "@/lib/abilities";
 
 describe("ABILITY_SCORES", () => {
   it("lists the six ability scores in order", () => {
