@@ -4,7 +4,7 @@ shortTitle: Sources
 description: The creators and openly licensed works this guide draws on are the Lazy GM's Resource Document, Blog of Holding, Alphastream, and the SRD 5.2.
 ---
 
-This guide consolidates monster-design knowledge developed by the D&D community over many years. The thinking belongs to the creators below. I've organized it, connected it to Monsterbrew's editor, and kept it 2024-focused. If this guide was useful, their full works go deeper than I do here, and the paid ones are worth every copper.
+This guide would not have been possible without the amazing people listed below. It consolidates monster-design knowledge the D&D community developed over many years, and the thinking belongs to its creators. I've just organized it, connected it to Monsterbrew's editor and kept it 2024-focused. If this guide was useful, their full works go deeper than I do here, and the paid ones are worth every penny (or copper).
 
 ## The Lazy GM's 5e Monster Builder Resource Document
 

@@ -8,7 +8,7 @@ Numbers make a monster fair; traits and actions make it memorable. This chapter 
 
 ## Abilities should create decisions
 
-The best monster features change what players *do*, not just how fast their hit points drop. Before adding an ability, ask: what decision does this force?
+The best monster features change what players _do_, not just how fast their hit points drop. Before adding an ability, ask: what decision does this force?
 
 - A damaging aura makes melee characters weigh staying in against stepping out.
 - A restraining grab turns the fight into a rescue problem.
@@ -20,6 +20,8 @@ A monster needs surprisingly few of these. A battle lasts three to five rounds, 
 ## Telegraph, then pay off
 
 An ability the players never saw coming reads as GM fiat; the same ability telegraphed a round earlier reads as a puzzle they failed to solve, or triumphantly did. Build the telegraph into the creature's description or into a low-cost behavior: the hag mutters the first line of a curse, the golem's runes flare before its overcharge, the swarm visibly thickens around the wounded.
+
+> As my note earlier said, telegraphing that the dragon is about to use it's breath attack the round before and seeing my players thinking and panicking is amazing.
 
 This is also the Lazy GM's advice for [lightning-rod encounters](/guide/common-pitfalls): if a threat is meant to be answered by a specific player capability (stun it, banish it, burn it down first), make sure the danger is readable enough that someone gets to have that idea.
 
@@ -44,6 +46,6 @@ Pick the one or two that restate your concept sentence, price them out of the [d
 
 ## Write it so it runs itself
 
-Statblock text is read under pressure, mid-combat. Short sentences, standard phrasing, numbers up front. In Monsterbrew, write attacks and saves with the native `{@…}` tokens, like `{@atkr m} {@hit str}, reach 5 ft. {@h}{@damage 2d8 + str} slashing damage.`, and the statblock renders them as proper attack lines. Because tokens like `{@hit str}` and `{@dc con}` are keyed to abilities rather than hard-coded numbers, the text stays correct while you tune ability scores and CR, and the [editor](/editor)'s token inspector previews exactly what players will see.
+Statblock text is read under pressure, mid-combat. Short sentences, standard phrasing, numbers up front. In Monsterbrew, insert attacks and saving throws with the Insert menu's **Attack line** and **Saving throw line** options, which render as complete rules lines computed from the creature's stats. Under the hood these are `{@…}` tags keyed to abilities rather than hard-coded numbers (`{@hit str}`, `{@dc con}`), so the text stays correct while you tune ability scores and CR, and the [editor](/editor)'s token inspector previews exactly what players will see.
 
-Finally, give the creature one line of *behavior*: how it opens, what it protects, when it flees. "Fights until destroyed" is a choice, not a default. A monster that surrenders, bargains, or routs at half HP creates a scene; one that stands in place until it dies creates a subtraction problem.
+Finally, give the creature one line of _behavior_: how it opens, what it protects, when it flees. "Fights until destroyed" is a choice, not a default. A monster that surrenders, bargains, or routs at half HP creates a scene; one that stands in place until it dies creates a subtraction problem.
