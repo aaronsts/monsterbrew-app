@@ -50,13 +50,13 @@ export function NonmagicalDefensesField() {
                       <span className="font-semibold text-amber-400">
                         Amber
                       </span>{" "}
-                      — Resistant (half damage)
+                      – Resistant (half damage)
                     </li>
                     <li>
                       <span className="font-semibold text-green-500">
                         Green
                       </span>{" "}
-                      — Immune (no damage)
+                      – Immune (no damage)
                     </li>
                   </ul>
                 </TooltipContent>

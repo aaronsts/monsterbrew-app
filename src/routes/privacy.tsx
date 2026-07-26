@@ -37,7 +37,7 @@ const sections: Array<Section> = [
     body: (
       <>
         <p className="text-muted-foreground">
-          We use{" "}
+          I use{" "}
           <a
             href="https://umami.is/privacy"
             target="_blank"
@@ -69,20 +69,20 @@ const sections: Array<Section> = [
       <p className="text-muted-foreground">
         Any creatures, statblocks, and related content you build are stored
         locally in your own browser using IndexedDB. This data never leaves your
-        device and is not transmitted to or stored on any server we control.
+        device and is not transmitted to or stored on any server I control.
         Clearing your browser data will permanently remove it.
       </p>
     ),
   },
   {
     icon: <ShieldCheck />,
-    title: "What We Do Not Do",
+    title: "What I Do Not Do",
     body: (
       <ul className="space-y-1.5 text-muted-foreground">
-        <li>We do not collect or store your personal information.</li>
-        <li>We do not build profiles about you.</li>
-        <li>We do not sell, rent, or share your data with third parties.</li>
-        <li>We do not use your data for advertising or marketing.</li>
+        <li>I do not collect or store your personal information.</li>
+        <li>I do not build profiles about you.</li>
+        <li>I do not sell, rent, or share your data with third parties.</li>
+        <li>I do not use your data for advertising or marketing.</li>
       </ul>
     ),
   },
@@ -92,7 +92,7 @@ const sections: Array<Section> = [
     body: (
       <p className="text-muted-foreground">
         The Service relies on third-party providers, including Umami
-        Analytics and our hosting provider, to operate. These providers process
+        Analytics and my hosting provider, to operate. These providers process
         only the limited, anonymous technical information necessary to deliver
         the Service. Their handling of that information is governed by their own
         privacy policies.
@@ -104,7 +104,7 @@ const sections: Array<Section> = [
     title: "Changes to This Policy",
     body: (
       <p className="text-muted-foreground">
-        We may update this Privacy Policy from time to time. Any changes will be
+        I may update this Privacy Policy from time to time. Any changes will be
         posted on this page with a revised effective date.
       </p>
     ),

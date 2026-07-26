@@ -164,7 +164,7 @@ function Changelog() {
                     </span>
                     {release.title ? (
                       <span className="text-accent">
-                        {" — "}
+                        {" – "}
                         {release.title}
                       </span>
                     ) : null}

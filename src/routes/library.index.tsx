@@ -10,7 +10,7 @@ export const Route = createFileRoute("/library/")({
     ...seo({
       title: "Monster Library | Monsterbrew",
       description:
-        "Browse your saved homebrew creatures and the full D&D 2024 SRD bestiary — over 300 monsters with complete 5e statblocks, ready to copy into the editor.",
+        "Browse your saved homebrew creatures and the full D&D 2024 SRD bestiary: over 300 monsters with complete 5e statblocks, ready to copy into the editor.",
       path: "/library",
     }),
   }),

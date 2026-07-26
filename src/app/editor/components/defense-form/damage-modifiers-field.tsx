@@ -25,15 +25,15 @@ export function DamageModifiersField() {
                   <span className="font-semibold text-destructive-500">
                     Red
                   </span>{" "}
-                  — Vulnerable (double damage)
+                  – Vulnerable (double damage)
                 </p>
                 <p>
                   <span className="font-semibold text-warning-500">Amber</span>{" "}
-                  — Resistant (half damage)
+                  – Resistant (half damage)
                 </p>
                 <p>
                   <span className="font-semibold text-success-500">Green</span>{" "}
-                  — Immune (no damage)
+                  – Immune (no damage)
                 </p>
               </div>
             </span>

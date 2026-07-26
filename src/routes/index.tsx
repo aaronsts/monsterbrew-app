@@ -24,7 +24,7 @@ const faq = [
   {
     question: "Does Monsterbrew include official D&D monsters?",
     answer:
-      "Yes. The library includes the full D&D 2024 SRD bestiary — over 300 monsters you can browse and copy into the editor as a starting point for your own homebrew creatures. The SRD is published by Wizards of the Coast under the Creative Commons Attribution 4.0 license.",
+      "Yes. The library includes the full D&D 2024 SRD bestiary: over 300 monsters you can browse and copy into the editor as a starting point for your own homebrew creatures. The SRD is published by Wizards of the Coast under the Creative Commons Attribution 4.0 license.",
   },
 ];
 
@@ -145,7 +145,7 @@ function Home() {
             </h2>
             <div className="md:border-l md:border-white/15 md:pl-12">
               <p className="text-lg opacity-80">
-                Enter a creature&apos;s abilities and we&apos;ll handle the
+                Enter a creature&apos;s abilities and Monsterbrew handles the
                 rest. Modifiers, saving throws, passive scores, and HP all
                 update as you type. Import from tools you already use, and
                 export to well-known formats like Homebrewery or PDF when
@@ -180,7 +180,7 @@ function Home() {
           <FeatureCard
             icon={<HardDriveDownload />}
             title="Locally Saved"
-            description="Everything lives in your browser — no account and no sign-up required."
+            description="Everything lives in your browser. No account and no sign-up required."
           />
         </div>
       </section>

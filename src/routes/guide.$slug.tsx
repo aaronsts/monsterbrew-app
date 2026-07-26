@@ -170,7 +170,7 @@ function GuideChapterPage() {
           </nav>
 
           <p className="mt-6 text-xs text-muted-foreground">
-            This guide draws on openly licensed community works — see{" "}
+            This guide draws on openly licensed community works. See{" "}
             <Link
               to="/guide/$slug"
               params={{ slug: "sources" }}

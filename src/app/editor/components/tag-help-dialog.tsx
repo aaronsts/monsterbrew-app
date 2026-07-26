@@ -40,7 +40,7 @@ export function TagHelpDialog() {
         <DialogHeader>
           <DialogTitle>The tag system</DialogTitle>
           <DialogDescription>
-            Descriptions can embed <Tag>{"{@…}"}</Tag> tags — small
+            Descriptions can embed <Tag>{"{@…}"}</Tag> tags: small
             placeholders that the editor, the preview and every export turn
             into proper statblock text.
           </DialogDescription>
@@ -53,8 +53,8 @@ export function TagHelpDialog() {
             <span className="text-foreground">Saving throw line</span> insert a
             single tag that renders a complete rules line, e.g.{" "}
             <Tag>{"{@attack m|str|5|1d6+str|slashing}"}</Tag>. Click its
-            highlighted preview in the field to edit the parts — attack kind,
-            to-hit, reach, damage — in a popup.
+            highlighted preview in the field to edit the parts (attack kind,
+            to-hit, reach, damage) in a popup.
           </p>
         </div>
 
@@ -72,7 +72,7 @@ export function TagHelpDialog() {
         <div className="grid gap-1">
           <p className="font-medium">Inline tags</p>
           <p className="text-muted-foreground">
-            Smaller tags cover single values inside a sentence —{" "}
+            Smaller tags cover single values inside a sentence:{" "}
             <Tag>{"{@damage 2d6}"}</Tag>, <Tag>{"{@dice 1d20 + 3}"}</Tag>,{" "}
             <Tag>{"{@condition prone}"}</Tag>, <Tag>{"{@spell fireball}"}</Tag>
             , <Tag>{"{@recharge 5}"}</Tag>. Anything the editor doesn&apos;t
