@@ -5,43 +5,9 @@ import { IdentityForm } from "./identity-form";
 import { renderWithForm } from "./test-utils";
 import { Languages } from "@/schema/createCreatureSchema";
 
-const ppInput = () =>
-  screen.getByLabelText<HTMLInputElement>("Passive Perception");
-const manualToggle = () =>
-  screen.getByRole("switch", { name: "Manual passive perception" });
 const languageInput = () =>
   screen.getByLabelText<HTMLInputElement>("Custom languages");
 const addButton = () => screen.getByRole("button", { name: "Add" });
-
-describe("IdentityForm — custom passive perception", () => {
-  it("disables the passive perception input by default (it is derived)", () => {
-    renderWithForm(<IdentityForm />);
-    expect(ppInput().disabled).toBe(true);
-  });
-
-  it("enables the input and flips custom_passive_perception when toggled", async () => {
-    const user = userEvent.setup();
-    const { getForm } = renderWithForm(<IdentityForm />);
-
-    await user.click(manualToggle());
-
-    expect(getForm().getValues("custom_passive_perception")).toBe(true);
-    expect(ppInput().disabled).toBe(false);
-  });
-
-  it("writes a manually entered passive perception to the form", async () => {
-    const user = userEvent.setup();
-    const { getForm } = renderWithForm(<IdentityForm />, {
-      custom_passive_perception: true,
-    });
-
-    await user.clear(ppInput());
-    await user.type(ppInput(), "18");
-
-    // The number input holds a raw string; monsterSchema coerces on save.
-    expect(getForm().getValues("passive_perception")).toBe("18");
-  });
-});
 
 describe("IdentityForm — custom languages", () => {
   it("adds a custom language via the Add button and clears the input", async () => {

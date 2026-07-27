@@ -31,6 +31,12 @@ export function SaveEditor({
   const isKeyword = effectiveOnSave === "half" || effectiveOnSave === "none";
   const mode = forcedCustom || !isKeyword ? "custom" : effectiveOnSave;
 
+  const hasDamage = value.dice.trim() !== "";
+  // "Half damage" is meaningless without a Failure damage clause.
+  const onSaveOptions = hasDamage
+    ? ON_SAVE_OPTIONS
+    : ON_SAVE_OPTIONS.filter((o) => o.value !== "half");
+
   return (
     <div className="grid gap-2.5">
       <FieldRow label="Saving throw">
@@ -45,19 +51,32 @@ export function SaveEditor({
         value={value.dc}
         onChange={(dc) => set({ dc })}
       />
-      <FieldRow label="Damage dice (on failure)">
+      <FieldRow label="Damage dice (on failure, optional)">
         <Input
           aria-label="Failure damage dice"
           value={value.dice}
-          onChange={(e) => set({ dice: e.target.value })}
+          onChange={(e) => {
+            const dice = e.target.value;
+            // A dangling "half" would still render "Success: Half damage."
+            const patch =
+              !dice.trim() && value.onSave === "half"
+                ? { dice, onSave: "" }
+                : { dice };
+            set(patch);
+          }}
           placeholder="3d6"
           className="h-8"
         />
       </FieldRow>
-      <DamageTypeSelect value={value.type} onChange={(type) => set({ type })} />
+      {hasDamage && (
+        <DamageTypeSelect
+          value={value.type}
+          onChange={(type) => set({ type })}
+        />
+      )}
       <FieldRow label="On success">
         <OptionSelect
-          items={ON_SAVE_OPTIONS}
+          items={onSaveOptions}
           value={mode}
           onChange={(v) => {
             if (v === "custom") {

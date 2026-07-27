@@ -10,7 +10,11 @@ import {
 import type {
   SkillProficiency} from "./helpers";
 import type { Monster } from "@/schema/monster-schema";
-import { FieldGroup, FieldLabel } from "@/components/ui/field";
+import {
+  FieldDescription,
+  FieldGroup,
+  FieldLabel,
+} from "@/components/ui/field";
 import { calculateStatBonus, cn } from "@/lib/utils";
 
 export function SkillsField() {
@@ -27,6 +31,10 @@ export function SkillsField() {
         return (
           <FieldGroup>
             <FieldLabel className="-mb-1">Skills</FieldLabel>
+            <FieldDescription className="-mt-1">
+              Click a skill to cycle its bonus: one square is proficient, two
+              squares is expertise (double proficiency).
+            </FieldDescription>
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {SKILLS_BY_ABILITY.map(({ ability, label, skills }) => (
                 <div key={ability} className="space-y-px">

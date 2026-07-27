@@ -20,8 +20,8 @@ interface MarkupFieldProps {
   onChange: (value: string) => void;
   onBlur?: () => void;
   placeholder?: string;
-  /** Creature stats used to resolve stat-linked tags in the live preview. */
   ctx: MarkupContext;
+  tags?: Array<TagItem>;
 }
 
 export function MarkupField({
@@ -31,6 +31,7 @@ export function MarkupField({
   onBlur,
   placeholder,
   ctx,
+  tags = TAG_CATALOG,
 }: Readonly<MarkupFieldProps>) {
   const editorRef = useRef<MarkupEditorHandle>(null);
   /** The editor's box — presses inside it are caret moves, not dismissals. */
@@ -124,7 +125,7 @@ export function MarkupField({
       />
 
       <div className="flex flex-wrap items-center gap-1">
-        {TAG_CATALOG.map((tag) => (
+        {tags.map((tag) => (
           <Button
             key={tag.name}
             type="button"

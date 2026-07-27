@@ -15,6 +15,13 @@ describe("monsterToHomebrewery", () => {
     expect(md).toContain("## Goblin");
   });
 
+  it("appends the flavor description after the monster block", () => {
+    const md = monsterToHomebrewery(
+      makeMonster({ description: "A sneaky little menace." }),
+    );
+    expect(md).toContain("}}\n\nA sneaky little menace.");
+  });
+
   it("renders the header block: type line, AC, HP and speed", () => {
     const md = monsterToHomebrewery(
       makeMonster({

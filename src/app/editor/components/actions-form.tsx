@@ -10,6 +10,7 @@ import { MarkupField } from "./markup-field";
 import type { Control } from "react-hook-form";
 import type { Monster } from "@/schema/monster-schema";
 import type { MarkupContext } from "@/lib/statblock-markup";
+import type { TagItem } from "@/lib/tag-catalog";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -43,10 +44,13 @@ interface FeatureListProps {
   name: FeatureArrayName;
   itemLabel: string;
   addLabel: string;
+  namePlaceholder: string;
+  descriptionPlaceholder: string;
   title?: string;
   descriptionName?: DescriptionName;
   descriptionLabel?: string;
   ctx: MarkupContext;
+  tags?: Array<TagItem>;
 }
 
 function FeatureList({
@@ -54,10 +58,13 @@ function FeatureList({
   name,
   itemLabel,
   addLabel,
+  namePlaceholder,
+  descriptionPlaceholder,
   title,
   descriptionName,
   descriptionLabel,
   ctx,
+  tags,
 }: FeatureListProps) {
   const { fields, append, remove, swap } = useFieldArray({ control, name });
 
@@ -67,7 +74,8 @@ function FeatureList({
         {title ? <FieldLabel className="mb-0">{title}</FieldLabel> : <span />}
         <Button
           type="button"
-          color="neutral" variant="outline"
+          color="neutral"
+          variant="outline"
           size="sm"
           onClick={() => append({ name: "", description: "" })}
         >
@@ -111,7 +119,8 @@ function FeatureList({
               <div className="flex gap-1">
                 <Button
                   type="button"
-                  color="neutral" variant="ghost"
+                  color="neutral"
+                  variant="ghost"
                   size="icon-sm"
                   disabled={index === 0}
                   onClick={() => swap(index, index - 1)}
@@ -121,7 +130,8 @@ function FeatureList({
                 </Button>
                 <Button
                   type="button"
-                  color="neutral" variant="ghost"
+                  color="neutral"
+                  variant="ghost"
                   size="icon-sm"
                   disabled={index === fields.length - 1}
                   onClick={() => swap(index, index + 1)}
@@ -131,7 +141,8 @@ function FeatureList({
                 </Button>
                 <Button
                   type="button"
-                  color="neutral" variant="ghost"
+                  color="neutral"
+                  variant="ghost"
                   size="icon-sm"
                   onClick={() => remove(index)}
                 >
@@ -154,7 +165,7 @@ function FeatureList({
                     <Input
                       {...field}
                       id={`form-rhf-${name}-${index}-name`}
-                      placeholder="ex. Multiattack"
+                      placeholder={namePlaceholder}
                     />
                   </Field>
                 )}
@@ -174,8 +185,9 @@ function FeatureList({
                       value={field.value}
                       onChange={field.onChange}
                       onBlur={field.onBlur}
-                      placeholder="Describe the effect…  e.g. {@attack m|str|5|2d8+str|slashing}"
+                      placeholder={descriptionPlaceholder}
                       ctx={ctx}
+                      tags={tags}
                     />
                   </Field>
                 )}
@@ -214,6 +226,9 @@ export const ActionsForm = () => {
         title="Traits"
         itemLabel="Trait"
         addLabel="Add trait"
+        namePlaceholder="ex. Pack Tactics"
+        descriptionPlaceholder="Describe the passive ability… e.g. The wolf has advantage on attack rolls against a creature if at least one ally is within 5 ft. of it."
+        tags={[]}
         ctx={ctx}
       />
       <FeatureList
@@ -222,6 +237,8 @@ export const ActionsForm = () => {
         title="Actions"
         itemLabel="Action"
         addLabel="Add action"
+        namePlaceholder="ex. Multiattack"
+        descriptionPlaceholder="Describe the action… e.g. {@attack m|str|5|2d8+str|slashing}"
         ctx={ctx}
       />
       <FeatureList
@@ -230,6 +247,8 @@ export const ActionsForm = () => {
         title="Reactions"
         itemLabel="Reaction"
         addLabel="Add reaction"
+        namePlaceholder="ex. Parry"
+        descriptionPlaceholder="Describe the trigger and effect… e.g. Adds 2 to its AC against one melee attack that would hit it."
         ctx={ctx}
       />
       <FeatureList
@@ -238,6 +257,8 @@ export const ActionsForm = () => {
         title="Bonus Actions"
         itemLabel="Bonus Action"
         addLabel="Add bonus action"
+        namePlaceholder="ex. Nimble Escape"
+        descriptionPlaceholder="Describe the bonus action… e.g. Takes the Disengage or Hide action."
         ctx={ctx}
       />
 
@@ -267,6 +288,8 @@ export const ActionsForm = () => {
             name="lair_actions"
             itemLabel="Lair Action"
             addLabel="Add lair action"
+            namePlaceholder="ex. Grasping Roots"
+            descriptionPlaceholder="Describe the lair effect… e.g. Roots erupt in a 20-foot square; that area becomes difficult terrain."
             descriptionName="lair_description"
             descriptionLabel="Lair Description"
             ctx={ctx}
@@ -298,6 +321,8 @@ export const ActionsForm = () => {
             name="legendary_actions"
             itemLabel="Legendary Action"
             addLabel="Add legendary action"
+            namePlaceholder="ex. Tail Attack"
+            descriptionPlaceholder="Describe the legendary action… e.g. {@attack m|str|10|1d8+str|bludgeoning}"
             descriptionName="legendary_description"
             descriptionLabel="Legendary Description"
             ctx={ctx}
@@ -329,6 +354,8 @@ export const ActionsForm = () => {
             name="mythic_actions"
             itemLabel="Mythic Action"
             addLabel="Add mythic action"
+            namePlaceholder="ex. Blazing Rebirth"
+            descriptionPlaceholder="Describe the mythic action… e.g. Regains 50 hit points and stands if prone."
             descriptionName="mythic_description"
             descriptionLabel="Mythic Description"
             ctx={ctx}
