@@ -1,9 +1,11 @@
 "use client";
 
+import { X } from "lucide-react";
 import { TOKEN_EDITORS } from "./token-editors";
 import type { MarkupContext } from "@/lib/statblock-markup";
 import { keySegments } from "@/lib/token-keys";
 import { parseMarkup } from "@/lib/statblock-markup";
+import { Button } from "@/components/ui/button";
 import {
   Popover,
   PopoverContent,
@@ -71,8 +73,19 @@ export function TokenEditorPopover({
         className="w-80"
         initialFocus={focusPopover ? undefined : false}
       >
-        <PopoverHeader>
+        <PopoverHeader className="flex flex-row items-center justify-between">
           <PopoverTitle className="mb-0">{editor.label}</PopoverTitle>
+          <Button
+            type="button"
+            color="neutral"
+            variant="ghost"
+            size="icon-sm"
+            className="-my-1 -mr-1"
+            onClick={() => onOpenChange(false, { reason: "close-button" })}
+          >
+            <span className="sr-only">Close</span>
+            <X />
+          </Button>
         </PopoverHeader>
         <Editor
           value={fields}

@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { X } from "lucide-react";
-import { Controller, useFormContext, useWatch } from "react-hook-form";
+import { Controller, useFormContext } from "react-hook-form";
 import type { Monster } from "@/schema/monster-schema";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -24,7 +24,7 @@ import {
   FieldSet,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Item,
   ItemContent,
@@ -47,11 +47,6 @@ const LANGUAGES = Object.values(Languages);
 
 export const IdentityForm = () => {
   const { control } = useFormContext<Monster>();
-  const customPassivePerception = useWatch({
-    control,
-    name: "custom_passive_perception",
-  });
-
   const [customLanguageInput, setCustomLanguageInput] = useState("");
   return (
     <FieldSet>
@@ -216,6 +211,7 @@ export const IdentityForm = () => {
                     id={`form-rhf-input-${sense.name}`}
                     type="number"
                     min={0}
+                    step={5}
                     onKeyDown={blockMinusKey}
                     onFocus={(e) => e.target.select()}
                     aria-invalid={fieldState.invalid}
@@ -249,57 +245,6 @@ export const IdentityForm = () => {
           />
         </div>
 
-        <Controller
-          name="passive_perception"
-          control={control}
-          render={({ field, fieldState }) => (
-            <Field data-invalid={fieldState.invalid}>
-              <div className="flex items-center justify-between gap-2">
-                <FieldLabel htmlFor="form-rhf-input-passive-perception">
-                  Passive Perception
-                </FieldLabel>
-                <Controller
-                  name="custom_passive_perception"
-                  control={control}
-                  render={({ field: customField }) => (
-                    <Field
-                      orientation="horizontal"
-                      className="w-auto items-center"
-                    >
-                      <Switch
-                        id="form-rhf-input-custom-passive-perception"
-                        size="sm"
-                        checked={customField.value}
-                        onCheckedChange={customField.onChange}
-                      />
-                      <FieldLabel
-                        htmlFor="form-rhf-input-custom-passive-perception"
-                        className="text-xs font-normal text-muted-foreground"
-                      >
-                        <span aria-hidden>Manual</span>
-                        <span className="sr-only">
-                          Manual passive perception
-                        </span>
-                      </FieldLabel>
-                    </Field>
-                  )}
-                />
-              </div>
-              <Input
-                {...field}
-                id="form-rhf-input-passive-perception"
-                type="number"
-                min={0}
-                onKeyDown={blockMinusKey}
-                onFocus={(e) => e.target.select()}
-                disabled={!customPassivePerception}
-                aria-invalid={fieldState.invalid}
-                placeholder="ex. 10"
-              />
-              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-            </Field>
-          )}
-        />
       </FieldGroup>
 
       {/* Languages */}
@@ -415,6 +360,28 @@ export const IdentityForm = () => {
             </FieldGroup>
           );
         }}
+      />
+
+      {/* Description */}
+      <Controller
+        name="description"
+        control={control}
+        render={({ field }) => (
+          <Field>
+            <FieldLabel htmlFor="form-rhf-input-description">
+              Description
+            </FieldLabel>
+            <Textarea
+              {...field}
+              value={field.value ?? ""}
+              id="form-rhf-input-description"
+              placeholder="ex. Kobolds are small reptilian humanoids that dwell in dark places…"
+            />
+            <FieldDescription>
+              Flavor text shown at the bottom of the statblock
+            </FieldDescription>
+          </Field>
+        )}
       />
     </FieldSet>
   );

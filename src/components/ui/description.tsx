@@ -59,9 +59,14 @@ export function Description({
       .replaceAll("[CON ATK]", mappings["[CON ATK]"]);
   }
 
-  const markdownString = `***${title}.*** ${parseDescription(
-    description || placeholder
-  )}`;
+  // Stray whitespace around the title breaks the ***bold-italic*** delimiters
+  // (CommonMark flanking rules), and 4-space-indented lines would render as
+  // code blocks — trim per line, display-only.
+  const body = parseDescription(description || placeholder)
+    .split("\n")
+    .map((line) => line.trim())
+    .join("\n");
+  const markdownString = `***${title.trim()}.*** ${body}`;
 
   return (
     <Markdown

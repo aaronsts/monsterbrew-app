@@ -76,6 +76,41 @@ describe("CombatForm — custom HP", () => {
   });
 });
 
+describe("CombatForm — custom passive perception", () => {
+  const ppInput = () =>
+    screen.getByLabelText<HTMLInputElement>("Passive Perception");
+  const ppToggle = () =>
+    screen.getByRole("switch", { name: "Manual passive perception" });
+
+  it("disables the passive perception input by default (it is derived)", () => {
+    renderWithForm(<CombatForm />);
+    expect(ppInput().disabled).toBe(true);
+  });
+
+  it("enables the input and flips custom_passive_perception when toggled", async () => {
+    const user = userEvent.setup();
+    const { getForm } = renderWithForm(<CombatForm />);
+
+    await user.click(ppToggle());
+
+    expect(getForm().getValues("custom_passive_perception")).toBe(true);
+    expect(ppInput().disabled).toBe(false);
+  });
+
+  it("writes a manually entered passive perception to the form", async () => {
+    const user = userEvent.setup();
+    const { getForm } = renderWithForm(<CombatForm />, {
+      custom_passive_perception: true,
+    });
+
+    await user.clear(ppInput());
+    await user.type(ppInput(), "18");
+
+    // The number input holds a raw string; monsterSchema coerces on save.
+    expect(getForm().getValues("passive_perception")).toBe("18");
+  });
+});
+
 describe("CombatForm — custom initiative", () => {
   const initiativeInput = () =>
     screen.getByLabelText<HTMLInputElement>("Initiative");

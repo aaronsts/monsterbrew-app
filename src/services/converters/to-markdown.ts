@@ -218,5 +218,10 @@ export function monsterToHomebrewery(creature: Monster): string {
   }
 
   lines.push("}}");
+
+  if (creature.description?.trim()) {
+    lines.push("", creature.description.trim());
+  }
+
   return lines.join("\n");
 }

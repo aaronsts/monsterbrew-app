@@ -62,7 +62,9 @@ export function calculateHitPoints(
   const medianHp = Math.floor(hp / 2 + extraHP);
   if (Number.isNaN(medianHp)) return "";
 
-  return `${medianHp} (${Number.parseInt(amount)}d${hit_dice} + ${extraHP})`;
+  const bonus =
+    extraHP === 0 ? "" : extraHP > 0 ? ` + ${extraHP}` : ` - ${-extraHP}`;
+  return `${medianHp} (${Number.parseInt(amount)}d${hit_dice}${bonus})`;
 }
 
 export function generateId(): string {
