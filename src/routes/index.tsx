@@ -28,6 +28,15 @@ const faq = [
   },
 ];
 
+const guideChapters = [
+  "Fundamentals of monster design",
+  "Challenge rating in practice",
+  "Offense and defense budgets",
+  "Traits, actions, and flavor",
+  "Common pitfalls",
+  "Playtesting and iteration",
+];
+
 export const Route = createFileRoute("/")({
   head: () => {
     const { meta, links } = seo({
@@ -76,7 +85,6 @@ export const Route = createFileRoute("/")({
   component: Home,
 });
 
-// eslint-disable-next-line react-refresh/only-export-components
 function Home() {
   return (
     <div className="w-full flex flex-col gap-24 py-8 px-6">
@@ -166,7 +174,7 @@ function Home() {
           <h2 className="mb-0">Everything you need to run the encounter</h2>
         </div>
 
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           <FeatureCard
             icon={<FileText />}
             title="Statblock Creator"
@@ -182,6 +190,50 @@ function Home() {
             title="Locally Saved"
             description="Everything lives in your browser. No account and no sign-up required."
           />
+        </div>
+      </section>
+
+      {/* Creature building guide */}
+      <section className="relative px-4 py-10 sm:px-8">
+        <div className="mx-auto grid max-w-5xl gap-10 md:grid-cols-2 md:items-center">
+          <div>
+            <p className="mb-3 flex items-center gap-2 text-xs font-medium tracking-widest text-accent uppercase">
+              <span aria-hidden className="size-1.5 bg-accent" />
+              Creature building guide
+            </p>
+            <h2>Learn how to build a balanced and exciting monster</h2>
+            <p className="mb-8 text-lg text-muted-foreground">
+              Not sure where to start? The guide walks you through monster
+              design with the 2024 rules. It covers the numbers behind challenge
+              rating, how to budget offense and defense, and the pitfalls that
+              happen to most homebrew.
+            </p>
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <Link to="/guide">
+                <Button color="accent">
+                  Read the guide <ArrowRight />
+                </Button>
+              </Link>
+              <Link to="/guide/quick-reference">
+                <Button color="neutral" variant="outline">
+                  Quick reference
+                </Button>
+              </Link>
+            </div>
+          </div>
+          <ol className="border-b border-foreground/10">
+            {guideChapters.map((title, index) => (
+              <li
+                key={title}
+                className="flex items-baseline gap-4 border-t border-foreground/10 py-3"
+              >
+                <span className="text-xs font-medium tracking-widest text-accent">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                <span className="font-medium">{title}</span>
+              </li>
+            ))}
+          </ol>
         </div>
       </section>
 

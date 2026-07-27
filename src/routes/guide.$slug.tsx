@@ -2,6 +2,7 @@ import { Link, createFileRoute, notFound } from "@tanstack/react-router";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import type { ComponentType } from "react";
 import { ChapterSidebar } from "@/app/guide/components/chapter-sidebar";
+import { CombatRolesChart } from "@/app/guide/components/combat-roles-chart";
 import { CrBenchmarkTable } from "@/app/guide/components/cr-benchmark-table";
 import { GuideMarkdown } from "@/app/guide/components/guide-markdown";
 import { Button } from "@/components/ui/button";
@@ -14,6 +15,7 @@ import { SITE_URL, seo } from "@/lib/seo";
  */
 const slotComponents: Record<string, ComponentType> = {
   "cr-table": CrBenchmarkTable,
+  "combat-roles-chart": CombatRolesChart,
 };
 
 export const Route = createFileRoute("/guide/$slug")({

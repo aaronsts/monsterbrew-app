@@ -26,7 +26,9 @@ Depending on the type, a monster rarely fights alone, and the job it does in an 
 - **Leader:** heals, buffs, or repositions its allies. Best protected by a defender or two, since players will (correctly) want to defeat it first.
 - **Skirmisher:** mobile, darting in and out. Great for pulling a party apart and making terrain matter.
 
-Naming the role tells you where the numbers should bend. An artillery creature trades hit points for accuracy. A defender trades damage for AC. When you later compare your creature against the [benchmark statistics](/guide/challenge-rating), you'll know _which_ columns it should deviate from, and in which direction.
+Naming the role tells you where the numbers should bend. An artillery creature trades hit points for accuracy. A defender trades damage for AC. When you later compare your creature against the [benchmark statistics](/guide/challenge-rating), you'll know _which_ columns it should deviate from, and in which direction. Click a role to see how its stats compare to the CR baseline.
+
+<!--slot:combat-roles-chart-->
 
 ## Respect the action economy
 

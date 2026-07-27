@@ -10,7 +10,7 @@ import {
 import { CR_BENCHMARKS } from "@/lib/constants/cr-benchmarks";
 import { CHALLENGE_RATINGS } from "@/lib/constants";
 
-const KNOWN_SLOTS = ["cr-table"];
+const KNOWN_SLOTS = ["cr-table", "combat-roles-chart"];
 
 describe("guide manifest", () => {
   it("loads all chapters with complete frontmatter", () => {

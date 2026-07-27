@@ -197,27 +197,7 @@ function RoleChart({ stats }: Readonly<{ stats: Record<StatKey, StatDelta> }>) {
 export function CombatRolesChart() {
   const [selected, setSelected] = useState(COMBAT_ROLES[0]);
   return (
-    <div>
-      <ul className="mt-3 grid grid-cols-2 lg:grid-cols-4 gap-2">
-        {COMBAT_ROLES.map((role) => (
-          <li key={role.name} className="w-full list-none">
-            <Button
-              type="button"
-              color="accent"
-              variant="outline"
-              size="sm"
-              aria-pressed={role.name === selected.name}
-              onClick={() => setSelected(role)}
-              className={cn(
-                "w-full",
-                role.name === selected.name && "bg-accent/20",
-              )}
-            >
-              {role.name}
-            </Button>
-          </li>
-        ))}
-      </ul>
+    <div className="mb-6">
       <p className="mt-3 text-sm text-muted-foreground">{selected.tooltip}</p>
       <RoleChart stats={selected.stats} />
       <div className="mb-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-[10px] text-muted-foreground">
@@ -238,6 +218,26 @@ export function CombatRolesChart() {
         </span>
       </div>
       <p className="sr-only">{describeStats(selected.stats)}</p>
+      <ul className="mt-3 grid grid-cols-2 lg:grid-cols-4 gap-2">
+        {COMBAT_ROLES.map((role) => (
+          <li key={role.name} className="w-full list-none">
+            <Button
+              type="button"
+              color="accent"
+              variant="outline"
+              size="sm"
+              aria-pressed={role.name === selected.name}
+              onClick={() => setSelected(role)}
+              className={cn(
+                "w-full",
+                role.name === selected.name && "bg-accent/20",
+              )}
+            >
+              {role.name}
+            </Button>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
