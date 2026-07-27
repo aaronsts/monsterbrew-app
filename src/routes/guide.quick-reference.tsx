@@ -1,62 +1,24 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
-import { ArrowLeft, ArrowRight } from "lucide-react";
-import type { ReactNode } from "react";
+import { ArrowLeft } from "lucide-react";
+import { CombatRolesChart } from "@/app/guide/components/combat-roles-chart";
 import { Button } from "@/components/ui/button";
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { SITE_URL, seo } from "@/lib/seo";
-
-/**
- * The seven combat roles from the Lazy GM's Resource Document (CC-BY 4.0),
- * with how each one bends the stats away from its CR baseline.
- */
-const COMBAT_ROLES: Array<{ name: string; tooltip: string }> = [
-  {
-    name: "Ambusher",
-    tooltip:
-      "Hides, strikes, and hides again. Hits harder than the CR baseline, with lower HP and AC in exchange.",
-  },
-  {
-    name: "Artillery",
-    tooltip:
-      "Fights from range. Higher attack bonus and damage than the baseline, lower HP and AC. The classic glass cannon.",
-  },
-  {
-    name: "Bruiser",
-    tooltip:
-      "Big melee damage. Above-baseline damage, and easier to hit or quicker to drop in exchange.",
-  },
-  {
-    name: "Controller",
-    tooltip:
-      "Imposes conditions: grapples, restrains, frightens, poisons. Lower damage than the baseline, because the save DC does the work.",
-  },
-  {
-    name: "Defender",
-    tooltip:
-      "Soaks hits and keeps enemies off its allies. Higher AC and HP than the baseline, lower damage.",
-  },
-  {
-    name: "Leader",
-    tooltip:
-      "Heals, buffs, or repositions its allies. Its own damage sits below the baseline; the allies make up the difference.",
-  },
-  {
-    name: "Skirmisher",
-    tooltip:
-      "Darts in and out of the fight. More speed and mobility than the baseline, less HP.",
-  },
-];
+import { Section } from "@/app/guide/components/section";
+import { Card } from "@/components/ui/card";
 
 const QUICK_FORMULAS: Array<{ stat: string; formula: string }> = [
-  { stat: "AC and save DC", formula: "12 + ½ CR" },
-  { stat: "Hit points", formula: "(15 × CR) + 15" },
-  { stat: "Attack bonus", formula: "4 + ½ CR" },
-  { stat: "Damage per round", formula: "(7 × CR) + 5" },
+  { stat: "AC and save DC", formula: "12 + half the creature's CR" },
+  { stat: "Hit points", formula: "(15 x CR) + 15" },
+  { stat: "Attack bonus", formula: "4 + half the creature's CR" },
+  { stat: "Damage per round", formula: "(7 x CR) + 5" },
   { stat: "Attacks", formula: "one, plus another at CR 2, 7, 11, and 15" },
 ];
 
@@ -96,7 +58,7 @@ export const Route = createFileRoute("/guide/quick-reference")({
                   {
                     "@type": "ListItem",
                     position: 3,
-                    name: "Cheat sheet",
+                    name: "Quick reference",
                     item: `${SITE_URL}${path}`,
                   },
                 ],
@@ -121,68 +83,33 @@ export const Route = createFileRoute("/guide/quick-reference")({
       ],
     };
   },
-  component: CheatSheetPage,
+  component: QuickReferencePage,
 });
 
-function Section({
-  title,
-  slug,
-  children,
-}: {
-  title: string;
-  slug: string;
-  children: ReactNode;
-}) {
-  return (
-    <section className="mt-10">
-      <div className="mb-4 flex items-baseline justify-between gap-4 border-b border-border pb-2">
-        <h2 className="text-2xl font-semibold tracking-tight">{title}</h2>
-        <Link
-          to="/guide/$slug"
-          params={{ slug }}
-          className="flex items-center gap-1 text-sm whitespace-nowrap text-muted-foreground transition-colors hover:text-accent"
-        >
-          Full chapter
-          <ArrowRight className="size-3" />
-        </Link>
-      </div>
-      {children}
-    </section>
-  );
-}
-
-function Checklist({ children }: { children: ReactNode }) {
-  return (
-    <ul className="flex flex-col gap-2 pl-5 [&>li]:list-disc [&>li]:marker:text-accent">
-      {children}
-    </ul>
-  );
-}
-
-function CheatSheetPage() {
+function QuickReferencePage() {
   return (
     <div className="mx-auto w-full max-w-3xl px-6 py-8 pb-16">
       <p className="mb-3 flex items-center gap-2 text-xs font-medium tracking-widest text-accent uppercase">
         <span aria-hidden className="size-1.5 bg-accent" />
-        Quick reference
+        cheat sheet
       </p>
       <h1 className="mb-4 text-3xl font-bold tracking-tight md:text-4xl">
-        The cheat sheet
+        Quick Reference
       </h1>
       <p className="text-muted-foreground">
-        The whole{" "}
+        A condensed version of the{" "}
         <Link
           to="/guide"
           className="underline underline-offset-4 hover:text-foreground"
         >
           guide
         </Link>{" "}
-        on one page. Use it as a checklist while you build, and open a chapter
-        when you want the reasoning behind a rule.
+        . You can use it as a checklist while you build, and open a chapter when
+        you want to go more in depth.
       </p>
 
       <Section title="Identity" slug="fundamentals">
-        <Checklist>
+        <ul className="flex flex-col gap-2 pl-5 [&>li]:list-disc [&>li]:marker:text-accent">
           <li>
             Write one sentence about the creature before you open the statblock.
             Test every choice against it.
@@ -192,68 +119,60 @@ function CheatSheetPage() {
             concept and need no balancing.
           </li>
           <li>
-            Pick a combat role, and let it decide where the numbers bend. Hover
-            over a role to see how:
-            <TooltipProvider>
-              <ul className="mt-3 flex flex-wrap gap-2">
-                {COMBAT_ROLES.map((role) => (
-                  <li key={role.name} className="list-none">
-                    <Tooltip>
-                      <TooltipTrigger
-                        type="button"
-                        className="cursor-help border border-border px-3 py-1 text-sm transition-colors hover:border-accent hover:text-accent"
-                      >
-                        {role.name}
-                      </TooltipTrigger>
-                      <TooltipContent
-                        side="top"
-                        className="max-w-3xs p-3 text-left"
-                      >
-                        {role.tooltip}
-                      </TooltipContent>
-                    </Tooltip>
-                  </li>
-                ))}
-              </ul>
-            </TooltipProvider>
+            Pick the role this creature will play in combat, and let it decide
+            where the numbers bend. Click a role to see how its stats compare to
+            the CR baseline.
           </li>
           <li>
             Count turns. One monster acts once per round, a party acts four or
             five times.
           </li>
-        </Checklist>
+          <CombatRolesChart />
+        </ul>
       </Section>
 
       <Section title="The numbers" slug="challenge-rating">
-        <dl className="mb-4 grid grid-cols-[auto_1fr] gap-x-6 gap-y-1.5 border border-border bg-card p-4 text-sm">
-          {QUICK_FORMULAS.map((row) => (
-            <div key={row.stat} className="col-span-2 grid grid-cols-subgrid">
-              <dt className="font-medium">{row.stat}</dt>
-              <dd className="text-muted-foreground">{row.formula}</dd>
-            </div>
-          ))}
-        </dl>
-        <Checklist>
+        <Card className="mb-4 border py-0">
+          <Table className="text-sm">
+            <TableHeader>
+              <TableRow className="hover:bg-transparent">
+                <TableHead className="px-4">Stat</TableHead>
+                <TableHead className="px-4">Formula</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {QUICK_FORMULAS.map((row) => (
+                <TableRow key={row.stat} className="hover:bg-transparent">
+                  <TableCell className="px-4 font-medium">{row.stat}</TableCell>
+                  <TableCell className="px-4 whitespace-normal text-muted-foreground">
+                    {row.formula}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </Card>
+        <ul className="flex flex-col gap-2 pl-5 [&>li]:list-disc [&>li]:marker:text-accent">
           <li>
-            Deviate from the baseline to fit the role, and pay for it: more
-            damage means fewer hit points, more AC means less damage.
+            Deviate from the baseline to fit the role, but adjust. More damage
+            means fewer hit points or lower AC.
           </li>
           <li>
             If every stat sits above the baseline, that's not a tough monster,
             that's a higher CR. Raise it.
           </li>
           <li>
-            Cross-check: average the CR its defenses look like with the CR its
-            offense looks like. That average should match the CR you wrote down.
+            Cross-check: average the defensive CR with the offensive CR. It
+            should match the CR you wrote down.
           </li>
-        </Checklist>
+        </ul>
       </Section>
 
-      <Section title="Spend the budget" slug="offense-defense">
-        <Checklist>
+      <Section title="Offense & defense" slug="offense-defense">
+        <ul className="flex flex-col gap-2 pl-5 [&>li]:list-disc [&>li]:marker:text-accent">
           <li>
-            The math assumes a three-round fight. Balance the average of the
-            creature's three best rounds, not its single biggest one.
+            The math is based on a three-round fight. Balance the average damage
+            of the creature's three best rounds, not its single biggest one.
           </li>
           <li>
             An effect that hits two or more characters counts double. Budget it
@@ -264,25 +183,25 @@ function CheatSheetPage() {
             under it. Give the spike a visible tell.
           </li>
           <li>
-            Key every save DC to one ability. If an attack also poisons,
+            Make save DC rely on just one ability. If an attack also poisons,
             restrains, or knocks prone, lower its damage.
           </li>
           <li>
             A solo boss needs about 25% more damage, three legendary actions per
             round, legendary resistance 3/day, and ideally a few allies.
           </li>
-        </Checklist>
+        </ul>
       </Section>
 
       <Section title="Traits and actions" slug="traits-actions-flavor">
-        <Checklist>
+        <ul className="flex flex-col gap-2 pl-5 [&>li]:list-disc [&>li]:marker:text-accent">
           <li>
             Three actions is usually enough, five is the maximum. A fight lasts
             three to five rounds.
           </li>
           <li>
-            Every ability should force a decision. Flat extra damage doesn't
-            force any.
+            Abilities should force a decision. Flat extra damage doesn't force
+            any.
           </li>
           <li>Telegraph big abilities a round early, then pay off.</li>
           <li>Match damage types to the concept.</li>
@@ -301,36 +220,24 @@ function CheatSheetPage() {
             End with one line of behavior: how it opens, what it protects, when
             it runs.
           </li>
-        </Checklist>
+        </ul>
       </Section>
 
       <Section title="Avoid" slug="common-pitfalls">
-        <Checklist>
-          <li>
-            The HP sponge. A longer fight needs more threat, not more hit
-            points.
-          </li>
-          <li>
-            The stun-lock. Don't take the same player's turns away round after
-            round.
-          </li>
-          <li>
-            The overloaded statblock. Cut abilities, or split them over two
-            monsters.
-          </li>
-          <li>
-            The unsupported solo boss. Bring minions, or the full legendary
-            package.
-          </li>
+        <ul className="flex flex-col gap-2 pl-5 [&>li]:list-disc [&>li]:marker:text-accent">
+          <li>A longer fight needs more threat, not more hit points.</li>
+          <li>Don't take the same player's turns away round after round.</li>
+          <li>Cut abilities, or split them over two monsters.</li>
+          <li>Bring minions, or the full legendary package.</li>
           <li>
             Immunity to the party's favorite tricks. Build lightning rods for
             them instead.
           </li>
-        </Checklist>
+        </ul>
       </Section>
 
       <Section title="Playtest" slug="playtesting">
-        <Checklist>
+        <ul className="flex flex-col gap-2 pl-5 [&>li]:list-disc [&>li]:marker:text-accent">
           <li>
             Put the statblock next to its CR row, and next to a{" "}
             <Link
@@ -362,7 +269,7 @@ function CheatSheetPage() {
             </Link>{" "}
             is free.
           </li>
-        </Checklist>
+        </ul>
       </Section>
 
       <div className="mt-12 flex flex-col gap-6 border-t border-border pt-6">
