@@ -24,8 +24,17 @@ const faq = [
   {
     question: "Does Monsterbrew include official D&D monsters?",
     answer:
-      "Yes. The library includes the full D&D 2024 SRD bestiary — over 300 monsters you can browse and copy into the editor as a starting point for your own homebrew creatures. The SRD is published by Wizards of the Coast under the Creative Commons Attribution 4.0 license.",
+      "Yes. The library includes the full D&D 2024 SRD bestiary: over 300 monsters you can browse and copy into the editor as a starting point for your own homebrew creatures. The SRD is published by Wizards of the Coast under the Creative Commons Attribution 4.0 license.",
   },
+];
+
+const guideChapters = [
+  "Fundamentals of monster design",
+  "Challenge rating in practice",
+  "Offense and defense budgets",
+  "Traits, actions, and flavor",
+  "Common pitfalls",
+  "Playtesting and iteration",
 ];
 
 export const Route = createFileRoute("/")({
@@ -76,7 +85,6 @@ export const Route = createFileRoute("/")({
   component: Home,
 });
 
-// eslint-disable-next-line react-refresh/only-export-components
 function Home() {
   return (
     <div className="w-full flex flex-col gap-24 py-8 px-6">
@@ -145,7 +153,7 @@ function Home() {
             </h2>
             <div className="md:border-l md:border-white/15 md:pl-12">
               <p className="text-lg opacity-80">
-                Enter a creature&apos;s abilities and we&apos;ll handle the
+                Enter a creature&apos;s abilities and Monsterbrew handles the
                 rest. Modifiers, saving throws, passive scores, and HP all
                 update as you type. Import from tools you already use, and
                 export to well-known formats like Homebrewery or PDF when
@@ -166,7 +174,7 @@ function Home() {
           <h2 className="mb-0">Everything you need to run the encounter</h2>
         </div>
 
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           <FeatureCard
             icon={<FileText />}
             title="Statblock Creator"
@@ -180,8 +188,52 @@ function Home() {
           <FeatureCard
             icon={<HardDriveDownload />}
             title="Locally Saved"
-            description="Everything lives in your browser — no account and no sign-up required."
+            description="Everything lives in your browser. No account and no sign-up required."
           />
+        </div>
+      </section>
+
+      {/* Creature building guide */}
+      <section className="relative px-4 py-10 sm:px-8">
+        <div className="mx-auto grid max-w-5xl gap-10 md:grid-cols-2 md:items-center">
+          <div>
+            <p className="mb-3 flex items-center gap-2 text-xs font-medium tracking-widest text-accent uppercase">
+              <span aria-hidden className="size-1.5 bg-accent" />
+              Creature building guide
+            </p>
+            <h2>Learn how to build a balanced and exciting monster</h2>
+            <p className="mb-8 text-lg text-muted-foreground">
+              Not sure where to start? The guide walks you through monster
+              design with the 2024 rules. It covers the numbers behind challenge
+              rating, how to budget offense and defense, and the pitfalls that
+              happen to most homebrew.
+            </p>
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <Link to="/guide">
+                <Button color="accent">
+                  Read the guide <ArrowRight />
+                </Button>
+              </Link>
+              <Link to="/guide/quick-reference">
+                <Button color="neutral" variant="outline">
+                  Quick reference
+                </Button>
+              </Link>
+            </div>
+          </div>
+          <ol className="border-b border-foreground/10">
+            {guideChapters.map((title, index) => (
+              <li
+                key={title}
+                className="flex items-baseline gap-4 border-t border-foreground/10 py-3"
+              >
+                <span className="text-xs font-medium tracking-widest text-accent">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                <span className="font-medium">{title}</span>
+              </li>
+            ))}
+          </ol>
         </div>
       </section>
 
@@ -209,7 +261,7 @@ function Home() {
       </section>
 
       {/* Closing CTA */}
-      <section className="relative overflow-hidden bg-accent p-10 text-center text-primary-foreground dark:text-foreground ring-1 ring-foreground/10 sm:p-16">
+      <section className="relative overflow-hidden bg-accent dark:bg-accent/80 p-10 text-center text-primary-foreground dark:text-foreground ring-1 ring-foreground/10 sm:p-16">
         <div
           aria-hidden
           className="pointer-events-none absolute inset-0 opacity-15 mask-[radial-gradient(ellipse_70%_70%_at_50%_50%,#000,transparent)]"

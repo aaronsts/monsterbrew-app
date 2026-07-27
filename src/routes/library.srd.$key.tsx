@@ -27,7 +27,7 @@ export const Route = createFileRoute("/library/srd/$key")({
     const monster = loaderData;
     const path = `/library/srd/${params.key}`;
     const title = `${monster.name} – CR ${monster.challengeRating} ${titleCase(monster.size)} ${titleCase(monster.type)} | Monsterbrew`;
-    const description = `${monster.name}: CR ${monster.challengeRating} ${monster.size.toLowerCase()} ${monster.type.toLowerCase()}${monster.alignment ? ` (${monster.alignment.toLowerCase()})` : ""}, AC ${monster.armorClass}, ${monster.hitPoints} HP. Full D&D 5e statblock from the 2024 SRD — view it or copy it into Monsterbrew's free statblock editor.`;
+    const description = `${monster.name}: CR ${monster.challengeRating} ${monster.size.toLowerCase()} ${monster.type.toLowerCase()}${monster.alignment ? ` (${monster.alignment.toLowerCase()})` : ""}, AC ${monster.armorClass}, ${monster.hitPoints} HP. Full D&D 5e statblock from the 2024 SRD. View it or copy it into Monsterbrew's free statblock editor.`;
     const { meta, links } = seo({ title, description, path });
     return {
       meta,
@@ -63,7 +63,7 @@ export const Route = createFileRoute("/library/srd/$key")({
               },
               {
                 "@type": "CreativeWork",
-                name: `${monster.name} — D&D 5e statblock`,
+                name: `${monster.name} – D&D 5e statblock`,
                 url: `${SITE_URL}${path}`,
                 description,
                 isPartOf: {

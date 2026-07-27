@@ -35,7 +35,7 @@ export function DamageModifiersField() {
                   <span className="font-semibold text-destructive-500">
                     Red
                   </span>{" "}
-                  — Vulnerable (double damage)
+                  – Vulnerable (double damage)
                 </p>
                 <p className="inline-flex items-center gap-1">
                   <ShieldHalf className="size-3 text-warning-500" aria-hidden />
@@ -45,10 +45,11 @@ export function DamageModifiersField() {
                   — Resistant (half damage)
                 </p>
                 <p className="inline-flex items-center gap-1">
-                  <ShieldCheck className="size-3 text-success-500" aria-hidden />
-                  <span className="font-semibold text-success-500">
-                    Green
-                  </span>{" "}
+                  <ShieldCheck
+                    className="size-3 text-success-500"
+                    aria-hidden
+                  />
+                  <span className="font-semibold text-success-500">Green</span>{" "}
                   — Immune (no damage)
                 </p>
               </div>

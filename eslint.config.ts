@@ -43,6 +43,7 @@ export default defineConfig(
       "no-constant-binary-expression": "warn",
       "valid-typeof": "warn",
       "preserve-caught-error": "warn",
+      "react-refresh/only-export-components": "off",
     },
   },
 );
