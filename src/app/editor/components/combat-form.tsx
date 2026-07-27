@@ -44,17 +44,24 @@ const MOVEMENTS = [
 export const CombatForm = () => {
   const form = useFormContext<Monster>();
   const { control, getValues, setValue } = form;
-  const [ability_scores, custom_hp, hit_dice, size, custom_initiative] =
-    useWatch({
-      control,
-      name: [
-        "ability_scores",
-        "custom_hp",
-        "hit_dice",
-        "size",
-        "custom_initiative",
-      ],
-    });
+  const [
+    ability_scores,
+    custom_hp,
+    hit_dice,
+    size,
+    custom_initiative,
+    custom_passive_perception,
+  ] = useWatch({
+    control,
+    name: [
+      "ability_scores",
+      "custom_hp",
+      "hit_dice",
+      "size",
+      "custom_initiative",
+      "custom_passive_perception",
+    ],
+  });
 
   useEffect(() => {
     if (custom_hp) return;
@@ -78,6 +85,105 @@ export const CombatForm = () => {
       <FieldDescription>
         Will decide how though a creature is and how much damage it can deal
       </FieldDescription>
+
+      {/* Ability Scores */}
+      <FieldGroup className="grid grid-cols-3 xl:grid-cols-6">
+        {ABILITY_SCORES.map((ability) => {
+          const score = ability_scores[ability];
+          const modifier =
+            score !== undefined ? calculateStatBonus(score) : undefined;
+          return (
+            <Controller
+              key={ability}
+              name={`ability_scores.${ability}`}
+              control={control}
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel htmlFor={`form-rhf-input-${ability}`}>
+                    {ability.toUpperCase()}{" "}
+                    {modifier !== undefined && (
+                      <span className="text-muted-foreground/60">
+                        ({modifier >= 0 ? `+${modifier}` : modifier})
+                      </span>
+                    )}
+                  </FieldLabel>
+                  <Input
+                    {...field}
+                    id={`form-rhf-input-${ability}`}
+                    type="number"
+                    min={0}
+                    onKeyDown={blockMinusKey}
+                    onFocus={(e) => e.target.select()}
+                    aria-invalid={fieldState.invalid}
+                    placeholder="10"
+                  />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
+          );
+        })}
+      </FieldGroup>
+
+      {/* Passive Perception */}
+      <FieldGroup className="grid grid-cols-2">
+        <Controller
+          name="passive_perception"
+          control={control}
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid}>
+              <div className="flex items-center justify-between gap-2">
+                <FieldLabel htmlFor="form-rhf-input-passive-perception">
+                  Passive Perception
+                </FieldLabel>
+                <Controller
+                  name="custom_passive_perception"
+                  control={control}
+                  render={({ field: customField }) => (
+                    <Field
+                      orientation="horizontal"
+                      className="w-auto items-center"
+                    >
+                      <Switch
+                        id="form-rhf-input-custom-passive-perception"
+                        size="sm"
+                        checked={customField.value}
+                        onCheckedChange={customField.onChange}
+                      />
+                      <FieldLabel
+                        htmlFor="form-rhf-input-custom-passive-perception"
+                        className="text-xs font-normal text-muted-foreground"
+                      >
+                        <span aria-hidden>Manual</span>
+                        <span className="sr-only">
+                          Manual passive perception
+                        </span>
+                      </FieldLabel>
+                    </Field>
+                  )}
+                />
+              </div>
+              <Input
+                {...field}
+                id="form-rhf-input-passive-perception"
+                type="number"
+                min={0}
+                onKeyDown={blockMinusKey}
+                onFocus={(e) => e.target.select()}
+                disabled={!custom_passive_perception}
+                aria-invalid={fieldState.invalid}
+                placeholder="ex. 10"
+              />
+              <FieldDescription>
+                10 + WIS modifier; adds proficiency when Perception is trained
+              </FieldDescription>
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+            </Field>
+          )}
+        />
+      </FieldGroup>
 
       {/* Challenge Rating & Initiative */}
       <FieldGroup className="grid grid-cols-2">
@@ -298,47 +404,6 @@ export const CombatForm = () => {
         />
       </FieldGroup>
 
-      {/* Ability Scores */}
-      <FieldGroup className="grid grid-cols-3 xl:grid-cols-6">
-        {ABILITY_SCORES.map((ability) => {
-          const score = ability_scores[ability];
-          const modifier =
-            score !== undefined ? calculateStatBonus(score) : undefined;
-          return (
-            <Controller
-              key={ability}
-              name={`ability_scores.${ability}`}
-              control={control}
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor={`form-rhf-input-${ability}`}>
-                    {ability.toUpperCase()}{" "}
-                    {modifier !== undefined && (
-                      <span className="text-muted-foreground/60">
-                        ({modifier >= 0 ? `+${modifier}` : modifier})
-                      </span>
-                    )}
-                  </FieldLabel>
-                  <Input
-                    {...field}
-                    id={`form-rhf-input-${ability}`}
-                    type="number"
-                    min={0}
-                    onKeyDown={blockMinusKey}
-                    onFocus={(e) => e.target.select()}
-                    aria-invalid={fieldState.invalid}
-                    placeholder="10"
-                  />
-                  {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
-              )}
-            />
-          );
-        })}
-      </FieldGroup>
-
       {/* Speed */}
       <FieldGroup className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6">
         {MOVEMENTS.map((movement) => (
@@ -357,6 +422,7 @@ export const CombatForm = () => {
                   id={`form-rhf-input-${movement.name}`}
                   type="number"
                   min={0}
+                  step={5}
                   onKeyDown={blockMinusKey}
                   onFocus={(e) => e.target.select()}
                   aria-invalid={fieldState.invalid}

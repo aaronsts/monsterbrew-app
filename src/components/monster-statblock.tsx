@@ -231,7 +231,14 @@ export function MonsterStatblock({
         {/* Defenses & speed */}
         <div>
           <div className="flex flex-wrap gap-x-6">
-            <StatLine label="AC" value={creature.armor_class} />
+            <StatLine
+              label="AC"
+              value={
+                creature.armor_description
+                  ? `${creature.armor_class} (${creature.armor_description})`
+                  : creature.armor_class
+              }
+            />
             <StatLine
               label="Initiative"
               value={`${formatMod(initMod)} (${10 + initMod})`}
@@ -389,6 +396,14 @@ export function MonsterStatblock({
             />
           )}
         </div>
+
+        {/* Flavor description */}
+        {creature.description?.trim() && (
+          <div className="mt-3 flex flex-col gap-2">
+            <TaperedRule />
+            <p className="italic whitespace-pre-wrap">{creature.description}</p>
+          </div>
+        )}
       </CardContent>
     </Card>
   );

@@ -155,7 +155,7 @@ export const defaultMonster: Monster = {
   armor_class: 0,
   armor_description: "",
   hit_points: "",
-  hit_dice: "",
+  hit_dice: "2",
   custom_hp: false,
   ability_scores: {
     str: 10,
