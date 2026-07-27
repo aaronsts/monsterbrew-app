@@ -1,3 +1,5 @@
+import { ShieldAlert, ShieldCheck, ShieldHalf } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import type { Monster } from "@/schema/monster-schema";
 import { ABILITY_LABELS, ABILITY_SCORES } from "@/lib/abilities";
 import { SKILLS } from "@/lib/skills";
@@ -80,6 +82,15 @@ export function setNonmagical(
   }
   return updated;
 }
+
+export const DAMAGE_STATE_ICONS: Record<
+  Exclude<DamageState, "">,
+  LucideIcon
+> = {
+  resistant: ShieldHalf,
+  vulnerable: ShieldAlert,
+  immune: ShieldCheck,
+};
 
 export function damageStateStyles(state: DamageState): string {
   switch (state) {

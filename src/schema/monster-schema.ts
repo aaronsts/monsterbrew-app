@@ -70,6 +70,8 @@ export const monsterSchema = z.object({
 
   // Combat
   cr: challengeRatingSchema,
+  initiative_bonus: z.coerce.number().optional(),
+  custom_initiative: z.boolean().optional(),
   armor_class: z.coerce.number(),
   armor_description: z.string().optional(),
   hit_points: z.string(),
@@ -148,6 +150,8 @@ export const defaultMonster: Monster = {
     experience: 10,
     armor_class: 13,
   },
+  initiative_bonus: 0,
+  custom_initiative: false,
   armor_class: 0,
   armor_description: "",
   hit_points: "",

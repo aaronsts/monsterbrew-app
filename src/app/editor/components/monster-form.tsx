@@ -77,10 +77,8 @@ export const MonsterForm = () => {
     let perception = calculateStatBonus(wis);
     const perceptionProficiency = skills?.perception;
     if (perceptionProficiency) {
-      perception +=
-        perceptionProficiency === "expert"
-          ? proficiencyBonus * 2
-          : proficiencyBonus;
+      const pb = proficiencyBonus ?? 0;
+      perception += perceptionProficiency === "expert" ? pb * 2 : pb;
     }
     setValue("passive_perception", 10 + perception);
   }, [wis, skills, proficiencyBonus, customPassivePerception, setValue]);

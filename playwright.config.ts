@@ -2,6 +2,8 @@ import { defineConfig, devices } from "@playwright/test";
 
 const collectCoverage = !!process.env.COVERAGE;
 
+const port = Number(process.env.E2E_PORT ?? 3000);
+
 /**
  * When COVERAGE=1 (via `pnpm test:e2e:coverage`), swap in the monocart reporter,
  * which consumes the V8 coverage collected by the `e2e/fixtures.ts` auto-fixture
@@ -51,7 +53,7 @@ export default defineConfig({
   timeout: 60_000,
   expect: { timeout: 10_000 },
   use: {
-    baseURL: "http://localhost:3000",
+    baseURL: `http://localhost:${port}`,
     trace: "on-first-retry",
   },
   projects: [
@@ -65,14 +67,18 @@ export default defineConfig({
     // Normal runs use the dev server for speed. Coverage needs a production
     // build (with source maps) served by the Nitro output, otherwise V8
     // coverage can't be mapped from Vite's on-the-fly dev modules back to src/.
-    command: collectCoverage ? "pnpm build && pnpm start" : "pnpm dev",
-    url: "http://localhost:3000",
+    command: collectCoverage
+      ? "pnpm build && pnpm start"
+      : `pnpm exec vite dev --port ${port}`,
+    url: `http://localhost:${port}`,
     // The feedback CTA (e2e/feedback-cta.spec.ts) only arms itself when an
     // access key is configured. Always use a dummy one: it keeps the suite
     // independent of a local .env and guarantees no test can ever submit
     // through the real inbox (process env overrides .env in Vite).
     env: {
       VITE_WEB3FORMS_ACCESS_KEY: "e2e-dummy-key",
+      // The coverage path serves the Nitro build, which reads PORT.
+      PORT: String(port),
     },
     reuseExistingServer: !process.env.CI && !collectCoverage,
     timeout: collectCoverage ? 240_000 : 120_000,

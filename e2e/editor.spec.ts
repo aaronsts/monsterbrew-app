@@ -29,6 +29,38 @@ test.describe("Monster editor — live preview", () => {
     ).toBeVisible();
   });
 
+  test("clearing the challenge rating does not crash the editor", async ({
+    page,
+  }) => {
+    const crField = page.locator("#form-rhf-input-cr");
+    await crField.click();
+    await page.getByRole("option", { name: /^1\/2/ }).click();
+    await expect(statblock(page)).toContainText("CR 1/2");
+
+    // The clear button empties the CR; the preview must survive and fall back.
+    await crField
+      .locator("..")
+      .locator('[data-slot="combobox-clear"]')
+      .click();
+
+    await expect(crField).toHaveValue("");
+    await expect(statblock(page)).toBeVisible();
+    await expect(statblock(page)).toContainText("CR 0");
+  });
+
+  test("pressing Enter in the type combobox selects the first match", async ({
+    page,
+  }) => {
+    const typeField = page.locator("#form-rhf-input-type");
+    await typeField.click();
+    await typeField.fill("dra");
+    await page.keyboard.press("Enter");
+
+    // Selection stores the item's raw value; capitalization is CSS.
+    await expect(typeField).toHaveValue("dragon");
+    await expect(statblock(page)).toContainText(/dragon/i);
+  });
+
   test("recalculates the ability modifier from the score", async ({ page }) => {
     await page.locator("#form-rhf-input-dex").fill("16");
 

@@ -33,7 +33,7 @@ import {
   ItemTitle,
 } from "@/components/ui/item";
 import { CREATURE_SIZES, CREATURE_TYPES } from "@/lib/constants";
-import { titleCase } from "@/lib/utils";
+import { blockMinusKey, titleCase } from "@/lib/utils";
 import { Languages } from "@/schema/createCreatureSchema";
 
 const SENSES = [
@@ -91,6 +91,7 @@ export const IdentityForm = () => {
                   size.label
                 }
                 onInputValueChange={field.onChange}
+                autoHighlight
               >
                 <ComboboxInput
                   id="form-rhf-input-type"
@@ -132,6 +133,7 @@ export const IdentityForm = () => {
                   size.label
                 }
                 onInputValueChange={field.onChange}
+                autoHighlight
               >
                 <ComboboxInput
                   id="form-rhf-input-size"
@@ -168,7 +170,7 @@ export const IdentityForm = () => {
                 {...field}
                 id="form-rhf-input-sub-type"
                 aria-invalid={fieldState.invalid}
-                placeholder="ex. Chaotic Evil"
+                placeholder="ex. Chromatic"
               />
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
@@ -213,6 +215,8 @@ export const IdentityForm = () => {
                     {...field}
                     id={`form-rhf-input-${sense.name}`}
                     type="number"
+                    min={0}
+                    onKeyDown={blockMinusKey}
                     onFocus={(e) => e.target.select()}
                     aria-invalid={fieldState.invalid}
                     placeholder="ex. 0"
@@ -272,7 +276,10 @@ export const IdentityForm = () => {
                         htmlFor="form-rhf-input-custom-passive-perception"
                         className="text-xs font-normal text-muted-foreground"
                       >
-                        Manual
+                        <span aria-hidden>Manual</span>
+                        <span className="sr-only">
+                          Manual passive perception
+                        </span>
                       </FieldLabel>
                     </Field>
                   )}
@@ -282,6 +289,8 @@ export const IdentityForm = () => {
                 {...field}
                 id="form-rhf-input-passive-perception"
                 type="number"
+                min={0}
+                onKeyDown={blockMinusKey}
                 onFocus={(e) => e.target.select()}
                 disabled={!customPassivePerception}
                 aria-invalid={fieldState.invalid}
@@ -373,7 +382,8 @@ export const IdentityForm = () => {
                 />
                 <Button
                   type="button"
-                  color="neutral" variant="outline"
+                  color="neutral"
+                  variant="outline"
                   onClick={addCustomLanguage}
                   disabled={!customLanguageInput.trim()}
                 >
@@ -386,7 +396,8 @@ export const IdentityForm = () => {
                     <Badge key={language} variant="secondary">
                       {language}
                       <Button
-                        color="neutral" variant="transparent"
+                        color="neutral"
+                        variant="transparent"
                         size="icon-xs"
                         type="button"
                         aria-label={`Remove ${language}`}

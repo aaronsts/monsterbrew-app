@@ -70,8 +70,8 @@ export function monsterToHomebrewery(creature: Monster): string {
   lines.push(
     `## ${creature.name}`,
     `*${titleCase(creature.size)} ${creature.type}${
-      creature.alignment ? `, ${creature.alignment}` : ""
-    }*`,
+      creature.sub_type ? ` (${creature.sub_type})` : ""
+    }${creature.alignment ? `, ${creature.alignment}` : ""}*`,
     "___",
     `**Armor Class** :: ${creature.armor_class}${
       creature.armor_description ? ` (${creature.armor_description})` : ""
