@@ -261,7 +261,7 @@ function Home() {
       </section>
 
       {/* Closing CTA */}
-      <section className="relative overflow-hidden bg-accent p-10 text-center text-primary-foreground dark:text-foreground ring-1 ring-foreground/10 sm:p-16">
+      <section className="relative overflow-hidden bg-accent dark:bg-accent/80 p-10 text-center text-primary-foreground dark:text-foreground ring-1 ring-foreground/10 sm:p-16">
         <div
           aria-hidden
           className="pointer-events-none absolute inset-0 opacity-15 mask-[radial-gradient(ellipse_70%_70%_at_50%_50%,#000,transparent)]"

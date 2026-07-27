@@ -2,13 +2,12 @@ import { useEffect, useState } from "react";
 import {
   Bar,
   BarChart,
-  Cell,
   Rectangle,
   ReferenceLine,
   XAxis,
   YAxis,
 } from "recharts";
-import type { RectangleProps } from "recharts";
+import type { BarShapeProps } from "recharts";
 import type { ChartConfig } from "@/components/ui/chart";
 import { ChartContainer } from "@/components/ui/chart";
 import { cn } from "@/lib/utils";
@@ -124,7 +123,7 @@ function useIsMobile() {
   return isMobile;
 }
 
-function deltaBarShape(props: RectangleProps) {
+function deltaBarShape(props: BarShapeProps) {
   const { x = 0, y = 0, width = 0, height } = props;
   if (!height) {
     return (
@@ -133,11 +132,21 @@ function deltaBarShape(props: RectangleProps) {
         y={y - 1}
         width={width}
         height={2}
-        fill="var(--neutral-300)"
+        className="fill-neutral-300 dark:fill-neutral-500"
       />
     );
   }
-  return <Rectangle {...props} />;
+  const { delta } = props.payload as RoleChartDatum;
+  return (
+    <Rectangle
+      {...props}
+      className={cn(
+        delta > 0
+          ? "fill-info-300 dark:fill-info-500"
+          : "fill-destructive-300 dark:fill-destructive-500",
+      )}
+    />
+  );
 }
 
 function RoleChart({ stats }: Readonly<{ stats: Record<StatKey, StatDelta> }>) {
@@ -179,16 +188,7 @@ function RoleChart({ stats }: Readonly<{ stats: Record<StatKey, StatDelta> }>) {
           strokeOpacity={0.6}
           strokeDasharray="4 4"
         />
-        <Bar dataKey="delta" maxBarSize={44} shape={deltaBarShape}>
-          {data.map((entry) => (
-            <Cell
-              key={entry.stat}
-              fill={
-                entry.delta > 0 ? "var(--info-300)" : "var(--destructive-300)"
-              }
-            />
-          ))}
-        </Bar>
+        <Bar dataKey="delta" maxBarSize={44} shape={deltaBarShape} />
       </BarChart>
     </ChartContainer>
   );
@@ -209,11 +209,14 @@ export function CombatRolesChart() {
           baseline CR
         </span>
         <span className="flex items-center gap-1.5">
-          <span aria-hidden className="size-2.5 bg-info-300" />
+          <span aria-hidden className="size-2.5 bg-info-300 dark:bg-info-500" />
           above
         </span>
         <span className="flex items-center gap-1.5">
-          <span aria-hidden className="size-2.5 bg-destructive-300" />
+          <span
+            aria-hidden
+            className="size-2.5 bg-destructive-300 dark:bg-destructive-500"
+          />
           below
         </span>
       </div>

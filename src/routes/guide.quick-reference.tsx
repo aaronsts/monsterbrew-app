@@ -103,7 +103,7 @@ function QuickReferencePage() {
           className="underline underline-offset-4 hover:text-foreground"
         >
           guide
-        </Link>{" "}
+        </Link>
         . You can use it as a checklist while you build, and open a chapter when
         you want to go more in depth.
       </p>
