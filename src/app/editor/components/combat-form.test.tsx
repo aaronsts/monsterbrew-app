@@ -7,7 +7,8 @@ import { calculateHitPoints } from "@/lib/utils";
 import { defaultMonster } from "@/schema/monster-schema";
 
 const hpInput = () => screen.getByLabelText<HTMLInputElement>("Hit Points");
-const manualToggle = () => screen.getByRole("switch", { name: "Manual" });
+const manualToggle = () =>
+  screen.getByRole("switch", { name: "Manual hit points" });
 
 describe("CombatForm — custom HP", () => {
   it("disables the HP input by default (HP is derived)", () => {
@@ -72,5 +73,40 @@ describe("CombatForm — custom HP", () => {
     await user.type(hpInput(), "999");
 
     expect(getForm().getValues("hit_points")).toBe("999");
+  });
+});
+
+describe("CombatForm — custom initiative", () => {
+  const initiativeInput = () =>
+    screen.getByLabelText<HTMLInputElement>("Initiative");
+  const initiativeToggle = () =>
+    screen.getByRole("switch", { name: "Manual initiative" });
+
+  it("derives initiative_bonus from DEX while not manual and disables the input", async () => {
+    const { getForm } = renderWithForm(<CombatForm />, {
+      custom_initiative: false,
+      ability_scores: { ...defaultMonster.ability_scores, dex: 16 },
+    });
+
+    expect(initiativeInput().disabled).toBe(true);
+    await waitFor(() =>
+      expect(getForm().getValues("initiative_bonus")).toBe(3),
+    );
+  });
+
+  it("keeps a manual initiative_bonus when the Manual switch is on", async () => {
+    const user = userEvent.setup();
+    const { getForm } = renderWithForm(<CombatForm />, {
+      ability_scores: { ...defaultMonster.ability_scores, dex: 16 },
+    });
+
+    await user.click(initiativeToggle());
+    expect(getForm().getValues("custom_initiative")).toBe(true);
+    expect(initiativeInput().disabled).toBe(false);
+
+    await user.clear(initiativeInput());
+    await user.type(initiativeInput(), "7");
+
+    expect(getForm().getValues("initiative_bonus")).toBe("7");
   });
 });

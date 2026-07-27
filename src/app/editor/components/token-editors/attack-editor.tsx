@@ -9,6 +9,7 @@ import {
 import type { AttackFields } from "@/lib/statblock-markup";
 import type { TokenEditorProps } from "./index";
 import { Input } from "@/components/ui/input";
+import { blockMinusKey } from "@/lib/utils";
 
 const KIND_OPTIONS = [
   { value: "m", label: "Melee" },
@@ -83,6 +84,8 @@ export function AttackEditor({
           <FieldRow label="Reach (ft.)" className="w-16">
             <Input
               type="number"
+              min={0}
+              onKeyDown={blockMinusKey}
               aria-label="Reach in feet"
               value={distance.melee}
               onChange={(e) => setDistance({ melee: e.target.value })}
@@ -95,6 +98,8 @@ export function AttackEditor({
             <FieldRow label="Range (ft.)" className="w-16">
               <Input
                 type="number"
+                min={0}
+                onKeyDown={blockMinusKey}
                 aria-label="Normal range in feet"
                 value={distance.normal}
                 onChange={(e) => setDistance({ normal: e.target.value })}
@@ -104,6 +109,8 @@ export function AttackEditor({
             <FieldRow label="Long (ft.)" className="w-16">
               <Input
                 type="number"
+                min={0}
+                onKeyDown={blockMinusKey}
                 aria-label="Long range in feet"
                 value={distance.long}
                 onChange={(e) => setDistance({ long: e.target.value })}

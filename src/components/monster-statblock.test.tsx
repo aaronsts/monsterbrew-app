@@ -44,6 +44,48 @@ describe("MonsterStatblock markup resolution", () => {
     expect(container.textContent).toContain("nonsilvered attacks");
   });
 
+  it("renders without crashing when CR is cleared mid-edit", () => {
+    const monster = makeMonster({
+      cr: null as unknown as Monster["cr"],
+      actions: [{ name: "Slam", description: "{@atkr m} {@hit str}" }],
+    });
+
+    const { container } = render(<MonsterStatblock creature={monster} />);
+    expect(container.textContent).toContain("CR 0");
+  });
+
+  it("shows the subtype in the header line when set", () => {
+    const monster = makeMonster({
+      size: "medium",
+      type: "humanoid",
+      sub_type: "goblinoid",
+      alignment: "chaotic evil",
+    });
+
+    const { container } = render(<MonsterStatblock creature={monster} />);
+    expect(container.textContent).toContain(
+      "medium humanoid (goblinoid), chaotic evil",
+    );
+  });
+
+  it("uses the manual initiative bonus over the DEX modifier when set", () => {
+    const base = makeMonster({
+      ability_scores: { ...defaultMonster.ability_scores, dex: 16 },
+    });
+
+    const { container, rerender } = render(
+      <MonsterStatblock creature={base} />,
+    );
+    expect(container.textContent).toContain("Initiative +3 (13)");
+
+    rerender(
+      <MonsterStatblock
+        creature={{ ...base, custom_initiative: true, initiative_bonus: 7 }}
+      />,
+    );
+    expect(container.textContent).toContain("Initiative +7 (17)");
+  });
+
   it("recomputes when the ability score changes", () => {
     const base = makeMonster({
       cr: { ...defaultMonster.cr, proficiency_bonus: 4 },

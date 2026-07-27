@@ -1,8 +1,9 @@
-import {  clsx } from "clsx";
+import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { CREATURE_SIZES } from "./constants";
-import type {ClassValue} from "clsx";
-import type { defaultCreature} from "@/schema/createCreatureSchema";
+import type { ClassValue } from "clsx";
+import type { KeyboardEvent } from "react";
+import type { defaultCreature } from "@/schema/createCreatureSchema";
 import { Languages } from "@/schema/createCreatureSchema";
 
 interface Option {
@@ -12,6 +13,10 @@ interface Option {
 
 export function cn(...inputs: Array<ClassValue>) {
   return twMerge(clsx(inputs));
+}
+
+export function blockMinusKey(e: KeyboardEvent<HTMLInputElement>) {
+  if (e.key === "-") e.preventDefault();
 }
 
 export function calculateStatBonus(value: number | undefined) {

@@ -25,7 +25,11 @@ import { Item, ItemContent, ItemMedia, ItemTitle } from "@/components/ui/item";
 import { Switch } from "@/components/ui/switch";
 import { ABILITY_SCORES } from "@/lib/abilities";
 import { CHALLENGE_RATINGS } from "@/lib/constants";
-import { calculateHitPoints, calculateStatBonus } from "@/lib/utils";
+import {
+  blockMinusKey,
+  calculateHitPoints,
+  calculateStatBonus,
+} from "@/lib/utils";
 
 type ChallengeRating = Monster["cr"];
 
@@ -40,10 +44,17 @@ const MOVEMENTS = [
 export const CombatForm = () => {
   const form = useFormContext<Monster>();
   const { control, getValues, setValue } = form;
-  const [ability_scores, custom_hp, hit_dice, size] = useWatch({
-    control,
-    name: ["ability_scores", "custom_hp", "hit_dice", "size"],
-  });
+  const [ability_scores, custom_hp, hit_dice, size, custom_initiative] =
+    useWatch({
+      control,
+      name: [
+        "ability_scores",
+        "custom_hp",
+        "hit_dice",
+        "size",
+        "custom_initiative",
+      ],
+    });
 
   useEffect(() => {
     if (custom_hp) return;
@@ -53,6 +64,14 @@ export const CombatForm = () => {
     }
   }, [custom_hp, hit_dice, size, ability_scores?.con, setValue, getValues]);
 
+  useEffect(() => {
+    if (custom_initiative) return;
+    const next = calculateStatBonus(ability_scores?.dex);
+    if (next !== getValues("initiative_bonus")) {
+      setValue("initiative_bonus", next);
+    }
+  }, [custom_initiative, ability_scores?.dex, setValue, getValues]);
+
   return (
     <FieldSet>
       <FieldLegend>Combat</FieldLegend>
@@ -60,8 +79,8 @@ export const CombatForm = () => {
         Will decide how though a creature is and how much damage it can deal
       </FieldDescription>
 
-      {/* Challenge Rating */}
-      <FieldGroup>
+      {/* Challenge Rating & Initiative */}
+      <FieldGroup className="grid grid-cols-2">
         <Controller
           name="cr"
           control={control}
@@ -74,6 +93,7 @@ export const CombatForm = () => {
                 items={CHALLENGE_RATINGS}
                 value={field.value}
                 onValueChange={field.onChange}
+                autoHighlight
                 isItemEqualToValue={(
                   item: ChallengeRating,
                   value: ChallengeRating,
@@ -111,6 +131,57 @@ export const CombatForm = () => {
             </Field>
           )}
         />
+        <Controller
+          name="initiative_bonus"
+          control={control}
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid}>
+              <div className="flex items-center justify-between gap-2">
+                <FieldLabel htmlFor="form-rhf-input-initiative-bonus">
+                  Initiative
+                </FieldLabel>
+                <Controller
+                  name="custom_initiative"
+                  control={control}
+                  render={({ field: customField }) => (
+                    <Field
+                      orientation="horizontal"
+                      className="w-auto items-center"
+                    >
+                      <Switch
+                        id="form-rhf-input-custom-initiative"
+                        size="sm"
+                        checked={customField.value ?? false}
+                        onCheckedChange={customField.onChange}
+                      />
+                      <FieldLabel
+                        htmlFor="form-rhf-input-custom-initiative"
+                        className="text-xs font-normal text-muted-foreground"
+                      >
+                        <span aria-hidden>Manual</span>
+                        <span className="sr-only">Manual initiative</span>
+                      </FieldLabel>
+                    </Field>
+                  )}
+                />
+              </div>
+              <Input
+                {...field}
+                value={field.value ?? 0}
+                id="form-rhf-input-initiative-bonus"
+                type="number"
+                onFocus={(e) => e.target.select()}
+                disabled={!custom_initiative}
+                aria-invalid={fieldState.invalid}
+                placeholder="ex. 2"
+              />
+              <FieldDescription>
+                Bonus to initiative; DEX modifier unless set manually
+              </FieldDescription>
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+            </Field>
+          )}
+        />
       </FieldGroup>
 
       {/* Armor Class */}
@@ -127,6 +198,8 @@ export const CombatForm = () => {
                 {...field}
                 id="form-rhf-input-armor-class"
                 type="number"
+                min={0}
+                onKeyDown={blockMinusKey}
                 onFocus={(e) => e.target.select()}
                 aria-invalid={fieldState.invalid}
                 placeholder="ex. 15"
@@ -184,7 +257,8 @@ export const CombatForm = () => {
                         htmlFor="form-rhf-input-custom-hp"
                         className="text-xs font-normal text-muted-foreground"
                       >
-                        Manual
+                        <span aria-hidden>Manual</span>
+                        <span className="sr-only">Manual hit points</span>
                       </FieldLabel>
                     </Field>
                   )}
@@ -249,6 +323,8 @@ export const CombatForm = () => {
                     {...field}
                     id={`form-rhf-input-${ability}`}
                     type="number"
+                    min={0}
+                    onKeyDown={blockMinusKey}
                     onFocus={(e) => e.target.select()}
                     aria-invalid={fieldState.invalid}
                     placeholder="10"
@@ -280,6 +356,8 @@ export const CombatForm = () => {
                   {...field}
                   id={`form-rhf-input-${movement.name}`}
                   type="number"
+                  min={0}
+                  onKeyDown={blockMinusKey}
                   onFocus={(e) => e.target.select()}
                   aria-invalid={fieldState.invalid}
                   placeholder="ex. 0"

@@ -14,7 +14,7 @@ import {
 } from "@/lib/utils";
 import { resolveMarkup } from "@/lib/statblock-markup";
 import { SKILLS } from "@/lib/skills";
-import { abilityScoresSchema } from "@/schema/monster-schema";
+import { abilityScoresSchema, defaultMonster } from "@/schema/monster-schema";
 
 type Feature = Monster["traits"][number];
 
@@ -121,8 +121,11 @@ export function MonsterStatblock({
   creature: Monster;
   columns?: boolean;
 }) {
-  const pb = creature.cr.proficiency_bonus || 0;
-  const initMod = calculateStatBonus(creature.ability_scores.dex);
+  const cr = creature.cr ?? defaultMonster.cr;
+  const pb = cr.proficiency_bonus || 0;
+  const initMod = creature.custom_initiative
+    ? Number(creature.initiative_bonus) || 0
+    : calculateStatBonus(creature.ability_scores.dex);
 
   const medianHP = calculateHitPoints(
     creature.hit_dice,
@@ -209,7 +212,8 @@ export function MonsterStatblock({
         </h2>
 
         <p className="mt-1 capitalize italic text-muted-foreground">
-          {creature.size || "Size"} {creature.type || "Type"},{" "}
+          {creature.size || "Size"} {creature.type || "Type"}
+          {creature.sub_type ? ` (${creature.sub_type})` : ""},{" "}
           {creature.alignment || "Alignment"}
         </p>
       </CardHeader>
@@ -329,8 +333,8 @@ export function MonsterStatblock({
           )}
           <StatLine
             label="CR"
-            value={`${creature.cr.challenge_rating} (XP ${new Intl.NumberFormat().format(
-              creature.cr.experience,
+            value={`${cr.challenge_rating} (XP ${new Intl.NumberFormat().format(
+              cr.experience,
             )}; PB ${formatMod(pb)})`}
           />
         </div>

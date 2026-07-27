@@ -1,0 +1,9 @@
+A round of fixes and small improvements straight from your feedback. The editor no longer crashes when you clear the challenge rating, subtypes finally show up on statblocks, and deleting a creature now asks for confirmation first. Initiative also got its own field, so you can override the DEX-based value for creatures that are quicker (or slower) than they look.
+
+- Clearing the challenge rating no longer crashes the editor
+- Subtypes now appear on the statblock, library cards, and Homebrewery exports — like “Medium Humanoid (Goblinoid)”
+- Deleting a creature asks for confirmation first, and the delete button is properly red
+- New initiative field with a manual toggle — it follows your DEX modifier until you take over
+- Pressing Enter in the type or size fields picks the first matching suggestion instead of clearing what you typed
+- Number fields like speeds, senses, and armor class no longer accept negative values
+- Damage modifier buttons now show a shield symbol for resistant, vulnerable, and immune, so the states are readable without relying on color
