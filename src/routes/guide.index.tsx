@@ -97,6 +97,25 @@ function GuideIndex() {
 
       {/* Chapters */}
       <div className="mt-8 flex flex-col gap-4">
+        <Link to="/guide/quick-reference" className="group block">
+          <Card className="relative border-dashed transition-colors group-hover:border-accent">
+            <CardHeader>
+              <p className="text-xs font-medium tracking-widest text-accent uppercase">
+                Cheat Sheet
+              </p>
+              <h2 className="mb-0 flex items-center gap-2 text-xl font-semibold tracking-tight">
+                Quick Reference
+                <ArrowRight className="size-4 text-accent opacity-0 transition-opacity group-hover:opacity-100" />
+              </h2>
+            </CardHeader>
+            <CardContent>
+              <p className="text-muted-foreground">
+                Information condensed to one page: roles, formulas, budgets, and
+                checks. Handy while building a creature from scratch.
+              </p>
+            </CardContent>
+          </Card>
+        </Link>
         {chapters.map((chapter, index) => (
           <Link
             key={chapter.slug}
@@ -121,27 +140,6 @@ function GuideIndex() {
           </Link>
         ))}
       </div>
-
-      {/* Cheat sheet */}
-      <Link to="/guide/cheat-sheet" className="group mt-4 block">
-        <Card className="relative border-dashed transition-colors group-hover:border-accent">
-          <CardHeader>
-            <p className="text-xs font-medium tracking-widest text-accent uppercase">
-              Quick reference
-            </p>
-            <h2 className="mb-0 flex items-center gap-2 text-xl font-semibold tracking-tight">
-              The cheat sheet
-              <ArrowRight className="size-4 text-accent opacity-0 transition-opacity group-hover:opacity-100" />
-            </h2>
-          </CardHeader>
-          <CardContent>
-            <p className="text-muted-foreground">
-              The whole guide condensed to one page: roles, formulas, budgets,
-              and checks. Handy while building, or at the table.
-            </p>
-          </CardContent>
-        </Card>
-      </Link>
 
       {/* Editor CTA */}
       <Card className="relative mt-10">

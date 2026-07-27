@@ -12,7 +12,7 @@ const staticPaths = [
   "/editor",
   "/library",
   "/guide",
-  "/guide/cheat-sheet",
+  "/guide/quick-reference",
   "/changelog",
   "/privacy",
   "/legal",

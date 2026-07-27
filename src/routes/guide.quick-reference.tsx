@@ -60,9 +60,9 @@ const QUICK_FORMULAS: Array<{ stat: string; formula: string }> = [
   { stat: "Attacks", formula: "one, plus another at CR 2, 7, 11, and 15" },
 ];
 
-export const Route = createFileRoute("/guide/cheat-sheet")({
+export const Route = createFileRoute("/guide/quick-reference")({
   head: () => {
-    const path = "/guide/cheat-sheet";
+    const path = "/guide/quick-reference";
     const { meta, links } = seo({
       title: "Monster Building Cheat Sheet | Monsterbrew Guide",
       description:
@@ -170,24 +170,30 @@ function CheatSheetPage() {
         The cheat sheet
       </h1>
       <p className="text-muted-foreground">
-        The whole <Link to="/guide" className="underline underline-offset-4 hover:text-foreground">guide</Link> on
-        one page. Use it as a checklist while you build, and open a chapter when
-        you want the reasoning behind a rule.
+        The whole{" "}
+        <Link
+          to="/guide"
+          className="underline underline-offset-4 hover:text-foreground"
+        >
+          guide
+        </Link>{" "}
+        on one page. Use it as a checklist while you build, and open a chapter
+        when you want the reasoning behind a rule.
       </p>
 
       <Section title="Identity" slug="fundamentals">
         <Checklist>
           <li>
-            Write one sentence about the creature before you open the
-            statblock. Test every choice against it.
+            Write one sentence about the creature before you open the statblock.
+            Test every choice against it.
           </li>
           <li>
-            Fill in size, type, movement, and senses first. They follow from
-            the concept and need no balancing.
+            Fill in size, type, movement, and senses first. They follow from the
+            concept and need no balancing.
           </li>
           <li>
-            Pick a combat role, and let it decide where the numbers bend.
-            Hover over a role to see how:
+            Pick a combat role, and let it decide where the numbers bend. Hover
+            over a role to see how:
             <TooltipProvider>
               <ul className="mt-3 flex flex-wrap gap-2">
                 {COMBAT_ROLES.map((role) => (
@@ -199,7 +205,10 @@ function CheatSheetPage() {
                       >
                         {role.name}
                       </TooltipTrigger>
-                      <TooltipContent side="top" className="max-w-3xs p-3 text-left">
+                      <TooltipContent
+                        side="top"
+                        className="max-w-3xs p-3 text-left"
+                      >
                         {role.tooltip}
                       </TooltipContent>
                     </Tooltip>
@@ -235,8 +244,7 @@ function CheatSheetPage() {
           </li>
           <li>
             Cross-check: average the CR its defenses look like with the CR its
-            offense looks like. That average should match the CR you wrote
-            down.
+            offense looks like. That average should match the CR you wrote down.
           </li>
         </Checklist>
       </Section>
@@ -248,20 +256,20 @@ function CheatSheetPage() {
             creature's three best rounds, not its single biggest one.
           </li>
           <li>
-            An effect that hits two or more characters counts double. Budget
-            it at half the damage-per-round number.
+            An effect that hits two or more characters counts double. Budget it
+            at half the damage-per-round number.
           </li>
           <li>
-            A recharge ability may spike above budget if the normal rounds
-            stay under it. Give the spike a visible tell.
+            A recharge ability may spike above budget if the normal rounds stay
+            under it. Give the spike a visible tell.
           </li>
           <li>
             Key every save DC to one ability. If an attack also poisons,
             restrains, or knocks prone, lower its damage.
           </li>
           <li>
-            A solo boss needs about 25% more damage, three legendary actions
-            per round, legendary resistance 3/day, and ideally a few allies.
+            A solo boss needs about 25% more damage, three legendary actions per
+            round, legendary resistance 3/day, and ideally a few allies.
           </li>
         </Checklist>
       </Section>
@@ -269,8 +277,8 @@ function CheatSheetPage() {
       <Section title="Traits and actions" slug="traits-actions-flavor">
         <Checklist>
           <li>
-            Three actions is usually enough, five is the maximum. A fight
-            lasts three to five rounds.
+            Three actions is usually enough, five is the maximum. A fight lasts
+            three to five rounds.
           </li>
           <li>
             Every ability should force a decision. Flat extra damage doesn't
@@ -280,15 +288,18 @@ function CheatSheetPage() {
           <li>Match damage types to the concept.</li>
           <li>
             Insert attacks and saves with the{" "}
-            <Link to="/editor" className="underline underline-offset-4 hover:text-foreground">
+            <Link
+              to="/editor"
+              className="underline underline-offset-4 hover:text-foreground"
+            >
               editor
             </Link>
             's Attack line and Saving throw line options, so the numbers
             recompute when the stats change.
           </li>
           <li>
-            End with one line of behavior: how it opens, what it protects,
-            when it runs.
+            End with one line of behavior: how it opens, what it protects, when
+            it runs.
           </li>
         </Checklist>
       </Section>
@@ -300,8 +311,8 @@ function CheatSheetPage() {
             points.
           </li>
           <li>
-            The stun-lock. Don't take the same player's turns away round
-            after round.
+            The stun-lock. Don't take the same player's turns away round after
+            round.
           </li>
           <li>
             The overloaded statblock. Cut abilities, or split them over two
@@ -336,14 +347,17 @@ function CheatSheetPage() {
             character, and a stunned round one shouldn't delete the monster.
           </li>
           <li>
-            Encounter check: possibly deadly when the monsters' total CR is
-            more than ¼ of the characters' total levels (levels 1–4), or ½
-            (level 5 and up).
+            Encounter check: possibly deadly when the monsters' total CR is more
+            than ¼ of the characters' total levels (levels 1–4), or ½ (level 5
+            and up).
           </li>
           <li>
             Adjust during the fight, edit the statblock the same evening, and
             keep the version that played better. Duplicating in{" "}
-            <Link to="/my-creatures" className="underline underline-offset-4 hover:text-foreground">
+            <Link
+              to="/my-creatures"
+              className="underline underline-offset-4 hover:text-foreground"
+            >
               your library
             </Link>{" "}
             is free.
