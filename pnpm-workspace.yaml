@@ -1,7 +1,10 @@
 # pnpm blocks dependency build scripts by default (a security measure).
 # These packages need their build/install scripts to work correctly:
 #   esbuild / unrs-resolver -> vite + vitest + vite-tsconfig-paths resolver
+#   @sentry/cli -> downloads the sentry-cli binary @sentry/vite-plugin uses
+#                  to upload source maps
 allowBuilds:
+  '@sentry/cli': true
   esbuild: true
   unrs-resolver: true
 minimumReleaseAgeExclude:

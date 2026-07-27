@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import {
   BarChart3,
+  Bug,
   Database,
   RefreshCw,
   Share2,
@@ -22,7 +23,7 @@ export const Route = createFileRoute("/privacy")({
   component: Privacy,
 });
 
-const LAST_UPDATED = "20 July 2026";
+const LAST_UPDATED = "27 July 2026";
 
 type Section = {
   icon: React.ReactNode;
@@ -63,6 +64,43 @@ const sections: Array<Section> = [
     ),
   },
   {
+    icon: <Bug />,
+    title: "Error Logging",
+    body: (
+      <>
+        <p className="text-muted-foreground">
+          I use{" "}
+          <a
+            href="https://sentry.io/privacy/"
+            target="_blank"
+            rel="noreferrer"
+            className="text-primary underline underline-offset-4"
+          >
+            Sentry
+          </a>{" "}
+          to log errors that happen on the live site. It helps me find and fix
+          bugs without waiting for someone to report them. When something
+          breaks, Sentry receives a technical report containing:
+        </p>
+        <ul className="mt-3 space-y-1.5 text-muted-foreground">
+          <li>
+            The error itself: what went wrong and where in the code it
+            happened.
+          </li>
+          <li>The page you were on when it happened.</li>
+          <li>Your browser and operating system version.</li>
+        </ul>
+        <p className="mt-3 text-muted-foreground">
+          These reports are not linked to you. IP addresses are not stored with
+          them, no cookies or persistent identifiers are used, and I do not
+          send your creatures or anything else you have saved. Error logging
+          only runs on the live site, never while the app is used in
+          development or preview builds.
+        </p>
+      </>
+    ),
+  },
+  {
     icon: <Database />,
     title: "Data You Create",
     body: (
@@ -92,10 +130,10 @@ const sections: Array<Section> = [
     body: (
       <p className="text-muted-foreground">
         The Service relies on third-party providers, including Umami
-        Analytics and my hosting provider, to operate. These providers process
-        only the limited, anonymous technical information necessary to deliver
-        the Service. Their handling of that information is governed by their own
-        privacy policies.
+        Analytics, Sentry, and my hosting provider, to operate. These providers
+        process only the limited, anonymous technical information necessary to
+        deliver the Service. Their handling of that information is governed by
+        their own privacy policies.
       </p>
     ),
   },

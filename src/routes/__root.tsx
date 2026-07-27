@@ -9,6 +9,7 @@ import type { ReactNode } from "react";
 import "@/app/globals.css";
 import "@fontsource-variable/oxanium";
 import "@fontsource-variable/jetbrains-mono";
+import "@/lib/sentry";
 
 import { Providers } from "@/components/providers/providers";
 import { SiteHeader } from "@/components/ui/site-header";
