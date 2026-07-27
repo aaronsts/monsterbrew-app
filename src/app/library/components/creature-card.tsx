@@ -15,10 +15,11 @@ export function CreatureCard({
   creature: Monster & { id?: string };
   srdKey?: string;
 }>) {
-  const typeLine = [creature.size, creature.type]
-    .filter(Boolean)
-    .map((part) => titleCase(part))
-    .join(" ");
+  const typeLine =
+    [creature.size, creature.type]
+      .filter(Boolean)
+      .map((part) => titleCase(part))
+      .join(" ") + (creature.sub_type ? ` (${titleCase(creature.sub_type)})` : "");
 
   const median = calculateHitPoints(
     creature.hit_dice,

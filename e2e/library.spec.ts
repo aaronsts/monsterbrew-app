@@ -104,6 +104,11 @@ test.describe("Library", () => {
     await expect(statblock(page)).toBeVisible();
 
     await page.getByRole("button", { name: "Delete" }).click();
+    // Deletion now asks for confirmation first.
+    await page
+      .getByRole("dialog")
+      .getByRole("button", { name: "Delete" })
+      .click();
 
     await expect(page).toHaveURL(/\/library$/);
     await expect(

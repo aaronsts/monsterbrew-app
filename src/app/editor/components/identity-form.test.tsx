@@ -7,7 +7,8 @@ import { Languages } from "@/schema/createCreatureSchema";
 
 const ppInput = () =>
   screen.getByLabelText<HTMLInputElement>("Passive Perception");
-const manualToggle = () => screen.getByRole("switch", { name: "Manual" });
+const manualToggle = () =>
+  screen.getByRole("switch", { name: "Manual passive perception" });
 const languageInput = () =>
   screen.getByLabelText<HTMLInputElement>("Custom languages");
 const addButton = () => screen.getByRole("button", { name: "Add" });

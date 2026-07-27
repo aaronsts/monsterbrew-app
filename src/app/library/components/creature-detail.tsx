@@ -6,6 +6,16 @@ import { ArrowLeft, Copy, Edit, Trash } from "lucide-react";
 import type { StoredMonster } from "@/schema/monster-schema";
 
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { MonsterStatblock } from "@/components/monster-statblock";
 import { CreatureExportMenu } from "@/app/library/components/creature-export-menu";
 import { useCreature, useDeleteCreature } from "@/hooks/use-creatures";
@@ -123,15 +133,37 @@ export default function CreatureDetail() {
             Duplicate
           </Button>
           <CreatureExportMenu creature={creature} statblockRef={statblockRef} />
-          <Button
-            color="neutral" variant="outline"
-            size="sm"
-            onClick={handleDelete}
-            className="text-destructive"
-          >
-            <Trash className="mr-2 h-4 w-4" />
-            Delete
-          </Button>
+          <Dialog>
+            <DialogTrigger
+              render={<Button color="destructive" variant="outline" size="sm" />}
+            >
+              <Trash className="mr-2 h-4 w-4" />
+              Delete
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Delete {creature.name}?</DialogTitle>
+                <DialogDescription>
+                  This removes the creature from your library. It can't be
+                  undone.
+                </DialogDescription>
+              </DialogHeader>
+              <DialogFooter>
+                <DialogClose
+                  render={<Button color="neutral" variant="outline" size="sm" />}
+                >
+                  Cancel
+                </DialogClose>
+                <DialogClose
+                  render={<Button color="destructive" size="sm" />}
+                  onClick={handleDelete}
+                >
+                  <Trash className="mr-2 h-4 w-4" />
+                  Delete
+                </DialogClose>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
 
