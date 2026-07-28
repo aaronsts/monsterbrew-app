@@ -29,7 +29,7 @@ export function StandAloneDescription({
       <Markdown
         components={{
           strong: ({ node, ...props }) => (
-            <strong className="font-semibold pr-1" {...props} />
+            <strong className="font-semibold" {...props} />
           ),
         }}
       >

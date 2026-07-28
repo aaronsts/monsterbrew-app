@@ -48,6 +48,10 @@ export function titleCase(str: string) {
     .replace(/[-_]+(.)/g, (_, c) => " " + c.toUpperCase());
 }
 
+export function capitalizeWords(value: string): string {
+  return value.replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
 export function calculateHitPoints(
   amount: string,
   size: string,
