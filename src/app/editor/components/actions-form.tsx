@@ -7,10 +7,13 @@ import {
   useWatch,
 } from "react-hook-form";
 import { MarkupField } from "./markup-field";
+import { PresetPicker } from "./preset-picker";
 import type { Control } from "react-hook-form";
 import type { Monster } from "@/schema/monster-schema";
 import type { MarkupContext } from "@/lib/statblock-markup";
 import type { TagItem } from "@/lib/tag-catalog";
+import type { FeaturePreset } from "@/lib/constants/actionPresets";
+import { getPresetsForType } from "@/lib/constants/actionPresets";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -51,6 +54,7 @@ interface FeatureListProps {
   descriptionLabel?: string;
   ctx: MarkupContext;
   tags?: Array<TagItem>;
+  presets?: Array<FeaturePreset>;
 }
 
 function FeatureList({
@@ -65,6 +69,7 @@ function FeatureList({
   descriptionLabel,
   ctx,
   tags,
+  presets,
 }: FeatureListProps) {
   const { fields, append, remove, swap } = useFieldArray({ control, name });
 
@@ -72,16 +77,27 @@ function FeatureList({
     <FieldGroup className="gap-3">
       <div className="flex items-center justify-between gap-2">
         {title ? <FieldLabel className="mb-0">{title}</FieldLabel> : <span />}
-        <Button
-          type="button"
-          color="neutral"
-          variant="outline"
-          size="sm"
-          onClick={() => append({ name: "", description: "" })}
-        >
-          <Plus />
-          {addLabel}
-        </Button>
+        <div className="flex items-center gap-2">
+          {presets && presets.length > 0 && (
+            <PresetPicker
+              presets={presets}
+              triggerLabel="Insert preset"
+              onSelect={(preset) =>
+                append({ name: preset.name, description: preset.description })
+              }
+            />
+          )}
+          <Button
+            type="button"
+            color="neutral"
+            variant="outline"
+            size="sm"
+            onClick={() => append({ name: "", description: "" })}
+          >
+            <Plus />
+            {addLabel}
+          </Button>
+        </div>
       </div>
 
       {descriptionName && (
@@ -200,6 +216,8 @@ function FeatureList({
   );
 }
 
+const TRAIT_PRESETS = getPresetsForType("trait");
+
 export const ActionsForm = () => {
   const form = useFormContext<Monster>();
   const hasLair = form.watch("has_lair");
@@ -211,7 +229,8 @@ export const ActionsForm = () => {
     name: "ability_scores",
   });
   const cr = useWatch({ control: form.control, name: "cr" });
-  const ctx: MarkupContext = { ability_scores, cr };
+  const name = useWatch({ control: form.control, name: "name" });
+  const ctx: MarkupContext = { ability_scores, cr, name };
 
   return (
     <FieldSet>
@@ -229,6 +248,7 @@ export const ActionsForm = () => {
         namePlaceholder="ex. Pack Tactics"
         descriptionPlaceholder="Describe the passive ability… e.g. The wolf has advantage on attack rolls against a creature if at least one ally is within 5 ft. of it."
         tags={[]}
+        presets={TRAIT_PRESETS}
         ctx={ctx}
       />
       <FeatureList
