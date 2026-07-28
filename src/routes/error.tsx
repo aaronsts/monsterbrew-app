@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { ErrorFallback } from "@/components/error-fallback";
 
 export const Route = createFileRoute("/error")({
   head: () => ({
@@ -10,7 +11,6 @@ export const Route = createFileRoute("/error")({
   component: ErrorPage,
 });
 
-// eslint-disable-next-line react-refresh/only-export-components
 function ErrorPage() {
-  return <p>Sorry, something went wrong</p>;
+  return <ErrorFallback />;
 }

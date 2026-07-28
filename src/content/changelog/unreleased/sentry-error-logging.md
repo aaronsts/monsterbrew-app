@@ -1,0 +1,5 @@
+Monsterbrew now reports crashes and unexpected errors on the live site to an error tracker (Sentry), so when something breaks we can see it and fix it without waiting for a bug report. And if a page does crash, you now land on a proper error page with a retry button instead of a wall of technical text. No personal data is collected, and nothing is reported while you use the editor locally or on preview builds.
+
+- Errors on the production site are now logged to Sentry so bugs get caught and fixed faster
+- Crashes show a friendly error page with "Try again" and "Back home" buttons, and your creatures stay safe in your browser
+- The privacy policy has a new section explaining exactly what an error report contains (and what it never will)
