@@ -12,7 +12,6 @@ export const Route = createFileRoute("/library/$id")({
   component: CreatureDetailPage,
 });
 
-// eslint-disable-next-line react-refresh/only-export-components
 function CreatureDetailPage() {
   return <CreatureDetail />;
 }

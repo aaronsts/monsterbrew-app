@@ -7,6 +7,7 @@ import {
   useWatch,
 } from "react-hook-form";
 import { MarkupField } from "./markup-field";
+import { CollapsibleSection } from "./collapsible-section";
 import type { Control } from "react-hook-form";
 import type { Monster } from "@/schema/monster-schema";
 import type { MarkupContext } from "@/lib/statblock-markup";
@@ -15,12 +16,9 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   Field,
-  FieldDescription,
   FieldGroup,
   FieldLabel,
-  FieldLegend,
   FieldSeparator,
-  FieldSet,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -214,12 +212,10 @@ export const ActionsForm = () => {
   const ctx: MarkupContext = { ability_scores, cr };
 
   return (
-    <FieldSet>
-      <FieldLegend>Actions</FieldLegend>
-      <FieldDescription>
-        What the creature can do in and out of combat
-      </FieldDescription>
-
+    <CollapsibleSection
+      legend="Actions"
+      description="What the creature can do in and out of combat"
+    >
       <FeatureList
         control={form.control}
         name="traits"
@@ -362,6 +358,6 @@ export const ActionsForm = () => {
           />
         )}
       </FieldGroup>
-    </FieldSet>
+    </CollapsibleSection>
   );
 };

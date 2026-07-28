@@ -29,7 +29,6 @@ export const MonsterForm = () => {
   const { data: loadedCreature } = useCreature(idParam);
   const saveCreature = useSaveCreature();
 
-  // Reactively populate the form once the query resolves the saved creature.
   const form = useForm({
     resolver: zodResolver(monsterSchema),
     values: loadedCreature ?? defaultMonster,
@@ -37,7 +36,6 @@ export const MonsterForm = () => {
 
   const { control, setValue, reset, getValues, trigger } = form;
 
-  // Treat as an existing creature when loaded by id (URL) or via handoff.
   const effectiveId = idParam ?? creatureId;
 
   const preview = useWatch({ control }) as Monster;
@@ -49,7 +47,6 @@ export const MonsterForm = () => {
     name: "custom_passive_perception",
   });
 
-  // Fallback handoff (no id in the URL): hydrate from localStorage once.
   useEffect(() => {
     if (idParam) return;
     const handoff = localStorage.getItem("editCreature");
@@ -120,18 +117,12 @@ export const MonsterForm = () => {
             type="button"
             color="neutral"
             variant="filled"
-            size="lg"
             onClick={() => setShowImport(true)}
           >
             <Upload className="size-4" />
             Import
           </Button>
-          <Button
-            type="button"
-            className="w-full lg:w-fit"
-            size="lg"
-            onClick={save}
-          >
+          <Button type="button" className="w-full lg:w-fit" onClick={save}>
             {effectiveId ? "Update" : "Save"}
           </Button>
         </div>
