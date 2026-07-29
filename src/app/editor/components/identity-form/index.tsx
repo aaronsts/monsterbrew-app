@@ -244,7 +244,6 @@ export const IdentityForm = () => {
             )}
           />
         </div>
-
       </FieldGroup>
 
       {/* Languages */}

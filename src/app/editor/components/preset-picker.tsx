@@ -1,17 +1,18 @@
 "use client";
 
-import { useState } from "react";
 import { BookPlus } from "lucide-react";
 import type { FeaturePreset } from "@/lib/constants/actionPresets";
 import { Button } from "@/components/ui/button";
 import {
-  CommandDialog,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
+  Combobox,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxList,
+  ComboboxTrigger,
+  useComboboxFilter,
+} from "@/components/ui/combobox";
 
 interface PresetPickerProps {
   presets: Array<FeaturePreset>;
@@ -19,52 +20,45 @@ interface PresetPickerProps {
   onSelect: (preset: FeaturePreset) => void;
 }
 
-/** Searchable dialog for inserting a pre-defined feature into a list. */
+/** Searchable combobox for inserting a pre-defined feature into a list. */
 export function PresetPicker({
   presets,
   triggerLabel,
   onSelect,
 }: Readonly<PresetPickerProps>) {
-  const [open, setOpen] = useState(false);
+  const filter = useComboboxFilter();
 
   return (
-    <>
-      <Button
-        type="button"
-        color="neutral"
-        variant="outline"
-        size="sm"
-        onClick={() => setOpen(true)}
+    <Combobox
+      items={presets}
+      itemToStringValue={(preset: FeaturePreset) => preset.label}
+      filter={(preset: FeaturePreset, query: string) =>
+        filter.contains(preset.label, query) ||
+        filter.contains(preset.description, query)
+      }
+      onValueChange={(preset: FeaturePreset | null) => {
+        if (preset) onSelect(preset);
+      }}
+    >
+      <ComboboxTrigger
+        render={
+          <Button type="button" color="neutral" variant="outline" size="sm" />
+        }
       >
         <BookPlus />
         {triggerLabel}
-      </Button>
-      <CommandDialog
-        open={open}
-        onOpenChange={setOpen}
-        title="Insert preset"
-        description="Search the pre-defined library and insert one into the creature."
-      >
-        <CommandInput placeholder="Search presets…" />
-        <CommandList>
-          <CommandEmpty>No presets found.</CommandEmpty>
-          <CommandGroup>
-            {presets.map((preset) => (
-              <CommandItem
-                key={preset.label}
-                value={preset.label}
-                keywords={[preset.description]}
-                onSelect={() => {
-                  onSelect(preset);
-                  setOpen(false);
-                }}
-              >
-                {preset.label}
-              </CommandItem>
-            ))}
-          </CommandGroup>
-        </CommandList>
-      </CommandDialog>
-    </>
+      </ComboboxTrigger>
+      <ComboboxContent>
+        <ComboboxInput placeholder="Search presets…" showTrigger={false} />
+        <ComboboxEmpty>No presets found.</ComboboxEmpty>
+        <ComboboxList>
+          {(preset: FeaturePreset) => (
+            <ComboboxItem key={preset.label} value={preset}>
+              {preset.label}
+            </ComboboxItem>
+          )}
+        </ComboboxList>
+      </ComboboxContent>
+    </Combobox>
   );
 }

@@ -40,7 +40,9 @@ function ComboboxClear({ className, ...props }: ComboboxPrimitive.Clear.Props) {
   return (
     <ComboboxPrimitive.Clear
       data-slot="combobox-clear"
-      render={<InputGroupButton color="neutral" variant="ghost" size="icon-xs" />}
+      render={
+        <InputGroupButton color="neutral" variant="ghost" size="icon-xs" />
+      }
       className={cn(className)}
       {...props}
     >
@@ -70,7 +72,8 @@ function ComboboxInput({
         {showTrigger && (
           <InputGroupButton
             size="icon-xs"
-            color="neutral" variant="ghost"
+            color="neutral"
+            variant="ghost"
             render={<ComboboxTrigger />}
             data-slot="input-group-button"
             className="group-has-data-[slot=combobox-clear]/input-group:hidden data-pressed:bg-transparent"
@@ -252,7 +255,9 @@ function ComboboxChip({
       {children}
       {showRemove && (
         <ComboboxPrimitive.ChipRemove
-          render={<Button color="neutral" variant="transparent" size="icon-xs" />}
+          render={
+            <Button color="neutral" variant="transparent" size="icon-xs" />
+          }
           className="-ml-1 opacity-50 hover:opacity-100"
           data-slot="combobox-chip-remove"
         >
@@ -280,6 +285,8 @@ function useComboboxAnchor() {
   return React.useRef<HTMLDivElement | null>(null);
 }
 
+const useComboboxFilter = ComboboxPrimitive.useFilter;
+
 export {
   Combobox,
   ComboboxInput,
@@ -296,6 +303,6 @@ export {
   ComboboxChipsInput,
   ComboboxTrigger,
   ComboboxValue,
-  // eslint-disable-next-line react-refresh/only-export-components
   useComboboxAnchor,
+  useComboboxFilter,
 };

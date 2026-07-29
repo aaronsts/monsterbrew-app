@@ -1,8 +1,8 @@
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
-import { IdentityForm } from "./identity-form";
-import { renderWithForm } from "./test-utils";
+import { renderWithForm } from "../test-utils";
+import { IdentityForm } from ".";
 import { Languages } from "@/schema/createCreatureSchema";
 
 const languageInput = () =>
@@ -83,9 +83,9 @@ describe("IdentityForm — enum languages", () => {
     renderWithForm(<IdentityForm />, { languages: [Languages.draconic] });
 
     expect(
-      screen.getByRole("checkbox", { name: "Draconic" }).getAttribute(
-        "data-checked",
-      ),
+      screen
+        .getByRole("checkbox", { name: "Draconic" })
+        .getAttribute("data-checked"),
     ).not.toBeNull();
   });
 });
