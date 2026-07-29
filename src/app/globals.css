@@ -100,6 +100,28 @@
 
   --radius-4xl: calc(var(--radius) * 2.6);
 
+  /* neutral — overrides Tailwind's default gray scale at these steps */
+  --color-neutral-100: var(--neutral-100);
+  --color-neutral-300: var(--neutral-300);
+  --color-neutral-500: var(--neutral-500);
+  --color-neutral-700: var(--neutral-700);
+  --color-neutral-900: var(--neutral-900);
+
+  /* primary */
+  --color-primary-100: var(--primary-100);
+  --color-primary-300: var(--primary-300);
+  --color-primary-500: var(--primary-500);
+  --color-primary-700: var(--primary-700);
+  --color-primary-900: var(--primary-900);
+
+  /* accent */
+  --color-accent-100: var(--accent-100);
+  --color-accent-300: var(--accent-300);
+  --color-accent-500: var(--accent-500);
+  --color-accent-700: var(--accent-700);
+  --color-accent-900: var(--accent-900);
+
+  /* success */
   --color-success-100: var(--success-100);
   --color-success-300: var(--success-300);
   --color-success-500: var(--success-500);

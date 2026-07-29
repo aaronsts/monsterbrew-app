@@ -23,7 +23,6 @@ export const Route = createFileRoute("/editor")({
   component: CreatureEditor,
 });
 
-// eslint-disable-next-line react-refresh/only-export-components
 function CreatureEditor() {
   return (
     <>
