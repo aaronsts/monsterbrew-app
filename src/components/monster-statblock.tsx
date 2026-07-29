@@ -9,6 +9,7 @@ import { StandAloneDescription as Description } from "@/components/ui/stand-alon
 import {
   calculateHitPoints,
   calculateStatBonus,
+  capitalizeWords,
   cn,
   titleCase,
 } from "@/lib/utils";
@@ -21,6 +22,9 @@ type Feature = Monster["traits"][number];
 const ABILITY_KEYS = abilityScoresSchema.keyof().options;
 const SKILL_ABILITY = new Map<string, string>(
   SKILLS.map((s) => [s.skill_name, s.skill_modifier]),
+);
+const SKILL_LABEL = new Map<string, string>(
+  SKILLS.map((s) => [s.skill_name, s.label]),
 );
 
 function formatMod(mod: number): string {
@@ -159,7 +163,7 @@ export function MonsterStatblock({
         creature.ability_scores[abilityKey as (typeof ABILITY_KEYS)[number]],
       );
       const bonus = mod + (level === "expert" ? pb * 2 : pb);
-      return `${titleCase(name)} ${formatMod(bonus)}`;
+      return `${SKILL_LABEL.get(name) ?? capitalizeWords(name)} ${formatMod(bonus)}`;
     },
   );
 
