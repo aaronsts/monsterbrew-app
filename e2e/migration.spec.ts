@@ -1,5 +1,10 @@
 import { expect, test } from "./fixtures";
-import { legacyCreature, seedCreature, statblock } from "./helpers";
+import {
+  clickCreatureAction,
+  legacyCreature,
+  seedCreature,
+  statblock,
+} from "./helpers";
 
 test.describe("Legacy creature migration", () => {
   test("auto-migrates a seeded legacy creature on open (no Legacy badge)", async ({
@@ -36,7 +41,7 @@ test.describe("Legacy creature migration", () => {
     await page.goto(`/library/${creature.id}`);
 
     // No migrate dialog — Edit hands the already-migrated creature to the editor.
-    await page.getByRole("button", { name: "Edit" }).click();
+    await clickCreatureAction(page, "Edit");
 
     await expect(page).toHaveURL(/\/editor/);
     await expect(page.getByLabel("Name")).toHaveValue("Old Goblin");

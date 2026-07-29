@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { X } from "lucide-react";
 import { Controller, useFormContext } from "react-hook-form";
+import { CollapsibleSection } from "../collapsible-section";
 import type { Monster } from "@/schema/monster-schema";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -20,8 +21,6 @@ import {
   FieldError,
   FieldGroup,
   FieldLabel,
-  FieldLegend,
-  FieldSet,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -49,12 +48,10 @@ export const IdentityForm = () => {
   const { control } = useFormContext<Monster>();
   const [customLanguageInput, setCustomLanguageInput] = useState("");
   return (
-    <FieldSet>
-      <FieldLegend>Identity</FieldLegend>
-      <FieldDescription>
-        General information about the creature
-      </FieldDescription>
-
+    <CollapsibleSection
+      legend="Identity"
+      description="General information about the creature"
+    >
       <Controller
         name="name"
         control={control}
@@ -382,6 +379,6 @@ export const IdentityForm = () => {
           </Field>
         )}
       />
-    </FieldSet>
+    </CollapsibleSection>
   );
 };

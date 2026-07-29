@@ -1,17 +1,15 @@
 "use client";
 import { Controller, useFormContext, useWatch } from "react-hook-form";
+import { CollapsibleSection } from "../collapsible-section";
 import { FeatureList } from "./feature-list";
 import type { MarkupContext } from "@/lib/statblock-markup";
 import type { Monster } from "@/schema/monster-schema";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   Field,
-  FieldDescription,
   FieldGroup,
   FieldLabel,
-  FieldLegend,
   FieldSeparator,
-  FieldSet,
 } from "@/components/ui/field";
 import { getPresetsForType } from "@/lib/constants/actionPresets";
 
@@ -32,12 +30,10 @@ export const ActionsForm = () => {
   const ctx: MarkupContext = { ability_scores, cr, name };
 
   return (
-    <FieldSet>
-      <FieldLegend>Actions</FieldLegend>
-      <FieldDescription>
-        What the creature can do in and out of combat
-      </FieldDescription>
-
+    <CollapsibleSection
+      legend="Actions"
+      description="What the creature can do in and out of combat"
+    >
       <FeatureList
         control={form.control}
         name="traits"
@@ -181,6 +177,6 @@ export const ActionsForm = () => {
           />
         )}
       </FieldGroup>
-    </FieldSet>
+    </CollapsibleSection>
   );
 };

@@ -148,6 +148,15 @@ export async function toggleLanguage(page: Page, value: string) {
   await page.locator(`label[for="form-rhf-language-${value}"]`).click();
 }
 
+/**
+ * Open a creature detail page's "Actions" dropdown menu and click one of its
+ * items (e.g. "Edit", "Duplicate", "Delete").
+ */
+export async function clickCreatureAction(page: Page, action: string) {
+  await page.getByRole("button", { name: "Actions" }).click();
+  await page.getByRole("menuitem", { name: action }).click();
+}
+
 /** Add a feature to one of the editor's field arrays and fill its inputs. */
 export async function addFeature(
   page: Page,

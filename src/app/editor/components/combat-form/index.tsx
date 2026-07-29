@@ -1,6 +1,7 @@
 "use client";
 import { useEffect } from "react";
 import { Controller, useFormContext, useWatch } from "react-hook-form";
+import { CollapsibleSection } from "../collapsible-section";
 import type { Monster } from "@/schema/monster-schema";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -17,8 +18,6 @@ import {
   FieldError,
   FieldGroup,
   FieldLabel,
-  FieldLegend,
-  FieldSet,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Item, ItemContent, ItemMedia, ItemTitle } from "@/components/ui/item";
@@ -80,12 +79,10 @@ export const CombatForm = () => {
   }, [custom_initiative, ability_scores?.dex, setValue, getValues]);
 
   return (
-    <FieldSet>
-      <FieldLegend>Combat</FieldLegend>
-      <FieldDescription>
-        Will decide how though a creature is and how much damage it can deal
-      </FieldDescription>
-
+    <CollapsibleSection
+      legend="Combat"
+      description="Will decide how tough a creature is and how much damage it can deal"
+    >
       {/* Ability Scores */}
       <FieldGroup className="grid grid-cols-3 xl:grid-cols-6">
         {ABILITY_SCORES.map((ability) => {
@@ -455,6 +452,6 @@ export const CombatForm = () => {
           )}
         />
       </FieldGroup>
-    </FieldSet>
+    </CollapsibleSection>
   );
 };

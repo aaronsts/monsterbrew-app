@@ -15,9 +15,6 @@ export function StandAloneDescription({
 }: DescriptionProps) {
   if (!show) return null;
 
-  // Stray whitespace around the title breaks the ***bold-italic*** delimiters
-  // (CommonMark flanking rules), and 4-space-indented lines would render as
-  // code blocks — trim per line, display-only.
   const body = String(description || placeholder)
     .split("\n")
     .map((line) => line.trim())

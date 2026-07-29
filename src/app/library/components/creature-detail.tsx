@@ -1,34 +1,21 @@
 "use client";
 import { useEffect, useRef } from "react";
-import { Link, useNavigate, useParams } from "@tanstack/react-router";
+import { Link, useParams } from "@tanstack/react-router";
 import { toast } from "sonner";
-import { ArrowLeft, Copy, Edit, Trash } from "lucide-react";
-import type { StoredMonster } from "@/schema/monster-schema";
+import { ArrowLeft } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import { MonsterStatblock } from "@/components/monster-statblock";
-import { CreatureExportMenu } from "@/app/library/components/creature-export-menu";
-import { useCreature, useDeleteCreature } from "@/hooks/use-creatures";
+import { CreatureActionsMenu } from "@/app/library/components/creature-actions-menu";
+import { useCreature } from "@/hooks/use-creatures";
 
 export default function CreatureDetail() {
   const { id } = useParams({ from: "/library/$id" });
-  const navigate = useNavigate();
   const {
     data: creature = null,
     isPending: isLoading,
     error,
   } = useCreature(id);
-  const deleteCreature = useDeleteCreature();
 
   const statblockRef = useRef<HTMLDivElement>(null);
 
@@ -39,58 +26,6 @@ export default function CreatureDetail() {
       );
     }
   }, [error]);
-
-  // Load the current creature into the editor for editing.
-  const loadCreatureIntoEditor = (target: StoredMonster) => {
-    toast.promise(
-      new Promise<void>((resolve) => {
-        localStorage.setItem("editCreature", JSON.stringify(target));
-        navigate({ to: "/editor" });
-        resolve();
-      }),
-      {
-        loading: `Loading ${target.name} into editor...`,
-        success: `${target.name} ready for editing`,
-        error: "Failed to load creature",
-      },
-    );
-  };
-
-  const handleEdit = () => {
-    if (!creature) return;
-    loadCreatureIntoEditor(creature);
-  };
-
-  // Duplicate the creature and open the copy in the editor as a new creature.
-  const handleDuplicate = () => {
-    if (!creature) return;
-    const { id: _id, ...rest } = creature;
-    const creatureCopy = { ...rest, name: `Copy of ${creature.name}` };
-    localStorage.setItem("editCreature", JSON.stringify(creatureCopy));
-    navigate({ to: "/editor" });
-  };
-
-  // Delete the creature and return to the library.
-  const handleDelete = () => {
-    if (!creature) return;
-    toast.promise(
-      (async () => {
-        if (!creature.id) {
-          throw new Error("Could not find creature to delete");
-        }
-        await deleteCreature.mutateAsync(creature.id);
-        return creature.name;
-      })(),
-      {
-        loading: `Deleting ${creature.name}...`,
-        success: (name) => {
-          navigate({ to: "/library" });
-          return `${name} deleted successfully`;
-        },
-        error: (err) => `Error deleting creature: ${err.message}`,
-      },
-    );
-  };
 
   if (isLoading) {
     return (
@@ -123,48 +58,7 @@ export default function CreatureDetail() {
             Back to library
           </Button>
         </Link>
-        <div className="flex items-center gap-2">
-          <Button color="neutral" variant="outline" size="sm" onClick={handleEdit}>
-            <Edit className="mr-2 h-4 w-4" />
-            Edit
-          </Button>
-          <Button color="neutral" variant="outline" size="sm" onClick={handleDuplicate}>
-            <Copy className="mr-2 h-4 w-4" />
-            Duplicate
-          </Button>
-          <CreatureExportMenu creature={creature} statblockRef={statblockRef} />
-          <Dialog>
-            <DialogTrigger
-              render={<Button color="destructive" variant="outline" size="sm" />}
-            >
-              <Trash className="mr-2 h-4 w-4" />
-              Delete
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Delete {creature.name}?</DialogTitle>
-                <DialogDescription>
-                  This removes the creature from your library. It can't be
-                  undone.
-                </DialogDescription>
-              </DialogHeader>
-              <DialogFooter>
-                <DialogClose
-                  render={<Button color="neutral" variant="outline" size="sm" />}
-                >
-                  Cancel
-                </DialogClose>
-                <DialogClose
-                  render={<Button color="destructive" size="sm" />}
-                  onClick={handleDelete}
-                >
-                  <Trash className="mr-2 h-4 w-4" />
-                  Delete
-                </DialogClose>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
-        </div>
+        <CreatureActionsMenu creature={creature} statblockRef={statblockRef} />
       </div>
 
       <div ref={statblockRef}>

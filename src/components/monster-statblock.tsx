@@ -205,7 +205,7 @@ export function MonsterStatblock({
   });
 
   return (
-    <Card className="h-fit gap-0 py-0 text-[13px]/relaxed">
+    <Card className="h-fit gap-0 py-0 text-[13px]">
       {/* Name banner */}
       <CardHeader className="pt-4 pb-2  gap-0">
         <h2

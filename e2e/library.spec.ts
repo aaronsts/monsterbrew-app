@@ -1,5 +1,5 @@
 import { expect, test } from "./fixtures";
-import { saveCreature, statblock } from "./helpers";
+import { clickCreatureAction, saveCreature, statblock } from "./helpers";
 
 test.describe("Library", () => {
   test("shows the empty state when nothing is saved", async ({ page }) => {
@@ -89,7 +89,7 @@ test.describe("Library", () => {
     });
     await page.goto(`/library/${id}`);
 
-    await page.getByRole("button", { name: "Duplicate" }).click();
+    await clickCreatureAction(page, "Duplicate");
 
     await expect(page).toHaveURL(/\/editor/);
     await expect(page.getByLabel("Name")).toHaveValue("Copy of Goblin Scout");
@@ -103,7 +103,7 @@ test.describe("Library", () => {
     await page.goto(`/library/${id}`);
     await expect(statblock(page)).toBeVisible();
 
-    await page.getByRole("button", { name: "Delete" }).click();
+    await clickCreatureAction(page, "Delete");
     // Deletion now asks for confirmation first.
     await page
       .getByRole("dialog")

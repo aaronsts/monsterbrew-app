@@ -336,7 +336,7 @@ export function serializeSaveArgs(fields: SaveFields): string {
 }
 
 /** Flat-or-ability attack bonus: `str` → mod + PB, `7` → 7 (mirrors `@hit`). */
-function hitBonus(value: string, ctx: MarkupContext): number {
+export function hitBonus(value: string, ctx: MarkupContext): number {
   const pb = ctx.cr?.proficiency_bonus || 0;
   return isAbility(value)
     ? abilityMod(ctx, value) + pb
@@ -344,7 +344,7 @@ function hitBonus(value: string, ctx: MarkupContext): number {
 }
 
 /** Flat-or-ability DC: `con` → 8 + PB + mod, `15` → 15 (mirrors `@dc`). */
-function dcValue(value: string, ctx: MarkupContext): number {
+export function dcValue(value: string, ctx: MarkupContext): number {
   const pb = ctx.cr?.proficiency_bonus || 0;
   return isAbility(value)
     ? 8 + pb + abilityMod(ctx, value)
