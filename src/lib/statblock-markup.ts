@@ -17,8 +17,14 @@ import type { Monster } from "@/schema/monster-schema";
  * regardless of where the text came from (5eTools import, SRD, or hand-typed).
  */
 
-/** The stats `resolveMarkup` needs to compute stat-linked values. */
-export type MarkupContext = Pick<Monster, "ability_scores" | "cr">;
+/**
+ * The stats `resolveMarkup` needs to compute stat-linked values. `name` is
+ * optional so existing callers (and the narrowed editor ctx) keep working; the
+ * `{@mon}` tag falls back to "the creature" when it's absent.
+ */
+export type MarkupContext = Pick<Monster, "ability_scores" | "cr"> & {
+  name?: string;
+};
 
 export interface TextSegment {
   type: "text";
@@ -409,6 +415,7 @@ function resolveSave(args: string, ctx: MarkupContext): string {
 
 /** Every tag name `resolveTag` has a case for — keep in sync with its switch. */
 export const KNOWN_TAG_NAMES: ReadonlySet<string> = new Set([
+  "mon",
   "atkr",
   "atk",
   "hit",
@@ -490,6 +497,10 @@ export function resolveTag(tag: TagSegment, ctx: MarkupContext): string {
   const { name, args, raw } = tag;
 
   switch (name) {
+    case "mon":
+      // Monsterbrew extension: the creature's own name, so preset text tracks
+      // renames live. Falls back to "the creature" before a name is set.
+      return ctx.name?.trim() || "the creature";
     case "atkr":
       // 2024: {@atkr m} / {@atkr r} / {@atkr m,r}
       return attackRoll(args, null);

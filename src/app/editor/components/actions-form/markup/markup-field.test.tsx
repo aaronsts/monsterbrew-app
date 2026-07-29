@@ -16,8 +16,6 @@ import type { MarkupContext } from "@/lib/statblock-markup";
 
 afterEach(cleanup);
 
-// jsdom shims: CodeMirror measures text with Ranges, Base UI popovers need
-// ResizeObserver. Zero-rects are fine — we assert on DOM/state, not layout.
 if (typeof window !== "undefined") {
   window.ResizeObserver ??= class {
     observe() {}
@@ -343,7 +341,7 @@ describe("MarkupField (CodeMirror)", () => {
 
 describe("token editor registry", () => {
   it("round-trips parse ∘ serialize for every registered editor", async () => {
-    const { TOKEN_EDITORS } = await import("./token-editors");
+    const { TOKEN_EDITORS } = await import("../../token-editors");
     const samples: Record<string, string> = {
       attack: "m|str|5|2d8+str|slashing",
       save: "dex|con|3d6|fire|the target is {@condition prone}",

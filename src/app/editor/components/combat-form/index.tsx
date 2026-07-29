@@ -1,7 +1,7 @@
 "use client";
 import { useEffect } from "react";
 import { Controller, useFormContext, useWatch } from "react-hook-form";
-import { CollapsibleSection } from "./collapsible-section";
+import { CollapsibleSection } from "../collapsible-section";
 import type { Monster } from "@/schema/monster-schema";
 import { Checkbox } from "@/components/ui/checkbox";
 import {

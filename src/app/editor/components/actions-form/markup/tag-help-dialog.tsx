@@ -19,7 +19,6 @@ function Tag({ children }: Readonly<{ children: React.ReactNode }>) {
   );
 }
 
-/** Explains the `{@…}` tagging system used in description fields. */
 export function TagHelpDialog() {
   return (
     <Dialog>
@@ -40,9 +39,9 @@ export function TagHelpDialog() {
         <DialogHeader>
           <DialogTitle>The tag system</DialogTitle>
           <DialogDescription>
-            Descriptions can embed <Tag>{"{@…}"}</Tag> tags: small
-            placeholders that the editor, the preview and every export turn
-            into proper statblock text.
+            Descriptions can embed <Tag>{"{@…}"}</Tag> tags: small placeholders
+            that the editor, the preview and every export turn into proper
+            statblock text.
           </DialogDescription>
         </DialogHeader>
 
@@ -74,8 +73,8 @@ export function TagHelpDialog() {
           <p className="text-muted-foreground">
             Smaller tags cover single values inside a sentence:{" "}
             <Tag>{"{@damage 2d6}"}</Tag>, <Tag>{"{@dice 1d20 + 3}"}</Tag>,{" "}
-            <Tag>{"{@condition prone}"}</Tag>, <Tag>{"{@spell fireball}"}</Tag>
-            , <Tag>{"{@recharge 5}"}</Tag>. Anything the editor doesn&apos;t
+            <Tag>{"{@condition prone}"}</Tag>, <Tag>{"{@spell fireball}"}</Tag>,{" "}
+            <Tag>{"{@recharge 5}"}</Tag>. Anything the editor doesn&apos;t
             recognize falls back to its plain text, so imported descriptions
             stay readable.
           </p>

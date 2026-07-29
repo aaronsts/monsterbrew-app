@@ -7,6 +7,12 @@ export interface TagItem {
 
 export const TAG_CATALOG: Array<TagItem> = [
   {
+    snippet: "{@mon}",
+    name: "mon",
+    title: "Creature name",
+    hint: "inserts the creature's name, tracking renames live",
+  },
+  {
     snippet: "{@attack m|str|5|1d6+str|slashing}",
     name: "attack",
     title: "Attack line",
