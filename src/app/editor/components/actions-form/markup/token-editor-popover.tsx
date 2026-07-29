@@ -1,7 +1,7 @@
 "use client";
 
 import { X } from "lucide-react";
-import { TOKEN_EDITORS } from "./token-editors";
+import { TOKEN_EDITORS } from "../../token-editors";
 import type { MarkupContext } from "@/lib/statblock-markup";
 import { keySegments } from "@/lib/token-keys";
 import { parseMarkup } from "@/lib/statblock-markup";

@@ -1,7 +1,7 @@
 import { Controller, useFieldArray } from "react-hook-form";
 import { ArrowDown, ArrowUp, Plus, Trash2 } from "lucide-react";
-import { MarkupField } from "../markup-field";
-import { PresetPicker } from "../preset-picker";
+import { MarkupField } from "./markup/markup-field";
+import { PresetPicker } from "./preset-picker";
 import type { Control } from "react-hook-form";
 import type { Monster } from "@/schema/monster-schema";
 import type { MarkupContext } from "@/lib/statblock-markup";
