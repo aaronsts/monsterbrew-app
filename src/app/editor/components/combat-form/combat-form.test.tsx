@@ -1,8 +1,8 @@
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
-import { CombatForm } from "./combat-form";
-import { renderWithForm } from "./test-utils";
+import { renderWithForm } from "../test-utils";
+import { CombatForm } from ".";
 import { calculateHitPoints } from "@/lib/utils";
 import { defaultMonster } from "@/schema/monster-schema";
 

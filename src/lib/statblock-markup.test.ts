@@ -196,6 +196,22 @@ describe("resolveMarkup — reference tags", () => {
   });
 });
 
+describe("resolveMarkup — {@mon} creature name", () => {
+  it("renders the creature's name when present", () => {
+    const named: MarkupContext = { ...ctx, name: "Goblin Boss" };
+    expect(resolveMarkup("The {@mon} makes two attacks.", named)).toBe(
+      "The Goblin Boss makes two attacks.",
+    );
+  });
+
+  it("falls back to 'the creature' when the name is empty or absent", () => {
+    expect(render("The {@mon} attacks.")).toBe("The the creature attacks.");
+    expect(resolveMarkup("The {@mon} attacks.", { ...ctx, name: "  " })).toBe(
+      "The the creature attacks.",
+    );
+  });
+});
+
 describe("resolveMarkup — robustness", () => {
   it("never leaks braces for unknown tags and never throws", () => {
     expect(render("{@unknownTag some text}")).toBe("some text");

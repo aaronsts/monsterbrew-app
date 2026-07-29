@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { X } from "lucide-react";
 import { Controller, useFormContext } from "react-hook-form";
-import { CollapsibleSection } from "./collapsible-section";
+import { CollapsibleSection } from "../collapsible-section";
 import type { Monster } from "@/schema/monster-schema";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -241,7 +241,6 @@ export const IdentityForm = () => {
             )}
           />
         </div>
-
       </FieldGroup>
 
       {/* Languages */}

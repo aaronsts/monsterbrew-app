@@ -2,10 +2,10 @@
 
 import { useRef, useState } from "react";
 import { Plus } from "lucide-react";
+import { TOKEN_EDITORS } from "../../token-editors";
+import { TokenEditorPopover } from "./token-editor-popover";
 import { MarkupEditor } from "./markup-editor";
 import { TagHelpDialog } from "./tag-help-dialog";
-import { TokenEditorPopover } from "./token-editor-popover";
-import { TOKEN_EDITORS } from "./token-editors";
 import type { MarkupEditorHandle } from "./markup-editor";
 import type { TokenOpenChangeDetails } from "./token-editor-popover";
 import type { TagItem } from "@/lib/tag-catalog";
