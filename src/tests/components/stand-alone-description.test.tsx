@@ -39,4 +39,13 @@ describe("StandAloneDescription", () => {
     expect(container.querySelector("code")).toBeNull();
     expect(container.textContent).toContain("Second hit.");
   });
+
+  it("does not pad bold text with a trailing space", () => {
+    const { container } = render(
+      <StandAloneDescription title="Bite" description="***Foo***! Bar." />,
+    );
+    for (const strong of container.querySelectorAll("strong")) {
+      expect(strong.className).not.toMatch(/\bpr-\d/);
+    }
+  });
 });

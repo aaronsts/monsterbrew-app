@@ -2,23 +2,23 @@ import type { Monster } from "@/schema/monster-schema";
 import { abilityScoresSchema } from "@/schema/monster-schema";
 import { SKILLS } from "@/lib/skills";
 import { resolveMarkup } from "@/lib/statblock-markup";
-import { calculateHitPoints, calculateStatBonus, titleCase } from "@/lib/utils";
+import {
+  calculateHitPoints,
+  calculateStatBonus,
+  capitalizeWords,
+  titleCase,
+} from "@/lib/utils";
 
 const ABILITY_KEYS = abilityScoresSchema.keyof().options;
 const SKILL_ABILITY = new Map<string, string>(
   SKILLS.map((s) => [s.skill_name, s.skill_modifier]),
 );
+const SKILL_LABEL = new Map<string, string>(
+  SKILLS.map((s) => [s.skill_name, s.label]),
+);
 
 function formatMod(mod: number): string {
   return mod >= 0 ? `+${mod}` : `${mod}`;
-}
-
-/**
- * Capitalize each word. The statblock renders these lists with CSS
- * `capitalize`; markdown has no such affordance, so we do it here.
- */
-function capitalizeWords(value: string): string {
-  return value.replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
 type Feature = Monster["traits"][number];
@@ -66,6 +66,10 @@ export function monsterToHomebrewery(creature: Monster): string {
     ? creature.hit_points
     : medianHP || creature.hit_points;
 
+  const initMod = creature.custom_initiative
+    ? Number(creature.initiative_bonus) || 0
+    : calculateStatBonus(creature.ability_scores.dex);
+
   lines.push("{{monster,frame,wide");
   lines.push(
     `## ${creature.name}`,
@@ -76,6 +80,7 @@ export function monsterToHomebrewery(creature: Monster): string {
     `**Armor Class** :: ${creature.armor_class}${
       creature.armor_description ? ` (${creature.armor_description})` : ""
     }`,
+    `**Initiative** :: ${formatMod(initMod)} (${10 + initMod})`,
     `**Hit Points** :: ${hp}`,
     `**Speed** :: ${movements.join(", ") || "30 ft."}`,
     "___",
@@ -108,7 +113,7 @@ export function monsterToHomebrewery(creature: Monster): string {
       "dex") as (typeof ABILITY_KEYS)[number];
     const mod = calculateStatBonus(creature.ability_scores[abilityKey]);
     const bonus = mod + (level === "expert" ? pb * 2 : pb);
-    return `${titleCase(name)} ${formatMod(bonus)}`;
+    return `${SKILL_LABEL.get(name) ?? capitalizeWords(name)} ${formatMod(bonus)}`;
   });
   if (skills.length > 0) {
     lines.push(`**Skills** :: ${skills.join(", ")}`);

@@ -22,7 +22,7 @@ describe("monsterToHomebrewery", () => {
     expect(md).toContain("}}\n\nA sneaky little menace.");
   });
 
-  it("renders the header block: type line, AC, HP and speed", () => {
+  it("renders the header block: type line, AC, initiative, HP and speed", () => {
     const md = monsterToHomebrewery(
       makeMonster({
         name: "Goblin",
@@ -31,6 +31,7 @@ describe("monsterToHomebrewery", () => {
         alignment: "neutral evil",
         armor_class: 15,
         armor_description: "leather armor",
+        ability_scores: { ...defaultMonster.ability_scores, dex: 14 },
         custom_hp: true,
         hit_points: "7 (2d6)",
         movements: { ...defaultMonster.movements, walk: 30, fly: 60 },
@@ -38,8 +39,21 @@ describe("monsterToHomebrewery", () => {
     );
     expect(md).toContain("*Small humanoid, neutral evil*");
     expect(md).toContain("**Armor Class** :: 15 (leather armor)");
+    // dex 14 -> +2 mod, no custom initiative
+    expect(md).toContain("**Initiative** :: +2 (12)");
     expect(md).toContain("**Hit Points** :: 7 (2d6)");
     expect(md).toContain("**Speed** :: 30 ft., Fly 60 ft.");
+  });
+
+  it("uses a custom initiative bonus when set", () => {
+    const md = monsterToHomebrewery(
+      makeMonster({
+        ability_scores: { ...defaultMonster.ability_scores, dex: 14 },
+        custom_initiative: true,
+        initiative_bonus: 7,
+      }),
+    );
+    expect(md).toContain("**Initiative** :: +7 (17)");
   });
 
   it("emits the ability score table with modifiers", () => {
@@ -66,6 +80,20 @@ describe("monsterToHomebrewery", () => {
     expect(md).toContain("**Saving Throws** :: Dex +4");
     // stealth (dex +2) expert -> +2 + 2*2 = +6; perception (wis +1) prof -> +1 + 2 = +3
     expect(md).toContain("**Skills** :: Stealth +6, Perception +3");
+  });
+
+  it("capitalizes every word of a multi-word skill name", () => {
+    const md = monsterToHomebrewery(
+      makeMonster({
+        ability_scores: { ...defaultMonster.ability_scores, dex: 14 },
+        cr: { ...defaultMonster.cr, proficiency_bonus: 2 },
+        skills: { "sleight of hand": "proficient", "animal handling": "expert" },
+      }),
+    );
+    expect(md).toContain("Sleight of Hand");
+    expect(md).toContain("Animal Handling");
+    expect(md).not.toContain("Sleight of hand");
+    expect(md).not.toContain("Animal handling");
   });
 
   it("groups damage modifiers into resistances, immunities and vulnerabilities", () => {
