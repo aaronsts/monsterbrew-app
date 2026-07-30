@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate, useSearch } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 import { Upload } from "lucide-react";
@@ -13,6 +13,7 @@ import { ActionsForm } from "./actions-form";
 import { ImportDialog } from "./import-dialog";
 import type { Monster } from "@/schema/monster-schema";
 import { useCreature, useSaveCreature } from "@/hooks/use-creatures";
+import { useAutoSave } from "@/hooks/use-auto-save";
 import { calculateStatBonus, generateId } from "@/lib/utils";
 import { defaultMonster, monsterSchema } from "@/schema/monster-schema";
 import { isLegacyCreature } from "@/services/migrations/creatureFormat";
@@ -32,11 +33,20 @@ export const MonsterForm = () => {
   const form = useForm({
     resolver: zodResolver(monsterSchema),
     values: loadedCreature ?? defaultMonster,
+    // If a background resync ever fires, keep fields the user is editing.
+    resetOptions: { keepDirtyValues: true },
   });
 
   const { control, setValue, reset, getValues, trigger } = form;
 
   const effectiveId = idParam ?? creatureId;
+
+  // Auto-save is inert until the creature has an id (i.e. after the first
+  // manual Save), so we don't spawn junk records while a new creature is drafted.
+  const { status: autoSaveStatus } = useAutoSave(form, {
+    id: effectiveId,
+    enabled: Boolean(effectiveId),
+  });
 
   const preview = useWatch({ control }) as Monster;
   const wis = useWatch({ control, name: "ability_scores.wis" });
@@ -109,10 +119,57 @@ export const MonsterForm = () => {
     }
   }
 
+  // Nudge users editing a brand-new (unsaved) creature to save so auto-save can
+  // take over — once, after ~30s or several edits, until they actually save.
+  const saveRef = useRef(save);
+  saveRef.current = save;
+  const nudgeShownRef = useRef(false);
+
+  useEffect(() => {
+    if (effectiveId) {
+      nudgeShownRef.current = false;
+      return;
+    }
+    let changes = 0;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const nudge = () => {
+      if (nudgeShownRef.current) return;
+      nudgeShownRef.current = true;
+      toast("You have unsaved changes", {
+        description: "Save this creature to turn on auto-save.",
+        action: { label: "Save now", onClick: () => void saveRef.current() },
+      });
+    };
+    const subscription = form.watch((_value, { type }) => {
+      if (type !== "change") return;
+      changes += 1;
+      if (!timer) timer = setTimeout(nudge, 30_000);
+      if (changes >= 10) nudge();
+    });
+    return () => {
+      subscription.unsubscribe();
+      if (timer) clearTimeout(timer);
+    };
+  }, [effectiveId, form]);
+
   return (
     <Form {...form}>
       <div className="space-y-4">
-        <div className="flex fixed  bottom-2 z-50 inset-x-4 lg:sticky lg:top-18 justify-end gap-2">
+        <div className="flex fixed  bottom-2 z-50 inset-x-4 lg:sticky lg:top-18 items-center justify-end gap-2">
+          {effectiveId && (
+            <span
+              className="mr-auto hidden items-center text-xs text-muted-foreground lg:flex"
+              aria-live="polite"
+            >
+              {autoSaveStatus === "saving"
+                ? "Saving…"
+                : autoSaveStatus === "saved"
+                  ? "All changes saved"
+                  : autoSaveStatus === "error"
+                    ? "Couldn’t save changes"
+                    : null}
+            </span>
+          )}
           <Button
             type="button"
             color="neutral"

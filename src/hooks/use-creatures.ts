@@ -31,12 +31,21 @@ export function useCreatures() {
   });
 }
 
-/** A single creature by id. Disabled (no fetch) while `id` is undefined. */
+/**
+ * A single creature by id. Disabled (no fetch) while `id` is undefined.
+ *
+ * IndexedDB is the single source of truth and the editor is the only writer, so
+ * we never want a stale/focus refetch to overwrite the open form (see #93). Our
+ * own mutations refresh this cache explicitly, so `staleTime: Infinity` +
+ * `refetchOnWindowFocus: false` is safe here.
+ */
 export function useCreature(id: string | undefined) {
   return useQuery({
     queryKey: creatureKeys.detail(id ?? ""),
     queryFn: () => getCreature(id!),
     enabled: Boolean(id),
+    staleTime: Infinity,
+    refetchOnWindowFocus: false,
   });
 }
 
@@ -52,6 +61,26 @@ export function useSaveCreature() {
           queryKey: creatureKeys.detail(creature.id),
         });
       }
+    },
+  });
+}
+
+/**
+ * Auto-save variant of {@link useSaveCreature}. Unlike the manual save (which
+ * invalidates the detail query and navigates away), this writes the saved record
+ * straight into the detail cache with `setQueryData` so the open form is **not**
+ * resynced/re-rendered by a background refetch. The list is still invalidated so
+ * the library grid stays current.
+ */
+export function useAutoSaveCreature() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: saveCreature,
+    onSuccess: (creature) => {
+      if (creature.id) {
+        queryClient.setQueryData(creatureKeys.detail(creature.id), creature);
+      }
+      queryClient.invalidateQueries({ queryKey: creatureKeys.lists() });
     },
   });
 }
