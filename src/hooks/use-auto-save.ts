@@ -14,6 +14,12 @@ interface UseAutoSaveOptions {
   enabled: boolean;
   /** Debounce window after the last change, in ms. */
   delay?: number;
+  /**
+   * Minimum time the "saving" status is held, in ms. IndexedDB writes are
+   * near-instant, so without this the indicator flips to "saved" too fast for
+   * users to ever see their work being saved.
+   */
+  minSavingTime?: number;
 }
 
 /**
@@ -25,8 +31,9 @@ interface UseAutoSaveOptions {
  */
 export function useAutoSave(
   form: UseFormReturn<Monster>,
-  { id, enabled, delay = 800 }: UseAutoSaveOptions,
+  { id, enabled, delay = 1000, minSavingTime = 500 }: UseAutoSaveOptions,
 ) {
+  const { subscribe, getValues } = form;
   const { mutateAsync } = useAutoSaveCreature();
   const [status, setStatus] = useState<AutoSaveStatus>("idle");
   const [lastSavedAt, setLastSavedAt] = useState<number | null>(null);
@@ -34,31 +41,40 @@ export function useAutoSave(
   const runSave = useCallback(async () => {
     if (!enabled || !id) return;
 
-    const parsed = monsterSchema.safeParse(form.getValues());
+    const parsed = monsterSchema.safeParse(getValues());
     if (!parsed.success) return;
 
     try {
       setStatus("saving");
+      const startedAt = Date.now();
       await mutateAsync({ ...parsed.data, id });
+      const remaining = minSavingTime - (Date.now() - startedAt);
+      if (remaining > 0) {
+        await new Promise((resolve) => setTimeout(resolve, remaining));
+      }
       setStatus("saved");
       setLastSavedAt(Date.now());
     } catch {
       setStatus("error");
     }
-  }, [form, enabled, id, mutateAsync]);
+  }, [enabled, getValues, id, minSavingTime, mutateAsync]);
 
-  const debouncedSave = useMemo(() => debounce(runSave, delay), [runSave, delay]);
+  const debouncedSave = useMemo(
+    () => debounce(runSave, delay),
+    [runSave, delay],
+  );
 
   useEffect(() => {
-    const subscription = form.watch(() => {
-      if (!enabled || !id) return;
-      debouncedSave();
+    if (!enabled || !id) return;
+    const unsubscribe = subscribe({
+      formState: { values: true },
+      callback: () => debouncedSave(),
     });
     return () => {
-      subscription.unsubscribe();
+      unsubscribe();
       debouncedSave.cancel();
     };
-  }, [form, enabled, id, debouncedSave]);
+  }, [enabled, id, debouncedSave, subscribe]);
 
   return { status, lastSavedAt };
 }

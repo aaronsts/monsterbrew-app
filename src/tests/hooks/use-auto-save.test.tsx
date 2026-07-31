@@ -30,8 +30,12 @@ vi.mock("@/schema/monster-schema", async (importOriginal) => {
 
 function useHarness(opts: { id: string | undefined; enabled: boolean }) {
   const form = useForm<Monster>({ defaultValues: { name: "" } as Monster });
-  useAutoSave(form, { ...opts, delay: 800 });
-  return form;
+  const autoSave = useAutoSave(form, {
+    ...opts,
+    delay: 800,
+    minSavingTime: 1000,
+  });
+  return { form, autoSave };
 }
 
 describe("useAutoSave", () => {
@@ -49,7 +53,7 @@ describe("useAutoSave", () => {
       useHarness({ id: undefined, enabled: false }),
     );
     act(() => {
-      result.current.setValue("name", "Goblin");
+      result.current.form.setValue("name", "Goblin");
     });
     act(() => {
       vi.advanceTimersByTime(1000);
@@ -62,7 +66,7 @@ describe("useAutoSave", () => {
       useHarness({ id: "abc", enabled: true }),
     );
     act(() => {
-      result.current.setValue("name", "Goblin");
+      result.current.form.setValue("name", "Goblin");
     });
     // Still within the debounce window.
     expect(mutateAsync).not.toHaveBeenCalled();
@@ -83,7 +87,7 @@ describe("useAutoSave", () => {
       useHarness({ id: "abc", enabled: true }),
     );
     act(() => {
-      result.current.setValue("name", "");
+      result.current.form.setValue("name", "");
     });
     await act(async () => {
       vi.advanceTimersByTime(800);
@@ -97,11 +101,11 @@ describe("useAutoSave", () => {
       useHarness({ id: "abc", enabled: true }),
     );
     act(() => {
-      result.current.setValue("name", "a");
+      result.current.form.setValue("name", "a");
       vi.advanceTimersByTime(400);
-      result.current.setValue("name", "ab");
+      result.current.form.setValue("name", "ab");
       vi.advanceTimersByTime(400);
-      result.current.setValue("name", "abc");
+      result.current.form.setValue("name", "abc");
     });
     await act(async () => {
       vi.advanceTimersByTime(800);
@@ -111,5 +115,30 @@ describe("useAutoSave", () => {
     expect(mutateAsync).toHaveBeenCalledWith(
       expect.objectContaining({ name: "abc" }),
     );
+  });
+
+  it("holds the saving status for the minimum visible time", async () => {
+    const { result } = renderHook(() =>
+      useHarness({ id: "abc", enabled: true }),
+    );
+    act(() => {
+      result.current.form.setValue("name", "Goblin");
+    });
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(800);
+    });
+    // The write itself resolves instantly, but the status must hold.
+    expect(mutateAsync).toHaveBeenCalledTimes(1);
+    expect(result.current.autoSave.status).toBe("saving");
+
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(999);
+    });
+    expect(result.current.autoSave.status).toBe("saving");
+
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(1);
+    });
+    expect(result.current.autoSave.status).toBe("saved");
   });
 });
