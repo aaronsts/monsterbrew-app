@@ -1,5 +1,16 @@
 import { describe, expect, it } from "vitest";
-import { calculateHitPoints } from "./utils";
+import { calculateHitPoints, formatMod } from "./utils";
+
+describe("formatMod", () => {
+  it("prefixes zero and positive modifiers with a plus", () => {
+    expect(formatMod(0)).toBe("+0");
+    expect(formatMod(3)).toBe("+3");
+  });
+
+  it("keeps the minus on negative modifiers", () => {
+    expect(formatMod(-2)).toBe("-2");
+  });
+});
 
 describe("calculateHitPoints", () => {
   it("appends a positive CON bonus", () => {

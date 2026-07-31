@@ -1,4 +1,4 @@
-import { calculateStatBonus } from "./utils";
+import { calculateStatBonus, formatMod } from "./utils";
 import type { Monster } from "@/schema/monster-schema";
 
 /**
@@ -91,10 +91,6 @@ function parseTagHead(raw: string): { name: string; args: string } | null {
  * is unaffected.
  */
 const REDUNDANT_AVERAGE_RE = /\d+\s*\(\s*(\{@damage\b[^}]*\})\s*\)/g;
-
-function formatMod(n: number): string {
-  return n >= 0 ? `+${n}` : `${n}`;
-}
 
 function isAbility(value: string): value is Ability {
   return ABILITY_SET.has(value.toLowerCase());

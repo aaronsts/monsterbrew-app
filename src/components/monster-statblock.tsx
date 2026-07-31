@@ -11,6 +11,7 @@ import {
   calculateStatBonus,
   capitalizeWords,
   cn,
+  formatMod,
   titleCase,
 } from "@/lib/utils";
 import { resolveMarkup } from "@/lib/statblock-markup";
@@ -26,10 +27,6 @@ const SKILL_ABILITY = new Map<string, string>(
 const SKILL_LABEL = new Map<string, string>(
   SKILLS.map((s) => [s.skill_name, s.label]),
 );
-
-function formatMod(mod: number): string {
-  return mod >= 0 ? `+${mod}` : `${mod}`;
-}
 
 /** Statblock divider bar, tinted to the theme accent and fading out to the right. */
 function TaperedRule({ thin = false }: { thin?: boolean }) {

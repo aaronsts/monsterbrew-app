@@ -28,6 +28,20 @@ if (typeof Element !== "undefined") {
   Element.prototype.releasePointerCapture ??= () => {};
 }
 
+if (typeof window !== "undefined" && !window.matchMedia) {
+  window.matchMedia = (query: string) =>
+    ({
+      matches: false,
+      media: query,
+      onchange: null,
+      addEventListener: () => {},
+      removeEventListener: () => {},
+      addListener: () => {},
+      removeListener: () => {},
+      dispatchEvent: () => false,
+    }) as MediaQueryList;
+}
+
 /**
  * Renders a section form inside a react-hook-form provider, mirroring how the
  * sections consume the shared form via `useFormContext`. The live `form`

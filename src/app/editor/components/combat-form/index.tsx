@@ -1,7 +1,9 @@
 "use client";
 import { useEffect } from "react";
 import { Controller, useFormContext, useWatch } from "react-hook-form";
+import { Info } from "lucide-react";
 import { CollapsibleSection } from "../collapsible-section";
+import { CrAbilityHint, CrStatHint } from "../cr-calculator/field-hint";
 import type { Monster } from "@/schema/monster-schema";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -29,6 +31,12 @@ import {
   calculateHitPoints,
   calculateStatBonus,
 } from "@/lib/utils";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 type ChallengeRating = Monster["cr"];
 
@@ -96,14 +104,17 @@ export const CombatForm = () => {
               control={control}
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor={`form-rhf-input-${ability}`}>
-                    {ability.toUpperCase()}{" "}
-                    {modifier !== undefined && (
-                      <span className="text-muted-foreground/60">
-                        ({modifier >= 0 ? `+${modifier}` : modifier})
-                      </span>
-                    )}
-                  </FieldLabel>
+                  <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                    <FieldLabel htmlFor={`form-rhf-input-${ability}`}>
+                      {ability.toUpperCase()}{" "}
+                      {modifier !== undefined && (
+                        <span className="text-muted-foreground/60">
+                          ({modifier >= 0 ? `+${modifier}` : modifier})
+                        </span>
+                      )}
+                    </FieldLabel>
+                    <CrAbilityHint ability={ability} />
+                  </div>
                   <Input
                     {...field}
                     id={`form-rhf-input-${ability}`}
@@ -130,11 +141,26 @@ export const CombatForm = () => {
           name="passive_perception"
           control={control}
           render={({ field, fieldState }) => (
-            <Field data-invalid={fieldState.invalid}>
+            <Field data-invalid={fieldState.invalid} className="col-span-2">
               <div className="flex items-center justify-between gap-2">
-                <FieldLabel htmlFor="form-rhf-input-passive-perception">
-                  Passive Perception
-                </FieldLabel>
+                {/* The tooltip trigger stays outside the label: a button
+                    nested in the label would steal its association. */}
+                <div className="flex items-center gap-1">
+                  <FieldLabel htmlFor="form-rhf-input-passive-perception">
+                    Passive Perception
+                  </FieldLabel>
+                  <TooltipProvider delay={0}>
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <Info className="text-primary-300 size-4" />
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        10 + WIS modifier, adds proficiency when Perception is
+                        trained
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
                 <Controller
                   name="custom_passive_perception"
                   control={control}
@@ -173,8 +199,8 @@ export const CombatForm = () => {
                 aria-invalid={fieldState.invalid}
                 placeholder="ex. 10"
               />
-              <FieldDescription>
-                10 + WIS modifier; adds proficiency when Perception is trained
+              <FieldDescription aria-hidden className="sr-only">
+                10 + WIS modifier
               </FieldDescription>
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
@@ -188,7 +214,10 @@ export const CombatForm = () => {
           name="cr"
           control={control}
           render={({ field, fieldState }) => (
-            <Field data-invalid={fieldState.invalid}>
+            <Field
+              data-invalid={fieldState.invalid}
+              className="col-span-2 md:col-span-1"
+            >
               <FieldLabel htmlFor="form-rhf-input-cr">
                 Challenge Rating
               </FieldLabel>
@@ -238,7 +267,10 @@ export const CombatForm = () => {
           name="initiative_bonus"
           control={control}
           render={({ field, fieldState }) => (
-            <Field data-invalid={fieldState.invalid}>
+            <Field
+              data-invalid={fieldState.invalid}
+              className="col-span-2 md:col-span-1"
+            >
               <div className="flex items-center justify-between gap-2">
                 <FieldLabel htmlFor="form-rhf-input-initiative-bonus">
                   Initiative
@@ -278,9 +310,7 @@ export const CombatForm = () => {
                 aria-invalid={fieldState.invalid}
                 placeholder="ex. 2"
               />
-              <FieldDescription>
-                Bonus to initiative; DEX modifier unless set manually
-              </FieldDescription>
+              <FieldDescription>Bonus to initiative</FieldDescription>
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
           )}
@@ -294,9 +324,12 @@ export const CombatForm = () => {
           control={control}
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor="form-rhf-input-armor-class">
-                Armor Class
-              </FieldLabel>
+              <div className="flex items-center gap-2">
+                <FieldLabel htmlFor="form-rhf-input-armor-class">
+                  Armor Class
+                </FieldLabel>
+                <CrStatHint stat="ac" />
+              </div>
               <Input
                 {...field}
                 id="form-rhf-input-armor-class"
@@ -339,9 +372,12 @@ export const CombatForm = () => {
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
               <div className="flex items-center justify-between gap-2">
-                <FieldLabel htmlFor="form-rhf-input-hit-points">
-                  Hit Points
-                </FieldLabel>
+                <div className="flex items-center gap-2">
+                  <FieldLabel htmlFor="form-rhf-input-hit-points">
+                    Hit Points
+                  </FieldLabel>
+                  <CrStatHint stat="hp" />
+                </div>
                 <Controller
                   name="custom_hp"
                   control={control}
@@ -389,12 +425,13 @@ export const CombatForm = () => {
               <Input
                 {...field}
                 id="form-rhf-input-hit-dice"
+                type="number"
+                onKeyDown={blockMinusKey}
+                onFocus={(e) => e.target.select()}
                 aria-invalid={fieldState.invalid}
                 placeholder="ex. 21"
               />
-              <FieldDescription>
-                Number of dice; size sets the die, CON the bonus
-              </FieldDescription>
+              <FieldDescription>Number of dice</FieldDescription>
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
           )}
@@ -436,7 +473,10 @@ export const CombatForm = () => {
           name="movements.hover"
           control={control}
           render={({ field }) => (
-            <Field orientation="horizontal" className="items-center xl:pb-2">
+            <Field
+              orientation="horizontal"
+              className="items-center pt-2 xl:pb-2"
+            >
               <Checkbox
                 id="form-rhf-input-hover"
                 checked={field.value}

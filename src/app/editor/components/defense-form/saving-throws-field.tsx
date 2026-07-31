@@ -1,10 +1,9 @@
 import { Controller, useFormContext } from "react-hook-form";
-import { formatModifier } from "./helpers";
 import type { Monster } from "@/schema/monster-schema";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { ABILITY_SCORES } from "@/lib/abilities";
-import { calculateStatBonus, cn } from "@/lib/utils";
+import { calculateStatBonus, cn, formatMod } from "@/lib/utils";
 
 export function SavingThrowsField() {
   const form = useFormContext<Monster>();
@@ -48,7 +47,7 @@ export function SavingThrowsField() {
                       field.value ? "text-foreground" : "text-muted-foreground",
                     )}
                   >
-                    {formatModifier(total)}
+                    {formatMod(total)}
                   </span>
                 </Field>
               );

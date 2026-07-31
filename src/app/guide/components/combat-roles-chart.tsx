@@ -1,15 +1,5 @@
-import { useEffect, useState } from "react";
-import {
-  Bar,
-  BarChart,
-  Rectangle,
-  ReferenceLine,
-  XAxis,
-  YAxis,
-} from "recharts";
-import type { BarShapeProps } from "recharts";
-import type { ChartConfig } from "@/components/ui/chart";
-import { ChartContainer } from "@/components/ui/chart";
+import { useState } from "react";
+import { DeltaBarChart, DeltaBarLegend } from "@/components/delta-bar-chart";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
@@ -89,10 +79,6 @@ function describeStats(stats: Record<StatKey, StatDelta>): string {
   return parts.join(" ");
 }
 
-const ROLE_CHART_CONFIG = {
-  delta: { label: "vs CR baseline" },
-} satisfies ChartConfig;
-
 type RoleChartDatum = {
   stat: string;
   statName: string;
@@ -109,117 +95,13 @@ function roleChartData(
   }));
 }
 
-/** Matches Tailwind's `sm` breakpoint, so the axis labels rotate on the same
-    screens where the chart switches to its taller mobile aspect ratio. */
-function useIsMobile() {
-  const [isMobile, setIsMobile] = useState(false);
-  useEffect(() => {
-    const query = window.matchMedia("(max-width: 639px)");
-    const onChange = () => setIsMobile(query.matches);
-    onChange();
-    query.addEventListener("change", onChange);
-    return () => query.removeEventListener("change", onChange);
-  }, []);
-  return isMobile;
-}
-
-function deltaBarShape(props: BarShapeProps) {
-  const { x = 0, y = 0, width = 0, height } = props;
-  if (!height) {
-    return (
-      <rect
-        x={x}
-        y={y - 1}
-        width={width}
-        height={2}
-        className="fill-neutral-300 dark:fill-neutral-500"
-      />
-    );
-  }
-  const { delta } = props.payload as RoleChartDatum;
-  return (
-    <Rectangle
-      {...props}
-      className={cn(
-        delta > 0
-          ? "fill-info-300 dark:fill-info-500"
-          : "fill-destructive-300 dark:fill-destructive-500",
-      )}
-    />
-  );
-}
-
-function RoleChart({ stats }: Readonly<{ stats: Record<StatKey, StatDelta> }>) {
-  const data = roleChartData(stats);
-  const isMobile = useIsMobile();
-
-  return (
-    <ChartContainer
-      aria-hidden
-      config={ROLE_CHART_CONFIG}
-      className="aspect-square w-full sm:aspect-5/2"
-    >
-      <BarChart data={data} margin={{ top: 8, right: 8, bottom: 8 }}>
-        <XAxis
-          dataKey="stat"
-          interval={0}
-          tickLine={false}
-          axisLine={false}
-          height={isMobile ? 64 : 30}
-          tick={
-            isMobile
-              ? { fontSize: 10, angle: -45, textAnchor: "end" }
-              : { fontSize: 10 }
-          }
-        />
-        <YAxis
-          width={32}
-          domain={[-2.25, 2.25]}
-          ticks={[-2, -1, 0, 1, 2]}
-          interval={0}
-          tick={{ fontSize: 10 }}
-          tickFormatter={(value: number) =>
-            value === 0 ? "CR" : value > 0 ? `+${value}` : `−${-value}`
-          }
-        />
-        <ReferenceLine
-          y={0}
-          stroke="var(--muted-foreground)"
-          strokeOpacity={0.6}
-          strokeDasharray="4 4"
-        />
-        <Bar dataKey="delta" maxBarSize={44} shape={deltaBarShape} />
-      </BarChart>
-    </ChartContainer>
-  );
-}
-
 export function CombatRolesChart() {
   const [selected, setSelected] = useState(COMBAT_ROLES[0]);
   return (
     <div className="mb-6">
       <p className="mt-3 text-sm text-muted-foreground">{selected.tooltip}</p>
-      <RoleChart stats={selected.stats} />
-      <div className="mb-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-[10px] text-muted-foreground">
-        <span className="flex items-center gap-1.5">
-          <span
-            aria-hidden
-            className="w-3 border-t border-dashed border-muted-foreground"
-          />
-          baseline CR
-        </span>
-        <span className="flex items-center gap-1.5">
-          <span aria-hidden className="size-2.5 bg-info-300 dark:bg-info-500" />
-          above
-        </span>
-        <span className="flex items-center gap-1.5">
-          <span
-            aria-hidden
-            className="size-2.5 bg-destructive-300 dark:bg-destructive-500"
-          />
-          below
-        </span>
-      </div>
+      <DeltaBarChart data={roleChartData(selected.stats)} max={2} />
+      <DeltaBarLegend baselineLabel="baseline CR" className="mb-3" />
       <p className="sr-only">{describeStats(selected.stats)}</p>
       <ul className="mt-3 grid grid-cols-2 lg:grid-cols-4 gap-2">
         {COMBAT_ROLES.map((role) => (

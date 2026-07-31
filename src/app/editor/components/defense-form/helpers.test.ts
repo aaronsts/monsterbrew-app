@@ -3,7 +3,6 @@ import {
   NONMAGICAL_ATTACK_TYPES,
   SKILLS_BY_ABILITY,
   damageStateStyles,
-  formatModifier,
   nextDamageState,
   nextNonmagicalState,
   nextSkillState,
@@ -39,17 +38,6 @@ describe("SKILLS_BY_ABILITY", () => {
       0,
     );
     expect(total).toBe(18);
-  });
-});
-
-describe("formatModifier", () => {
-  it("prefixes a plus sign for zero and positive numbers", () => {
-    expect(formatModifier(0)).toBe("+0");
-    expect(formatModifier(3)).toBe("+3");
-  });
-
-  it("keeps the minus sign for negative numbers", () => {
-    expect(formatModifier(-2)).toBe("-2");
   });
 });
 

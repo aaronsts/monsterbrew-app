@@ -1,7 +1,8 @@
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
 import { renderWithForm } from "../test-utils";
+import { setCrSuggestionsEnabled } from "../cr-calculator/use-cr-suggestions-enabled";
 import { CombatForm } from ".";
 import { calculateHitPoints } from "@/lib/utils";
 import { defaultMonster } from "@/schema/monster-schema";
@@ -73,6 +74,50 @@ describe("CombatForm — custom HP", () => {
     await user.type(hpInput(), "999");
 
     expect(getForm().getValues("hit_points")).toBe("999");
+  });
+});
+
+describe("CombatForm — CR stat hints", () => {
+  afterEach(() => setCrSuggestionsEnabled(true));
+
+  it("renders the AC and HP hints next to their labels", () => {
+    renderWithForm(<CombatForm />);
+    expect(
+      screen.getByText(/^AC (high|on par|low) for this challenge rating$/),
+    ).toBeTruthy();
+    expect(
+      screen.getByText(/^HP (high|on par|low) for this challenge rating$/),
+    ).toBeTruthy();
+  });
+
+  it("puts the ability hint on the highest ability and tracks typing", async () => {
+    const user = userEvent.setup();
+    // CR 0 (PB +2): the +2 benchmark attack implies a +0 best modifier.
+    // All abilities tie at 10, so the chip sits on STR (canonical order).
+    renderWithForm(<CombatForm />);
+    expect(
+      screen.getByText("STR modifier on par for this challenge rating"),
+    ).toBeTruthy();
+
+    // DEX 18 (+4): the chip moves to DEX and reads high.
+    const dexInput = screen.getByLabelText(/^DEX/);
+    await user.clear(dexInput);
+    await user.type(dexInput, "18");
+
+    expect(
+      await screen.findByText(
+        "DEX modifier high for this challenge rating",
+      ),
+    ).toBeTruthy();
+    expect(screen.queryByText(/^STR modifier/)).toBeNull();
+  });
+
+  it("hides both hints while CR suggestions are disabled", () => {
+    setCrSuggestionsEnabled(false);
+    renderWithForm(<CombatForm />);
+    expect(
+      screen.queryByText(/for this challenge rating$/),
+    ).toBeNull();
   });
 });
 

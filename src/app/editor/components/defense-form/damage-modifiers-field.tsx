@@ -26,7 +26,7 @@ export function DamageModifiersField() {
           <FieldGroup>
             <span className="inline-flex flex-col items-start">
               <FieldLabel>Damage Modifiers</FieldLabel>
-              <div className="flex gap-2 text-muted-foreground italic text-[10px]">
+              <div className="flex flex-col mt-2 gap-0.5 lg:flex-row lg:gap-2 lg:mt-0 text-muted-foreground italic text-[10px]">
                 <p className="inline-flex items-center gap-1">
                   <ShieldAlert
                     className="size-3 text-destructive-500"
