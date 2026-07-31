@@ -28,7 +28,7 @@ export async function saveCreature(
   await page.getByLabel("Name").fill(opts.name);
   if (opts.size) await selectCombo(page, "form-rhf-input-size", opts.size);
   if (opts.type) await selectCombo(page, "form-rhf-input-type", opts.type);
-  await page.getByRole("button", { name: "Save" }).click();
+  await page.getByRole("button", { name: "Save", exact: true }).click();
   await expect(page).toHaveURL(/\/library\/[^/]+$/);
   const id = creatureIdFromUrl(page);
   if (!id) throw new Error("save did not navigate to a library detail page");

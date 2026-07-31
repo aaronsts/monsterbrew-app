@@ -17,9 +17,9 @@ const TRAIT_PRESETS = getPresetsForType("trait");
 
 export const ActionsForm = () => {
   const form = useFormContext<Monster>();
-  const hasLair = form.watch("has_lair");
-  const isLegendary = form.watch("is_legendary");
-  const isMythic = form.watch("is_mythic");
+  const hasLair = useWatch({ control: form.control, name: "has_lair" });
+  const isLegendary = useWatch({ control: form.control, name: "is_legendary" });
+  const isMythic = useWatch({ control: form.control, name: "is_mythic" });
 
   const ability_scores = useWatch({
     control: form.control,

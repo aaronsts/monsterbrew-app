@@ -110,7 +110,7 @@ test.describe("Monster editor — full round-trip", () => {
     });
 
     // --- Save ---
-    await page.getByRole("button", { name: "Save" }).click();
+    await page.getByRole("button", { name: "Save", exact: true }).click();
     await expect(page).toHaveURL(/\/library\/[^/]+$/);
     const id = creatureIdFromUrl(page);
     expect(id).toBeTruthy();

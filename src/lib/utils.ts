@@ -75,6 +75,29 @@ export function generateId(): string {
   return `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
 }
 
+/**
+ * Trailing-edge debounce: `fn` runs `wait` ms after the last call. The returned
+ * function carries a `cancel()` to drop a pending invocation (e.g. on unmount).
+ */
+export function debounce<TArgs extends Array<unknown>>(
+  fn: (...args: TArgs) => void,
+  wait: number,
+): ((...args: TArgs) => void) & { cancel: () => void } {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const debounced = (...args: TArgs) => {
+    if (timer) clearTimeout(timer);
+    timer = setTimeout(() => {
+      timer = undefined;
+      fn(...args);
+    }, wait);
+  };
+  debounced.cancel = () => {
+    if (timer) clearTimeout(timer);
+    timer = undefined;
+  };
+  return debounced;
+}
+
 const KNOWN_LANGUAGES = new Set<string>(Object.values(Languages));
 
 /**

@@ -1,4 +1,4 @@
-import { Controller, useFormContext } from "react-hook-form";
+import { Controller, useFormContext, useWatch } from "react-hook-form";
 import { CheckSquare } from "./check-square";
 import {
   FOCUS_RING,
@@ -19,8 +19,11 @@ import { calculateStatBonus, cn } from "@/lib/utils";
 
 export function SkillsField() {
   const form = useFormContext<Monster>();
-  const scores = form.watch("ability_scores");
-  const profBonus = form.watch("cr.proficiency_bonus");
+  const scores = useWatch({ control: form.control, name: "ability_scores" });
+  const profBonus = useWatch({
+    control: form.control,
+    name: "cr.proficiency_bonus",
+  });
 
   return (
     <Controller

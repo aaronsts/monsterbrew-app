@@ -4,7 +4,7 @@ import { creatureIdFromUrl, selectCombo, statblock } from "./helpers";
 test.describe("Monster editor — persistence", () => {
   test("warns and does not save when the name is empty", async ({ page }) => {
     await page.goto("/editor");
-    await page.getByRole("button", { name: "Save" }).click();
+    await page.getByRole("button", { name: "Save", exact: true }).click();
 
     await expect(
       page.getByText("Please provide a name for the creature"),
@@ -20,7 +20,7 @@ test.describe("Monster editor — persistence", () => {
     await selectCombo(page, "form-rhf-input-size", "Large");
     await selectCombo(page, "form-rhf-input-type", "Monstrosity");
 
-    await page.getByRole("button", { name: "Save" }).click();
+    await page.getByRole("button", { name: "Save", exact: true }).click();
 
     // Save navigates to the creature's detail page.
     await expect(page).toHaveURL(/\/library\/[^/]+$/);
@@ -34,7 +34,7 @@ test.describe("Monster editor — persistence", () => {
   }) => {
     await page.goto("/editor");
     await page.getByLabel("Name").fill("Reloadable Wyrm");
-    await page.getByRole("button", { name: "Save" }).click();
+    await page.getByRole("button", { name: "Save", exact: true }).click();
 
     await expect(page).toHaveURL(/\/library\/[^/]+$/);
     const id = creatureIdFromUrl(page);
