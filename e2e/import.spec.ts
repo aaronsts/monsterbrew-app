@@ -115,7 +115,7 @@ test.describe("Import fixtures", () => {
       if (!(await nameField.inputValue()).trim()) {
         await nameField.fill(`E2E ${fixture.name}`);
       }
-      await page.getByRole("button", { name: "Save" }).click();
+      await page.getByRole("button", { name: "Save", exact: true }).click();
       await expect(page).toHaveURL(/\/library\/[^/]+$/);
 
       const id = new URL(page.url()).pathname.split("/library/")[1] || null;
