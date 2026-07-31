@@ -8,15 +8,14 @@ const statusText: Record<AutoSaveStatus, string | null> = {
   error: "Couldn’t save changes",
 };
 
-/** Subtle auto-save state readout for the editor toolbar (desktop only). */
 export function AutoSaveIndicator({ status }: { status: AutoSaveStatus }) {
   return (
     <span
-      className="mr-auto hidden items-center text-xs text-muted-foreground lg:flex"
+      className=" hidden items-center text-xs text-muted-foreground lg:flex"
       aria-live="polite"
     >
+      {status === "saving" && <LoadingSpinner className="mr-3 size-4" />}
       {statusText[status]}
-      {status === "saving" && <LoadingSpinner className="ml-2 size-4" />}
     </span>
   );
 }
