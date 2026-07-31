@@ -117,6 +117,76 @@ describe("useAutoSave", () => {
     );
   });
 
+  it("ignores the cache echo of its own save", async () => {
+    const { result } = renderHook(() =>
+      useHarness({ id: "abc", enabled: true }),
+    );
+    act(() => {
+      result.current.form.setValue("name", "Goblin");
+    });
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(2000);
+    });
+    expect(mutateAsync).toHaveBeenCalledTimes(1);
+    expect(result.current.autoSave.status).toBe("saved");
+
+    // Saving writes into the query cache, which resyncs the form with the
+    // same values — that reset must not start a second "Saving…" cycle.
+    act(() => {
+      result.current.form.reset({ name: "Goblin" });
+    });
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(2000);
+    });
+    expect(mutateAsync).toHaveBeenCalledTimes(1);
+    expect(result.current.autoSave.status).toBe("saved");
+  });
+
+  it("does not re-save already-persisted state after arming", async () => {
+    const { result } = renderHook(() =>
+      useHarness({ id: "abc", enabled: true }),
+    );
+    // A programmatic setValue that changes nothing (e.g. derived passive
+    // perception recomputing after load) must not save the state back.
+    act(() => {
+      result.current.form.setValue("name", "");
+    });
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(2000);
+    });
+    expect(mutateAsync).not.toHaveBeenCalled();
+    expect(result.current.autoSave.status).toBe("idle");
+  });
+
+  it("adopts a late-arriving creature as baseline instead of saving it back", async () => {
+    // Arm while the form is still invalid (no baseline yet)…
+    validRef.valid = false;
+    const { result } = renderHook(() =>
+      useHarness({ id: "abc", enabled: true }),
+    );
+    validRef.valid = true;
+    // …then the stored creature arrives as a whole-form reset, not an edit.
+    act(() => {
+      result.current.form.reset({ name: "Loaded Wyrm" });
+    });
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(2000);
+    });
+    expect(mutateAsync).not.toHaveBeenCalled();
+
+    // A real edit afterwards still saves.
+    act(() => {
+      result.current.form.setValue("name", "Loaded Wyrm, Renamed");
+    });
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(2000);
+    });
+    expect(mutateAsync).toHaveBeenCalledTimes(1);
+    expect(mutateAsync).toHaveBeenCalledWith(
+      expect.objectContaining({ name: "Loaded Wyrm, Renamed" }),
+    );
+  });
+
   it("holds the saving status for the minimum visible time", async () => {
     const { result } = renderHook(() =>
       useHarness({ id: "abc", enabled: true }),

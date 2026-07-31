@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { UseFormReturn } from "react-hook-form";
 import type { Monster } from "@/schema/monster-schema";
 import { useAutoSaveCreature } from "@/hooks/use-creatures";
@@ -38,16 +38,34 @@ export function useAutoSave(
   const [status, setStatus] = useState<AutoSaveStatus>("idle");
   const [lastSavedAt, setLastSavedAt] = useState<number | null>(null);
 
+  // Snapshot of the last state known to be persisted (our own save, or the
+  // baseline adopted when the stored creature syncs in). Saving writes back
+  // into the query cache, which resyncs the form and emits a reset event —
+  // without this guard that echo schedules a second, identical save.
+  const lastSavedRef = useRef<string | null>(null);
+
+  const snapshotValues = useCallback(() => {
+    const parsed = monsterSchema.safeParse(getValues());
+    return parsed.success
+      ? JSON.stringify({ ...parsed.data, id })
+      : null;
+  }, [getValues, id]);
+
   const runSave = useCallback(async () => {
     if (!enabled || !id) return;
 
     const parsed = monsterSchema.safeParse(getValues());
     if (!parsed.success) return;
 
+    const record = { ...parsed.data, id };
+    const snapshot = JSON.stringify(record);
+    if (snapshot === lastSavedRef.current) return;
+
     try {
       setStatus("saving");
       const startedAt = Date.now();
-      await mutateAsync({ ...parsed.data, id });
+      await mutateAsync(record);
+      lastSavedRef.current = snapshot;
       const remaining = minSavingTime - (Date.now() - startedAt);
       if (remaining > 0) {
         await new Promise((resolve) => setTimeout(resolve, remaining));
@@ -59,22 +77,34 @@ export function useAutoSave(
     }
   }, [enabled, getValues, id, minSavingTime, mutateAsync]);
 
-  const debouncedSave = useMemo(
-    () => debounce(runSave, delay),
-    [runSave, delay],
-  );
-
   useEffect(() => {
     if (!enabled || !id) return;
+    // Arming happens only once the form holds persisted state (after a manual
+    // save, or once the stored creature hydrated the form — see the `enabled`
+    // gate in monster-form), so the current values are the baseline. Without
+    // this, harmless post-load events (like the derived passive-perception
+    // setValue) would immediately re-save the state we just loaded.
+    lastSavedRef.current = snapshotValues();
+    const debouncedSave = debounce(runSave, delay);
     const unsubscribe = subscribe({
       formState: { values: true },
-      callback: () => debouncedSave(),
+      callback: ({ name }) => {
+        // `name == null` is a whole-form replacement. Before anything was
+        // saved that's the stored creature syncing in: adopt it as the
+        // baseline rather than saving it back. Later replacements (e.g. an
+        // import) do schedule; true echoes are caught by the snapshot guard.
+        if (name == null && lastSavedRef.current == null) {
+          lastSavedRef.current = snapshotValues();
+          return;
+        }
+        debouncedSave();
+      },
     });
     return () => {
       unsubscribe();
       debouncedSave.cancel();
     };
-  }, [enabled, id, debouncedSave, subscribe]);
+  }, [enabled, id, runSave, delay, subscribe, snapshotValues]);
 
   return { status, lastSavedAt };
 }

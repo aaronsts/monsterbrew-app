@@ -45,7 +45,10 @@ export const MonsterForm = () => {
 
   const { status: autoSaveStatus } = useAutoSave(form, {
     id: effectiveId,
-    enabled: Boolean(effectiveId),
+    // When loading via ?id=, wait until the stored creature has hydrated the
+    // form — otherwise a slow load could let auto-save persist the blank
+    // default form over the stored creature.
+    enabled: Boolean(effectiveId) && (!idParam || loadedCreature != null),
   });
 
   const preview = useWatch({ control: form.control }) as Monster;

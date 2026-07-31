@@ -14,6 +14,24 @@ test.describe("Monster editor — auto-save", () => {
     // The debounced auto-save runs ~800ms after the last edit.
     await expect(page.getByText("All changes saved")).toBeVisible();
 
+    // The save echoes back into the form via the query cache; that echo must
+    // not start a second "Saving…" cycle (#93 regression). Watch the status
+    // line long enough for a would-be echo (debounce + hold) to show itself.
+    const echoSightings = await page.evaluate(async () => {
+      const el = document.querySelector('span[aria-live="polite"]');
+      let sightings = 0;
+      let last = "";
+      const started = Date.now();
+      while (Date.now() - started < 3000) {
+        const text = (el?.textContent ?? "").trim();
+        if (text !== last && text.startsWith("Saving")) sightings += 1;
+        last = text;
+        await new Promise((resolve) => setTimeout(resolve, 50));
+      }
+      return sightings;
+    });
+    expect(echoSightings).toBe(0);
+
     // The edit must survive a full reload from IndexedDB on its own.
     await page.reload();
     await expect(page.getByLabel("Name")).toHaveValue("Auto Wyrm, Evolved");
