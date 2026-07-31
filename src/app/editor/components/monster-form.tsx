@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate, useSearch } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 import { Upload } from "lucide-react";
@@ -13,12 +13,15 @@ import { CrSuggestionsToggle } from "./cr-calculator/cr-suggestions-toggle";
 import { DefenseForm } from "./defense-form";
 import { ActionsForm } from "./actions-form";
 import { ImportDialog } from "./import-dialog";
+import { AutoSaveIndicator } from "./auto-save-indicator";
 import type { Monster } from "@/schema/monster-schema";
 import { useCreature, useSaveCreature } from "@/hooks/use-creatures";
-import { calculateStatBonus, generateId } from "@/lib/utils";
+import { useAutoSave } from "@/hooks/use-auto-save";
+import { useEditCreatureHandoff } from "@/hooks/use-edit-creature-handoff";
+import { usePassivePerception } from "@/hooks/use-passive-perception";
+import { useSaveNudge } from "@/hooks/use-save-nudge";
+import { generateId } from "@/lib/utils";
 import { defaultMonster, monsterSchema } from "@/schema/monster-schema";
-import { isLegacyCreature } from "@/services/migrations/creatureFormat";
-import { creatureToMonster } from "@/services/migrations/creatureToMonster";
 import { MonsterStatblock } from "@/components/monster-statblock";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
@@ -26,7 +29,7 @@ import { Form } from "@/components/ui/form";
 export const MonsterForm = () => {
   const { id: idParam } = useSearch({ from: "/editor" });
   const navigate = useNavigate();
-  const [creatureId, setCreatureId] = useState<string | undefined>();
+  const [savedId, setSavedId] = useState<string | undefined>();
   const [showImport, setShowImport] = useState(false);
   const { data: loadedCreature } = useCreature(idParam);
   const saveCreature = useSaveCreature();
@@ -34,56 +37,26 @@ export const MonsterForm = () => {
   const form = useForm({
     resolver: zodResolver(monsterSchema),
     values: loadedCreature ?? defaultMonster,
+    resetOptions: { keepDirtyValues: true },
   });
 
-  const { control, setValue, reset, getValues, trigger } = form;
+  const handoffId = useEditCreatureHandoff(form, { enabled: !idParam });
+  const effectiveId = idParam ?? savedId ?? handoffId;
 
-  const effectiveId = idParam ?? creatureId;
+  usePassivePerception(form);
 
-  const preview = useWatch({ control }) as Monster;
-  const wis = useWatch({ control, name: "ability_scores.wis" });
-  const skills = useWatch({ control, name: "skills" });
-  const proficiencyBonus = useWatch({ control, name: "cr.proficiency_bonus" });
-  const customPassivePerception = useWatch({
-    control,
-    name: "custom_passive_perception",
+  const { status: autoSaveStatus } = useAutoSave(form, {
+    id: effectiveId,
+    // When loading via ?id=, wait until the stored creature has hydrated the
+    // form — otherwise a slow load could let auto-save persist the blank
+    // default form over the stored creature.
+    enabled: Boolean(effectiveId) && (!idParam || loadedCreature != null),
   });
 
-  useEffect(() => {
-    if (idParam) return;
-    const handoff = localStorage.getItem("editCreature");
-    if (!handoff) return;
-    try {
-      const parsed = JSON.parse(handoff);
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      if (parsed.id) setCreatureId(parsed.id);
-      // Handoffs (SRD copy, duplicate, library edit) normally already emit
-      // `Monster`, but normalize any stale legacy-shaped payload just in case.
-      const monster: Monster = isLegacyCreature(parsed)
-        ? creatureToMonster(parsed)
-        : (parsed as Monster);
-      reset(monster);
-    } catch (error) {
-      console.error("Error parsing stored creature:", error);
-    } finally {
-      localStorage.removeItem("editCreature");
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const preview = useWatch({ control: form.control }) as Monster;
 
-  useEffect(() => {
-    if (customPassivePerception) return;
-    let perception = calculateStatBonus(wis);
-    const perceptionProficiency = skills?.perception;
-    if (perceptionProficiency) {
-      const pb = proficiencyBonus ?? 0;
-      perception += perceptionProficiency === "expert" ? pb * 2 : pb;
-    }
-    setValue("passive_perception", 10 + perception);
-  }, [wis, skills, proficiencyBonus, customPassivePerception, setValue]);
-
-  async function save() {
-    const values = getValues();
+  async function save({ stayInEditor = false } = {}) {
+    const values = form.getValues();
     if (!values.name || values.name.trim().length === 0) {
       toast.warning("Please provide a name for the creature");
       return;
@@ -91,7 +64,7 @@ export const MonsterForm = () => {
 
     const parsed = monsterSchema.safeParse(values);
     if (!parsed.success) {
-      trigger();
+      form.trigger();
       toast.warning("Please fix the highlighted fields before saving");
       return;
     }
@@ -101,9 +74,13 @@ export const MonsterForm = () => {
 
     try {
       await saveCreature.mutateAsync(record);
-      setCreatureId(id);
+      setSavedId(id);
       toast.success(`Saved ${values.name}`);
-      navigate({ to: "/library/$id", params: { id } });
+      if (stayInEditor) {
+        navigate({ to: "/editor", search: { id }, replace: true });
+      } else {
+        navigate({ to: "/library/$id", params: { id } });
+      }
     } catch (err) {
       toast.error(
         `Something went wrong: ${err instanceof Error ? err.message : String(err)}`,
@@ -111,10 +88,18 @@ export const MonsterForm = () => {
     }
   }
 
+  // The nudge's save keeps you in the editor — it exists to arm auto-save
+  // mid-edit, not to end the editing session like the explicit Save button.
+  useSaveNudge(form, {
+    enabled: !effectiveId,
+    onSave: () => save({ stayInEditor: true }),
+  });
+
   return (
     <Form {...form}>
       <div className="space-y-4">
         <div className="flex fixed bg-background py-2 bottom-2 z-50 inset-x-4 lg:sticky lg:top-14 items-center justify-end gap-2">
+          {effectiveId && <AutoSaveIndicator status={autoSaveStatus} />}
           <CrSuggestionsToggle />
           <Button
             type="button"
@@ -125,7 +110,11 @@ export const MonsterForm = () => {
             <Upload className="size-4" />
             Import
           </Button>
-          <Button type="button" className="grow lg:grow-0" onClick={save}>
+          <Button
+            type="button"
+            className="grow lg:grow-0"
+            onClick={() => save()}
+          >
             {effectiveId ? "Update" : "Save"}
           </Button>
         </div>
