@@ -43,7 +43,7 @@ export function DeltaChart() {
   if (!comparison) return null;
 
   return (
-    <Collapsible defaultOpen>
+    <Collapsible>
       <CollapsibleTrigger className="group/delta-trigger flex w-full items-center justify-between gap-2 py-1 text-left text-xs font-medium outline-none transition-colors focus-visible:ring-1 focus-visible:ring-ring/50">
         Benchmark deltas
         <ChevronDownIcon className="size-4 shrink-0 text-muted-foreground transition-transform duration-200 group-aria-expanded/delta-trigger:rotate-180" />

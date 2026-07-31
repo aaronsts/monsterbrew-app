@@ -1,11 +1,17 @@
-import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
+import {
+  act,
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+} from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { FeedbackCta } from "@/components/feedback-cta";
 
 const STORAGE_KEY = "monsterbrew:feedback-cta-shown";
-const SHOW_DELAY_MS = 5_000;
-const TOAST_DURATION_MS = 10_000;
+const SHOW_DELAY_MS = 3 * 60 * 1_000;
+const TOAST_DURATION_MS = 15_000;
 const SNOOZE_MS = 7 * 24 * 60 * 60 * 1_000;
 const DAY_MS = 24 * 60 * 60 * 1_000;
 
@@ -56,7 +62,7 @@ describe("FeedbackCta", () => {
     vi.useRealTimers();
   });
 
-  it("shows the prompt 5 seconds after mount, not before", () => {
+  it("shows the prompt 3 minutes after mount, not before", () => {
     render(<FeedbackCta />);
 
     act(() => vi.advanceTimersByTime(SHOW_DELAY_MS - 1));
@@ -66,7 +72,7 @@ describe("FeedbackCta", () => {
     expect(toastCustom).toHaveBeenCalledOnce();
   });
 
-  it("keeps the prompt on screen for 10 seconds", () => {
+  it("keeps the prompt on screen for 15 seconds", () => {
     render(<FeedbackCta />);
     act(() => vi.advanceTimersByTime(SHOW_DELAY_MS));
 

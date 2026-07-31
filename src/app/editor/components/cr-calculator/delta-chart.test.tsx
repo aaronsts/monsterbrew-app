@@ -1,4 +1,5 @@
 import { screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it } from "vitest";
 import { renderWithForm } from "../test-utils";
 import { DeltaChart, deltaChartData } from "./delta-chart";
@@ -63,9 +64,14 @@ describe("deltaChartData", () => {
 });
 
 describe("DeltaChart", () => {
-  it("renders the collapsible trigger and legend", () => {
+  it("starts collapsed and reveals the chart when the trigger is clicked", async () => {
+    const user = userEvent.setup();
     renderWithForm(<DeltaChart />, { cr: cr5 });
-    expect(screen.getByText("Benchmark deltas")).toBeTruthy();
+
+    const trigger = screen.getByText("Benchmark deltas");
+    expect(screen.queryByText(/within ±1 counts as on par/)).toBeNull();
+
+    await user.click(trigger);
     expect(screen.getByText(/within ±1 counts as on par/)).toBeTruthy();
   });
 
