@@ -18,9 +18,11 @@ function MarkdownLink({
   ...props
 }: ComponentProps<"a"> & { node?: unknown }) {
   if (href?.startsWith("/")) {
-    const [path, query] = href.split("?");
+    const [pathAndQuery, hash] = href.split("#");
+    const [path, query] = pathAndQuery.split("?");
     const linkProps = {
       to: path,
+      ...(hash ? { hash } : {}),
       ...(query
         ? { search: Object.fromEntries(new URLSearchParams(query)) }
         : {}),

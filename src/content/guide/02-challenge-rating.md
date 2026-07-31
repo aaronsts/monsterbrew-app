@@ -8,7 +8,7 @@ Challenge rating is the shorthand for "how hard is this monster?" that every oth
 
 ## What CR actually predicts
 
-A monster's CR is a promise about two things: how hard the creature is to put down (hit points, AC, saving throws; the editor's Defense section) and how hard it hits back (attack bonus, save DC, damage per round; the Combat and Actions sections). The designers balance those against a party's expected capabilities, assuming a fight lasts about three rounds.
+A monster's CR is a promise about two things: how hard the creature is to put down (hit points, AC, saving throws; the editor's [Defense section](/editor#defense)) and how hard it hits back (attack bonus, save DC, damage per round; the [Combat](/editor#combat) and [Actions](/editor#actions) sections). The designers balance those against a party's expected capabilities, assuming a fight lasts about three rounds.
 
 CR is _not_ a promise about how the fight feels. That comes from role, terrain, and action economy. Two CR 5 creatures can play completely differently. But if your homebrew creature's numbers drift far from its CR's benchmarks in both offense _and_ defense, players will definitely feel the mismatch.
 
@@ -51,4 +51,4 @@ What ruins a monster is deviating in the same direction everywhere: above-benchm
 
 A useful cross-check from Teos Abadía's process: estimate a _defensive_ CR (which row does its effective HP and AC most resemble?) and an _offensive_ CR (which row matches its attack bonus and damage output?), then average the two. If that average isn't the CR you wrote down, adjust the statblock or the label until they agree.
 
-Set the result in the editor's [Challenge Rating field](/editor). Monsterbrew derives proficiency bonus and XP from it automatically, and any `{@hit}` or `{@dc}` tokens keyed to abilities recompute as you tune the statblock.
+Set the result in the editor's [Challenge Rating field](/editor#combat). Monsterbrew derives proficiency bonus and XP from it automatically, and any `{@hit}` or `{@dc}` tokens keyed to abilities recompute as you tune the statblock.

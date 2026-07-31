@@ -11,6 +11,7 @@ export const DefenseForm = () => {
   return (
     <TooltipProvider>
       <CollapsibleSection
+        id="defense"
         legend="Defense"
         description="How resilient a creature is against attacks and effects"
       >

@@ -9,18 +9,23 @@ import {
 import { FieldDescription, FieldLegend, FieldSet } from "@/components/ui/field";
 
 interface CollapsibleSectionProps {
+  id?: string;
   legend: string;
   description: string;
   children: React.ReactNode;
 }
 
 export const CollapsibleSection = ({
+  id,
   legend,
   description,
   children,
 }: CollapsibleSectionProps) => {
   return (
-    <Collapsible defaultOpen render={<FieldSet className="gap-0" />}>
+    <Collapsible
+      defaultOpen
+      render={<FieldSet id={id} className="gap-0 scroll-mt-24 lg:scroll-mt-32" />}
+    >
       <FieldLegend className="mb-0 w-full">
         <CollapsibleTrigger className="group/section-trigger flex w-full items-center justify-between gap-2 bg-primary-100 dark:bg-primary-500 px-3 py-2 text-left outline-none transition-colors focus-visible:border-ring dark:text-primary-100 focus-visible:ring-1 focus-visible:ring-ring/50">
           {legend}

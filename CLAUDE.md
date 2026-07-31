@@ -30,7 +30,7 @@ CI deploys PR previews and production to Vercel. There is no test-run step in CI
 
 ## Architecture
 
-Monsterbrew is a **client-side-only** D&D 5e monster statblock builder. **TanStack Start** (TanStack Router on Vite, with SSR) + React 19, but there is no backend and no server functions: all creature data persists to **IndexedDB in the browser** (via `idb`). File-based routes live in `src/routes/` (`__root.tsx` holds the document shell, providers, header/footer, and SEO head/meta); page-specific components still live under `src/app/*/components/`. The marketing routes (`/`, `/privacy`, `/changelog`) server-render for SEO; `/legacy-editor` is marked `ssr: false` because it depends on the browser-only `react-to-print`. Client navigation uses `Link`/`useNavigate`/`useSearch` from `@tanstack/react-router`. Despite `supabase` being a dev dependency, `src/types/database.types.ts` existing, and a `user_id` field in the schema, there is **no active Supabase/server persistence** — treat those as vestigial unless you are deliberately adding a backend.
+Monsterbrew is a **client-side-only** D&D 5e monster statblock builder. **TanStack Start** (TanStack Router on Vite, with SSR) + React 19, but there is no backend and no server functions: all creature data persists to **IndexedDB in the browser** (via `idb`). File-based routes live in `src/routes/` (`__root.tsx` holds the document shell, providers, header/footer, and SEO head/meta); page-specific components still live under `src/app/*/components/`. Nearly all routes are **prerendered to static HTML** at build time (the `prerenderPages` list in `vite.config.ts`: marketing pages, guide chapters, all `/library/srd/$key` pages, plus the static shells of the client-only `ssr: false` routes like `/editor` and `/library`); only `/library/$id` (unenumerable per-user ids) and the `/dev/*` routes render on the server at request time. Client navigation uses `Link`/`useNavigate`/`useSearch` from `@tanstack/react-router`. Despite `supabase` being a dev dependency, `src/types/database.types.ts` existing, and a `user_id` field in the schema, there is **no active Supabase/server persistence** — treat those as vestigial unless you are deliberately adding a backend.
 
 ### The creature model is the center of everything
 
@@ -57,7 +57,7 @@ Derived values are computed with `useEffect` + `form.setValue` rather than store
 
 ### Persistence
 
-`src/services/database.ts` opens the versioned `monsterbrewDB` (object store `creatures`, `keyPath: "id"`). IDs are generated client-side in `save-dialog.tsx` (`Date.now()-<random>`), not by the store. `save-dialog.tsx` only touches IndexedDB inside event handlers (not during render), so it renders fine under SSR. Bumping the DB version means adding a `case` to the `upgrade` switch in `database.ts`. `/my-creatures` lists and manages saved creatures.
+`src/services/database.ts` opens the versioned `monsterbrewDB` (object store `creatures`, `keyPath: "id"`). IDs are generated client-side in `save-dialog.tsx` (`Date.now()-<random>`), not by the store. `save-dialog.tsx` only touches IndexedDB inside event handlers (not during render), so it renders fine under SSR. Bumping the DB version means adding a `case` to the `upgrade` switch in `database.ts`. Saved creatures are listed and managed in `/library`; the old `/my-creatures` route is a redirect stub to it.
 
 ### SRD monsters
 

@@ -46,6 +46,6 @@ Pick the one or two that restate your concept sentence, price them out of the [d
 
 ## Write it so it runs itself
 
-Statblock text is usually read during combat. Short sentences, standard phrasing, numbers up front. In Monsterbrew, insert attacks and saving throws with the Insert menu's **Attack line** and **Saving throw line** options, which render as complete rules lines computed from the creature's stats. Under the hood these are `{@…}` tags keyed to abilities rather than hard-coded numbers (`{@hit str}`, `{@dc con}`), so the text stays correct while you tune ability scores and CR, and the [editor](/editor)'s token inspector previews exactly what players will see.
+Statblock text is usually read during combat. Short sentences, standard phrasing, numbers up front. In Monsterbrew, insert attacks and saving throws with the Insert menu's **Attack line** and **Saving throw line** options, which render as complete rules lines computed from the creature's stats. Under the hood these are `{@…}` tags keyed to abilities rather than hard-coded numbers (`{@hit str}`, `{@dc con}`), so the text stays correct while you tune ability scores and CR, and the [editor](/editor#actions)'s token inspector previews exactly what players will see.
 
 Finally, give the creature one line of _behavior_: how it opens, what it protects, when it flees. "Fights until destroyed" is a choice, not a default. A monster that surrenders, bargains, or routs at half HP creates a scene; one that stands in place until it dies creates a subtraction problem.

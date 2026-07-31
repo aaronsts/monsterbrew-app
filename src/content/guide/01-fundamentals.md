@@ -4,7 +4,7 @@ shortTitle: Fundamentals
 description: What makes a homebrew D&D monster fun at the table. Concept, combat role, and action economy before you touch a single number.
 ---
 
-Before AC, hit points, or challenge rating, a good monster starts with an idea. The numbers exist to deliver that idea to the table. This chapter goes over the three things worth covering first: the creature's concept, the role it plays in a fight, and how it holds up against a party's action economy. In other words, this chapter is about your creature's identity. It's the first block of the [editor](/editor) form for a reason.
+Before AC, hit points, or challenge rating, a good monster starts with an idea. The numbers exist to deliver that idea to the table. This chapter goes over the three things worth covering first: the creature's concept, the role it plays in a fight, and how it holds up against a party's action economy. In other words, this chapter is about your creature's identity. It's the first block of the [editor](/editor#identity) form for a reason.
 
 ## Concept
 
@@ -14,7 +14,7 @@ Monster creation begins with asking yourself the following: What is this creatur
 
 Write one sentence about the creature before you start working on the statblock: _ex. "A cathedral gargoyle that feeds on prayers, peeling off the walls when the singing stops."_ Every mechanical choice that follows, senses, attacks and immunities, can be tested against that sentence.
 
-This is also the moment to decide the basics that flow straight from concept rather than math: size, creature type, alignment or disposition, movement modes, and senses. You can fill these in first in the [editor](/editor)'s identity section. Together they do a surprising amount of the creature's storytelling.
+This is also the moment to decide the basics that flow straight from concept rather than math: size, creature type, alignment or disposition, movement modes, and senses. You can fill these in first in the [editor](/editor#identity)'s identity section. Together they do a surprising amount of the creature's storytelling.
 
 ## Combat role
 

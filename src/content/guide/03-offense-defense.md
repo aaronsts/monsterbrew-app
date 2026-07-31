@@ -20,7 +20,7 @@ At almost every CR above 1, the benchmark splits damage across several attacks: 
 
 > I've definitely made this mistake before, as a DM, missing your attack is not as bad as it is for a player, but if it's your only attack, it still stings a little bit.
 
-A good shape is a Multiattack line spending most of the budget, plus one alternative action (a utility option or multi-target effect) for rounds when position calls for it. In Monsterbrew, you can write attacks with the Insert menu's **Attack line** option: it drops in a single tag that renders the complete rules line, computed from the creature's stats, so the attack recomputes if you retune its abilities later. Click the highlighted line in the [editor](/editor) to adjust the attack kind, to-hit, reach, and damage in a popup.
+A good shape is a Multiattack line spending most of the budget, plus one alternative action (a utility option or multi-target effect) for rounds when position calls for it. In Monsterbrew, you can write attacks with the Insert menu's **Attack line** option: it drops in a single tag that renders the complete rules line, computed from the creature's stats, so the attack recomputes if you retune its abilities later. Click the highlighted line in the [editor](/editor#actions) to adjust the attack kind, to-hit, reach, and damage in a popup.
 
 ## Recharge and limited-use abilities
 
