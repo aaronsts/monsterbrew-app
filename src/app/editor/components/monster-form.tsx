@@ -8,6 +8,8 @@ import { toast } from "sonner";
 import { Upload } from "lucide-react";
 import { IdentityForm } from "./identity-form";
 import { CombatForm } from "./combat-form";
+import { CrCalculator } from "./cr-calculator";
+import { CrSuggestionsToggle } from "./cr-calculator/cr-suggestions-toggle";
 import { DefenseForm } from "./defense-form";
 import { ActionsForm } from "./actions-form";
 import { ImportDialog } from "./import-dialog";
@@ -96,8 +98,9 @@ export const MonsterForm = () => {
   return (
     <Form {...form}>
       <div className="space-y-4">
-        <div className="flex fixed  bottom-2 z-50 inset-x-4 lg:sticky lg:top-18 items-center justify-end gap-2">
+        <div className="flex fixed bg-background py-2 bottom-2 z-50 inset-x-4 lg:sticky lg:top-14 items-center justify-end gap-2">
           {effectiveId && <AutoSaveIndicator status={autoSaveStatus} />}
+          <CrSuggestionsToggle />
           <Button
             type="button"
             color="neutral"
@@ -109,12 +112,13 @@ export const MonsterForm = () => {
           </Button>
           <Button
             type="button"
-            className="w-full lg:w-fit"
+            className="grow lg:grow-0"
             onClick={() => save()}
           >
             {effectiveId ? "Update" : "Save"}
           </Button>
         </div>
+        <CrCalculator />
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
           <form className="space-y-6">
             <IdentityForm />

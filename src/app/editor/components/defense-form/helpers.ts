@@ -19,10 +19,6 @@ export const SKILLS_BY_ABILITY = ABILITY_SCORES.map((ability) => ({
   skills: SKILLS.filter((skill) => skill.skill_modifier === ability),
 })).filter((group) => group.skills.length > 0);
 
-export function formatModifier(mod: number): string {
-  return mod >= 0 ? `+${mod}` : `${mod}`;
-}
-
 export function nextSkillState(state: SkillProficiency): SkillProficiency {
   return state === "" ? "proficient" : state === "proficient" ? "expert" : "";
 }

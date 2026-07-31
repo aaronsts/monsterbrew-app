@@ -137,6 +137,15 @@ export const CREATURE_SIZES = [
   },
 ] as const;
 
+/**
+ * The official DMG "Monster Statistics by Challenge Rating" table. Only
+ * `proficiency_bonus` and `experience` are rules-canonical (verified against
+ * the DMG) and actually read elsewhere in the app; `armor_class`, `save_dc`,
+ * `attack_bonus`, `damage_per_round`, and `hit_points_range` are unused
+ * legacy columns kept only because `challengeRatingSchema` requires them.
+ * Build-guidance targets (the CR calculator, the guide) come from
+ * `CR_BENCHMARKS` in `src/lib/constants/cr-benchmarks.ts` instead.
+ */
 export const CHALLENGE_RATINGS = [
   {
     challenge_rating: "0",

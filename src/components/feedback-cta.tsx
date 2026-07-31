@@ -9,10 +9,10 @@ import { FeedbackDialog } from "@/components/feedback-dialog";
 import { isFeedbackConfigured } from "@/hooks/use-feedback";
 
 const STORAGE_KEY = "monsterbrew:feedback-cta-shown";
-/** Wait 5 seconds after page load before popping up. */
-const SHOW_DELAY_MS = 5_000;
-/** The prompt stays on screen for 10 seconds before auto-dismissing. */
-const TOAST_DURATION_MS = 10_000;
+/** Wait 3 minutes after page load before popping up. */
+const SHOW_DELAY_MS = 3 * 60 * 1_000;
+/** The prompt stays on screen for 15 seconds before auto-dismissing. */
+const TOAST_DURATION_MS = 15_000;
 /** Once shown (or dismissed), stay quiet for 7 days. */
 const SNOOZE_MS = 7 * 24 * 60 * 60 * 1_000;
 

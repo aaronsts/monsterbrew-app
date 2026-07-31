@@ -59,7 +59,7 @@ export function FeatureList({
 
   return (
     <FieldGroup className="gap-3">
-      <div className="flex items-center justify-between gap-2">
+      <div className="flex flex-col items-start lg:flex-row lg:items-center justify-between gap-2">
         {title ? <FieldLabel className="mb-0">{title}</FieldLabel> : <span />}
         <div className="flex items-center gap-2">
           {presets && presets.length > 0 && (

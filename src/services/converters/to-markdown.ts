@@ -6,6 +6,7 @@ import {
   calculateHitPoints,
   calculateStatBonus,
   capitalizeWords,
+  formatMod,
   titleCase,
 } from "@/lib/utils";
 
@@ -16,10 +17,6 @@ const SKILL_ABILITY = new Map<string, string>(
 const SKILL_LABEL = new Map<string, string>(
   SKILLS.map((s) => [s.skill_name, s.label]),
 );
-
-function formatMod(mod: number): string {
-  return mod >= 0 ? `+${mod}` : `${mod}`;
-}
 
 type Feature = Monster["traits"][number];
 

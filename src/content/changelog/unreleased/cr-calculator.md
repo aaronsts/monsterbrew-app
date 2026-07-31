@@ -1,0 +1,11 @@
+---
+title: CR calculator
+---
+
+The editor now tells you whether your creature actually fights at its challenge rating. Pick a CR and the editor compares your armor class, hit points, save DC, and attack bonus against the benchmarks from the guide — live, as you type. No more flipping back and forth to the quick-reference table.
+
+- A chart above the form shows how far each stat sits from its CR benchmark, updating as you edit
+- Small “High / On par / Low” hints appear next to the Armor Class and Hit Points fields, and on your creature’s highest ability score, with the target numbers a hover away
+- A “Recommended stats” dialog lists the benchmark targets for your CR: AC, HP range, attack bonus, and suggested ability modifier
+- Attack bonus and save DC are projected from your highest ability modifier and proficiency bonus, so the guidance works before you’ve written a single action
+- Not interested? One switch turns all of it off, and the editor remembers your choice

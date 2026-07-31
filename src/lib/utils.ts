@@ -42,6 +42,11 @@ export function calculateSavingThrow(
       : `${calculateStatBonus(score.value)}`;
 }
 
+/** Signed modifier text: 3 → "+3", 0 → "+0", -2 → "-2". */
+export function formatMod(mod: number): string {
+  return mod >= 0 ? `+${mod}` : `${mod}`;
+}
+
 export function titleCase(str: string) {
   return str
     .replace(/^[-_]*(.)/, (_, c) => c.toUpperCase())

@@ -3,7 +3,6 @@ import { CheckSquare } from "./check-square";
 import {
   FOCUS_RING,
   SKILLS_BY_ABILITY,
-  formatModifier,
   nextSkillState,
   setSkill,
 } from "./helpers";
@@ -15,7 +14,7 @@ import {
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field";
-import { calculateStatBonus, cn } from "@/lib/utils";
+import { calculateStatBonus, cn, formatMod } from "@/lib/utils";
 
 export function SkillsField() {
   const form = useFormContext<Monster>();
@@ -98,7 +97,7 @@ export function SkillsField() {
                               : "text-muted-foreground",
                           )}
                         >
-                          {formatModifier(totalMod)}
+                          {formatMod(totalMod)}
                         </span>
                       </button>
                     );
