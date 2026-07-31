@@ -4,7 +4,7 @@ shortTitle: Challenge rating
 description: How CR maps to AC, HP, attack bonus, save DC, and damage per round in D&D 5e 2024, with a full benchmark table for CR 0–30.
 ---
 
-Challenge rating is the shorthand for "how hard is this monster?" that every other number depends on. The 2024 Dungeon Master's Guide, unlike its 2014 predecessor, ships no statistics-by-CR table for monster builders, so the community reverse-engineered one. This chapter gives you those benchmarks and how to use them.
+Challenge rating is the shorthand for "how hard is this monster?" that every other number depends on. The 2024 Dungeon Master's Guide, unlike its 2014 predecessor, ships no statistics-by-CR table for monster builders, so **the community** reverse-engineered one. In this chapter we go over these benchmarks and how to apply them.
 
 ## What CR actually predicts
 
@@ -19,7 +19,7 @@ The table below gives baseline statistics for every challenge rating, adapted fr
 A few notes on reading it:
 
 - **AC/DC** is one number doing two jobs: the creature's typical Armor Class, and the typical save DC of its features.
-- **Proficient bonus** is the ability modifier and proficiency bonus _already added together_. Use it as the attack bonus and as the bonus for proficient saving throws and skills. Non-proficient abilities just get a modifier from −2 to +4 based on the creature's story.
+- **Attack bonus** is the ability modifier and proficiency bonus _already added together_. Use it as the attack bonus and as the bonus for proficient saving throws and skills. Non-proficient abilities just get a modifier from −2 to +4 based on the creature's story.
 - **Damage per round** is the creature's whole output for one round, split across its attacks. If an effect hits two or more characters at once, like a breath weapon or a burst, budget it at _half_ this number.
 - **Equivalent level** is roughly the level of a single character for whom one such monster is a hard fight, so the table can double as an NPC builder.
 
@@ -40,14 +40,14 @@ Paul Hughes's regression over the full 2024 Monster Manual lands on nearly ident
 
 ## When to deviate, and how to pay for it
 
-These benchmarks are a baseline, deviating from them is how a creature can express its role. The trick is to _trade_ and not stack:
+These benchmarks are a baseline, you can deviate from them to express a creature role. The trick is to _trade_ and not stack:
 
 - A glass-cannon artillery piece takes hit points from the bottom of its HP range and pushes damage above the line.
-- A hulking defender does the opposite: HP at the top of the range, damage below the line.
+- A hulking defender does the opposite: trades HP for damage.
 - Accuracy and defense trades work too: −2 AC in exchange for grappling on every hit, +2 to hit in exchange for having only one attack.
-- Resistances, flight, regeneration, and at-will invisibility are all _defensive_ purchases. Pay for them with hit points or damage. A creature resistant to common damage types effectively has half again its listed HP.
+- Resistances, flight, regeneration, and at-will invisibility are all _defensive_ purchases. Pay for them with hit points or damage. A creature resistant to common damage types effectively has double its listed HP.
 
-What ruins a monster is deviating in the same direction everywhere: above-benchmark HP _and_ AC _and_ damage is just a monster of a higher CR wearing the wrong label. If you find yourself doing that, raise the CR instead. The table is right there.
+What ruins a monster is deviating in the same direction everywhere: above-benchmark HP _and_ AC _and_ damage is just a monster of a higher CR with the wrong label. If you find yourself doing that, raise the CR instead. The table is right there.
 
 A useful cross-check from Teos Abadía's process: estimate a _defensive_ CR (which row does its effective HP and AC most resemble?) and an _offensive_ CR (which row matches its attack bonus and damage output?), then average the two. If that average isn't the CR you wrote down, adjust the statblock or the label until they agree.
 

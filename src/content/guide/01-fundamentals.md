@@ -4,21 +4,23 @@ shortTitle: Fundamentals
 description: What makes a homebrew D&D monster fun at the table. Concept, combat role, and action economy before you touch a single number.
 ---
 
-Before AC, hit points, or challenge rating, a good monster starts as an idea. The numbers exist to deliver the idea to the table. This chapter covers the three things worth settling first: the creature's concept, the role it plays in a fight, and how it holds up against a party's action economy. In other words, this chapter is about your creature's identity. It's the first block of the [editor](/editor) form for a reason.
+Before AC, hit points, or challenge rating, a good monster starts with an idea. The numbers exist to deliver that idea to the table. This chapter goes over the three things worth covering first: the creature's concept, the role it plays in a fight, and how it holds up against a party's action economy. In other words, this chapter is about your creature's identity. It's the first block of the [editor](/editor) form for a reason.
 
-## Concept before math
+## Concept
 
-Monster creation begins with the fiction. What is this creature? What does it want, how does it fight, and what should the players remember about it a week later? As Teos Abadía puts it in his [guide to creating monsters for the 2024 rules](https://alphastream.org/index.php/2025/03/26/how-to-create-a-monster-for-revised-dd-5e-2024/), you want a monster's actions to convey its essence: a rot-hulk should feel like fighting a mass of grave-soil and grasping hands, not like a reskinned ogre with the same Greatclub attack.
+Monster creation begins with asking yourself the following: What is this creature? What does it want, how does it fight, and do you what the players to remember about this creature after combat? As **Teos Abadía** puts it in his [guide to creating monsters for the 2024 rules](https://alphastream.org/index.php/2025/03/26/how-to-create-a-monster-for-revised-dd-5e-2024/), you want a monster's actions to convey its essence: a rot-hulk should feel like fighting a mass of grave-soil and grasping hands, not like a reskinned ogre with the same Greatclub attack.
 
-Write one sentence about the creature before you open the statblock: _"A cathedral gargoyle that feeds on prayers, peeling off the walls when the singing stops."_ Every mechanical choice that follows, senses, attacks and immunities, can be tested against that sentence.
+> A lot of the identity of a monster can also also be conveyed through roleplay, describing visually how the attack looks etc...
 
-This is also the moment to decide the basics that flow straight from concept rather than math: size, creature type, alignment or disposition, movement modes, and senses. Fill these in first in the [editor](/editor)'s identity section; none of them need balancing, and together they do a surprising amount of the creature's storytelling.
+Write one sentence about the creature before you start working on the statblock: _ex. "A cathedral gargoyle that feeds on prayers, peeling off the walls when the singing stops."_ Every mechanical choice that follows, senses, attacks and immunities, can be tested against that sentence.
 
-## Pick a combat role
+This is also the moment to decide the basics that flow straight from concept rather than math: size, creature type, alignment or disposition, movement modes, and senses. You can fill these in first in the [editor](/editor)'s identity section. Together they do a surprising amount of the creature's storytelling.
 
-Depending on the type, a monster rarely fights alone, and the job it does in an encounter shapes its statistics more than its CR does. The [Lazy GM's 5e Monster Builder Resource Document](https://slyflourish.com/lazy_5e_monster_building_resource_document.html) describes seven roles that cover almost every foe in a 5e game:
+## Combat role
 
-- **Ambusher:** hides, strikes, and hides again. Often fragile; frustrating if the party can never force it into the open, so give them a way to do that.
+Depending on the type of monster, it can fight alone or in groups, and the job it does in an encounter shapes its statistics more than its CR does. The [Lazy GM's 5e Monster Builder Resource Document](https://slyflourish.com/lazy_5e_monster_building_resource_document.html) describes seven roles that cover almost every foe in a 5e game:
+
+- **Ambusher:** hides, strikes, and hides again. A glass cannon, often fragile; frustrating if the party can never force it into the open, so give them a way to do that.
 - **Artillery:** high attack bonus and solid ranged damage, low durability. Creates early pressure, then a satisfying takedown once the party reaches it.
 - **Bruiser:** big melee damage, and usually easy to hit or quick to drop in exchange. Every attack roll it makes is tense.
 - **Controller:** imposes conditions: grapples, restrains, poisons, frightens. Powerful in small doses; miserable when it locks the same player down round after round.
@@ -26,15 +28,17 @@ Depending on the type, a monster rarely fights alone, and the job it does in an 
 - **Leader:** heals, buffs, or repositions its allies. Best protected by a defender or two, since players will (correctly) want to defeat it first.
 - **Skirmisher:** mobile, darting in and out. Great for pulling a party apart and making terrain matter.
 
-Naming the role tells you where the numbers should bend. An artillery creature trades hit points for accuracy. A defender trades damage for AC. When you later compare your creature against the [benchmark statistics](/guide/challenge-rating), you'll know _which_ columns it should deviate from, and in which direction. Click a role to see how its stats compare to the CR baseline.
+Deciding on the role can help you how to bend the numbers. An artillery creature trades hit points for accuracy. A defender trades damage for AC. When you later compare your creature against the [benchmark statistics](/guide/challenge-rating), you'll know _which_ columns it can deviate from, and in which direction. Click a role to see how its stats compare to the CR baseline.
+
+> This is my interpretation of deviating from baseline CR to adjust a combat role, not official guidelines.
 
 <!--slot:combat-roles-chart-->
 
-## Respect the action economy
+## Action Economy
 
-Whatever its CR, a single monster gets one turn per round while a party of four or five acts four or five times. That asymmetry decides more fights than raw numbers do. For example, a "boss creature" with impressive stats but one attack per round will be shoved, stunned, restrained, and dead before it does anything memorable.
+Whatever its CR, a single monster gets one turn per round while a party of four or five acts four or five times. That asymmetry will decides more fights than raw numbers do. For example, a "boss creature" with impressive stats but one attack per round will be shoved, stunned, restrained, and dead before it does anything worth remembering.
 
-> I've had this happen to me more then I'd like to admit.. especially when a Bard is around. And my players just LOVE to bring it up whenever they get the chance.
+> I've had this happen to me more then I'd like to admit.. especially when a Bard is around. My players LOVE to bring it up whenever they get the chance.
 
 The tools for fighting back are covered in depth later in this guide, but the short version:
 
@@ -42,4 +46,4 @@ The tools for fighting back are covered in depth later in this guide, but the sh
 - **Multiattack** spreads a monster's damage across several rolls, so one unlucky miss doesn't waste its whole round.
 - **Legendary actions, reactions, and lair actions** let a solo creature act on other creatures' turns, which is the only real cure for a 5-on-1 fight.
 
-If you take one thing from this chapter: decide what the creature _is_, lock down its identity, decide what job it does in the fight, and count the turns on each side. Then start on the math. The next chapter goes more in depth.
+If you take one thing from this chapter: decide the creature's identity, what job it does in the fight, and count the turns on each side. Then start on the math. The next chapter goes more in depth about this.
