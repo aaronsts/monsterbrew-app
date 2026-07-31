@@ -14,9 +14,6 @@
 @plugin "@tailwindcss/typography";
 
 :root {
-  --font-jetbrains-mono: "JetBrains Mono Variable", monospace;
-  --font-oxanium: "Oxanium Variable", sans-serif;
-
   /* typeset.css reads `--color-*`/`--font-*` tokens at runtime, but
      `@theme inline` inlines its values into utilities without emitting the
      variables themselves — so alias the ones typeset needs to real tokens. */
