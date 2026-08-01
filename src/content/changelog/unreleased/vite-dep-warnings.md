@@ -1,0 +1,1 @@
+An under-the-hood cleanup of the development tooling: removed two stale dependency pre-bundling entries that stopped resolving after the switch to pnpm and printed warnings on every dev-server start. No visible changes.
