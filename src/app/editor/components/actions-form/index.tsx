@@ -31,6 +31,7 @@ export const ActionsForm = () => {
 
   return (
     <CollapsibleSection
+      id="actions"
       legend="Actions"
       description="What the creature can do in and out of combat"
     >

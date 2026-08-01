@@ -49,6 +49,7 @@ export const IdentityForm = () => {
   const [customLanguageInput, setCustomLanguageInput] = useState("");
   return (
     <CollapsibleSection
+      id="identity"
       legend="Identity"
       description="General information about the creature"
     >

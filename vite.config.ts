@@ -1,21 +1,24 @@
-import { readdirSync } from "node:fs";
-import { fileURLToPath } from "node:url";
 import { defineConfig } from "vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import viteReact from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import { nitro } from "nitro/vite";
 import { sentryVitePlugin } from "@sentry/vite-plugin";
+import {
+  guideChapterPages,
+  srdPages,
+  staticPages,
+} from "./scripts/site-pages.mjs";
 
-const guidePages = [
-  "/guide",
-  "/guide/quick-reference",
-  ...readdirSync(
-    fileURLToPath(new URL("./src/content/guide/", import.meta.url)),
-  )
-    .filter((file) => file.endsWith(".md"))
-    .sort()
-    .map((file) => `/guide/${file.replace(/^\d+-/, "").replace(/\.md$/, "")}`),
+// Everything except /library/$id (per-user IndexedDB ids, not enumerable) and
+// the localhost-only /dev/* routes. Client-only routes (ssr: false) prerender
+// to their static shell. /error is prerendered but noindex, so it lives here
+// rather than in the shared sitemap lists.
+const prerenderPages = [
+  ...staticPages,
+  "/error",
+  ...guideChapterPages,
+  ...srdPages,
 ];
 
 export default defineConfig({
@@ -35,7 +38,7 @@ export default defineConfig({
   plugins: [
     tailwindcss(),
     tanstackStart({
-      pages: guidePages.map((path) => ({
+      pages: prerenderPages.map((path) => ({
         path,
         prerender: { enabled: true, crawlLinks: false },
       })),

@@ -20,7 +20,7 @@ export function CrBenchmarkTable() {
               <TableHead>Eqv. level</TableHead>
               <TableHead>AC / DC</TableHead>
               <TableHead>HP (range)</TableHead>
-              <TableHead>Prof. bonus</TableHead>
+              <TableHead>Atk. bonus</TableHead>
               <TableHead>Damage / round</TableHead>
               <TableHead>Attacks</TableHead>
               <TableHead>Damage / attack</TableHead>

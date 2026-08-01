@@ -1,0 +1,6 @@
+Guide chapters now link straight to the part of the editor they talk about — click through and you land on the Identity, Combat, Defense, or Actions section instead of the top of the form. Under the hood, nearly every page of the site is now built ahead of time as plain HTML, so pages load faster and SRD monster pages are fully readable by search engines.
+
+- Links in the guide jump to the exact editor section they discuss, and those links are shareable — /editor#combat lands you on Combat
+- The whole site — home, guide, changelog, and all 329 SRD monster pages — now ships as prebuilt static pages, so they load faster
+- The site's typefaces now load for every visitor — if you've been seeing a plain typewriter-style font instead of JetBrains Mono, that's fixed
+- Nothing changes about how your creatures work: they still live in your browser

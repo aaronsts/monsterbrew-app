@@ -88,6 +88,7 @@ export const CombatForm = () => {
 
   return (
     <CollapsibleSection
+      id="combat"
       legend="Combat"
       description="Will decide how tough a creature is and how much damage it can deal"
     >
