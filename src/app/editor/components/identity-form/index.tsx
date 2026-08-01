@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { X } from "lucide-react";
+import { Info, X } from "lucide-react";
 import { Controller, useFormContext } from "react-hook-form";
 import { CollapsibleSection } from "../collapsible-section";
 import type { Monster } from "@/schema/monster-schema";
@@ -31,6 +31,12 @@ import {
   ItemMedia,
   ItemTitle,
 } from "@/components/ui/item";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { CREATURE_SIZES, CREATURE_TYPES } from "@/lib/constants";
 import { blockMinusKey, titleCase } from "@/lib/utils";
 import { Languages } from "@/schema/createCreatureSchema";
@@ -98,7 +104,21 @@ export const IdentityForm = () => {
             const selectedType = findByText(CREATURE_TYPES, field.value);
             return (
               <Field data-invalid={fieldState.invalid}>
-                <FieldLabel htmlFor="form-rhf-input-type">Type</FieldLabel>
+                <div className="flex items-center gap-1">
+                  <FieldLabel htmlFor="form-rhf-input-type">Type</FieldLabel>
+                  {selectedType && (
+                    <TooltipProvider delay={0}>
+                      <Tooltip>
+                        <TooltipTrigger>
+                          <Info className="text-primary-300 size-4" />
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          {selectedType.description}
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  )}
+                </div>
                 <Combobox<CreatureTypeOption>
                   items={CREATURE_TYPES}
                   value={selectedType ?? null}
@@ -134,11 +154,6 @@ export const IdentityForm = () => {
                     </ComboboxList>
                   </ComboboxContent>
                 </Combobox>
-                {selectedType && (
-                  <FieldDescription>
-                    {selectedType.description}
-                  </FieldDescription>
-                )}
                 {fieldState.invalid && (
                   <FieldError errors={[fieldState.error]} />
                 )}
