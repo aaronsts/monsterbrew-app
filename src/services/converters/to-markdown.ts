@@ -7,6 +7,7 @@ import {
   calculateStatBonus,
   capitalizeWords,
   formatMod,
+  formatMovements,
   titleCase,
 } from "@/lib/utils";
 
@@ -46,13 +47,7 @@ export function monsterToHomebrewery(creature: Monster): string {
   const pb = creature.cr.proficiency_bonus || 0;
   const lines: Array<string> = [];
 
-  const movements: Array<string> = [];
-  Object.entries(creature.movements).forEach(([key, value]) => {
-    if (!value) return;
-    movements.push(
-      key === "walk" ? `${value} ft.` : `${titleCase(key)} ${value} ft.`,
-    );
-  });
+  const movements = formatMovements(creature.movements);
 
   const medianHP = calculateHitPoints(
     creature.hit_dice,

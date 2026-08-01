@@ -19,7 +19,7 @@ export type AbilityKey = keyof Monster["ability_scores"];
 const ABILITY_KEYS = abilityScoresSchema.keyof().options;
 
 export type CombatStats = {
-  /** The ability driving the projections; ties go to canonical order. */
+  /** The ability driving the projections; never CON, ties go to canonical order. */
   bestAbility: AbilityKey;
   attackBonus: number;
   saveDc: number;
@@ -64,13 +64,16 @@ export function benchmarkForCr(cr: string): CrBenchmark | undefined {
  * Project the attack bonus and save DC from the creature's highest ability
  * modifier and proficiency bonus — deliberately independent of how (or
  * whether) the Actions text is written, so the guidance is stable from the
- * moment ability scores and a CR are set.
+ * moment ability scores and a CR are set. CON is skipped: no attack or
+ * spellcasting ability is ever CON-linked, so a high CON (common on brutes)
+ * must not drive the projection.
  */
 export function extractCombatStats(
   monster: Pick<Monster, "ability_scores" | "cr">,
 ): CombatStats {
   let bestAbility: AbilityKey = ABILITY_KEYS[0];
   for (const key of ABILITY_KEYS) {
+    if (key === "con") continue;
     if (
       calculateStatBonus(monster.ability_scores[key]) >
       calculateStatBonus(monster.ability_scores[bestAbility])

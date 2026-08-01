@@ -60,7 +60,7 @@ function HintChip({
           render={
             <span
               className={cn(
-                "flex items-center max-h-4 px-1 gap-1 text-[10px] font-normal",
+                "flex w-fit items-center max-h-4 px-1 gap-1 text-[10px] font-normal",
                 display.className,
               )}
             />

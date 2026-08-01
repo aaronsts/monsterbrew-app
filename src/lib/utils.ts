@@ -57,6 +57,26 @@ export function capitalizeWords(value: string): string {
   return value.replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
+const MOVEMENT_KEYS = ["walk", "swim", "burrow", "climb", "fly"] as const;
+
+/**
+ * Speed-line entries for a statblock, e.g. `["30 ft.", "Fly 60 ft. (hover)"]`.
+ * `hover` is a flag on the fly speed, not a movement mode of its own.
+ */
+export function formatMovements(
+  movements: Partial<Record<(typeof MOVEMENT_KEYS)[number], number>> & {
+    hover?: boolean;
+  },
+): Array<string> {
+  return MOVEMENT_KEYS.flatMap((key) => {
+    const value = movements[key];
+    if (!value) return [];
+    if (key === "walk") return [`${value} ft.`];
+    const hover = key === "fly" && movements.hover ? " (hover)" : "";
+    return [`${titleCase(key)} ${value} ft.${hover}`];
+  });
+}
+
 export function calculateHitPoints(
   amount: string,
   size: string,

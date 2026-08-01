@@ -92,6 +92,15 @@ describe("extractCombatStats", () => {
     });
     expect(stats.bestAbility).toBe("dex");
   });
+
+  it("never projects from CON, even when it is the highest score", () => {
+    const stats = extractCombatStats({
+      ...base,
+      ability_scores: { str: 14, dex: 12, con: 20, int: 10, wis: 10, cha: 10 },
+    });
+    expect(stats.bestAbility).toBe("str"); // +2, the highest attack-capable
+    expect(stats.attackBonus).toBe(6); // +2 STR + 4 PB
+  });
 });
 
 describe("classify", () => {

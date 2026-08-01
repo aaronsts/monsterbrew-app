@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { calculateHitPoints, formatMod } from "./utils";
+import { calculateHitPoints, formatMod, formatMovements } from "./utils";
 
 describe("formatMod", () => {
   it("prefixes zero and positive modifiers with a plus", () => {
@@ -9,6 +9,29 @@ describe("formatMod", () => {
 
   it("keeps the minus on negative modifiers", () => {
     expect(formatMod(-2)).toBe("-2");
+  });
+});
+
+describe("formatMovements", () => {
+  it("renders walk bare and other modes with a label", () => {
+    expect(formatMovements({ walk: 30, swim: 20, fly: 60 })).toEqual([
+      "30 ft.",
+      "Swim 20 ft.",
+      "Fly 60 ft.",
+    ]);
+  });
+
+  it("marks the fly speed as hovering instead of listing hover", () => {
+    expect(formatMovements({ walk: 30, fly: 60, hover: true })).toEqual([
+      "30 ft.",
+      "Fly 60 ft. (hover)",
+    ]);
+  });
+
+  it("ignores hover without a fly speed and skips zero speeds", () => {
+    expect(formatMovements({ walk: 30, fly: 0, hover: true })).toEqual([
+      "30 ft.",
+    ]);
   });
 });
 
