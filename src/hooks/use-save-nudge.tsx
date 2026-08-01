@@ -19,19 +19,13 @@ export function useSaveNudge(
   useEffect(() => {
     onSaveRef.current = onSave;
   });
-  const shownRef = useRef(false);
 
   useEffect(() => {
-    if (!enabled) {
-      shownRef.current = false;
-      return;
-    }
+    if (!enabled) return;
     let changes = 0;
-    let timer: ReturnType<typeof setTimeout> | undefined;
+    let timer: ReturnType<typeof setInterval> | undefined;
 
     const nudge = () => {
-      if (shownRef.current) return;
-      shownRef.current = true;
       toast("You have unsaved changes", {
         id: NUDGE_TOAST_ID,
         description: "Save this creature to turn on auto-save.",
@@ -55,13 +49,13 @@ export function useSaveNudge(
       callback: ({ type }) => {
         if (type !== "change") return;
         changes += 1;
-        if (!timer) timer = setTimeout(nudge, 60_000);
-        if (changes >= 10) nudge();
+        if (!timer) timer = setInterval(nudge, 30_000);
+        if (changes === 10) nudge();
       },
     });
     return () => {
       unsubscribe();
-      if (timer) clearTimeout(timer);
+      if (timer) clearInterval(timer);
     };
   }, [enabled, subscribe]);
 }
