@@ -45,6 +45,15 @@ describe("monsterToHomebrewery", () => {
     expect(md).toContain("**Speed** :: 30 ft., Fly 60 ft.");
   });
 
+  it("renders hover as a flag on the fly speed", () => {
+    const md = monsterToHomebrewery(
+      makeMonster({
+        movements: { ...defaultMonster.movements, walk: 30, fly: 60, hover: true },
+      }),
+    );
+    expect(md).toContain("**Speed** :: 30 ft., Fly 60 ft. (hover)");
+  });
+
   it("uses a custom initiative bonus when set", () => {
     const md = monsterToHomebrewery(
       makeMonster({

@@ -105,17 +105,14 @@ export const CombatForm = () => {
               control={control}
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
-                  <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-                    <FieldLabel htmlFor={`form-rhf-input-${ability}`}>
-                      {ability.toUpperCase()}{" "}
-                      {modifier !== undefined && (
-                        <span className="text-muted-foreground/60">
-                          ({modifier >= 0 ? `+${modifier}` : modifier})
-                        </span>
-                      )}
-                    </FieldLabel>
-                    <CrAbilityHint ability={ability} />
-                  </div>
+                  <FieldLabel htmlFor={`form-rhf-input-${ability}`}>
+                    {ability.toUpperCase()}{" "}
+                    {modifier !== undefined && (
+                      <span className="text-muted-foreground/60">
+                        ({modifier >= 0 ? `+${modifier}` : modifier})
+                      </span>
+                    )}
+                  </FieldLabel>
                   <Input
                     {...field}
                     id={`form-rhf-input-${ability}`}
@@ -126,6 +123,7 @@ export const CombatForm = () => {
                     aria-invalid={fieldState.invalid}
                     placeholder="10"
                   />
+                  <CrAbilityHint ability={ability} />
                   {fieldState.invalid && (
                     <FieldError errors={[fieldState.error]} />
                   )}

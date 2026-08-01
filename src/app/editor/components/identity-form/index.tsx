@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { X } from "lucide-react";
+import { Info, X } from "lucide-react";
 import { Controller, useFormContext } from "react-hook-form";
 import { CollapsibleSection } from "../collapsible-section";
 import type { Monster } from "@/schema/monster-schema";
@@ -31,6 +31,12 @@ import {
   ItemMedia,
   ItemTitle,
 } from "@/components/ui/item";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { CREATURE_SIZES, CREATURE_TYPES } from "@/lib/constants";
 import { blockMinusKey, titleCase } from "@/lib/utils";
 import { Languages } from "@/schema/createCreatureSchema";
@@ -43,6 +49,26 @@ const SENSES = [
 ] as const;
 
 const LANGUAGES = Object.values(Languages);
+
+type CreatureTypeOption = (typeof CREATURE_TYPES)[number];
+type CreatureSizeOption = (typeof CREATURE_SIZES)[number];
+
+/**
+ * Match the field's free text back to a known option — stored values may
+ * carry either the label ("Aberration") or the value ("aberration") casing.
+ */
+function findByText<T extends { label: string; value: string }>(
+  options: ReadonlyArray<T>,
+  text: string | undefined,
+): T | undefined {
+  const needle = text?.trim().toLowerCase();
+  if (!needle) return undefined;
+  return options.find(
+    (option) =>
+      option.label.toLowerCase() === needle ||
+      option.value.toLowerCase() === needle,
+  );
+}
 
 export const IdentityForm = () => {
   const { control } = useFormContext<Monster>();
@@ -74,44 +100,66 @@ export const IdentityForm = () => {
         <Controller
           name="type"
           control={control}
-          render={({ field, fieldState }) => (
-            <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor="form-rhf-input-type">Type</FieldLabel>
-              <Combobox
-                items={CREATURE_TYPES}
-                inputValue={field.value}
-                itemToStringValue={(size: (typeof CREATURE_TYPES)[number]) =>
-                  size.label
-                }
-                onInputValueChange={field.onChange}
-                autoHighlight
-              >
-                <ComboboxInput
-                  id="form-rhf-input-type"
-                  placeholder="Select a type"
-                  showClear
-                />
-                <ComboboxContent>
-                  <ComboboxEmpty>No items found.</ComboboxEmpty>
-                  <ComboboxList>
-                    {(item: (typeof CREATURE_TYPES)[number]) => (
-                      <ComboboxItem key={item.value} value={item.value}>
-                        <Item size="sm">
-                          <ItemContent>
-                            <ItemTitle>{item.label}</ItemTitle>
-                            <ItemDescription>
-                              {item.description}
-                            </ItemDescription>
-                          </ItemContent>
-                        </Item>
-                      </ComboboxItem>
-                    )}
-                  </ComboboxList>
-                </ComboboxContent>
-              </Combobox>
-              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-            </Field>
-          )}
+          render={({ field, fieldState }) => {
+            const selectedType = findByText(CREATURE_TYPES, field.value);
+            return (
+              <Field data-invalid={fieldState.invalid}>
+                <div className="flex items-center gap-1">
+                  <FieldLabel htmlFor="form-rhf-input-type">Type</FieldLabel>
+                  {selectedType && (
+                    <TooltipProvider delay={0}>
+                      <Tooltip>
+                        <TooltipTrigger>
+                          <Info className="text-primary-300 size-4" />
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          {selectedType.description}
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  )}
+                </div>
+                <Combobox<CreatureTypeOption>
+                  items={CREATURE_TYPES}
+                  value={selectedType ?? null}
+                  onValueChange={(type) => field.onChange(type?.value ?? "")}
+                  inputValue={field.value}
+                  onInputValueChange={(text: string) =>
+                    field.onChange(
+                      findByText(CREATURE_TYPES, text)?.value ?? text,
+                    )
+                  }
+                  autoHighlight
+                >
+                  <ComboboxInput
+                    id="form-rhf-input-type"
+                    placeholder="Select a type"
+                    showClear
+                  />
+                  <ComboboxContent>
+                    <ComboboxEmpty>No items found.</ComboboxEmpty>
+                    <ComboboxList>
+                      {(item: (typeof CREATURE_TYPES)[number]) => (
+                        <ComboboxItem key={item.value} value={item}>
+                          <Item size="sm">
+                            <ItemContent>
+                              <ItemTitle>{item.label}</ItemTitle>
+                              <ItemDescription>
+                                {item.description}
+                              </ItemDescription>
+                            </ItemContent>
+                          </Item>
+                        </ComboboxItem>
+                      )}
+                    </ComboboxList>
+                  </ComboboxContent>
+                </Combobox>
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            );
+          }}
         />
         <Controller
           name="size"
@@ -119,13 +167,16 @@ export const IdentityForm = () => {
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
               <FieldLabel htmlFor="form-rhf-input-size">Size</FieldLabel>
-              <Combobox
+              <Combobox<CreatureSizeOption>
                 items={CREATURE_SIZES}
+                value={findByText(CREATURE_SIZES, field.value) ?? null}
+                onValueChange={(size) => field.onChange(size?.value ?? "")}
                 inputValue={field.value}
-                itemToStringValue={(size: (typeof CREATURE_SIZES)[number]) =>
-                  size.label
+                onInputValueChange={(text: string) =>
+                  field.onChange(
+                    findByText(CREATURE_SIZES, text)?.value ?? text,
+                  )
                 }
-                onInputValueChange={field.onChange}
                 autoHighlight
               >
                 <ComboboxInput
@@ -137,7 +188,7 @@ export const IdentityForm = () => {
                   <ComboboxEmpty>No items found.</ComboboxEmpty>
                   <ComboboxList>
                     {(item: (typeof CREATURE_SIZES)[number]) => (
-                      <ComboboxItem key={item.value} value={item.value}>
+                      <ComboboxItem key={item.value} value={item}>
                         <Item size="xs">
                           <ItemMedia>d{item.hit_dice}</ItemMedia>
                           <ItemContent>

@@ -12,6 +12,7 @@ import {
   capitalizeWords,
   cn,
   formatMod,
+  formatMovements,
   titleCase,
 } from "@/lib/utils";
 import { resolveMarkup } from "@/lib/statblock-markup";
@@ -137,13 +138,7 @@ export function MonsterStatblock({
     ? creature.hit_points
     : medianHP || creature.hit_points;
 
-  const movements: Array<string> = [];
-  Object.entries(creature.movements).forEach(([key, value]) => {
-    if (!value) return;
-    movements.push(
-      key === "walk" ? `${value} ft.` : `${titleCase(key)} ${value} ft.`,
-    );
-  });
+  const movements = formatMovements(creature.movements);
 
   const abilityScores = ABILITY_KEYS.map((key) => ({
     key,
