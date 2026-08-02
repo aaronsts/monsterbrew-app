@@ -27,7 +27,7 @@ import type {
   CompletionContext,
   CompletionResult,
 } from "@codemirror/autocomplete";
-import type { MarkupContext } from "@/lib/statblock-markup";
+import type { MarkupContext, TagSegment } from "@/lib/statblock-markup";
 import { compositeProblems, markupLint } from "@/lib/markup-lint";
 import { keySegments } from "@/lib/token-keys";
 import { TAG_CATALOG } from "@/lib/tag-catalog";
@@ -139,6 +139,23 @@ class TokenChipWidget extends WidgetType {
 }
 
 /**
+ * Only well-formed, single-line tokens collapse into chips and open their
+ * dialog from a click; broken ones stay plain hand-editable text so lint
+ * squiggles and caret placement keep working on them.
+ */
+function isChippable(seg: TagSegment): boolean {
+  return !seg.raw.includes("\n") && compositeProblems(seg).length === 0;
+}
+
+/** The keyed tag segment matching `key` in the current doc, if any. */
+function segmentForKey(state: EditorState, key: string): TagSegment | null {
+  const match = keySegments(parseMarkup(state.doc.toString())).find(
+    (k) => k.key === key,
+  );
+  return match?.seg.type === "tag" ? match.seg : null;
+}
+
+/**
  * Live-preview decorations: an editable token renders as a resolved-text
  * chip while the caret is elsewhere, and as raw tagged text (tinted, with
  * `data-token-key` for tests/tooling) while the caret is inside it or its
@@ -155,9 +172,7 @@ function buildTokenDecorations(state: EditorState): DecorationSet {
     const caretInside = head > seg.start && head < seg.end;
     const isActive = key === activeKey;
 
-    const chippable =
-      !seg.raw.includes("\n") && compositeProblems(seg).length === 0;
-    if (ctx && !caretInside && !isActive && chippable) {
+    if (ctx && !caretInside && !isActive && isChippable(seg)) {
       builder.add(
         seg.start,
         seg.end,
@@ -282,6 +297,24 @@ export const MarkupEditor = forwardRef<MarkupEditorHandle, MarkupEditorProps>(
             editorTheme,
             EditorView.domEventHandlers({
               blur: () => callbacksRef.current.onBlur?.(),
+              // A token whose raw text is showing (caret inside it, so no
+              // chip) opens its dialog on click too. Plain caret clicks
+              // only — a drag leaves a selection behind — and only tokens
+              // a chip would open, so broken ones stay click-editable.
+              click: (event, view) => {
+                if (event.button !== 0) return;
+                if (!view.state.selection.main.empty) return;
+                const target =
+                  event.target instanceof Element ? event.target : null;
+                const key = target
+                  ?.closest("[data-token-key]")
+                  ?.getAttribute("data-token-key");
+                if (!key) return;
+                const seg = segmentForKey(view.state, key);
+                if (seg && isChippable(seg)) {
+                  callbacksRef.current.onTokenClick(key);
+                }
+              },
             }),
             EditorView.updateListener.of((update) => {
               if (update.docChanged) {

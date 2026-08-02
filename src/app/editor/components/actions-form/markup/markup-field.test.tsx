@@ -223,6 +223,30 @@ describe("MarkupField (CodeMirror)", () => {
     );
   });
 
+  it("opens the editor dialog from a click on raw token text (caret inside)", async () => {
+    const { container } = render(
+      <Harness initial="Bite. {@attack m|con|5|1d6+str|slashing} x" />,
+    );
+    const view = getView(container);
+    act(() => view.focus());
+    act(() => view.dispatch({ selection: { anchor: 25 } })); // caret on "1d6"
+
+    // The token shows raw for hand-editing; clicking it still opens the
+    // dialog, same as clicking its chip would.
+    const mark = container.querySelector('[data-token-key="attack:0"]');
+    expect(mark).not.toBeNull();
+    fireEvent.click(mark!);
+    expect(await screen.findByLabelText("Damage dice")).toBeDefined();
+  });
+
+  it("keeps clicks on an invalid raw token dialog-free for hand repair", () => {
+    const { container } = render(<Harness initial="x {@attack q|banana} y" />);
+    const mark = container.querySelector('[data-token-key="attack:0"]');
+    expect(mark).not.toBeNull();
+    fireEvent.click(mark!);
+    expect(screen.queryByLabelText("Damage dice")).toBeNull();
+  });
+
   it("keeps the dialog closed while the caret moves through a composite tag", () => {
     const { container } = render(
       <Harness initial="Bite. {@attack m|con|5|1d6+str|slashing} x" />,
