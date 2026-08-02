@@ -76,4 +76,54 @@ test.describe("SRD library", () => {
       .filter({ hasText: /^HP\b/ });
     await expect(hpLine).toContainText("170");
   });
+
+  test("renders the baked-in {@…} tags as resolved statblock text", async ({
+    page,
+  }) => {
+    // SRD descriptions ship as {@attack}/{@save}/{@damage} tags; the detail
+    // page must resolve them — computed values, the official Hit: label the
+    // upstream prose omits, and no leaked braces.
+    await openSrdMonster(page, "Aboleth");
+
+    const tentacle = statblock(page)
+      .locator("p")
+      .filter({ hasText: /^Tentacle\./ });
+    await expect(tentacle).toContainText(
+      "Melee Attack Roll: +9, reach 15 ft. Hit: 12 (2d6 + 5) Bludgeoning damage.",
+    );
+    const consume = statblock(page)
+      .locator("p")
+      .filter({ hasText: /^Consume Memories\./ });
+    await expect(consume).toContainText(
+      "Intelligence Saving Throw: DC 16",
+    );
+    await expect(statblock(page)).not.toContainText("{@");
+  });
+
+  test("copied SRD monsters recompute stat-linked values in the editor", async ({
+    page,
+  }) => {
+    await openSrdMonster(page, "Aboleth");
+    await page.getByRole("button", { name: "Copy to editor" }).click();
+    await expect(page).toHaveURL(/\/editor/);
+
+    // The preview resolves the copied tags with the aboleth's own stats.
+    const tentacle = statblock(page)
+      .locator("p")
+      .filter({ hasText: /^Tentacle\./ });
+    await expect(tentacle).toContainText("Melee Attack Roll: +9");
+    await expect(statblock(page)).not.toContainText("{@");
+
+    // STR 21 -> 23 bumps the STR-linked to-hit; INT 18 -> 20 bumps the
+    // INT-derived save DC. That's the point of the tags: no retyping.
+    await page.locator("#form-rhf-input-str").fill("23");
+    await expect(tentacle).toContainText("Melee Attack Roll: +10");
+
+    const consume = statblock(page)
+      .locator("p")
+      .filter({ hasText: /^Consume Memories\./ });
+    await expect(consume).toContainText("DC 16");
+    await page.locator("#form-rhf-input-int").fill("20");
+    await expect(consume).toContainText("DC 17");
+  });
 });
