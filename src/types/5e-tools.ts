@@ -43,13 +43,24 @@ const abilityScore = z.union([
 const legendaryActions = z.number().int().min(1);
 
 // Speed definition
+// 2024-era bestiary data writes conditional speeds as objects,
+// e.g. fly: { number: 90, condition: "(hover)" }
+const speedValue = z.union([
+  z.number().int(),
+  z.string(),
+  z.object({
+    number: z.number().int(),
+    condition: z.string().optional(),
+  }),
+]);
+
 const speed = z
   .object({
-    walk: z.union([z.number().int(), z.string()]).optional(),
-    fly: z.union([z.number().int(), z.string()]).optional(),
-    swim: z.union([z.number().int(), z.string()]).optional(),
-    climb: z.union([z.number().int(), z.string()]).optional(),
-    burrow: z.union([z.number().int(), z.string()]).optional(),
+    walk: speedValue.optional(),
+    fly: speedValue.optional(),
+    swim: speedValue.optional(),
+    climb: speedValue.optional(),
+    burrow: speedValue.optional(),
     hover: z.boolean().optional(),
     canHover: z.boolean().optional(),
   })
@@ -304,6 +315,9 @@ export const fiveECreatureSchema = z.object({
           vulnerable: z.array(z.string()),
           note: z.string().optional(),
         }),
+        z.object({
+          special: z.string(),
+        }),
       ])
     )
     .optional(),
@@ -314,6 +328,9 @@ export const fiveECreatureSchema = z.object({
         z.object({
           resist: z.array(z.string()),
           note: z.string().optional(),
+        }),
+        z.object({
+          special: z.string(),
         }),
       ])
     )
@@ -326,6 +343,9 @@ export const fiveECreatureSchema = z.object({
           immune: z.array(z.string()),
           note: z.string().optional(),
         }),
+        z.object({
+          special: z.string(),
+        }),
       ])
     )
     .optional(),
@@ -336,6 +356,9 @@ export const fiveECreatureSchema = z.object({
         z.object({
           conditionImmune: z.array(z.string()),
           note: z.string().optional(),
+        }),
+        z.object({
+          special: z.string(),
         }),
       ])
     )
