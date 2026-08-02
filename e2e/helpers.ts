@@ -149,12 +149,13 @@ export async function toggleLanguage(page: Page, value: string) {
 }
 
 /**
- * Open a creature detail page's "Actions" dropdown menu and click one of its
- * items (e.g. "Edit", "Duplicate", "Delete").
+ * Click one of a creature detail page's action icon buttons (e.g. "Edit",
+ * "Duplicate", "Delete") — the tooltip-labelled buttons that replaced the
+ * old "Actions" dropdown (#137). Exact match so "Edit" doesn't catch the
+ * "Editor" nav control.
  */
 export async function clickCreatureAction(page: Page, action: string) {
-  await page.getByRole("button", { name: "Actions" }).click();
-  await page.getByRole("menuitem", { name: action }).click();
+  await page.getByRole("button", { name: action, exact: true }).click();
 }
 
 /** Add a feature to one of the editor's field arrays and fill its inputs. */
