@@ -2,29 +2,35 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate, useSearch } from "@tanstack/react-router";
+import { TriangleAlert, Upload } from "lucide-react";
 import { useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
-import { Upload } from "lucide-react";
-import { IdentityForm } from "./identity-form";
+import { ActionsForm } from "./actions-form";
+import { AutoSaveIndicator } from "./auto-save-indicator";
 import { CombatForm } from "./combat-form";
 import { CrCalculator } from "./cr-calculator";
 import { CrSuggestionsToggle } from "./cr-calculator/cr-suggestions-toggle";
 import { DefenseForm } from "./defense-form";
-import { ActionsForm } from "./actions-form";
+import { IdentityForm } from "./identity-form";
 import { ImportDialog } from "./import-dialog";
-import { AutoSaveIndicator } from "./auto-save-indicator";
-import type { Monster } from "@/schema/monster-schema";
+import type { Monster, StoredMonster } from "@/schema/monster-schema";
+import { defaultMonster, monsterSchema } from "@/schema/monster-schema";
+import { generateId } from "@/lib/utils";
+import { useSaveNudge } from "@/hooks/use-save-nudge";
+import { usePassivePerception } from "@/hooks/use-passive-perception";
+import { useEditCreatureHandoff } from "@/hooks/use-edit-creature-handoff";
 import { useCreature, useSaveCreature } from "@/hooks/use-creatures";
 import { useAutoSave } from "@/hooks/use-auto-save";
-import { useEditCreatureHandoff } from "@/hooks/use-edit-creature-handoff";
-import { usePassivePerception } from "@/hooks/use-passive-perception";
-import { useSaveNudge } from "@/hooks/use-save-nudge";
-import { generateId } from "@/lib/utils";
-import { defaultMonster, monsterSchema } from "@/schema/monster-schema";
-import { MonsterStatblock } from "@/components/monster-statblock";
-import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
+import { Button } from "@/components/ui/button";
+import {
+  Alert,
+  AlertAction,
+  AlertDescription,
+  AlertTitle,
+} from "@/components/ui/alert";
+import { MonsterStatblock } from "@/components/monster-statblock";
 
 export const MonsterForm = () => {
   const { id: idParam } = useSearch({ from: "/editor" });
@@ -34,9 +40,22 @@ export const MonsterForm = () => {
   const { data: loadedCreature } = useCreature(idParam);
   const saveCreature = useSaveCreature();
 
+  // Every auto-save echoes its own write back into the detail cache (see
+  // useAutoSaveCreature). Feeding that echo into RHF's `values:` resets the
+  // form, which regenerates useFieldArray keys and remounts the trait/action
+  // rows — stealing focus mid-typing (#137). The editor is the only writer,
+  // so hydrate from the store only when the edited id changes.
+  const [hydration, setHydration] = useState<{
+    id: string | undefined;
+    creature: StoredMonster | null;
+  }>({ id: idParam, creature: null });
+  if (hydration.id !== idParam || (!hydration.creature && loadedCreature)) {
+    setHydration({ id: idParam, creature: loadedCreature ?? null });
+  }
+
   const form = useForm({
     resolver: zodResolver(monsterSchema),
-    values: loadedCreature ?? defaultMonster,
+    values: hydration.creature ?? defaultMonster,
     resetOptions: { keepDirtyValues: true },
   });
 
@@ -50,7 +69,7 @@ export const MonsterForm = () => {
     // When loading via ?id=, wait until the stored creature has hydrated the
     // form — otherwise a slow load could let auto-save persist the blank
     // default form over the stored creature.
-    enabled: Boolean(effectiveId) && (!idParam || loadedCreature != null),
+    enabled: Boolean(effectiveId) && (!idParam || hydration.creature != null),
   });
 
   const preview = useWatch({ control: form.control }) as Monster;
@@ -88,17 +107,26 @@ export const MonsterForm = () => {
     }
   }
 
-  // The nudge's save keeps you in the editor — it exists to arm auto-save
-  // mid-edit, not to end the editing session like the explicit Save button.
-  useSaveNudge(form, {
-    enabled: !effectiveId,
-    onSave: () => save({ stayInEditor: true }),
-  });
+  const showSaveNudge = useSaveNudge(form, { enabled: !effectiveId });
 
   return (
     <Form {...form}>
       <div className="space-y-4">
         <div className="flex fixed bg-background py-2 bottom-2 z-50 inset-x-4 lg:sticky lg:top-14 items-center justify-end gap-2">
+          {showSaveNudge && (
+            <Alert variant="info" className="max-w-lg mr-auto">
+              <TriangleAlert />
+              <AlertTitle>You have unsaved changes</AlertTitle>
+              <AlertDescription>
+                Save this creature to turn on auto-save.
+              </AlertDescription>
+              <AlertAction>
+                <Button size="sm" onClick={() => save({ stayInEditor: true })}>
+                  Save now
+                </Button>
+              </AlertAction>
+            </Alert>
+          )}
           {effectiveId && <AutoSaveIndicator status={autoSaveStatus} />}
           <CrSuggestionsToggle />
           <Button

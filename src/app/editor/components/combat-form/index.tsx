@@ -92,6 +92,115 @@ export const CombatForm = () => {
       legend="Combat"
       description="Will decide how tough a creature is and how much damage it can deal"
     >
+      {/* Challenge Rating & Initiative */}
+      <FieldGroup className="grid grid-cols-2">
+        <Controller
+          name="cr"
+          control={control}
+          render={({ field, fieldState }) => (
+            <Field
+              data-invalid={fieldState.invalid}
+              className="col-span-2 md:col-span-1"
+            >
+              <FieldLabel htmlFor="form-rhf-input-cr">
+                Challenge Rating
+              </FieldLabel>
+              <Combobox
+                items={CHALLENGE_RATINGS}
+                value={field.value}
+                onValueChange={field.onChange}
+                autoHighlight
+                isItemEqualToValue={(
+                  item: ChallengeRating,
+                  value: ChallengeRating,
+                ) => item.challenge_rating === value?.challenge_rating}
+                itemToStringLabel={(rating: ChallengeRating) =>
+                  `${rating.challenge_rating} (${new Intl.NumberFormat().format(
+                    rating.experience,
+                  )} XP)`
+                }
+              >
+                <ComboboxInput
+                  id="form-rhf-input-cr"
+                  placeholder="Select a rating"
+                  showClear
+                />
+                <ComboboxContent>
+                  <ComboboxEmpty>No items found.</ComboboxEmpty>
+                  <ComboboxList>
+                    {(item: ChallengeRating) => (
+                      <ComboboxItem key={item.experience} value={item}>
+                        <Item size="xs">
+                          <ItemContent>
+                            <ItemTitle>{item.challenge_rating}</ItemTitle>
+                          </ItemContent>
+                          <ItemMedia className="text-muted-foreground">
+                            {new Intl.NumberFormat().format(item.experience)} XP
+                          </ItemMedia>
+                        </Item>
+                      </ComboboxItem>
+                    )}
+                  </ComboboxList>
+                </ComboboxContent>
+              </Combobox>
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+            </Field>
+          )}
+        />
+        <Controller
+          name="initiative_bonus"
+          control={control}
+          render={({ field, fieldState }) => (
+            <Field
+              data-invalid={fieldState.invalid}
+              className="col-span-2 md:col-span-1"
+            >
+              <div className="flex items-center justify-between gap-2">
+                <FieldLabel htmlFor="form-rhf-input-initiative-bonus">
+                  Initiative
+                </FieldLabel>
+                <Controller
+                  name="custom_initiative"
+                  control={control}
+                  render={({ field: customField }) => (
+                    <Field
+                      orientation="horizontal"
+                      className="w-auto items-center"
+                    >
+                      <Switch
+                        id="form-rhf-input-custom-initiative"
+                        size="sm"
+                        checked={customField.value ?? false}
+                        onCheckedChange={customField.onChange}
+                      />
+                      <FieldLabel
+                        htmlFor="form-rhf-input-custom-initiative"
+                        className="text-xs font-normal text-muted-foreground"
+                      >
+                        <span aria-hidden>Manual</span>
+                        <span className="sr-only">Manual initiative</span>
+                      </FieldLabel>
+                    </Field>
+                  )}
+                />
+              </div>
+              <Input
+                {...field}
+                value={field.value ?? 0}
+                id="form-rhf-input-initiative-bonus"
+                type="number"
+                onFocus={(e) => e.target.select()}
+                disabled={!custom_initiative}
+                aria-invalid={fieldState.invalid}
+                placeholder="ex. 2"
+              />
+              <FieldDescription>Bonus to initiative</FieldDescription>
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+            </Field>
+          )}
+        />
+      </FieldGroup>
+
       {/* Ability Scores */}
       <FieldGroup className="grid grid-cols-3 xl:grid-cols-6">
         {ABILITY_SCORES.map((ability) => {
@@ -201,115 +310,6 @@ export const CombatForm = () => {
               <FieldDescription aria-hidden className="sr-only">
                 10 + WIS modifier
               </FieldDescription>
-              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-            </Field>
-          )}
-        />
-      </FieldGroup>
-
-      {/* Challenge Rating & Initiative */}
-      <FieldGroup className="grid grid-cols-2">
-        <Controller
-          name="cr"
-          control={control}
-          render={({ field, fieldState }) => (
-            <Field
-              data-invalid={fieldState.invalid}
-              className="col-span-2 md:col-span-1"
-            >
-              <FieldLabel htmlFor="form-rhf-input-cr">
-                Challenge Rating
-              </FieldLabel>
-              <Combobox
-                items={CHALLENGE_RATINGS}
-                value={field.value}
-                onValueChange={field.onChange}
-                autoHighlight
-                isItemEqualToValue={(
-                  item: ChallengeRating,
-                  value: ChallengeRating,
-                ) => item.challenge_rating === value?.challenge_rating}
-                itemToStringLabel={(rating: ChallengeRating) =>
-                  `${rating.challenge_rating} (${new Intl.NumberFormat().format(
-                    rating.experience,
-                  )} XP)`
-                }
-              >
-                <ComboboxInput
-                  id="form-rhf-input-cr"
-                  placeholder="Select a rating"
-                  showClear
-                />
-                <ComboboxContent>
-                  <ComboboxEmpty>No items found.</ComboboxEmpty>
-                  <ComboboxList>
-                    {(item: ChallengeRating) => (
-                      <ComboboxItem key={item.experience} value={item}>
-                        <Item size="xs">
-                          <ItemContent>
-                            <ItemTitle>{item.challenge_rating}</ItemTitle>
-                          </ItemContent>
-                          <ItemMedia className="text-muted-foreground">
-                            {new Intl.NumberFormat().format(item.experience)} XP
-                          </ItemMedia>
-                        </Item>
-                      </ComboboxItem>
-                    )}
-                  </ComboboxList>
-                </ComboboxContent>
-              </Combobox>
-              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-            </Field>
-          )}
-        />
-        <Controller
-          name="initiative_bonus"
-          control={control}
-          render={({ field, fieldState }) => (
-            <Field
-              data-invalid={fieldState.invalid}
-              className="col-span-2 md:col-span-1"
-            >
-              <div className="flex items-center justify-between gap-2">
-                <FieldLabel htmlFor="form-rhf-input-initiative-bonus">
-                  Initiative
-                </FieldLabel>
-                <Controller
-                  name="custom_initiative"
-                  control={control}
-                  render={({ field: customField }) => (
-                    <Field
-                      orientation="horizontal"
-                      className="w-auto items-center"
-                    >
-                      <Switch
-                        id="form-rhf-input-custom-initiative"
-                        size="sm"
-                        checked={customField.value ?? false}
-                        onCheckedChange={customField.onChange}
-                      />
-                      <FieldLabel
-                        htmlFor="form-rhf-input-custom-initiative"
-                        className="text-xs font-normal text-muted-foreground"
-                      >
-                        <span aria-hidden>Manual</span>
-                        <span className="sr-only">Manual initiative</span>
-                      </FieldLabel>
-                    </Field>
-                  )}
-                />
-              </div>
-              <Input
-                {...field}
-                value={field.value ?? 0}
-                id="form-rhf-input-initiative-bonus"
-                type="number"
-                onFocus={(e) => e.target.select()}
-                disabled={!custom_initiative}
-                aria-invalid={fieldState.invalid}
-                placeholder="ex. 2"
-              />
-              <FieldDescription>Bonus to initiative</FieldDescription>
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
           )}
