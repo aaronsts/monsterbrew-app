@@ -10,8 +10,8 @@ export interface KeyedSegment {
 
 /**
  * Key registry-editable tags by name + occurrence index so the active
- * popover survives value edits (offsets shift on every keystroke, but "the
- * 2nd {@attack}" stays the 2nd {@attack}).
+ * editor dialog survives value edits (offsets shift on every keystroke, but
+ * "the 2nd {@attack}" stays the 2nd {@attack}).
  */
 export function keySegments(segments: Array<Segment>): Array<KeyedSegment> {
   const counts = new Map<string, number>();
@@ -28,25 +28,11 @@ export function keySegments(segments: Array<Segment>): Array<KeyedSegment> {
 /**
  * Key of the editable token starting at source offset `start` in `value`,
  * or null if there is none. Lets `MarkupField` open a just-inserted token's
- * editor by passing the result as `MarkupPreview`'s `activeKey`.
+ * editor dialog by passing the result as its `activeKey`.
  */
 export function tokenKeyAt(value: string, start: number): string | null {
   const match = keySegments(parseMarkup(value)).find(
     (k) => k.key !== null && k.seg.start === start,
-  );
-  return match?.key ?? null;
-}
-
-/**
- * Key of the editable token the caret sits inside (strictly between the
- * braces' outer edges), or null. Drives caret-opens-editor in `MarkupField`.
- */
-export function tokenKeyContaining(
-  value: string,
-  caret: number,
-): string | null {
-  const match = keySegments(parseMarkup(value)).find(
-    (k) => k.key !== null && k.seg.start < caret && caret < k.seg.end,
   );
   return match?.key ?? null;
 }

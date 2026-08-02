@@ -162,6 +162,13 @@ describe("resolveMarkup — damage", () => {
       "Hit: 10 (2d8 + 1) Acid damage.",
     );
   });
+
+  it("renders flat no-dice damage bare instead of '1 (1)'", () => {
+    expect(render("{@damage 1}")).toBe("1");
+    expect(render("{@damage 1|piercing}")).toBe("1 Piercing damage");
+    // A flat amount with a linked ability still resolves to one bare total.
+    expect(render("{@damage 1 + dex}")).toBe("3");
+  });
 });
 
 describe("resolveMarkup — saves, recharge, dice", () => {
@@ -169,6 +176,25 @@ describe("resolveMarkup — saves, recharge, dice", () => {
     expect(render("{@actSave dex}")).toBe("Dexterity Saving Throw:");
     expect(render("{@actSaveFail}")).toBe("Failure:");
     expect(render("{@actSaveSuccess}")).toBe("Success:");
+    expect(render("{@actSaveFailBy 5}")).toBe("Failure by 5 or More:");
+  });
+
+  it("renders 2024 reaction labels", () => {
+    expect(
+      render(
+        "{@actTrigger} The captain is hit by an attack roll. {@actResponse} The captain adds 2 to its AC.",
+      ),
+    ).toBe(
+      "Trigger: The captain is hit by an attack roll. Response: The captain adds 2 to its AC.",
+    );
+    // The `d` variant dash-joins a sub-headed response.
+    expect(render("{@actResponse d}")).toBe("Response—");
+  });
+
+  it("renders the Hit or Miss label glued to its sentence like {@h}", () => {
+    expect(render("{@hom}The target has the Prone condition.")).toBe(
+      "Hit or Miss: The target has the Prone condition.",
+    );
   });
 
   it("renders recharge ranges", () => {
@@ -273,6 +299,52 @@ describe("resolveMarkup — {@attack} composite", () => {
     );
   });
 
+  it("appends secondary damage with 'plus'", () => {
+    expect(render("{@attack m|11|10|2d6+6|slashing|1d8|acid}")).toBe(
+      "Melee Attack Roll: +11, reach 10 ft. Hit: 13 (2d6 + 6) Slashing damage plus 4 (1d8) Acid damage.",
+    );
+  });
+
+  it("resolves ability keywords inside secondary damage dice", () => {
+    expect(render("{@attack m|str|5|2d8+str|slashing|1d8+con|fire}")).toBe(
+      "Melee Attack Roll: +9, reach 5 ft. Hit: 14 (2d8 + 5) Slashing damage plus 7 (1d8 + 3) Fire damage.",
+    );
+  });
+
+  it("renders flat damage without an average parenthetical", () => {
+    // The 2024 Blowgun pattern: "Hit: 1 Piercing damage."
+    expect(render("{@attack r|dex|25/100|1|piercing}")).toBe(
+      "Ranged Attack Roll: +6, range 25/100 ft. Hit: 1 Piercing damage.",
+    );
+    expect(render("{@attack r|dex|25/100|1+dex|piercing}")).toBe(
+      "Ranged Attack Roll: +6, range 25/100 ft. Hit: 3 Piercing damage.",
+    );
+  });
+
+  it("renders secondary damage alone when primary dice are missing", () => {
+    expect(render("{@attack m|str|5||slashing|1d8|acid}")).toBe(
+      "Melee Attack Roll: +9, reach 5 ft. Hit: 4 (1d8) Acid damage.",
+    );
+  });
+
+  it("joins an on-hit effect to the damage with ', and'", () => {
+    expect(
+      render(
+        "{@attack m|str|5|2d8+str|slashing|||the target has the {@condition grappled|XPHB} condition (escape DC 14)}",
+      ),
+    ).toBe(
+      "Melee Attack Roll: +9, reach 5 ft. Hit: 14 (2d8 + 5) Slashing damage, and the target has the grappled condition (escape DC 14).",
+    );
+  });
+
+  it("renders an effect-only Hit clause when there are no dice", () => {
+    expect(
+      render("{@attack m|str|5|||||the target has the Grappled condition}"),
+    ).toBe(
+      "Melee Attack Roll: +9, reach 5 ft. Hit: the target has the Grappled condition.",
+    );
+  });
+
   it("never throws on malformed args", () => {
     expect(render("{@attack}")).toBe("{@attack}");
     expect(render("{@attack |||}")).toBe("Melee Attack Roll:");
@@ -304,6 +376,46 @@ describe("resolveMarkup — {@save} composite", () => {
     expect(render("{@save dex|con}")).toBe("Dexterity Saving Throw: DC 15.");
     expect(render("{@save}")).toBe("{@save}");
   });
+
+  it("renders the target clause after the DC", () => {
+    expect(
+      render(
+        "{@save dex|18|12d8|acid|half|each creature in a 60-foot-long, 5-foot-wide Line}",
+      ),
+    ).toBe(
+      "Dexterity Saving Throw: DC 18, each creature in a 60-foot-long, 5-foot-wide Line. Failure: 54 (12d8) Acid damage. Success: Half damage.",
+    );
+  });
+
+  it("renders an effect-only failure without defaulting a success clause", () => {
+    expect(
+      render(
+        "{@save wis|16||||one creature the aboleth can see within 30 feet|the target has the {@condition Charmed} condition until the aboleth dies}",
+      ),
+    ).toBe(
+      "Wisdom Saving Throw: DC 16, one creature the aboleth can see within 30 feet. Failure: the target has the Charmed condition until the aboleth dies.",
+    );
+  });
+
+  it("joins failure damage and effect text with ', and'", () => {
+    expect(
+      render(
+        "{@save dex|17|4d10|poison|none||the target has Disadvantage on saving throws until the end of its next turn}",
+      ),
+    ).toBe(
+      "Dexterity Saving Throw: DC 17. Failure: 22 (4d10) Poison damage, and the target has Disadvantage on saving throws until the end of its next turn.",
+    );
+  });
+
+  it("expresses a full line with target, damage, and a Failure or Success epilogue", () => {
+    expect(
+      render(
+        "{@save int|16|3d6|psychic|half|one creature within 30 feet that is Charmed or Grappled by the aboleth||The aboleth gains the target's memories if the target is a Humanoid}",
+      ),
+    ).toBe(
+      "Intelligence Saving Throw: DC 16, one creature within 30 feet that is Charmed or Grappled by the aboleth. Failure: 10 (3d6) Psychic damage. Success: Half damage. Failure or Success: The aboleth gains the target's memories if the target is a Humanoid.",
+    );
+  });
 });
 
 describe("resolveMarkup — {@damage} with optional type", () => {
@@ -322,6 +434,9 @@ describe("composite grammar round-trip", () => {
     "m|str||1d6+str|",
     "r|4|30/120",
     "m,r|str|5;20/60|1d6+str|piercing",
+    "m|11|10|2d6+6|slashing|1d8|acid",
+    "m|str|5|2d8+str|slashing|1d8+con|fire",
+    "m|str|5|2d8+str|slashing|||the target has the {@condition prone} condition",
   ])("serializeAttackArgs(parseAttackArgs(%j)) is idempotent", (args) => {
     const once = serializeAttackArgs(parseAttackArgs(args));
     expect(serializeAttackArgs(parseAttackArgs(once))).toBe(once);
@@ -332,6 +447,8 @@ describe("composite grammar round-trip", () => {
     "dex|con|3d6|fire",
     "con|15|8d8|poison|none",
     "str|con|||the target is {@condition prone}",
+    "int|16|3d6|psychic|half|one creature within 30 feet||The aboleth gains its memories",
+    "wis|16||||one creature it can see|the target has the {@condition Charmed} condition",
   ])("serializeSaveArgs(parseSaveArgs(%j)) is idempotent", (args) => {
     const once = serializeSaveArgs(parseSaveArgs(args));
     expect(serializeSaveArgs(parseSaveArgs(once))).toBe(once);
@@ -346,6 +463,33 @@ describe("composite grammar round-trip", () => {
       "dex|con|3d6|fire|the target is {@condition prone}",
     );
   });
+
+  it("keeps legacy five-slot tags byte-identical through parse/serialize", () => {
+    expect(
+      serializeAttackArgs(parseAttackArgs("m|str|5|2d8+str|slashing")),
+    ).toBe("m|str|5|2d8+str|slashing");
+    expect(serializeSaveArgs(parseSaveArgs("dex|con|3d6|fire|half"))).toBe(
+      "dex|con|3d6|fire|half",
+    );
+  });
+
+  it("trims unused trailing slots when serializing", () => {
+    expect(
+      serializeAttackArgs(parseAttackArgs("m|str|5|2d8+str|slashing||")),
+    ).toBe("m|str|5|2d8+str|slashing");
+  });
+
+  it("preserves nested tags in the new save slots through the round-trip", () => {
+    const args =
+      "wis|16|||none|one creature|the target has the {@condition Charmed|XPHB} condition|The {@mon} recovers";
+    const fields = parseSaveArgs(args);
+    expect(fields.target).toBe("one creature");
+    expect(fields.fail).toBe(
+      "the target has the {@condition Charmed|XPHB} condition",
+    );
+    expect(fields.epilogue).toBe("The {@mon} recovers");
+    expect(serializeSaveArgs(fields)).toBe(args);
+  });
 });
 
 describe("composite validation (editor diagnostics)", () => {
@@ -354,6 +498,24 @@ describe("composite validation (editor diagnostics)", () => {
     expect(validateAttackArgs("m,r|4|5;20/60")).toEqual([]);
     expect(validateSaveArgs("dex|con|3d6|fire|half")).toEqual([]);
     expect(validateSaveArgs("con|15")).toEqual([]);
+  });
+
+  it("accepts args using the appended slots", () => {
+    expect(validateAttackArgs("m|str|5|2d8+str|slashing|1d8|acid")).toEqual([]);
+    expect(
+      validateSaveArgs(
+        "int|16|3d6|psychic|half|one creature|the target falls|The fun ends",
+      ),
+    ).toEqual([]);
+  });
+
+  it("flags dangling secondary damage slots", () => {
+    expect(validateAttackArgs("m|str|5||slashing|1d8|acid").join()).toContain(
+      "secondary damage dice without primary damage dice",
+    );
+    expect(validateAttackArgs("m|str|5|2d8|slashing||acid").join()).toContain(
+      "secondary damage type without secondary damage dice",
+    );
   });
 
   it("flags missing or malformed attack slots", () => {

@@ -138,6 +138,43 @@ describe("MarkupField (CodeMirror)", () => {
 
     expect(fieldValue()).toBe("{@save dex|con|2d6|fire|half}");
     expect(await screen.findByLabelText("Failure damage dice")).toBeDefined();
+    // A just-inserted token gets the add wording, not the edit wording.
+    expect(
+      screen.getByRole("button", { name: "Add saving throw" }),
+    ).toBeDefined();
+  });
+
+  it("cancelling a just-inserted token removes it again", async () => {
+    const user = userEvent.setup();
+    render(<Harness />);
+
+    await user.click(
+      screen.getByRole("button", { name: /saving throw line/i }),
+    );
+    await screen.findByLabelText("Failure damage dice");
+
+    await user.click(screen.getByRole("button", { name: "Cancel" }));
+    await waitFor(() =>
+      expect(screen.queryByLabelText("Failure damage dice")).toBeNull(),
+    );
+    expect(fieldValue()).toBe("");
+  });
+
+  it("cancelling an edit keeps the token untouched", async () => {
+    const user = userEvent.setup();
+    const initial = "Bite. {@attack m|con|5|1d6+str|slashing} x";
+    const { container } = render(<Harness initial={initial} />);
+    fireEvent.mouseDown(container.querySelector(".cm-content .mb-chip")!);
+
+    const dice = await screen.findByLabelText("Damage dice");
+    await user.clear(dice);
+    await user.type(dice, "9d10");
+
+    await user.click(screen.getByRole("button", { name: "Cancel" }));
+    await waitFor(() =>
+      expect(screen.queryByLabelText("Damage dice")).toBeNull(),
+    );
+    expect(fieldValue()).toBe(initial);
   });
 
   it("collapses valid tokens into resolved-text chips while the caret is outside", () => {
@@ -169,7 +206,7 @@ describe("MarkupField (CodeMirror)", () => {
     );
   });
 
-  it("expands a chip to raw text and opens its editor on click", async () => {
+  it("opens the editor dialog from a chip click and shows the token raw", async () => {
     const { container } = render(
       <Harness initial="Bite. {@attack m|con|5|1d6+str|slashing} x" />,
     );
@@ -178,25 +215,33 @@ describe("MarkupField (CodeMirror)", () => {
 
     fireEvent.mouseDown(chip!);
     expect(await screen.findByLabelText("Damage dice")).toBeDefined();
-    // Chip expanded: raw tag text visible, chip gone for this token.
+    // Active token: raw tag text visible, chip gone for this token…
     const content = container.querySelector(".cm-content");
     expect(content?.textContent).toContain(
       "{@attack m|con|5|1d6+str|slashing}",
     );
+    // …and its decoration is tinted as active.
+    const mark = container.querySelector('[data-token-key="attack:0"]');
+    expect(mark?.className).toContain("mb-token-active");
   });
 
-  it("splices popover field edits back into the markup by exact offsets", async () => {
+  it("splices dialog field edits back into the markup on save", async () => {
     const user = userEvent.setup();
     const { container } = render(
       <Harness initial="Bite. {@attack m|con|5|1d6+str|slashing} against one target." />,
     );
-    const view = getView(container);
-    act(() => view.focus());
-    act(() => view.dispatch({ selection: { anchor: 25 } }));
+    fireEvent.mouseDown(container.querySelector(".cm-content .mb-chip")!);
 
     const dice = await screen.findByLabelText("Damage dice");
+    expect((dice as HTMLInputElement).value).toBe("1d6+str");
     await user.clear(dice);
     await user.type(dice, "2d8+str");
+    // Edits are staged in the dialog until confirmed.
+    expect(fieldValue()).toBe(
+      "Bite. {@attack m|con|5|1d6+str|slashing} against one target.",
+    );
+
+    await user.click(screen.getByRole("button", { name: "Save changes" }));
     expect(fieldValue()).toBe(
       "Bite. {@attack m|con|5|2d8+str|slashing} against one target.",
     );
@@ -207,19 +252,46 @@ describe("MarkupField (CodeMirror)", () => {
     const initial =
       "{@attack m|str|5|1d6+str|slashing} or {@attack m|str|5|1d6+str|slashing}";
     const { container } = render(<Harness initial={initial} />);
-    const view = getView(container);
-    act(() => view.focus());
-    act(() => view.dispatch({ selection: { anchor: 48 } })); // inside the 2nd
+    const chips = container.querySelectorAll<HTMLElement>(
+      ".cm-content .mb-chip",
+    );
+    expect(chips).toHaveLength(2);
+    fireEvent.mouseDown(chips[1]); // the 2nd token's chip
 
     const dice = await screen.findByLabelText("Damage dice");
     await user.clear(dice);
     await user.type(dice, "3d10");
+    await user.click(screen.getByRole("button", { name: "Save changes" }));
     expect(fieldValue()).toBe(
       "{@attack m|str|5|1d6+str|slashing} or {@attack m|str|5|3d10|slashing}",
     );
   });
 
-  it("opens the token editor when the caret lands inside a composite tag", async () => {
+  it("opens the editor dialog from a click on raw token text (caret inside)", async () => {
+    const { container } = render(
+      <Harness initial="Bite. {@attack m|con|5|1d6+str|slashing} x" />,
+    );
+    const view = getView(container);
+    act(() => view.focus());
+    act(() => view.dispatch({ selection: { anchor: 25 } })); // caret on "1d6"
+
+    // The token shows raw for hand-editing; clicking it still opens the
+    // dialog, same as clicking its chip would.
+    const mark = container.querySelector('[data-token-key="attack:0"]');
+    expect(mark).not.toBeNull();
+    fireEvent.click(mark!);
+    expect(await screen.findByLabelText("Damage dice")).toBeDefined();
+  });
+
+  it("keeps clicks on an invalid raw token dialog-free for hand repair", () => {
+    const { container } = render(<Harness initial="x {@attack q|banana} y" />);
+    const mark = container.querySelector('[data-token-key="attack:0"]');
+    expect(mark).not.toBeNull();
+    fireEvent.click(mark!);
+    expect(screen.queryByLabelText("Damage dice")).toBeNull();
+  });
+
+  it("keeps the dialog closed while the caret moves through a composite tag", () => {
     const { container } = render(
       <Harness initial="Bite. {@attack m|con|5|1d6+str|slashing} x" />,
     );
@@ -227,58 +299,32 @@ describe("MarkupField (CodeMirror)", () => {
     act(() => view.focus());
     act(() => view.dispatch({ selection: { anchor: 25 } })); // on "1d6"
 
-    const dice = await screen.findByLabelText("Damage dice");
-    expect((dice as HTMLInputElement).value).toBe("1d6+str");
-    // The caret-driven open must not pull focus out of the editor…
+    // The tag expands to raw text for hand-editing, but no modal opens and
+    // focus stays in the text.
+    expect(container.querySelector(".cm-content")?.textContent).toContain(
+      "{@attack m|con|5|1d6+str|slashing}",
+    );
+    expect(screen.queryByLabelText("Damage dice")).toBeNull();
     expect(document.activeElement).toBe(view.contentDOM);
-    // …and the open token's decoration is tinted as active.
-    const mark = container.querySelector('[data-token-key="attack:0"]');
-    expect(mark?.className).toContain("mb-token-active");
   });
 
-  it("closes the token editor again when the caret leaves the tag", async () => {
+  it("survives repeated open/close cycles on the same chip", async () => {
+    const user = userEvent.setup();
     const { container } = render(
       <Harness initial="Bite. {@attack m|con|5|1d6+str|slashing} x" />,
     );
-    const view = getView(container);
-    act(() => view.focus());
-    act(() => view.dispatch({ selection: { anchor: 25 } }));
+    fireEvent.mouseDown(container.querySelector(".cm-content .mb-chip")!);
     await screen.findByLabelText("Damage dice");
 
-    act(() => view.dispatch({ selection: { anchor: 2 } })); // back into plain text
-    expect(screen.queryByLabelText("Damage dice")).toBeNull();
-  });
-
-  it("ignores the popover's outside-press when the press is inside the editor", async () => {
-    const { container } = render(
-      <Harness initial="Bite. {@attack m|con|5|1d6+str|slashing} x" />,
+    await user.click(screen.getByRole("button", { name: "Close" }));
+    await waitFor(() =>
+      expect(screen.queryByLabelText("Damage dice")).toBeNull(),
     );
-    const view = getView(container);
-    act(() => view.focus());
-    act(() => view.dispatch({ selection: { anchor: 25 } }));
-    await screen.findByLabelText("Damage dice");
 
-    // A press in the editor is a caret move; it must not flash the popover
-    // shut. Only pointerdown here: that's what Base UI's dismiss listens to,
-    // while a mousedown would make CM move the caret (to 0 under jsdom's
-    // zero-layout) and close it legitimately via the caret sync.
-    fireEvent.pointerDown(view.contentDOM);
-    expect(screen.getByLabelText("Damage dice")).toBeDefined();
-  });
-
-  it("survives repeated open/close cycles at the same caret position", async () => {
-    const { container } = render(
-      <Harness initial="Bite. {@attack m|con|5|1d6+str|slashing} x" />,
-    );
-    const view = getView(container);
-    act(() => view.focus());
-    act(() => view.dispatch({ selection: { anchor: 25 } }));
-    await screen.findByLabelText("Damage dice");
-
-    act(() => view.dispatch({ selection: { anchor: 2 } })); // close
-    expect(screen.queryByLabelText("Damage dice")).toBeNull();
-
-    act(() => view.dispatch({ selection: { anchor: 25 } })); // reopen
+    // The chip is back (the caret never entered the token) — reopen it.
+    const chip = container.querySelector<HTMLElement>(".cm-content .mb-chip");
+    expect(chip).not.toBeNull();
+    fireEvent.mouseDown(chip!);
     expect(await screen.findByLabelText("Damage dice")).toBeDefined();
   });
 

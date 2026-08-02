@@ -27,9 +27,9 @@ import type {
   CompletionContext,
   CompletionResult,
 } from "@codemirror/autocomplete";
-import type { MarkupContext } from "@/lib/statblock-markup";
+import type { MarkupContext, TagSegment } from "@/lib/statblock-markup";
 import { compositeProblems, markupLint } from "@/lib/markup-lint";
-import { keySegments, tokenKeyContaining } from "@/lib/token-keys";
+import { keySegments } from "@/lib/token-keys";
 import { TAG_CATALOG } from "@/lib/tag-catalog";
 import { cn } from "@/lib/utils";
 import { parseMarkup, resolveTag } from "@/lib/statblock-markup";
@@ -42,10 +42,9 @@ export interface MarkupEditorHandle {
    */
   insertSnippet: (snippet: string) => { at: number; value: string } | null;
   /**
-   * Splice a rewritten token back into the document (popover field edits).
+   * Splice a rewritten token back into the document (dialog field edits).
    * Dispatching into CM directly — rather than round-tripping through the
-   * controlled value — keeps selection mapping, history, and the open
-   * popover intact; the caret is pinned just inside the rewritten token.
+   * controlled value — keeps selection mapping and history intact.
    */
   replaceRange: (from: number, to: number, insert: string) => void;
   focus: () => void;
@@ -55,20 +54,21 @@ interface MarkupEditorProps {
   id?: string;
   value: string;
   placeholder?: string;
-  /** Token whose editor popover is open — kept raw + tinted stronger. */
+  /** Token whose editor dialog is open — kept raw + tinted stronger. */
   activeKey: string | null;
   /** Creature stats: chips show the token's *resolved* line text. */
   ctx: MarkupContext;
   onChange: (value: string) => void;
   onBlur?: () => void;
-  /** Editable token containing the selection head, on every caret move. */
-  onCaretToken: (key: string | null) => void;
+  /** A chip was clicked — open this token's editor dialog. */
+  onTokenClick: (key: string) => void;
   /** An autocomplete completion inserted this tag's snippet at `at`. */
   onTagInserted: (tag: TagItem, value: string, at: number) => void;
 }
 
 const setActiveToken = StateEffect.define<string | null>();
 const setMarkupCtx = StateEffect.define<MarkupContext>();
+const setTokenClickHandler = StateEffect.define<(key: string) => void>();
 
 const activeTokenField = StateField.define<string | null>({
   create: () => null,
@@ -92,10 +92,22 @@ const markupCtxField = StateField.define<MarkupContext | null>({
   },
 });
 
+/** Chip-click callback, reachable from widget DOM handlers via the state. */
+const tokenClickField = StateField.define<((key: string) => void) | null>({
+  create: () => null,
+  update(value, tr) {
+    let next = value;
+    for (const effect of tr.effects) {
+      if (effect.is(setTokenClickHandler)) next = effect.value;
+    }
+    return next;
+  },
+});
+
 /**
  * Collapsed view of an editable token: its resolved line text as a chip.
- * Clicking it drops the caret just inside the raw tag — the decorations
- * rebuild to raw text and the caret sync opens the popover editor.
+ * Clicking it opens the token's editor dialog; the caret stays put, so the
+ * chip re-collapses when the dialog closes.
  */
 class TokenChipWidget extends WidgetType {
   constructor(
@@ -116,9 +128,7 @@ class TokenChipWidget extends WidgetType {
     span.textContent = this.display;
     span.onmousedown = (event) => {
       event.preventDefault();
-      const pos = view.posAtDOM(span);
-      view.dispatch({ selection: { anchor: pos + 2 } });
-      view.focus();
+      view.state.field(tokenClickField)?.(this.key);
     };
     return span;
   }
@@ -129,10 +139,27 @@ class TokenChipWidget extends WidgetType {
 }
 
 /**
+ * Only well-formed, single-line tokens collapse into chips and open their
+ * dialog from a click; broken ones stay plain hand-editable text so lint
+ * squiggles and caret placement keep working on them.
+ */
+function isChippable(seg: TagSegment): boolean {
+  return !seg.raw.includes("\n") && compositeProblems(seg).length === 0;
+}
+
+/** The keyed tag segment matching `key` in the current doc, if any. */
+function segmentForKey(state: EditorState, key: string): TagSegment | null {
+  const match = keySegments(parseMarkup(state.doc.toString())).find(
+    (k) => k.key === key,
+  );
+  return match?.seg.type === "tag" ? match.seg : null;
+}
+
+/**
  * Live-preview decorations: an editable token renders as a resolved-text
  * chip while the caret is elsewhere, and as raw tagged text (tinted, with
- * `data-token-key` for popover anchoring) while the caret is inside it or
- * its editor popover is open.
+ * `data-token-key` for tests/tooling) while the caret is inside it or its
+ * editor dialog is open.
  */
 function buildTokenDecorations(state: EditorState): DecorationSet {
   const text = state.doc.toString();
@@ -145,9 +172,7 @@ function buildTokenDecorations(state: EditorState): DecorationSet {
     const caretInside = head > seg.start && head < seg.end;
     const isActive = key === activeKey;
 
-    const chippable =
-      !seg.raw.includes("\n") && compositeProblems(seg).length === 0;
-    if (ctx && !caretInside && !isActive && chippable) {
+    if (ctx && !caretInside && !isActive && isChippable(seg)) {
       builder.add(
         seg.start,
         seg.end,
@@ -204,7 +229,7 @@ export const MarkupEditor = forwardRef<MarkupEditorHandle, MarkupEditorProps>(
       ctx,
       onChange,
       onBlur,
-      onCaretToken,
+      onTokenClick,
       onTagInserted,
     },
     handleRef,
@@ -216,10 +241,10 @@ export const MarkupEditor = forwardRef<MarkupEditorHandle, MarkupEditorProps>(
     const callbacksRef = useRef({
       onChange,
       onBlur,
-      onCaretToken,
+      onTokenClick,
       onTagInserted,
     });
-    callbacksRef.current = { onChange, onBlur, onCaretToken, onTagInserted };
+    callbacksRef.current = { onChange, onBlur, onTokenClick, onTagInserted };
 
     useEffect(() => {
       function tagCompletions(
@@ -260,9 +285,10 @@ export const MarkupEditor = forwardRef<MarkupEditorHandle, MarkupEditorProps>(
             history(),
             keymap.of([...defaultKeymap, ...historyKeymap]),
             EditorView.lineWrapping,
-            // Order matters: tokenDecorations reads these two fields.
+            // Order matters: tokenDecorations reads the first two fields.
             activeTokenField,
             markupCtxField,
+            tokenClickField,
             tokenDecorations,
             autocompletion({ override: [tagCompletions], icons: false }),
             markupLint(),
@@ -271,22 +297,38 @@ export const MarkupEditor = forwardRef<MarkupEditorHandle, MarkupEditorProps>(
             editorTheme,
             EditorView.domEventHandlers({
               blur: () => callbacksRef.current.onBlur?.(),
+              // A token whose raw text is showing (caret inside it, so no
+              // chip) opens its dialog on click too. Plain caret clicks
+              // only — a drag leaves a selection behind — and only tokens
+              // a chip would open, so broken ones stay click-editable.
+              click: (event, view) => {
+                if (event.button !== 0) return;
+                if (!view.state.selection.main.empty) return;
+                const target =
+                  event.target instanceof Element ? event.target : null;
+                const key = target
+                  ?.closest("[data-token-key]")
+                  ?.getAttribute("data-token-key");
+                if (!key) return;
+                const seg = segmentForKey(view.state, key);
+                if (seg && isChippable(seg)) {
+                  callbacksRef.current.onTokenClick(key);
+                }
+              },
             }),
             EditorView.updateListener.of((update) => {
               if (update.docChanged) {
                 callbacksRef.current.onChange(update.state.doc.toString());
               }
-              if (update.selectionSet || update.docChanged) {
-                callbacksRef.current.onCaretToken(
-                  tokenKeyContaining(
-                    update.state.doc.toString(),
-                    update.state.selection.main.head,
-                  ),
-                );
-              }
             }),
           ],
         }),
+      });
+      // A ref-stable handler so chip widgets always reach the live callback.
+      view.dispatch({
+        effects: setTokenClickHandler.of((key) =>
+          callbacksRef.current.onTokenClick(key),
+        ),
       });
       viewRef.current = view;
       return () => {
@@ -332,13 +374,10 @@ export const MarkupEditor = forwardRef<MarkupEditorHandle, MarkupEditorProps>(
       replaceRange(from, to, insert) {
         const view = viewRef.current;
         if (!view) return;
-        view.dispatch({
-          changes: { from, to, insert },
-          // Keep the caret inside the token (before its closing brace) so
-          // the caret sync doesn't close the popover as the token resizes.
-          selection: { anchor: Math.max(from, from + insert.length - 1) },
-          userEvent: "input",
-        });
+        // No explicit selection: the caret maps through the change, so a
+        // caret outside the token stays outside and the chip re-collapses
+        // when the dialog closes.
+        view.dispatch({ changes: { from, to, insert }, userEvent: "input" });
       },
       focus() {
         viewRef.current?.focus();

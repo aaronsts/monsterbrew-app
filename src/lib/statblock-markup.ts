@@ -96,6 +96,11 @@ function isAbility(value: string): value is Ability {
   return ABILITY_SET.has(value.toLowerCase());
 }
 
+export function abilityName(value: string): string {
+  const key = value.toLowerCase();
+  return isAbility(key) ? ABILITY_NAMES[key] : "";
+}
+
 function abilityMod(ctx: MarkupContext, ability: string): number {
   return calculateStatBonus(
     ctx.ability_scores[ability.toLowerCase() as Ability],
@@ -241,9 +246,21 @@ function capitalize(s: string): string {
  * optional ones at the end. `parse*Args`/`serialize*Args` are the single
  * grammar implementation, shared by the resolvers here and the token-editor
  * UI, and round-trip: serialize(parse(args)) is stable.
+ *
+ * `resolveAttack` deliberately emits the official 2024 `Hit:` label before
+ * the damage clause. The open5e-derived SRD dataset omits that label, but
+ * official statblocks carry it and existing stored tags already render with
+ * it — prose converted from label-less text adopts the official phrasing.
  */
 
-/** `{@attack <kind>|<hit>|<reach>|<dice>|<type>}` — kind + hit required. */
+/**
+ * `{@attack <kind>|<hit>|<reach>|<dice>|<type>|<dice2>|<type2>|<effect>}` —
+ * kind + hit required. `dice2`/`type2` are the optional secondary-damage
+ * rider, rendered as `… 13 (2d6 + 6) Slashing damage plus 4 (1d8) Acid
+ * damage.`; `effect` is the optional on-hit rider that 2024 statblocks put
+ * inside the Hit sentence (`…damage, and the target has the Grappled
+ * condition.`).
+ */
 export interface AttackFields {
   /** `m`, `r`, or `m,r`. */
   kind: string;
@@ -258,9 +275,21 @@ export interface AttackFields {
   dice: string;
   /** Damage type (`slashing`); capitalized on output. */
   type: string;
+  /** Secondary ("plus") damage dice, same syntax as `dice`. */
+  dice2: string;
+  /** Secondary damage type; capitalized on output. */
+  type2: string;
+  /**
+   * On-hit effect text (may nest tags). Rendered as-authored: alone as
+   * `Hit: <effect>`, or joined to the damage with `, and `.
+   */
+  effect: string;
 }
 
-/** `{@save <ability>|<dc>|<dice>|<type>|<onSave>}` — ability + dc required. */
+/**
+ * `{@save <ability>|<dc>|<dice>|<type>|<onSave>|<target>|<fail>|<epilogue>}`
+ * — ability + dc required.
+ */
 export interface SaveFields {
   /** Tested ability (`dex`). */
   ability: string;
@@ -272,6 +301,15 @@ export interface SaveFields {
   type: string;
   /** `half` / `none` / custom success text. Defaults to `half` when dice set. */
   onSave: string;
+  /** Who must save, worded after the DC: `DC 16, <target>.` May nest tags. */
+  target: string;
+  /**
+   * Failure effect text (may nest tags). Rendered as-authored: alone as
+   * `Failure: <fail>`, or joined to failure damage with `, and `.
+   */
+  fail: string;
+  /** `Failure or Success:` epilogue text (may nest tags). */
+  epilogue: string;
 }
 
 /**
@@ -298,8 +336,11 @@ function splitArgs(args: string, count: number): Array<string> {
 }
 
 export function parseAttackArgs(args: string): AttackFields {
-  const [kind, hit, reach, dice, type] = splitArgs(args, 5);
-  return { kind, hit, reach, dice, type };
+  const [kind, hit, reach, dice, type, dice2, type2, effect] = splitArgs(
+    args,
+    8,
+  );
+  return { kind, hit, reach, dice, type, dice2, type2, effect };
 }
 
 export function serializeAttackArgs(fields: AttackFields): string {
@@ -309,14 +350,20 @@ export function serializeAttackArgs(fields: AttackFields): string {
     fields.reach,
     fields.dice,
     fields.type,
+    fields.dice2,
+    fields.type2,
+    fields.effect,
   ].map((p) => p.trim());
   while (parts.length > 2 && parts[parts.length - 1] === "") parts.pop();
   return parts.join("|");
 }
 
 export function parseSaveArgs(args: string): SaveFields {
-  const [ability, dc, dice, type, onSave] = splitArgs(args, 5);
-  return { ability, dc, dice, type, onSave };
+  const [ability, dc, dice, type, onSave, target, fail, epilogue] = splitArgs(
+    args,
+    8,
+  );
+  return { ability, dc, dice, type, onSave, target, fail, epilogue };
 }
 
 export function serializeSaveArgs(fields: SaveFields): string {
@@ -326,6 +373,9 @@ export function serializeSaveArgs(fields: SaveFields): string {
     fields.dice,
     fields.type,
     fields.onSave,
+    fields.target,
+    fields.fail,
+    fields.epilogue,
   ].map((p) => p.trim());
   while (parts.length > 2 && parts[parts.length - 1] === "") parts.pop();
   return parts.join("|");
@@ -369,7 +419,21 @@ function damageClause(dice: string, ctx: MarkupContext): string {
     // Uniform operator spacing so `2d8+str` renders as `2d8 + 4`.
     .replace(/\s*([+-])\s*/g, " $1 ")
     .trim();
+
+  if (!/d\d/i.test(expr)) return `${averageDice(expr)}`;
   return `${averageDice(expr)} (${expr})`;
+}
+
+/** `13 (2d8 + 4) Slashing damage` with abilities resolved, or `""` for no dice. */
+function damageText(dice: string, type: string, ctx: MarkupContext): string {
+  const clause = damageClause(dice, ctx);
+  if (!clause) return "";
+  return `${clause}${type ? ` ${capitalize(type)}` : ""} damage`;
+}
+
+/** Append a `.` unless the text already ends in sentence punctuation. */
+function ensurePeriod(text: string): string {
+  return /[.!?]$/.test(text) ? text : `${text}.`;
 }
 
 /** e.g. `Melee Attack Roll: +7, reach 5 ft. Hit: 13 (2d8 + 4) Slashing damage.` */
@@ -380,10 +444,15 @@ function resolveAttack(args: string, ctx: MarkupContext): string {
   const distance = attackDistance(f.kind, f.reach);
   if (distance) out += `${f.hit ? "," : ""} ${distance}`;
   else if (f.hit) out += ".";
-  const damage = damageClause(f.dice, ctx);
-  if (damage) {
-    out += ` Hit: ${damage}${f.type ? ` ${capitalize(f.type)}` : ""} damage.`;
-  }
+  const damage = [
+    damageText(f.dice, f.type, ctx),
+    damageText(f.dice2, f.type2, ctx),
+  ]
+    .filter(Boolean)
+    .join(" plus ");
+  const effect = f.effect ? resolveMarkup(f.effect, ctx) : "";
+  const hit = damage && effect ? `${damage}, and ${effect}` : damage || effect;
+  if (hit) out += ` ${ensurePeriod(`Hit: ${hit}`)}`;
   return out;
 }
 
@@ -393,18 +462,25 @@ function resolveSave(args: string, ctx: MarkupContext): string {
   const key = f.ability.toLowerCase();
   const label = isAbility(key) ? ABILITY_NAMES[key] : f.ability;
   let out = label ? `${label} Saving Throw:` : "Saving Throw:";
-  if (f.dc) out += ` DC ${dcValue(f.dc, ctx)}.`;
-  const damage = damageClause(f.dice, ctx);
-  if (damage) {
-    out += ` Failure: ${damage}${f.type ? ` ${capitalize(f.type)}` : ""} damage.`;
+  if (f.dc) out += ` DC ${dcValue(f.dc, ctx)}`;
+  if (f.target) out += `${f.dc ? "," : ""} ${resolveMarkup(f.target, ctx)}`;
+  if (f.dc || f.target) out = ensurePeriod(out);
+  const damage = damageText(f.dice, f.type, ctx);
+  const fail = f.fail ? resolveMarkup(f.fail, ctx) : "";
+  if (damage || fail) {
+    const joined = damage && fail ? `${damage}, and ${fail}` : damage || fail;
+    out += ` ${ensurePeriod(`Failure: ${joined}`)}`;
   }
   const onSave = f.onSave || (damage ? "half" : "");
   if (onSave === "half") {
     out += " Success: Half damage.";
   } else if (onSave && onSave !== "none") {
     // Custom success text may itself contain tags ({@condition prone}, …).
-    const custom = resolveMarkup(onSave, ctx);
-    out += ` Success: ${custom}${/[.!?]$/.test(custom) ? "" : "."}`;
+    out += ` ${ensurePeriod(`Success: ${resolveMarkup(onSave, ctx)}`)}`;
+  }
+  if (f.epilogue) {
+    const epilogue = resolveMarkup(f.epilogue, ctx);
+    out += ` ${ensurePeriod(`Failure or Success: ${epilogue}`)}`;
   }
   return out;
 }
@@ -416,6 +492,7 @@ export const KNOWN_TAG_NAMES: ReadonlySet<string> = new Set([
   "atk",
   "hit",
   "h",
+  "hom",
   "dc",
   "damage",
   "attack",
@@ -424,8 +501,11 @@ export const KNOWN_TAG_NAMES: ReadonlySet<string> = new Set([
   "scaledice",
   "actSave",
   "actSaveFail",
+  "actSaveFailBy",
   "actSaveSuccess",
   "actSaveSuccessOrFail",
+  "actTrigger",
+  "actResponse",
   "recharge",
   "i",
   "italic",
@@ -468,6 +548,12 @@ export function validateAttackArgs(args: string): Array<string> {
   } else if (!isAbility(f.hit) && !/^[+-]?\d+$/.test(f.hit)) {
     problems.push(`to-hit "${f.hit}" is neither an ability nor a number`);
   }
+  if (f.dice2 && !f.dice) {
+    problems.push("secondary damage dice without primary damage dice");
+  }
+  if (f.type2 && !f.dice2) {
+    problems.push("secondary damage type without secondary damage dice");
+  }
   return problems;
 }
 
@@ -509,6 +595,8 @@ export function resolveTag(tag: TagSegment, ctx: MarkupContext): string {
       return formatMod(hitBonus(args, ctx));
     case "h":
       return "Hit: ";
+    case "hom":
+      return "Hit or Miss: ";
     case "dc":
       return `DC ${dcValue(args, ctx)}`;
     case "damage": {
@@ -534,10 +622,16 @@ export function resolveTag(tag: TagSegment, ctx: MarkupContext): string {
     }
     case "actSaveFail":
       return "Failure:";
+    case "actSaveFailBy":
+      return args ? `Failure by ${args} or More:` : raw;
     case "actSaveSuccess":
       return "Success:";
     case "actSaveSuccessOrFail":
       return "Failure or Success:";
+    case "actTrigger":
+      return "Trigger:";
+    case "actResponse":
+      return args.includes("d") ? "Response—" : "Response:";
     case "recharge": {
       // {@recharge 5} -> "(Recharge 5–6)"; {@recharge}/{@recharge 6} -> only on a 6.
       const low = Number.parseInt(args, 10);

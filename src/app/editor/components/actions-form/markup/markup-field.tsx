@@ -3,11 +3,10 @@
 import { useRef, useState } from "react";
 import { Plus } from "lucide-react";
 import { TOKEN_EDITORS } from "../../token-editors";
-import { TokenEditorPopover } from "./token-editor-popover";
+import { TokenEditorDialog } from "./token-editor-dialog";
 import { MarkupEditor } from "./markup-editor";
 import { TagHelpDialog } from "./tag-help-dialog";
 import type { MarkupEditorHandle } from "./markup-editor";
-import type { TokenOpenChangeDetails } from "./token-editor-popover";
 import type { TagItem } from "@/lib/tag-catalog";
 import type { MarkupContext } from "@/lib/statblock-markup";
 import { TAG_CATALOG } from "@/lib/tag-catalog";
@@ -34,47 +33,16 @@ export function MarkupField({
   tags = TAG_CATALOG,
 }: Readonly<MarkupFieldProps>) {
   const editorRef = useRef<MarkupEditorHandle>(null);
-  /** The editor's box — presses inside it are caret moves, not dismissals. */
-  const editorBoxRef = useRef<HTMLDivElement>(null);
-  /** Key of the preview token whose editor popover is open (see tokenKeyAt). */
+  /** Key of the token whose editor dialog is open (see tokenKeyAt). */
   const [activeToken, setActiveToken] = useState<string | null>(null);
-  /** Caret-driven opens must not pull focus out of the editor. */
-  const [openedByCaret, setOpenedByCaret] = useState(false);
-  /** Token dismissed with Escape: stay closed until the caret leaves it. */
-  const suppressedRef = useRef<string | null>(null);
+  const [freshToken, setFreshToken] = useState<string | null>(null);
 
-  /** CodeMirror reports the token under the selection head on every move. */
-  function handleCaretToken(key: string | null) {
-    if (key !== suppressedRef.current) suppressedRef.current = null;
-    const next = key === suppressedRef.current ? null : key;
-    if (next !== null) setOpenedByCaret(true);
-    setActiveToken(next);
-  }
-
-  /** Chip clicks and popover dismissals arrive here from the preview. */
-  function handleActiveKeyChange(
-    key: string | null,
-    details?: TokenOpenChangeDetails,
-  ) {
-    if (key === null && details?.reason === "outside-press") {
-      const target = details.event?.target;
-
-      if (target instanceof Node && editorBoxRef.current?.contains(target)) {
-        return;
-      }
-    }
-    if (key === null && details?.reason === "escape-key") {
-      suppressedRef.current = activeToken;
-    }
-    if (key !== null) setOpenedByCaret(false);
-    setActiveToken(key);
-  }
-
-  /** Composites open their chip editor right away after an insert. */
+  /** Composites open their editor dialog right away after an insert. */
   function afterInsert(tag: TagItem, nextValue: string, at: number) {
     if (TOKEN_EDITORS[tag.name]) {
-      setOpenedByCaret(false);
-      setActiveToken(tokenKeyAt(nextValue, at));
+      const key = tokenKeyAt(nextValue, at);
+      setActiveToken(key);
+      setFreshToken(key);
     }
   }
 
@@ -86,42 +54,39 @@ export function MarkupField({
     if (!TOKEN_EDITORS[tag.name]) editorRef.current?.focus();
   }
 
+  /** The dialog only ever reports closes; opens go through setActiveToken. */
+  function handleOpenChange(open: boolean) {
+    if (open) return;
+    setActiveToken(null);
+    setFreshToken(null);
+    // Hand focus back to the text so editing continues where it left off.
+    editorRef.current?.focus();
+  }
+
   return (
     <div className="grid gap-1.5">
-      <div ref={editorBoxRef}>
-        <MarkupEditor
-          ref={editorRef}
-          id={id}
-          value={value}
-          placeholder={placeholder}
-          activeKey={activeToken}
-          ctx={ctx}
-          onChange={onChange}
-          onBlur={onBlur}
-          onCaretToken={handleCaretToken}
-          onTagInserted={afterInsert}
-        />
-      </div>
+      <MarkupEditor
+        ref={editorRef}
+        id={id}
+        value={value}
+        placeholder={placeholder}
+        activeKey={activeToken}
+        ctx={ctx}
+        onChange={onChange}
+        onBlur={onBlur}
+        onTokenClick={setActiveToken}
+        onTagInserted={afterInsert}
+      />
 
-      <TokenEditorPopover
+      <TokenEditorDialog
         value={value}
         ctx={ctx}
         activeKey={activeToken}
-        anchor={() =>
-          // Keys are internal (`name:occurrence`), safe in a quoted selector.
-          activeToken
-            ? (editorBoxRef.current?.querySelector(
-                `[data-token-key="${activeToken}"]`,
-              ) ?? null)
-            : null
-        }
+        isNew={activeToken !== null && activeToken === freshToken}
         onRewrite={(from, to, insert) =>
           editorRef.current?.replaceRange(from, to, insert)
         }
-        onOpenChange={(open, details) =>
-          handleActiveKeyChange(open ? activeToken : null, details)
-        }
-        focusPopover={!openedByCaret}
+        onOpenChange={handleOpenChange}
       />
 
       <div className="flex flex-wrap items-center gap-1">
