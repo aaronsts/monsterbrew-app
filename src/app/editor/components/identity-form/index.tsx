@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
-import { Info, X } from "lucide-react";
-import { Controller, useFormContext } from "react-hook-form";
+import { X } from "lucide-react";
+import { Controller, useFormContext, useWatch } from "react-hook-form";
 import { CollapsibleSection } from "../collapsible-section";
 import type { Monster } from "@/schema/monster-schema";
 import { Badge } from "@/components/ui/badge";
@@ -31,12 +31,6 @@ import {
   ItemMedia,
   ItemTitle,
 } from "@/components/ui/item";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { CREATURE_SIZES, CREATURE_TYPES } from "@/lib/constants";
 import { blockMinusKey, titleCase } from "@/lib/utils";
 import { Languages } from "@/schema/createCreatureSchema";
@@ -73,6 +67,8 @@ function findByText<T extends { label: string; value: string }>(
 export const IdentityForm = () => {
   const { control } = useFormContext<Monster>();
   const [customLanguageInput, setCustomLanguageInput] = useState("");
+  const typeValue = useWatch({ control, name: "type" });
+  const typeDescription = findByText(CREATURE_TYPES, typeValue)?.description;
   return (
     <CollapsibleSection
       id="identity"
@@ -84,10 +80,13 @@ export const IdentityForm = () => {
         control={control}
         render={({ field, fieldState }) => (
           <Field data-invalid={fieldState.invalid}>
-            <FieldLabel htmlFor="form-rhf-input-name">Name</FieldLabel>
+            <FieldLabel htmlFor="form-rhf-input-name">
+              Name <span className="text-muted-foreground/60">(required)</span>
+            </FieldLabel>
             <Input
               {...field}
               id="form-rhf-input-name"
+              aria-required
               aria-invalid={fieldState.invalid}
               placeholder="ex. Ancient Red Dragon"
             />
@@ -104,21 +103,7 @@ export const IdentityForm = () => {
             const selectedType = findByText(CREATURE_TYPES, field.value);
             return (
               <Field data-invalid={fieldState.invalid}>
-                <div className="flex items-center gap-1">
-                  <FieldLabel htmlFor="form-rhf-input-type">Type</FieldLabel>
-                  {selectedType && (
-                    <TooltipProvider delay={0}>
-                      <Tooltip>
-                        <TooltipTrigger>
-                          <Info className="text-primary-300 size-4" />
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          {selectedType.description}
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  )}
-                </div>
+                <FieldLabel htmlFor="form-rhf-input-type">Type</FieldLabel>
                 <Combobox<CreatureTypeOption>
                   items={CREATURE_TYPES}
                   value={selectedType ?? null}
@@ -204,6 +189,11 @@ export const IdentityForm = () => {
             </Field>
           )}
         />
+        {typeDescription && (
+          <FieldDescription className="col-span-2 text-xs -mt-2">
+            {typeDescription}
+          </FieldDescription>
+        )}
         <Controller
           name="sub_type"
           control={control}
@@ -377,6 +367,7 @@ export const IdentityForm = () => {
                   type="button"
                   color="neutral"
                   variant="outline"
+                  size="sm"
                   onClick={addCustomLanguage}
                   disabled={!customLanguageInput.trim()}
                 >

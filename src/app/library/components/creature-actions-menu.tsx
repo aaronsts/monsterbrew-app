@@ -4,15 +4,7 @@ import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { useReactToPrint } from "react-to-print";
-import {
-  ChevronDown,
-  Copy,
-  Download,
-  Edit,
-  FileText,
-  Printer,
-  Trash,
-} from "lucide-react";
+import { Copy, Edit, FileText, Printer, Trash } from "lucide-react";
 import type { RefObject } from "react";
 
 import type { StoredMonster } from "@/schema/monster-schema";
@@ -27,16 +19,11 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { ExportMarkdownDialog } from "@/app/library/components/export-markdown-dialog";
 import { useDeleteCreature } from "@/hooks/use-creatures";
 
@@ -79,8 +66,9 @@ interface CreatureActionsMenuProps {
 }
 
 /**
- * Actions dropdown for a library creature: edit, duplicate, export
- * (Homebrewery markdown / PDF), and delete with confirmation.
+ * Action buttons for a library creature: edit, duplicate, export
+ * (Homebrewery markdown / PDF), and delete with confirmation. Separate
+ * icon buttons with tooltips, not a dropdown (see #137).
  */
 export function CreatureActionsMenu({
   creature,
@@ -145,52 +133,90 @@ export function CreatureActionsMenu({
 
   return (
     <>
-      <DropdownMenu>
-        <DropdownMenuTrigger
-          render={
-            <Button color="neutral" variant="outline" size="sm">
-              Actions
-              <ChevronDown className="ml-2 h-4 w-4" />
-            </Button>
-          }
-        />
-        <DropdownMenuContent align="end" className="w-48">
-          <DropdownMenuGroup>
-            <DropdownMenuItem onClick={handleEdit}>
-              <Edit className="mr-2 h-4 w-4" />
-              Edit
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={handleDuplicate}>
-              <Copy className="mr-2 h-4 w-4" />
-              Duplicate
-            </DropdownMenuItem>
-            <DropdownMenuSub>
-              <DropdownMenuSubTrigger>
-                <Download className="mr-2 h-4 w-4" />
-                Export
-              </DropdownMenuSubTrigger>
-              <DropdownMenuSubContent>
-                <DropdownMenuItem onClick={() => setMarkdownOpen(true)}>
-                  <FileText className="mr-2 h-4 w-4" />
-                  Markdown (Homebrewery)
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => printStatblock()}>
-                  <Printer className="mr-2 h-4 w-4" />
-                  PDF
-                </DropdownMenuItem>
-              </DropdownMenuSubContent>
-            </DropdownMenuSub>
-          </DropdownMenuGroup>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem
-            variant="destructive"
-            onClick={() => setDeleteOpen(true)}
-          >
-            <Trash className="mr-2 h-4 w-4" />
-            Delete
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+      <TooltipProvider delay={200}>
+        <div className="flex items-center gap-2">
+          <Tooltip>
+            <TooltipTrigger
+              render={
+                <Button
+                  color="neutral"
+                  variant="outline"
+                  size="icon-sm"
+                  aria-label="Edit"
+                  onClick={handleEdit}
+                />
+              }
+            >
+              <Edit />
+            </TooltipTrigger>
+            <TooltipContent>Edit</TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger
+              render={
+                <Button
+                  color="neutral"
+                  variant="outline"
+                  size="icon-sm"
+                  aria-label="Duplicate"
+                  onClick={handleDuplicate}
+                />
+              }
+            >
+              <Copy />
+            </TooltipTrigger>
+            <TooltipContent>Duplicate</TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger
+              render={
+                <Button
+                  color="neutral"
+                  variant="outline"
+                  size="icon-sm"
+                  aria-label="Export Markdown (Homebrewery)"
+                  onClick={() => setMarkdownOpen(true)}
+                />
+              }
+            >
+              <FileText />
+            </TooltipTrigger>
+            <TooltipContent>Export Markdown (Homebrewery)</TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger
+              render={
+                <Button
+                  color="neutral"
+                  variant="outline"
+                  size="icon-sm"
+                  aria-label="Export PDF"
+                  onClick={() => printStatblock()}
+                />
+              }
+            >
+              <Printer />
+            </TooltipTrigger>
+            <TooltipContent>Export PDF</TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger
+              render={
+                <Button
+                  color="destructive"
+                  variant="outline"
+                  size="icon-sm"
+                  aria-label="Delete"
+                  onClick={() => setDeleteOpen(true)}
+                />
+              }
+            >
+              <Trash />
+            </TooltipTrigger>
+            <TooltipContent>Delete</TooltipContent>
+          </Tooltip>
+        </div>
+      </TooltipProvider>
 
       <ExportMarkdownDialog
         creature={creature}
