@@ -16,7 +16,7 @@ export function SavingThrowsField() {
   return (
     <FieldGroup>
       <FieldLabel className="-mb-1">Saving Throws</FieldLabel>
-      <div className="grid grid-cols-3 gap-1 xl:grid-cols-6">
+      <div className="grid grid-cols-3 gap-x-3 gap-y-1 xl:grid-cols-6">
         {ABILITY_SCORES.map((ability) => (
           <Controller
             key={ability}
@@ -28,7 +28,7 @@ export function SavingThrowsField() {
               return (
                 <Field
                   orientation="horizontal"
-                  className="items-center px-2 py-1.5 hover:bg-muted"
+                  className="items-center gap-1.5 px-2 py-1.5 hover:bg-muted"
                 >
                   <Checkbox
                     id={`form-rhf-save-${ability}`}
@@ -38,20 +38,15 @@ export function SavingThrowsField() {
                   <FieldLabel
                     htmlFor={`form-rhf-save-${ability}`}
                     className={cn(
-                      "flex-1 cursor-pointer font-normal uppercase",
+                      "cursor-pointer font-normal uppercase",
                       field.value ? "text-foreground" : "text-muted-foreground",
                     )}
                   >
-                    {ability}
+                    {ability}{" "}
+                    <span className="text-xs tabular-nums">
+                      {formatMod(total)}
+                    </span>
                   </FieldLabel>
-                  <span
-                    className={cn(
-                      "text-xs tabular-nums",
-                      field.value ? "text-foreground" : "text-muted-foreground",
-                    )}
-                  >
-                    {formatMod(total)}
-                  </span>
                 </Field>
               );
             }}

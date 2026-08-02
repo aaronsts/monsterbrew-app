@@ -25,6 +25,17 @@ export function EmptyState() {
           <ArrowRight className="ml-2 h-4 w-4" />
         </Button>
       </Link>
+      <p className="text-sm text-muted-foreground">
+        Not sure where to start? Pick one of the{" "}
+        <Link
+          to="/library"
+          search={{ source: "srd" }}
+          className="underline underline-offset-3 hover:text-foreground"
+        >
+          SRD monsters
+        </Link>{" "}
+        and copy it to the editor as your starting point.
+      </p>
     </div>
   );
 }

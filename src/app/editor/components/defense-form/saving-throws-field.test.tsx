@@ -20,7 +20,9 @@ describe("SavingThrowsField", () => {
     renderWithForm(<SavingThrowsField />);
     expect(screen.getAllByRole("checkbox")).toHaveLength(6);
     for (const ability of ["str", "dex", "con", "int", "wis", "cha"]) {
-      expect(screen.getByRole("checkbox", { name: ability })).toBeDefined();
+      expect(
+        screen.getByRole("checkbox", { name: new RegExp(`^${ability}`) }),
+      ).toBeDefined();
     }
   });
 
@@ -39,7 +41,7 @@ describe("SavingThrowsField", () => {
       cr: crWithProfBonus(3),
     });
 
-    await user.click(screen.getByRole("checkbox", { name: "dex" }));
+    await user.click(screen.getByRole("checkbox", { name: /^dex/ }));
 
     // dex 14 (+2) + proficiency 3 = +5
     expect(getForm().getValues("saving_throws.dex")).toBe(true);
@@ -49,7 +51,7 @@ describe("SavingThrowsField", () => {
   it("toggles the saving throw off again on a second click", async () => {
     const user = userEvent.setup();
     const { getForm } = renderWithForm(<SavingThrowsField />);
-    const con = screen.getByRole("checkbox", { name: "con" });
+    const con = screen.getByRole("checkbox", { name: /^con/ });
 
     await user.click(con);
     expect(getForm().getValues("saving_throws.con")).toBe(true);

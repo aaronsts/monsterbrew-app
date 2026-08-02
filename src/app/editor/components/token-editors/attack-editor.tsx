@@ -89,6 +89,7 @@ export function AttackEditor({
               <Input
                 type="number"
                 min={0}
+                step={5}
                 onKeyDown={blockMinusKey}
                 aria-label="Reach in feet"
                 value={distance.melee}
@@ -103,6 +104,7 @@ export function AttackEditor({
                 <Input
                   type="number"
                   min={0}
+                  step={5}
                   onKeyDown={blockMinusKey}
                   aria-label="Normal range in feet"
                   value={distance.normal}
@@ -114,6 +116,7 @@ export function AttackEditor({
                 <Input
                   type="number"
                   min={0}
+                  step={5}
                   onKeyDown={blockMinusKey}
                   aria-label="Long range in feet"
                   value={distance.long}

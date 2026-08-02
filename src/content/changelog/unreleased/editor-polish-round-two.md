@@ -1,0 +1,12 @@
+Another round of improvements straight from your feedback, most of them in the editor. The big one: auto-save no longer kicks you out of the field you're typing in, so you can write trait and action text without interruptions. The save reminder also sits calmly at the top of the editor now instead of popping up as a toast, and an empty library points you to the SRD monsters as a starting point.
+
+- Auto-save no longer steals focus from the field you're typing in
+- The unsaved-changes reminder is now a quiet alert at the top of the editor instead of a toast
+- An empty library now suggests copying an SRD monster to the editor as a starting point
+- The name field is clearly marked as required
+- Challenge rating moved to the top of the combat section, so the stat hints know your target CR from the start
+- The creature type's description now appears in full under the field instead of hiding in a tooltip
+- Saving-throw modifiers now sit right next to their ability, so STR's bonus can't be mistaken for DEX's
+- Attack reach and range fields now step by 5 like other distance fields
+- The add button for custom languages matches the input field's size
+- Library creature pages have separate icon buttons for edit, duplicate, export, and delete again, instead of one dropdown
