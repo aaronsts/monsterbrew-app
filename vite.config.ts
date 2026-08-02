@@ -29,12 +29,6 @@ export default defineConfig({
       ? "hidden"
       : !!process.env.COVERAGE,
   },
-  optimizeDeps: {
-    include: [
-      "use-sync-external-store/shim",
-      "use-sync-external-store/shim/with-selector",
-    ],
-  },
   plugins: [
     tailwindcss(),
     tanstackStart({
