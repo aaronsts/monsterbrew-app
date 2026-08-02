@@ -94,7 +94,11 @@ describe("bundled changelog content", () => {
     for (const release of releases) {
       expect(release.version).toMatch(/^\d+\.\d+\.\d+$/);
       expect(release.date).toMatch(/^\d{4}-\d{2}-\d{2}$/);
-      expect(release.changes.length).toBeGreaterThan(0);
+      // A release needs some content, but summary-only entries are legal —
+      // the pipeline promotes them (3.14.2) and the page renders them.
+      expect(
+        release.summary.length + release.changes.length,
+      ).toBeGreaterThan(0);
     }
     const versions = releases.map((release) => release.version);
     const sorted = [...versions].sort((a, b) => {
