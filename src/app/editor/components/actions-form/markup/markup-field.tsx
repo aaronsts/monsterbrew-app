@@ -35,11 +35,14 @@ export function MarkupField({
   const editorRef = useRef<MarkupEditorHandle>(null);
   /** Key of the token whose editor dialog is open (see tokenKeyAt). */
   const [activeToken, setActiveToken] = useState<string | null>(null);
+  const [freshToken, setFreshToken] = useState<string | null>(null);
 
   /** Composites open their editor dialog right away after an insert. */
   function afterInsert(tag: TagItem, nextValue: string, at: number) {
     if (TOKEN_EDITORS[tag.name]) {
-      setActiveToken(tokenKeyAt(nextValue, at));
+      const key = tokenKeyAt(nextValue, at);
+      setActiveToken(key);
+      setFreshToken(key);
     }
   }
 
@@ -55,6 +58,7 @@ export function MarkupField({
   function handleOpenChange(open: boolean) {
     if (open) return;
     setActiveToken(null);
+    setFreshToken(null);
     // Hand focus back to the text so editing continues where it left off.
     editorRef.current?.focus();
   }
@@ -78,6 +82,7 @@ export function MarkupField({
         value={value}
         ctx={ctx}
         activeKey={activeToken}
+        isNew={activeToken !== null && activeToken === freshToken}
         onRewrite={(from, to, insert) =>
           editorRef.current?.replaceRange(from, to, insert)
         }

@@ -327,6 +327,24 @@ describe("resolveMarkup — {@attack} composite", () => {
     );
   });
 
+  it("joins an on-hit effect to the damage with ', and'", () => {
+    expect(
+      render(
+        "{@attack m|str|5|2d8+str|slashing|||the target has the {@condition grappled|XPHB} condition (escape DC 14)}",
+      ),
+    ).toBe(
+      "Melee Attack Roll: +9, reach 5 ft. Hit: 14 (2d8 + 5) Slashing damage, and the target has the grappled condition (escape DC 14).",
+    );
+  });
+
+  it("renders an effect-only Hit clause when there are no dice", () => {
+    expect(
+      render("{@attack m|str|5|||||the target has the Grappled condition}"),
+    ).toBe(
+      "Melee Attack Roll: +9, reach 5 ft. Hit: the target has the Grappled condition.",
+    );
+  });
+
   it("never throws on malformed args", () => {
     expect(render("{@attack}")).toBe("{@attack}");
     expect(render("{@attack |||}")).toBe("Melee Attack Roll:");
@@ -418,6 +436,7 @@ describe("composite grammar round-trip", () => {
     "m,r|str|5;20/60|1d6+str|piercing",
     "m|11|10|2d6+6|slashing|1d8|acid",
     "m|str|5|2d8+str|slashing|1d8+con|fire",
+    "m|str|5|2d8+str|slashing|||the target has the {@condition prone} condition",
   ])("serializeAttackArgs(parseAttackArgs(%j)) is idempotent", (args) => {
     const once = serializeAttackArgs(parseAttackArgs(args));
     expect(serializeAttackArgs(parseAttackArgs(once))).toBe(once);

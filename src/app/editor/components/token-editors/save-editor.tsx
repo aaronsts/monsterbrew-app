@@ -3,25 +3,27 @@
 import { useState } from "react";
 import {
   AbilityOrNumberControl,
-  DamageTypeSelect,
+  DamageTypeControl,
   FieldRow,
   OptionSelect,
 } from "./controls";
 import type { SaveFields } from "@/lib/statblock-markup";
 import type { TokenEditorProps } from "./index";
+import { dcValue } from "@/lib/statblock-markup";
 import { Input } from "@/components/ui/input";
 import { ABILITY_OPTIONS } from "@/lib/abilities";
-import { FieldDescription } from "@/components/ui/field";
+import { Separator } from "@/components/ui/separator";
 
 const ON_SAVE_OPTIONS = [
-  { value: "half", label: "Half damage" },
-  { value: "none", label: "No success clause" },
-  { value: "custom", label: "Custom text" },
+  { value: "half", label: "Half dmg" },
+  { value: "none", label: "None" },
+  { value: "custom", label: "Custom" },
 ];
 
 export function SaveEditor({
   value,
   onChange,
+  ctx,
 }: Readonly<TokenEditorProps<SaveFields>>) {
   const set = (patch: Partial<SaveFields>) => onChange({ ...value, ...patch });
   // UI-only: keeps the custom input visible while its text is still empty or
@@ -38,23 +40,23 @@ export function SaveEditor({
     : ON_SAVE_OPTIONS.filter((o) => o.value !== "half");
 
   return (
-    <div className="grid gap-2.5">
-      <FieldRow label="Saving throw">
-        <OptionSelect
-          items={ABILITY_OPTIONS}
-          value={value.ability.toLowerCase()}
-          onChange={(ability) => set({ ability })}
+    <div className="grid gap-3">
+      <div className="grid gap-3 sm:grid-cols-2">
+        <FieldRow label="Players roll">
+          <OptionSelect
+            items={ABILITY_OPTIONS}
+            value={value.ability.toLowerCase()}
+            onChange={(ability) => set({ ability })}
+          />
+        </FieldRow>
+        <AbilityOrNumberControl
+          label="DC comes from"
+          value={value.dc}
+          onChange={(dc) => set({ dc })}
+          hint={value.dc ? `DC ${dcValue(value.dc, ctx)}` : undefined}
         />
-        <FieldDescription>
-          What the players need to save against
-        </FieldDescription>
-      </FieldRow>
-      <AbilityOrNumberControl
-        label="DC"
-        value={value.dc}
-        onChange={(dc) => set({ dc })}
-      />
-      <FieldRow label="Targets (after the DC, optional)">
+      </div>
+      <FieldRow label="Targets" optional>
         <Input
           aria-label="Save targets"
           value={value.target}
@@ -63,70 +65,84 @@ export function SaveEditor({
           className="h-8"
         />
       </FieldRow>
-      <FieldRow label="Damage dice (on failure, optional)">
-        <Input
-          aria-label="Failure damage dice"
-          value={value.dice}
-          onChange={(e) => {
-            const dice = e.target.value;
-            // A dangling "half" would still render "Success: Half damage."
-            const patch =
-              !dice.trim() && value.onSave === "half"
-                ? { dice, onSave: "" }
-                : { dice };
-            set(patch);
-          }}
-          placeholder="3d6"
-          className="h-8"
-        />
-      </FieldRow>
-      {hasDamage && (
-        <DamageTypeSelect
-          value={value.type}
-          onChange={(type) => set({ type })}
-        />
-      )}
-      <FieldRow label="Failure effect (optional)">
-        <Input
-          aria-label="Failure effect text"
-          value={value.fail}
-          onChange={(e) => set({ fail: e.target.value })}
-          placeholder="the target has the {@condition prone} condition"
-          className="h-8"
-        />
-      </FieldRow>
-      <FieldRow label="On success">
-        <OptionSelect
-          items={onSaveOptions}
-          value={mode}
-          onChange={(v) => {
-            if (v === "custom") {
-              setForcedCustom(true);
-              set({ onSave: "" });
-            } else {
-              setForcedCustom(false);
-              set({ onSave: v });
-            }
-          }}
-        />
-      </FieldRow>
-      {mode === "custom" && (
-        <Input
-          aria-label="Custom success text"
-          value={isKeyword && forcedCustom ? "" : value.onSave}
-          onChange={(e) => set({ onSave: e.target.value })}
-          placeholder="the target is {@condition prone}"
-        />
-      )}
-      <FieldRow label="Failure or Success (optional)">
-        <Input
-          aria-label="Failure or Success text"
-          value={value.epilogue}
-          onChange={(e) => set({ epilogue: e.target.value })}
-          placeholder="The target can't be affected again for 24 hours"
-          className="h-8"
-        />
-      </FieldRow>
+      <Separator />
+      <div className="grid gap-3 sm:grid-cols-2">
+        <FieldRow label="Damage on failure">
+          <div className="flex gap-1.5">
+            <Input
+              aria-label="Failure damage dice"
+              value={value.dice}
+              onChange={(e) => {
+                const dice = e.target.value;
+                // Clearing the dice tidies the dependent slots: a dangling
+                // "half" would still render "Success: Half damage.", and a
+                // typed damage type would be left orphaned in the args.
+                const patch = dice.trim()
+                  ? { dice }
+                  : {
+                      dice,
+                      type: "",
+                      onSave: value.onSave === "half" ? "" : value.onSave,
+                    };
+                set(patch);
+              }}
+              placeholder="3d6"
+              className="h-8 min-w-16 flex-1"
+            />
+            <DamageTypeControl
+              value={value.type}
+              onChange={(type) => set({ type })}
+              className="w-28 shrink-0"
+            />
+          </div>
+        </FieldRow>
+        <FieldRow label="Extra effect on failure" optional>
+          <Input
+            aria-label="Failure effect text"
+            value={value.fail}
+            onChange={(e) => set({ fail: e.target.value })}
+            placeholder="the target has the {@condition prone} condition"
+            className="h-8"
+          />
+        </FieldRow>
+      </div>
+      <Separator />
+      <div className="grid gap-3 sm:grid-cols-2">
+        <FieldRow label="On success">
+          <OptionSelect
+            items={onSaveOptions}
+            value={mode}
+            className="h-8"
+            onChange={(v) => {
+              if (v === "custom") {
+                setForcedCustom(true);
+                set({ onSave: "" });
+              } else {
+                setForcedCustom(false);
+                set({ onSave: v });
+              }
+            }}
+          />
+          {mode === "custom" && (
+            <Input
+              aria-label="Custom success text"
+              value={isKeyword && forcedCustom ? "" : value.onSave}
+              onChange={(e) => set({ onSave: e.target.value })}
+              placeholder="the target is {@condition prone}"
+              className="h-8"
+            />
+          )}
+        </FieldRow>
+        <FieldRow label="Applies either way" optional>
+          <Input
+            aria-label="Failure or Success text"
+            value={value.epilogue}
+            onChange={(e) => set({ epilogue: e.target.value })}
+            placeholder="The target can't be affected again for 24 hours"
+            className="h-8"
+          />
+        </FieldRow>
+      </div>
     </div>
   );
 }

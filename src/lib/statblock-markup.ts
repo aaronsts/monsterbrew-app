@@ -96,6 +96,11 @@ function isAbility(value: string): value is Ability {
   return ABILITY_SET.has(value.toLowerCase());
 }
 
+export function abilityName(value: string): string {
+  const key = value.toLowerCase();
+  return isAbility(key) ? ABILITY_NAMES[key] : "";
+}
+
 function abilityMod(ctx: MarkupContext, ability: string): number {
   return calculateStatBonus(
     ctx.ability_scores[ability.toLowerCase() as Ability],
@@ -249,9 +254,12 @@ function capitalize(s: string): string {
  */
 
 /**
- * `{@attack <kind>|<hit>|<reach>|<dice>|<type>|<dice2>|<type2>}` — kind + hit
- * required. The two trailing slots are the optional secondary-damage rider,
- * rendered as `… 13 (2d6 + 6) Slashing damage plus 4 (1d8) Acid damage.`
+ * `{@attack <kind>|<hit>|<reach>|<dice>|<type>|<dice2>|<type2>|<effect>}` —
+ * kind + hit required. `dice2`/`type2` are the optional secondary-damage
+ * rider, rendered as `… 13 (2d6 + 6) Slashing damage plus 4 (1d8) Acid
+ * damage.`; `effect` is the optional on-hit rider that 2024 statblocks put
+ * inside the Hit sentence (`…damage, and the target has the Grappled
+ * condition.`).
  */
 export interface AttackFields {
   /** `m`, `r`, or `m,r`. */
@@ -271,6 +279,11 @@ export interface AttackFields {
   dice2: string;
   /** Secondary damage type; capitalized on output. */
   type2: string;
+  /**
+   * On-hit effect text (may nest tags). Rendered as-authored: alone as
+   * `Hit: <effect>`, or joined to the damage with `, and `.
+   */
+  effect: string;
 }
 
 /**
@@ -323,8 +336,11 @@ function splitArgs(args: string, count: number): Array<string> {
 }
 
 export function parseAttackArgs(args: string): AttackFields {
-  const [kind, hit, reach, dice, type, dice2, type2] = splitArgs(args, 7);
-  return { kind, hit, reach, dice, type, dice2, type2 };
+  const [kind, hit, reach, dice, type, dice2, type2, effect] = splitArgs(
+    args,
+    8,
+  );
+  return { kind, hit, reach, dice, type, dice2, type2, effect };
 }
 
 export function serializeAttackArgs(fields: AttackFields): string {
@@ -336,6 +352,7 @@ export function serializeAttackArgs(fields: AttackFields): string {
     fields.type,
     fields.dice2,
     fields.type2,
+    fields.effect,
   ].map((p) => p.trim());
   while (parts.length > 2 && parts[parts.length - 1] === "") parts.pop();
   return parts.join("|");
@@ -433,7 +450,9 @@ function resolveAttack(args: string, ctx: MarkupContext): string {
   ]
     .filter(Boolean)
     .join(" plus ");
-  if (damage) out += ` Hit: ${damage}.`;
+  const effect = f.effect ? resolveMarkup(f.effect, ctx) : "";
+  const hit = damage && effect ? `${damage}, and ${effect}` : damage || effect;
+  if (hit) out += ` ${ensurePeriod(`Hit: ${hit}`)}`;
   return out;
 }
 

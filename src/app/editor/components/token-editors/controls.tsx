@@ -1,7 +1,7 @@
 "use client";
 
 import { useId } from "react";
-import { FieldDescription, FieldLabel } from "@/components/ui/field";
+import { FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -25,16 +25,34 @@ const ABILITY_VALUES = new Set<string>(ABILITY_OPTIONS.map((o) => o.value));
 
 export function FieldRow({
   label,
+  optional = false,
+  hint,
   children,
   className,
 }: {
   label: string;
+  optional?: boolean;
+  hint?: string;
   children: React.ReactNode;
   className?: string;
 }) {
   return (
-    <div className={cn("grid w-full gap-1", className)}>
-      <Label className="w-fit text-xs text-muted-foreground">{label}</Label>
+    <div className={cn("grid w-full content-start gap-1", className)}>
+      <div className="flex items-center justify-between gap-2">
+        <Label className="w-fit gap-1.5 text-xs text-muted-foreground">
+          {label}
+          {optional && (
+            <span className="border px-1 text-[8px]  text-muted-foreground/80">
+              optional
+            </span>
+          )}
+        </Label>
+        {hint && (
+          <span className="text-xs text-muted-foreground tabular-nums">
+            {hint}
+          </span>
+        )}
+      </div>
       {children}
     </div>
   );
@@ -47,15 +65,11 @@ interface OptionSelectProps {
   className?: string;
 }
 
-/**
- * Segmented radio row: one compact bordered chip per option, selection
- * styled by FieldLabel's `has-data-checked` rules. The hidden radio keeps
- * keyboard/group semantics.
- */
 export function OptionSelect({
   items,
   value,
   onChange,
+  className,
 }: Readonly<OptionSelectProps>) {
   const groupId = useId();
   const allItems = items.some((o) => o.value === value)
@@ -72,7 +86,10 @@ export function OptionSelect({
         <FieldLabel
           key={option.value}
           htmlFor={`${groupId}-${option.value}`}
-          className="h-7 min-w-fit flex-1 items-center justify-center rounded-none border px-1.5 text-[11px] whitespace-nowrap"
+          className={cn(
+            "h-7 min-w-fit flex-1 items-center justify-center rounded-none border px-1.5 text-[11px] whitespace-nowrap",
+            className,
+          )}
         >
           {option.label}
           <RadioGroupItem
@@ -123,6 +140,8 @@ interface AbilityOrNumberControlProps {
   label: string;
   value: string;
   onChange: (value: string) => void;
+  /** Derived value shown next to the label, e.g. the computed `DC 10`. */
+  hint?: string;
 }
 
 /**
@@ -133,13 +152,14 @@ export function AbilityOrNumberControl({
   label,
   value,
   onChange,
+  hint,
 }: Readonly<AbilityOrNumberControlProps>) {
   const isAbilityValue = ABILITY_VALUES.has(value.toLowerCase());
   const mode = isAbilityValue ? value.toLowerCase() : FLAT;
   const items = [...ABILITY_OPTIONS, { value: FLAT, label: "Custom" }];
   const isZero = /^\d+$/.test(value) ? value : "0";
   return (
-    <FieldRow label={label}>
+    <FieldRow label={label} hint={hint}>
       <div className="flex flex-col items-start gap-1.5">
         <div className="min-w-0 w-full flex-1">
           <OptionSelect
@@ -158,21 +178,21 @@ export function AbilityOrNumberControl({
           />
         )}
       </div>
-      <FieldDescription>What is used to set the save DC</FieldDescription>
     </FieldRow>
   );
 }
 
 const NO_TYPE = "__none";
 
-export function DamageTypeSelect({
+/** Bare damage-type dropdown, for pairing inline with a dice input. */
+export function DamageTypeControl({
   value,
   onChange,
-  label = "Damage type",
+  className,
 }: {
   value: string;
   onChange: (value: string) => void;
-  label?: string;
+  className?: string;
 }) {
   const items = [
     { value: NO_TYPE, label: "None" },
@@ -182,13 +202,11 @@ export function DamageTypeSelect({
     })),
   ];
   return (
-    <FieldRow label={label}>
-      <SelectControl
-        items={items}
-        value={value || NO_TYPE}
-        onChange={(v) => onChange(v === NO_TYPE ? "" : v)}
-        className="h-8"
-      />
-    </FieldRow>
+    <SelectControl
+      items={items}
+      value={value || NO_TYPE}
+      onChange={(v) => onChange(v === NO_TYPE ? "" : v)}
+      className={cn("h-8", className)}
+    />
   );
 }

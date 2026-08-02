@@ -138,6 +138,43 @@ describe("MarkupField (CodeMirror)", () => {
 
     expect(fieldValue()).toBe("{@save dex|con|2d6|fire|half}");
     expect(await screen.findByLabelText("Failure damage dice")).toBeDefined();
+    // A just-inserted token gets the add wording, not the edit wording.
+    expect(
+      screen.getByRole("button", { name: "Add saving throw" }),
+    ).toBeDefined();
+  });
+
+  it("cancelling a just-inserted token removes it again", async () => {
+    const user = userEvent.setup();
+    render(<Harness />);
+
+    await user.click(
+      screen.getByRole("button", { name: /saving throw line/i }),
+    );
+    await screen.findByLabelText("Failure damage dice");
+
+    await user.click(screen.getByRole("button", { name: "Cancel" }));
+    await waitFor(() =>
+      expect(screen.queryByLabelText("Failure damage dice")).toBeNull(),
+    );
+    expect(fieldValue()).toBe("");
+  });
+
+  it("cancelling an edit keeps the token untouched", async () => {
+    const user = userEvent.setup();
+    const initial = "Bite. {@attack m|con|5|1d6+str|slashing} x";
+    const { container } = render(<Harness initial={initial} />);
+    fireEvent.mouseDown(container.querySelector(".cm-content .mb-chip")!);
+
+    const dice = await screen.findByLabelText("Damage dice");
+    await user.clear(dice);
+    await user.type(dice, "9d10");
+
+    await user.click(screen.getByRole("button", { name: "Cancel" }));
+    await waitFor(() =>
+      expect(screen.queryByLabelText("Damage dice")).toBeNull(),
+    );
+    expect(fieldValue()).toBe(initial);
   });
 
   it("collapses valid tokens into resolved-text chips while the caret is outside", () => {
@@ -188,7 +225,7 @@ describe("MarkupField (CodeMirror)", () => {
     expect(mark?.className).toContain("mb-token-active");
   });
 
-  it("splices dialog field edits back into the markup by exact offsets", async () => {
+  it("splices dialog field edits back into the markup on save", async () => {
     const user = userEvent.setup();
     const { container } = render(
       <Harness initial="Bite. {@attack m|con|5|1d6+str|slashing} against one target." />,
@@ -199,6 +236,12 @@ describe("MarkupField (CodeMirror)", () => {
     expect((dice as HTMLInputElement).value).toBe("1d6+str");
     await user.clear(dice);
     await user.type(dice, "2d8+str");
+    // Edits are staged in the dialog until confirmed.
+    expect(fieldValue()).toBe(
+      "Bite. {@attack m|con|5|1d6+str|slashing} against one target.",
+    );
+
+    await user.click(screen.getByRole("button", { name: "Save changes" }));
     expect(fieldValue()).toBe(
       "Bite. {@attack m|con|5|2d8+str|slashing} against one target.",
     );
@@ -218,6 +261,7 @@ describe("MarkupField (CodeMirror)", () => {
     const dice = await screen.findByLabelText("Damage dice");
     await user.clear(dice);
     await user.type(dice, "3d10");
+    await user.click(screen.getByRole("button", { name: "Save changes" }));
     expect(fieldValue()).toBe(
       "{@attack m|str|5|1d6+str|slashing} or {@attack m|str|5|3d10|slashing}",
     );
