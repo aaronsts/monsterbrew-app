@@ -6,3 +6,5 @@ Attack and saving-throw lines can now express much more of what real 2024 monste
 - A “Failure or Success” clause covers effects that happen either way
 - The edit popup gained fields for all of these, and mistakes like a damage type without dice are underlined
 - Clicking an attack or save line now opens the edit popup even when your cursor is already inside it
+- The 2024 reaction labels Trigger and Response, plus “Hit or Miss” and “Failure by 5 or More”, now render properly instead of leaking curly braces on imported monsters
+- Flat damage without dice now reads “1 Piercing damage” instead of “1 (1) Piercing damage”

@@ -402,6 +402,8 @@ function damageClause(dice: string, ctx: MarkupContext): string {
     // Uniform operator spacing so `2d8+str` renders as `2d8 + 4`.
     .replace(/\s*([+-])\s*/g, " $1 ")
     .trim();
+
+  if (!/d\d/i.test(expr)) return `${averageDice(expr)}`;
   return `${averageDice(expr)} (${expr})`;
 }
 
@@ -471,6 +473,7 @@ export const KNOWN_TAG_NAMES: ReadonlySet<string> = new Set([
   "atk",
   "hit",
   "h",
+  "hom",
   "dc",
   "damage",
   "attack",
@@ -479,8 +482,11 @@ export const KNOWN_TAG_NAMES: ReadonlySet<string> = new Set([
   "scaledice",
   "actSave",
   "actSaveFail",
+  "actSaveFailBy",
   "actSaveSuccess",
   "actSaveSuccessOrFail",
+  "actTrigger",
+  "actResponse",
   "recharge",
   "i",
   "italic",
@@ -570,6 +576,8 @@ export function resolveTag(tag: TagSegment, ctx: MarkupContext): string {
       return formatMod(hitBonus(args, ctx));
     case "h":
       return "Hit: ";
+    case "hom":
+      return "Hit or Miss: ";
     case "dc":
       return `DC ${dcValue(args, ctx)}`;
     case "damage": {
@@ -595,10 +603,16 @@ export function resolveTag(tag: TagSegment, ctx: MarkupContext): string {
     }
     case "actSaveFail":
       return "Failure:";
+    case "actSaveFailBy":
+      return args ? `Failure by ${args} or More:` : raw;
     case "actSaveSuccess":
       return "Success:";
     case "actSaveSuccessOrFail":
       return "Failure or Success:";
+    case "actTrigger":
+      return "Trigger:";
+    case "actResponse":
+      return args.includes("d") ? "Response—" : "Response:";
     case "recharge": {
       // {@recharge 5} -> "(Recharge 5–6)"; {@recharge}/{@recharge 6} -> only on a 6.
       const low = Number.parseInt(args, 10);

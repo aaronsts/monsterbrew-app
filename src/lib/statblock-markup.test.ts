@@ -162,6 +162,13 @@ describe("resolveMarkup — damage", () => {
       "Hit: 10 (2d8 + 1) Acid damage.",
     );
   });
+
+  it("renders flat no-dice damage bare instead of '1 (1)'", () => {
+    expect(render("{@damage 1}")).toBe("1");
+    expect(render("{@damage 1|piercing}")).toBe("1 Piercing damage");
+    // A flat amount with a linked ability still resolves to one bare total.
+    expect(render("{@damage 1 + dex}")).toBe("3");
+  });
 });
 
 describe("resolveMarkup — saves, recharge, dice", () => {
@@ -169,6 +176,25 @@ describe("resolveMarkup — saves, recharge, dice", () => {
     expect(render("{@actSave dex}")).toBe("Dexterity Saving Throw:");
     expect(render("{@actSaveFail}")).toBe("Failure:");
     expect(render("{@actSaveSuccess}")).toBe("Success:");
+    expect(render("{@actSaveFailBy 5}")).toBe("Failure by 5 or More:");
+  });
+
+  it("renders 2024 reaction labels", () => {
+    expect(
+      render(
+        "{@actTrigger} The captain is hit by an attack roll. {@actResponse} The captain adds 2 to its AC.",
+      ),
+    ).toBe(
+      "Trigger: The captain is hit by an attack roll. Response: The captain adds 2 to its AC.",
+    );
+    // The `d` variant dash-joins a sub-headed response.
+    expect(render("{@actResponse d}")).toBe("Response—");
+  });
+
+  it("renders the Hit or Miss label glued to its sentence like {@h}", () => {
+    expect(render("{@hom}The target has the Prone condition.")).toBe(
+      "Hit or Miss: The target has the Prone condition.",
+    );
   });
 
   it("renders recharge ranges", () => {
@@ -282,6 +308,16 @@ describe("resolveMarkup — {@attack} composite", () => {
   it("resolves ability keywords inside secondary damage dice", () => {
     expect(render("{@attack m|str|5|2d8+str|slashing|1d8+con|fire}")).toBe(
       "Melee Attack Roll: +9, reach 5 ft. Hit: 14 (2d8 + 5) Slashing damage plus 7 (1d8 + 3) Fire damage.",
+    );
+  });
+
+  it("renders flat damage without an average parenthetical", () => {
+    // The 2024 Blowgun pattern: "Hit: 1 Piercing damage."
+    expect(render("{@attack r|dex|25/100|1|piercing}")).toBe(
+      "Ranged Attack Roll: +6, range 25/100 ft. Hit: 1 Piercing damage.",
+    );
+    expect(render("{@attack r|dex|25/100|1+dex|piercing}")).toBe(
+      "Ranged Attack Roll: +6, range 25/100 ft. Hit: 3 Piercing damage.",
     );
   });
 
