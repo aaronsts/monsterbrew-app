@@ -128,7 +128,10 @@ export function from5eTools(raw: unknown): Monster {
       resistant: flattenDamage(source.resist, "resist"),
       vulnerable: flattenDamage(source.vulnerable, "vulnerable"),
     }),
-    condition_immunities: flattenDamage(source.conditionImmune, "conditionImmune"),
+    condition_immunities: flattenDamage(
+      source.conditionImmune,
+      "conditionImmune",
+    ),
 
     // Actions
     traits: convertTraits(source),
@@ -151,7 +154,8 @@ export function from5eTools(raw: unknown): Monster {
 }
 
 function joinEntries(entries: unknown): string {
-  if (Array.isArray(entries)) return entries.filter((e) => typeof e === "string").join("\n");
+  if (Array.isArray(entries))
+    return entries.filter((e) => typeof e === "string").join("\n");
   return typeof entries === "string" ? entries : "";
 }
 
@@ -192,24 +196,41 @@ function extractAbility(score: Source["str"]): number {
   return typeof score === "number" ? score : 10;
 }
 
+type SpeedValue = number | string | { number: number; condition?: string };
+
+function speedNumber(value: SpeedValue | undefined): number {
+  if (typeof value === "object" && value !== null) return value.number || 0;
+  return Number(value) || 0;
+}
+
+function hasHoverCondition(value: SpeedValue | undefined): boolean {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    /hover/i.test(value.condition ?? "")
+  );
+}
+
 function extractMovements(speed: Source["speed"]): Monster["movements"] {
   if (!speed || "special" in speed) {
     return { walk: 30, swim: 0, burrow: 0, climb: 0, fly: 0, hover: false };
   }
   return {
-    walk: Number(speed.walk) || 0,
-    swim: Number(speed.swim) || 0,
-    burrow: Number(speed.burrow) || 0,
-    climb: Number(speed.climb) || 0,
-    fly: Number(speed.fly) || 0,
-    hover: Boolean(speed.canHover),
+    walk: speedNumber(speed.walk),
+    swim: speedNumber(speed.swim),
+    burrow: speedNumber(speed.burrow),
+    climb: speedNumber(speed.climb),
+    fly: speedNumber(speed.fly),
+    hover:
+      Boolean(speed.canHover || speed.hover) || hasHoverCondition(speed.fly),
   };
 }
 
 function extractCr(cr: Source["cr"]): string {
   if (!cr) return "0";
   if (typeof cr === "string") return cr;
-  if (typeof cr === "object" && "cr" in cr && cr.cr != null) return cr.cr.toString();
+  if (typeof cr === "object" && "cr" in cr && cr.cr != null)
+    return cr.cr.toString();
   return "0";
 }
 
@@ -254,8 +275,10 @@ function convertTraits(source: Source): Array<Feature> {
       spellcasting.displayAs !== "reaction"
     ) {
       const lines: Array<string> = [];
-      if (spellcasting.headerEntries) lines.push(spellcasting.headerEntries.join("\n"));
-      if (spellcasting.will?.length) lines.push(`At will: ${spellcasting.will.join(", ")}`);
+      if (spellcasting.headerEntries)
+        lines.push(spellcasting.headerEntries.join("\n"));
+      if (spellcasting.will?.length)
+        lines.push(`At will: ${spellcasting.will.join(", ")}`);
       if (spellcasting.daily) {
         for (const [times, spells] of Object.entries(spellcasting.daily)) {
           lines.push(`${times}/day: ${(spells as Array<string>).join(", ")}`);

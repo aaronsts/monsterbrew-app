@@ -44,8 +44,14 @@ describe("from5eTools", () => {
     expect(monster.movements).toMatchObject({ walk: 40, fly: 60, hover: true });
     expect(monster.saving_throws).toEqual({ dex: true, con: true });
     // CR 5 -> proficiency bonus 3; +8 clears the +6 expert threshold, +5 doesn't.
-    expect(monster.skills).toEqual({ perception: "expert", stealth: "proficient" });
-    expect(monster.damage_modifiers).toEqual({ fire: "immune", poison: "immune" });
+    expect(monster.skills).toEqual({
+      perception: "expert",
+      stealth: "proficient",
+    });
+    expect(monster.damage_modifiers).toEqual({
+      fire: "immune",
+      poison: "immune",
+    });
     expect(monster.condition_immunities).toEqual(["poisoned"]);
     expect(monster.senses).toMatchObject({ darkvision: 120, blindsight: 30 });
     expect(monster.languages).toEqual(["common", "infernal"]);
@@ -54,5 +60,57 @@ describe("from5eTools", () => {
 
   it("throws on JSON that isn't a 5eTools creature", () => {
     expect(() => from5eTools({ foo: "bar" })).toThrow();
+  });
+
+  it("reads a hover fly speed object (Air Elemental shape)", () => {
+    const monster = from5eTools({
+      ...source,
+      name: "Air Elemental",
+      speed: {
+        walk: 10,
+        fly: { number: 90, condition: "(hover)" },
+        canHover: true,
+      },
+    });
+    expect(monster.movements).toMatchObject({ walk: 10, fly: 90, hover: true });
+  });
+
+  it("derives hover from the fly condition when canHover is absent", () => {
+    const monster = from5eTools({
+      ...source,
+      speed: { walk: 10, fly: { number: 90, condition: "(hover)" } },
+    });
+    expect(monster.movements).toMatchObject({ fly: 90, hover: true });
+  });
+
+  it("reads the hover boolean on speed", () => {
+    const monster = from5eTools({
+      ...source,
+      speed: { walk: 30, fly: 60, hover: true },
+    });
+    expect(monster.movements).toMatchObject({ walk: 30, fly: 60, hover: true });
+  });
+
+  it("reads a conditional climb speed object without hovering", () => {
+    const monster = from5eTools({
+      ...source,
+      speed: {
+        walk: 30,
+        climb: { number: 30, condition: "(crawler form only)" },
+      },
+    });
+    expect(monster.movements).toMatchObject({
+      walk: 30,
+      climb: 30,
+      hover: false,
+    });
+  });
+
+  it("accepts { special } resist entries and drops them", () => {
+    const monster = from5eTools({
+      ...source,
+      resist: ["necrotic", { special: "damage from spells" }],
+    });
+    expect(monster.damage_modifiers).toMatchObject({ necrotic: "resistant" });
   });
 });
