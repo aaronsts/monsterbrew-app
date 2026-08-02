@@ -23,7 +23,6 @@ interface Distance {
   long: string;
 }
 
-/** Decode the structured reach slot (`5`, `30/120`, `5;30/120`) per kind. */
 function splitDistance(kind: string, reach: string): Distance {
   const melee = /m/.test(kind);
   const ranged = /r/.test(kind);
@@ -81,7 +80,7 @@ export function AttackEditor({
       />
       <div className="flex flex-wrap gap-2">
         {melee && (
-          <FieldRow label="Reach (ft.)" className="w-16">
+          <FieldRow label="Reach (ft.)" className="w-20">
             <Input
               type="number"
               min={0}
@@ -95,7 +94,7 @@ export function AttackEditor({
         )}
         {ranged && (
           <>
-            <FieldRow label="Range (ft.)" className="w-16">
+            <FieldRow label="Range (ft.)" className="w-20">
               <Input
                 type="number"
                 min={0}
@@ -106,7 +105,7 @@ export function AttackEditor({
                 className="h-8"
               />
             </FieldRow>
-            <FieldRow label="Long (ft.)" className="w-16">
+            <FieldRow label="Long (ft.)" className="w-20">
               <Input
                 type="number"
                 min={0}
@@ -130,6 +129,24 @@ export function AttackEditor({
         </FieldRow>
       </div>
       <DamageTypeSelect value={value.type} onChange={(type) => set({ type })} />
+      <FieldRow label="Extra damage dice (plus …, optional)">
+        <Input
+          aria-label="Extra damage dice"
+          value={value.dice2}
+          onChange={(e) => {
+            const dice2 = e.target.value;
+            set(dice2.trim() ? { dice2 } : { dice2, type2: "" });
+          }}
+          className="h-8"
+        />
+      </FieldRow>
+      {value.dice2.trim() !== "" && (
+        <DamageTypeSelect
+          label="Extra damage type"
+          value={value.type2}
+          onChange={(type2) => set({ type2 })}
+        />
+      )}
     </div>
   );
 }

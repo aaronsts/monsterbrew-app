@@ -11,6 +11,7 @@ import type { SaveFields } from "@/lib/statblock-markup";
 import type { TokenEditorProps } from "./index";
 import { Input } from "@/components/ui/input";
 import { ABILITY_OPTIONS } from "@/lib/abilities";
+import { FieldDescription } from "@/components/ui/field";
 
 const ON_SAVE_OPTIONS = [
   { value: "half", label: "Half damage" },
@@ -32,7 +33,6 @@ export function SaveEditor({
   const mode = forcedCustom || !isKeyword ? "custom" : effectiveOnSave;
 
   const hasDamage = value.dice.trim() !== "";
-  // "Half damage" is meaningless without a Failure damage clause.
   const onSaveOptions = hasDamage
     ? ON_SAVE_OPTIONS
     : ON_SAVE_OPTIONS.filter((o) => o.value !== "half");
@@ -45,12 +45,24 @@ export function SaveEditor({
           value={value.ability.toLowerCase()}
           onChange={(ability) => set({ ability })}
         />
+        <FieldDescription>
+          What the players need to save against
+        </FieldDescription>
       </FieldRow>
       <AbilityOrNumberControl
         label="DC"
         value={value.dc}
         onChange={(dc) => set({ dc })}
       />
+      <FieldRow label="Targets (after the DC, optional)">
+        <Input
+          aria-label="Save targets"
+          value={value.target}
+          onChange={(e) => set({ target: e.target.value })}
+          placeholder="each creature in a 30-foot Cone"
+          className="h-8"
+        />
+      </FieldRow>
       <FieldRow label="Damage dice (on failure, optional)">
         <Input
           aria-label="Failure damage dice"
@@ -74,6 +86,15 @@ export function SaveEditor({
           onChange={(type) => set({ type })}
         />
       )}
+      <FieldRow label="Failure effect (optional)">
+        <Input
+          aria-label="Failure effect text"
+          value={value.fail}
+          onChange={(e) => set({ fail: e.target.value })}
+          placeholder="the target has the {@condition prone} condition"
+          className="h-8"
+        />
+      </FieldRow>
       <FieldRow label="On success">
         <OptionSelect
           items={onSaveOptions}
@@ -97,6 +118,15 @@ export function SaveEditor({
           placeholder="the target is {@condition prone}"
         />
       )}
+      <FieldRow label="Failure or Success (optional)">
+        <Input
+          aria-label="Failure or Success text"
+          value={value.epilogue}
+          onChange={(e) => set({ epilogue: e.target.value })}
+          placeholder="The target can't be affected again for 24 hours"
+          className="h-8"
+        />
+      </FieldRow>
     </div>
   );
 }

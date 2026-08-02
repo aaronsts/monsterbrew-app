@@ -20,16 +20,16 @@ export interface TokenEditorProps<TFields> {
 }
 
 /**
- * A structured popover editor for one `{@…}` tag type. `parse`/`serialize`
+ * A structured dialog editor for one `{@…}` tag type. `parse`/`serialize`
  * convert between the tag's arg string and a field object the `Editor`
  * component edits; both come from `statblock-markup.ts` so the grammar has a
  * single implementation. Registering a tag here is all it takes to make its
- * chips clickable in `MarkupPreview`.
+ * chips clickable in the markup field.
  */
 export interface TokenEditor<TFields> {
   /** Tag name handled, without the leading `@`. */
   name: string;
-  /** Popover title. */
+  /** Dialog title. */
   label: string;
   parse: (args: string) => TFields;
   serialize: (fields: TFields) => string;
@@ -37,9 +37,9 @@ export interface TokenEditor<TFields> {
 }
 
 /**
- * Type-erased entry: `MarkupPreview` passes the field object opaquely from
- * `parse` into `Editor` and back through `serialize`, so each entry only has
- * to be internally consistent.
+ * Type-erased entry: `TokenEditorDialog` passes the field object opaquely
+ * from `parse` into `Editor` and back through `serialize`, so each entry
+ * only has to be internally consistent.
  */
 export type AnyTokenEditor = TokenEditor<unknown>;
 

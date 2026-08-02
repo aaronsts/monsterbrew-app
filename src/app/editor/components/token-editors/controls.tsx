@@ -1,7 +1,7 @@
 "use client";
 
 import { useId } from "react";
-import { FieldLabel } from "@/components/ui/field";
+import { FieldDescription, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -57,8 +57,6 @@ export function OptionSelect({
   value,
   onChange,
 }: Readonly<OptionSelectProps>) {
-  // Several OptionSelects share one popover; prefix the option ids so each
-  // label toggles its own group instead of the first group using that value.
   const groupId = useId();
   const allItems = items.some((o) => o.value === value)
     ? items
@@ -160,6 +158,7 @@ export function AbilityOrNumberControl({
           />
         )}
       </div>
+      <FieldDescription>What is used to set the save DC</FieldDescription>
     </FieldRow>
   );
 }
@@ -169,9 +168,11 @@ const NO_TYPE = "__none";
 export function DamageTypeSelect({
   value,
   onChange,
+  label = "Damage type",
 }: {
   value: string;
   onChange: (value: string) => void;
+  label?: string;
 }) {
   const items = [
     { value: NO_TYPE, label: "None" },
@@ -181,7 +182,7 @@ export function DamageTypeSelect({
     })),
   ];
   return (
-    <FieldRow label="Damage type">
+    <FieldRow label={label}>
       <SelectControl
         items={items}
         value={value || NO_TYPE}
