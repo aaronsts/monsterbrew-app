@@ -121,7 +121,7 @@ export const MonsterForm = () => {
                 Save this creature to turn on auto-save.
               </AlertDescription>
               <AlertAction>
-                <Button size="sm" onClick={() => save({ stayInEditor: true })}>
+                <Button size="xs" onClick={() => save({ stayInEditor: true })}>
                   Save now
                 </Button>
               </AlertAction>
