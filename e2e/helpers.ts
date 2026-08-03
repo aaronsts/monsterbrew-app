@@ -93,25 +93,25 @@ export async function selectCombo(page: Page, inputId: string, option: string) {
 }
 
 /**
- * The statblock renders each ability as three consecutive grid cells: a score
- * cell (`<span><span>DEX</span> 10</span>`) followed by the modifier and save
- * `<span>` cells. These helpers resolve the modifier / save cell for a given
- * ability abbreviation (e.g. "DEX") by walking from its label span.
+ * The statblock renders each ability as four consecutive grid cells: a label
+ * cell (`<span>DEX</span>`) followed by the score, modifier, and save `<span>`
+ * cells. These helpers resolve the modifier / save cell for a given ability
+ * abbreviation (e.g. "DEX") by walking from its label cell.
  */
-function abilityCell(page: Page, label: string, sibling: 1 | 2): Locator {
+function abilityCell(page: Page, label: string, sibling: 2 | 3): Locator {
   return statblock(page).locator(
-    `xpath=.//span[normalize-space(text())="${label}"]/parent::span/following-sibling::span[${sibling}]`,
+    `xpath=.//span[normalize-space(text())="${label}"]/following-sibling::span[${sibling}]`,
   );
 }
 
 /** The derived modifier cell for an ability (e.g. "DEX"). */
 export function abilityMod(page: Page, label: string): Locator {
-  return abilityCell(page, label, 1);
+  return abilityCell(page, label, 2);
 }
 
 /** The derived saving-throw cell for an ability (e.g. "DEX"). */
 export function abilitySave(page: Page, label: string): Locator {
-  return abilityCell(page, label, 2);
+  return abilityCell(page, label, 3);
 }
 
 /** Toggle a saving-throw checkbox via its (visually-hidden) label. */

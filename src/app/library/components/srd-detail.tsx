@@ -6,7 +6,9 @@ import { ArrowLeft, PencilRuler } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { MonsterStatblock } from "@/components/monster-statblock";
+import { MonsterDescription } from "@/components/statblock/monster-description";
 import { getSrdMonster } from "@/services/srd";
+import { cn } from "@/lib/utils";
 
 export default function SrdDetail() {
   const { key } = useParams({ from: "/library/srd/$key" });
@@ -62,7 +64,15 @@ export default function SrdDetail() {
         </div>
       </div>
 
-      <MonsterStatblock creature={entry.monster} columns />
+      <div
+        className={cn(
+          Boolean(entry.monster.description?.trim()) &&
+            "grid items-start gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]",
+        )}
+      >
+        <MonsterStatblock creature={entry.monster} columns />
+        <MonsterDescription description={entry.monster.description} />
+      </div>
 
       <p className="text-xs text-muted-foreground">
         {entry.monster.name} is from the System Reference Document 5.2.1

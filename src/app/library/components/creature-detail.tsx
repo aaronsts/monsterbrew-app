@@ -6,6 +6,8 @@ import { ArrowLeft } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { MonsterStatblock } from "@/components/monster-statblock";
+import { MonsterDescription } from "@/components/statblock/monster-description";
+import { cn } from "@/lib/utils";
 import { CreatureActionsMenu } from "@/app/library/components/creature-actions-menu";
 import { useCreature } from "@/hooks/use-creatures";
 
@@ -61,8 +63,16 @@ export default function CreatureDetail() {
         <CreatureActionsMenu creature={creature} statblockRef={statblockRef} />
       </div>
 
-      <div ref={statblockRef}>
-        <MonsterStatblock creature={creature} columns />
+      <div
+        className={cn(
+          Boolean(creature.description?.trim()) &&
+            "grid items-start gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]",
+        )}
+      >
+        <div ref={statblockRef}>
+          <MonsterStatblock creature={creature} columns />
+        </div>
+        <MonsterDescription description={creature.description} />
       </div>
     </div>
   );
