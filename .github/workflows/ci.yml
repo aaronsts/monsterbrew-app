@@ -110,7 +110,7 @@ jobs:
       - name: Deploy Project Artifacts to Vercel
         id: deploy-artifacts
         run: |
-          previewUrl=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }})
+          previewUrl=$(vercel deploy --prebuilt --archive=tgz --token=${{ secrets.VERCEL_TOKEN }})
           echo "previewUrl=$previewUrl" >> "$GITHUB_OUTPUT"
       - name: Show URL of PR-specific deployment in Sticky Comment
         id: show-url-in-pr
