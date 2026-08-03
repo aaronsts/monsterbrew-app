@@ -133,7 +133,9 @@ function normalizeChallengeRating(
   if (typeof cr === "number") {
     return fractions[cr.toString()] ?? cr.toString();
   }
-  return fractions[cr.trim()] ?? cr.trim();
+  // TetraCube's free-text CR field can carry an XP suffix: "23 (50,000 XP)".
+  const text = cr.replace(/\s*\(.*\)\s*$/, "").trim();
+  return fractions[text] ?? text;
 }
 
 /** Parse "passive Perception 26" out of a list of sense strings. */

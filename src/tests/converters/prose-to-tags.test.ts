@@ -168,6 +168,82 @@ describe("proseToTags — saving throws", () => {
   });
 });
 
+describe("proseToTags — 2014-style lines", () => {
+  it("tags a weapon attack head and its damage clause", () => {
+    const prose =
+      "Melee Weapon Attack: +9 to hit, reach 10 ft., one target. Hit: 12 (2d6 + 5) bludgeoning damage.";
+    const converted = proseToTags(prose, aboleth);
+    expect(converted).toBe(
+      "{@atk mw} {@hit str} to hit, reach 10 ft., one target. Hit: {@damage 2d6 + 5} bludgeoning damage.",
+    );
+    expect(resolveMarkup(converted, aboleth)).toBe(prose);
+  });
+
+  it("handles melee-or-ranged weapon attacks and secondary damage", () => {
+    // STR and DEX tie at +5; melee-capable attacks prefer STR.
+    const ctx = makeCtx({ str: 16, dex: 16 }, "1");
+    const prose =
+      "Melee or Ranged Weapon Attack: +5 to hit, reach 5 ft. or range 20/60 ft., one target. " +
+      "Hit: 6 (1d6 + 3) piercing damage plus 3 (1d6) poison damage.";
+    expect(proseToTags(prose, ctx)).toBe(
+      "{@atk mw,rw} {@hit str} to hit, reach 5 ft. or range 20/60 ft., one target. " +
+        "Hit: {@damage 1d6 + 3} piercing damage plus {@damage 1d6} poison damage.",
+    );
+  });
+
+  it("links a spell attack on a unique ability match", () => {
+    // INT +8 is the only candidate; every other ability sits at +4.
+    const ctx = makeCtx({ int: 18 }, "10");
+    const prose =
+      "Ranged Spell Attack: +8 to hit, range 120 ft., one target. Hit: 14 (4d6) fire damage.";
+    expect(proseToTags(prose, ctx)).toBe(
+      "{@atk rs} {@hit int} to hit, range 120 ft., one target. Hit: {@damage 4d6} fire damage.",
+    );
+  });
+
+  it("keeps a spell attack flat when casting stats tie", () => {
+    // INT and CHA both give +8, and spells get no STR/DEX convention.
+    const prose =
+      "Melee Spell Attack: +8 to hit, reach 5 ft., one target. Hit: 9 (2d8) psychic damage.";
+    expect(proseToTags(prose, aboleth)).toBe(
+      "{@atk ms} {@hit 8} to hit, reach 5 ft., one target. Hit: {@damage 2d8} psychic damage.",
+    );
+  });
+
+  it("keeps the to-hit flat when no ability matches", () => {
+    // Every ability sits at +2; +5 has no source.
+    const ctx = makeCtx({}, "1");
+    const prose =
+      "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 3 (1d6) piercing damage.";
+    expect(proseToTags(prose, ctx)).toBe(
+      "{@atk mw} {@hit 5} to hit, reach 5 ft., one target. Hit: {@damage 1d6} piercing damage.",
+    );
+  });
+
+  it("links a 2014-style DC to the save's own ability", () => {
+    const prose =
+      "The target must succeed on a DC 16 Intelligence saving throw or take 10 (3d6) Psychic damage.";
+    expect(proseToTags(prose, aboleth)).toBe(
+      "The target must succeed on a {@dc int} Intelligence saving throw or take {@damage 3d6} Psychic damage.",
+    );
+  });
+
+  it("links a 2014-style DC to a different single-candidate ability", () => {
+    // Blue-dragon style: DEX save, but only CON (+6, PB +5) produces DC 19.
+    const ctx = makeCtx({ con: 23 }, "16");
+    const prose = "Each creature must make a DC 19 Dexterity saving throw.";
+    expect(proseToTags(prose, ctx)).toBe(
+      "Each creature must make a {@dc con} Dexterity saving throw.",
+    );
+  });
+
+  it("leaves an ambiguous 2014-style DC untouched", () => {
+    // DC 16 matches INT and CHA (+4 each) but not the named WIS.
+    const prose = "The target must succeed on a DC 16 Wisdom saving throw.";
+    expect(proseToTags(prose, aboleth)).toBe(prose);
+  });
+});
+
 describe("proseToTags — damage and pass-through", () => {
   it("tags verifiable damage clauses in plain prose", () => {
     const prose =

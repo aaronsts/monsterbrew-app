@@ -8,6 +8,7 @@ import {
   toSavingThrows,
   toSkills,
 } from "./monster-mappers";
+import { tagMonsterFeatures } from "./prose-to-tags";
 import type { Monster } from "@/schema/monster-schema";
 import type { Open5eCreature } from "@/types/open-5e";
 import { open5eSchema } from "@/types/open-5e";
@@ -47,7 +48,7 @@ export function fromOpen5e(raw: unknown): Monster {
     parsePassivePerception(senseStrings) ??
     10 + calculateStatBonus(source.wisdom) + (source.perception || 0);
 
-  return {
+  return tagMonsterFeatures({
     // Identity
     name: source.name,
     type: source.type.toLowerCase(),
@@ -116,5 +117,5 @@ export function fromOpen5e(raw: unknown): Monster {
     is_mythic: false,
     mythic_description: "",
     mythic_actions: [],
-  };
+  });
 }

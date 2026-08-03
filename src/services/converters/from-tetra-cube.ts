@@ -6,14 +6,27 @@ import {
   toSavingThrows,
   toSkills,
 } from "./monster-mappers";
+import { tagMonsterFeatures } from "./prose-to-tags";
 import type { Monster } from "@/schema/monster-schema";
 import { tetraCubeSchema } from "@/types/tetra-cube";
 import { calculateStatBonus } from "@/lib/utils";
 
+/**
+ * TetraCube wraps the 2014 statblock labels in markdown italics
+ * (`_Melee Weapon Attack:_ … _Hit:_ …`). Monsterbrew prints those labels
+ * unitalicized, so drop the underscores — also letting the prose-to-tags
+ * attack grammar recognize the line.
+ */
+const LABEL_ITALICS_RE =
+  /_((?:Melee or Ranged|Melee|Ranged) (?:Weapon|Spell) Attack:|Hit:)_/g;
+
 function toFeatures(
   entries: Array<{ name: string; desc: string }>,
 ): Monster["traits"] {
-  return entries.map((entry) => ({ name: entry.name, description: entry.desc }));
+  return entries.map((entry) => ({
+    name: entry.name,
+    description: entry.desc.replace(LABEL_ITALICS_RE, "$1"),
+  }));
 }
 
 /** Convert a TetraCube export into the canonical `Monster` shape. */
@@ -30,7 +43,7 @@ export function fromTetraCube(raw: unknown): Monster {
   const byDamageType = (type: string) =>
     source.damagetypes.filter((d) => d.type === type).map((d) => d.name);
 
-  return {
+  return tagMonsterFeatures({
     // Identity
     name: source.name,
     type: source.type.toLowerCase(),
@@ -105,5 +118,5 @@ export function fromTetraCube(raw: unknown): Monster {
     is_mythic: source.isMythic,
     mythic_description: source.mythicDescription,
     mythic_actions: toFeatures(source.mythics),
-  };
+  });
 }
