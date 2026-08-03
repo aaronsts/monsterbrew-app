@@ -41,8 +41,11 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# agent skills / tooling
-/.claude
+# agent skills / tooling (project-authored skills in .claude/skills are tracked;
+# installer-managed skills and local agent state stay ignored)
+/.claude/*
+!/.claude/skills
+/.claude/skills/shadcn
 /.agents
 /skills-lock.json
 
