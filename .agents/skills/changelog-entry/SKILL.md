@@ -28,7 +28,8 @@ into one card).
      enough to describe the behavior, not just the commit subjects.
 
 2. **Read two or three recent entries** in `src/content/changelog/releases/`
-   and match their voice exactly (see Voice below).
+   for orientation. When they conflict with the Voice rules below, the rules
+   win: older entries run longer and chattier than the current voice.
 
 3. **Write the entry** to `src/content/changelog/unreleased/<slug>.md`, where
    `<slug>` is a short kebab-case name for the change (e.g. `export-returns.md`,
@@ -40,7 +41,7 @@ into one card).
    badge: Major
    ---
 
-   One user-facing paragraph on what changed and why it matters.
+   One or two plain sentences on what changed.
 
    - Concrete, user-facing bullet
    - Another concrete bullet
@@ -51,8 +52,8 @@ into one card).
      major release. Most entries have neither — then skip the frontmatter
      entirely.
    - Do **not** add `version` or `date` — the release pipeline stamps those.
-   - Body = summary paragraph(s) first, then `- ` bullets for the changes list.
-     Keep each bullet on a single line.
+   - Body = the 1-2 sentence summary first, then `- ` bullets for the changes
+     list. Keep each bullet on a single line.
 
 4. **Show the entry to the user** and let them tweak the wording. Do not treat
    the draft as final — the whole point is a curated starting point, not an
@@ -69,8 +70,10 @@ Study the existing entries and match them. The rules that produce that voice:
   the implementation. "You can now...", "shows up in the statblock automatically."
 - **Plain language.** No jargon, no internal component names, no ticket/PR
   numbers. A player who's never seen the code should understand it.
-- The **summary** is one flowing paragraph (2-4 sentences) that frames the
-  value. The **bullets** are 1-5 short, concrete specifics.
+- **Dry and short.** The **summary** is 1-2 matter-of-fact sentences saying
+  what changed. No scene-setting, no sales pitch. The **bullets** are 1-5
+  short, simple specifics, one plain clause each.
+- **No em dashes.** Use commas, periods, or parentheses instead.
 - **Be honest about invisible work.** For refactors/build/tooling releases, say
   so plainly: "An under-the-hood change... No visible changes." Don't oversell.
 - **`title`** only when there's a headline feature worth naming (e.g. "SRD

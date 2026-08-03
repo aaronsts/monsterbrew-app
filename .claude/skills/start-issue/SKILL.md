@@ -20,6 +20,9 @@ Run this workflow the same way every time. The argument is the issue number
 
 - Check `git status` first. If there is uncommitted work or the checkout is on
   another feature branch, stop and ask before touching anything.
+- Check for existing work on this issue: `git branch -a | grep "issue-<number>"`
+  and `gh pr list --state all --search "<number>"`. If a branch or PR already
+  exists, stop and ask whether to resume it instead of starting fresh.
 - `git fetch origin` and branch from `origin/main`:
   `git checkout -b <type>/issue-<number>[-short-slug] origin/main`
 - `<type>` follows the issue label: `enhancement` → `feat`, `bug` → `fix`,
