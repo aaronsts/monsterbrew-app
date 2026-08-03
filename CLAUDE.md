@@ -77,7 +77,9 @@ Import wiring is in `src/components/import-dialog.tsx`, switching on `ImportType
 
 ### UI conventions
 
-shadcn/ui ("new-york" style) in `src/components/ui/`, Tailwind v4 (config-less, driven by `src/app/globals.css`), Lucide icons. The Button has two style axes from CVA definitions in `button.tsx`: `color` (`neutral` | `primary` | `accent` | `destructive`, default `primary`) × `variant` (`filled` | `light` | `outline` | `ghost` | `transparent` | `link`, default `filled`); `link` ignores `color`. A visual inventory of all components lives at `/dev/components` (localhost-only route). Toasts use `sonner` (`toast.*`); the `<Toaster>` is mounted in `layout.tsx`. Analytics is Plausible (wrapped in `providers.tsx`); React Query is provided but currently minimal.
+shadcn/ui ("base-lyra" style, on Base UI primitives) in `src/components/ui/`, Tailwind v4 (config-less, driven by `src/app/globals.css`), Lucide icons. The Button has two style axes from CVA definitions in `button.tsx`: `color` (`neutral` | `primary` | `accent` | `destructive`, default `primary`) × `variant` (`filled` | `light` | `outline` | `ghost` | `transparent` | `link`, default `filled`); `link` ignores `color`. A visual inventory of all components lives at `/dev/components` (localhost-only route). Toasts use `sonner` (`toast.*`); the `<Toaster>` is mounted in `layout.tsx`. Analytics is Plausible (wrapped in `providers.tsx`); React Query is provided but currently minimal.
+
+Two non-obvious conventions: write Tailwind theme scale utilities (`text-destructive-500`), never the arbitrary-value var syntax (`text-(--destructive-500)`) — if a scale utility lacks an `@theme` mapping in `globals.css`, that's a bug to fix, not a reason to fall back. And don't use the router's `Link` inside editor form components (`src/app/editor/components/**`): their colocated tests render without a router, so use plain `<a>` anchors there.
 
 Preset trait/action content for quick insertion lives in `src/lib/constants/actionPresets.ts`.
 
