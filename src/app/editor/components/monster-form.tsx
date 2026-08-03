@@ -31,6 +31,7 @@ import {
   AlertTitle,
 } from "@/components/ui/alert";
 import { MonsterStatblock } from "@/components/monster-statblock";
+import { MonsterDescription } from "@/components/statblock/monster-description";
 
 export const MonsterForm = () => {
   const { id: idParam } = useSearch({ from: "/editor" });
@@ -156,6 +157,10 @@ export const MonsterForm = () => {
           </form>
           <div className="lg:sticky lg:top-30 lg:h-fit lg:max-h-[calc(100dvh-8.5rem)] lg:overflow-y-auto">
             <MonsterStatblock creature={preview} />
+            <MonsterDescription
+              description={preview.description}
+              className="mt-4"
+            />
           </div>
         </div>
       </div>

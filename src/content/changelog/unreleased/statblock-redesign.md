@@ -1,0 +1,12 @@
+---
+title: Statblock redesign
+---
+
+Statblocks now follow the official 2024 book layout much more closely, while keeping the Monsterbrew look. You'll see the new design everywhere a statblock appears: the editor preview, your library, and the SRD pages.
+
+- Ability scores sit in two tinted tables with Mod and Save columns, like the official books
+- Section headings ("Traits", "Actions") are now small caps with a thin rule underneath, and traits have their own heading
+- The creature name, headings, and labels like AC and HP use the deep red from the official design
+- The old gradient divider bars are gone, replaced by whitespace and clean lines
+- On wide screens the ability tables keep a compact width so the numbers stay easy to read
+- The flavor description moved out of the statblock: it shows beside it in the library and below the preview in the editor

@@ -1,11 +1,10 @@
 "use client";
 
 import { Fragment } from "react";
-import type { PropsWithChildren } from "react";
+import { FeatureSection } from "./statblock/feature-section";
 import type { Monster } from "@/schema/monster-schema";
-import type { MarkupContext } from "@/lib/statblock-markup";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { StandAloneDescription as Description } from "@/components/ui/stand-alone-description";
+import { SKILLS } from "@/lib/skills";
 import {
   calculateHitPoints,
   calculateStatBonus,
@@ -15,11 +14,9 @@ import {
   formatMovements,
   titleCase,
 } from "@/lib/utils";
-import { resolveMarkup } from "@/lib/statblock-markup";
-import { SKILLS } from "@/lib/skills";
 import { abilityScoresSchema, defaultMonster } from "@/schema/monster-schema";
 
-type Feature = Monster["traits"][number];
+export type Feature = Monster["traits"][number];
 
 const ABILITY_KEYS = abilityScoresSchema.keyof().options;
 const SKILL_ABILITY = new Map<string, string>(
@@ -28,30 +25,6 @@ const SKILL_ABILITY = new Map<string, string>(
 const SKILL_LABEL = new Map<string, string>(
   SKILLS.map((s) => [s.skill_name, s.label]),
 );
-
-/** Statblock divider bar, tinted to the theme accent and fading out to the right. */
-function TaperedRule({ thin = false }: { thin?: boolean }) {
-  return (
-    <div
-      className={cn(
-        "w-full bg-linear-to-r from-accent to-transparent",
-        thin ? "h-0.5" : "h-1",
-      )}
-      aria-hidden
-    />
-  );
-}
-
-function SectionHeading({ children }: Readonly<PropsWithChildren>) {
-  return (
-    <div className="mb-2">
-      <h3 className="font-heading text-base font-semibold uppercase tracking-wide text-primary">
-        {children}
-      </h3>
-      <TaperedRule thin />
-    </div>
-  );
-}
 
 /** A single "**Label** value" line as used throughout the 5e 2024 header block. */
 function StatLine({
@@ -65,54 +38,11 @@ function StatLine({
 }) {
   return (
     <p className={cn("whitespace-normal", className)}>
-      <span className="font-semibold text-foreground">{label} </span>
+      <span className="font-black text-accent-700 dark:text-accent-500">
+        {label}{" "}
+      </span>
       <span>{value}</span>
     </p>
-  );
-}
-
-function TraitList({
-  features,
-  ctx,
-}: {
-  features: Array<Feature>;
-  ctx: MarkupContext;
-}) {
-  return (
-    <div className="flex flex-col gap-3">
-      {features.map((feature, i) => (
-        <Description
-          key={feature.name + i}
-          title={feature.name}
-          description={resolveMarkup(feature.description, ctx)}
-        />
-      ))}
-    </div>
-  );
-}
-
-function FeatureSection({
-  title,
-  features,
-  description,
-  ctx,
-}: {
-  title: string;
-  features: Array<Feature>;
-  description?: string;
-  ctx: MarkupContext;
-}) {
-  if (features.length === 0) return null;
-  return (
-    <div className="flex flex-col gap-3">
-      <SectionHeading>{title}</SectionHeading>
-      {description && (
-        <p className="italic mb-1 whitespace-pre-wrap">
-          {resolveMarkup(description, ctx)}
-        </p>
-      )}
-      <TraitList features={features} ctx={ctx} />
-    </div>
   );
 }
 
@@ -199,10 +129,10 @@ export function MonsterStatblock({
   return (
     <Card className="h-fit gap-0 py-0 text-[13px]">
       {/* Name banner */}
-      <CardHeader className="pt-4 pb-2  gap-0">
+      <CardHeader className="pt-4 pb-2 gap-0">
         <h2
           data-slot="card-title"
-          className="mb-0 font-heading text-2xl leading-none font-bold tracking-wide text-accent"
+          className="mb-0 border-b border-accent-700 pb-1 font-heading text-2xl leading-none font-bold tracking-wide [font-variant-caps:small-caps] text-accent-700 dark:text-accent-500"
         >
           {creature.name || "Example Creature"}
         </h2>
@@ -218,14 +148,12 @@ export function MonsterStatblock({
         className={cn(
           "pb-4",
           columns
-            ? "md:columns-2 md:gap-x-8 [&>*+*]:mt-2 md:*:break-inside-avoid"
-            : "flex flex-col gap-2",
+            ? "md:columns-2 md:gap-x-8 [&>*+*]:mt-3"
+            : "flex flex-col gap-3",
         )}
       >
-        <TaperedRule />
-
         {/* Defenses & speed */}
-        <div>
+        <div className="md:break-inside-avoid">
           <div className="flex flex-wrap gap-x-6">
             <StatLine
               label="AC"
@@ -244,53 +172,75 @@ export function MonsterStatblock({
           <StatLine label="Speed" value={movements.join(", ") || "30 ft."} />
         </div>
 
-        <TaperedRule />
-
-        {/* Ability scores — 5e 2024 two-group layout */}
-        <div className="grid grid-cols-2 py-1">
-          {abilityGroups.map((group, gi) => (
-            <div
-              key={gi}
-              className={cn(
-                "grid grid-cols-[1fr_auto_auto] items-center gap-x-3 gap-y-1",
-                gi === 1 ? "border-l border-primary/20 pl-4" : "pr-4",
-              )}
-            >
-              <span />
-              <span className="text-right font-heading text-[10px] font-semibold uppercase tracking-wide text-accent">
-                Mod
-              </span>
-              <span className="text-right font-heading text-[10px] font-semibold uppercase tracking-wide text-accent">
-                Save
-              </span>
-              {group.map((score) => {
-                const mod = calculateStatBonus(score.value);
-                const save = mod + (creature.saving_throws[score.key] ? pb : 0);
-                return (
-                  <Fragment key={score.key}>
-                    <span className="flex  w-12 justify-between">
-                      <span className="font-heading font-semibold text-primary">
+        <div className="grid max-w-md grid-cols-2 gap-x-3 py-1 md:break-inside-avoid">
+          {abilityGroups.map((group, gi) => {
+            const scoreTint =
+              gi === 0
+                ? "bg-accent-500/10 dark:bg-accent-500/20"
+                : "bg-success-500/10 dark:bg-success-500/20";
+            const saveTint =
+              gi === 0
+                ? "bg-accent-500/20 dark:bg-accent-500/30"
+                : "bg-success-500/20 dark:bg-success-500/30";
+            return (
+              <div
+                key={gi}
+                className="grid grid-cols-[1.2fr_1fr_1fr_1fr] gap-y-px"
+              >
+                <span className="col-span-2" />
+                <span className="pb-0.5 text-center font-heading text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+                  Mod
+                </span>
+                <span className="pb-0.5 text-center font-heading text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+                  Save
+                </span>
+                {group.map((score) => {
+                  const mod = calculateStatBonus(score.value);
+                  const save =
+                    mod + (creature.saving_throws[score.key] ? pb : 0);
+                  return (
+                    <Fragment key={score.key}>
+                      <span
+                        className={cn(
+                          "py-0.5 pl-2 font-heading font-semibold text-accent-700 dark:text-accent-300",
+                          scoreTint,
+                        )}
+                      >
                         {score.label}
-                      </span>{" "}
-                      {score.value || 0}
-                    </span>
-                    <span className="text-right tabular-nums">
-                      {formatMod(mod)}
-                    </span>
-                    <span className="text-right tabular-nums">
-                      {formatMod(save)}
-                    </span>
-                  </Fragment>
-                );
-              })}
-            </div>
-          ))}
+                      </span>
+                      <span
+                        className={cn(
+                          "py-0.5 text-center tabular-nums",
+                          scoreTint,
+                        )}
+                      >
+                        {score.value || 0}
+                      </span>
+                      <span
+                        className={cn(
+                          "py-0.5 text-center tabular-nums",
+                          saveTint,
+                        )}
+                      >
+                        {formatMod(mod)}
+                      </span>
+                      <span
+                        className={cn(
+                          "py-0.5 text-center tabular-nums",
+                          saveTint,
+                        )}
+                      >
+                        {formatMod(save)}
+                      </span>
+                    </Fragment>
+                  );
+                })}
+              </div>
+            );
+          })}
         </div>
-
-        <TaperedRule />
-
         {/* Characteristics */}
-        <div>
+        <div className="md:break-inside-avoid">
           {skillSaves.length > 0 && (
             <StatLine label="Skills" value={skillSaves.join(", ")} />
           )}
@@ -341,17 +291,14 @@ export function MonsterStatblock({
             )}; PB ${formatMod(pb)})`}
           />
         </div>
-
-        {/* Traits — 5e 2024 shows these with no heading, above Actions */}
-        {creature.traits.length > 0 && (
-          <div className="mt-1 flex flex-col gap-3">
-            <TaperedRule />
-            <TraitList features={creature.traits} ctx={creature} />
-          </div>
-        )}
-
-        {/* Actions & reactions */}
-        <div className="mt-3 flex flex-col gap-5">
+        {/* Traits, actions & reactions — block flow so the sections can
+            continue across the column break instead of moving wholesale */}
+        <div className="mt-1 space-y-6">
+          <FeatureSection
+            title="Traits"
+            features={creature.traits}
+            ctx={creature}
+          />
           <FeatureSection
             title="Actions"
             features={creature.actions}
@@ -392,14 +339,6 @@ export function MonsterStatblock({
             />
           )}
         </div>
-
-        {/* Flavor description */}
-        {creature.description?.trim() && (
-          <div className="mt-3 flex flex-col gap-2">
-            <TaperedRule />
-            <p className="italic whitespace-pre-wrap">{creature.description}</p>
-          </div>
-        )}
       </CardContent>
     </Card>
   );
