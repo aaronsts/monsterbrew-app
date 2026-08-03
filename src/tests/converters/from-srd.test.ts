@@ -1,9 +1,16 @@
 import { describe, expect, it } from "vitest";
+import type { Monster } from "@/schema/monster-schema";
 import srdData from "@/data/srd-monsters.json";
 import { fromSrd } from "@/services/converters/from-srd";
 import { getSrdMonsters } from "@/services/srd";
 import { monsterSchema } from "@/schema/monster-schema";
 import { calculateHitPoints } from "@/lib/utils";
+import {
+  parseMarkup,
+  resolveMarkup,
+  validateAttackArgs,
+  validateSaveArgs,
+} from "@/lib/statblock-markup";
 
 /** Replicates how the statblock derives the displayed HP number. */
 function displayedHp(monster: ReturnType<typeof fromSrd>): number {
@@ -153,5 +160,93 @@ describe("getSrdMonsters", () => {
       }))
       .filter((row) => row.expected !== row.actual);
     expect(wrong).toEqual([]);
+  });
+});
+
+describe("SRD dataset {@…} markup", () => {
+  const entries = getSrdMonsters();
+  const FEATURES = ["traits", "actions", "legendary_actions"] as const;
+
+  function srdMonster(key: string): Monster {
+    const entry = entries.find((e) => e.key === key);
+    if (!entry) throw new Error(`missing SRD monster ${key}`);
+    return entry.monster;
+  }
+
+  function action(monster: Monster, name: string) {
+    const found = monster.actions.find((a) => a.name === name);
+    if (!found) throw new Error(`missing action ${name}`);
+    return found;
+  }
+
+  it("ships stat-linked tags baked into the dataset (Aboleth)", () => {
+    const aboleth = srdMonster("srd-2024_aboleth");
+    expect(action(aboleth, "Tentacle").description).toBe(
+      "{@attack m|str|15|2d6 + 5|bludgeoning} If the target is a Large or smaller creature, it has the Grappled condition (escape DC 14) from one of four tentacles.",
+    );
+    expect(action(aboleth, "Consume Memories").description).toContain(
+      "{@save int|int|3d6|psychic|half|",
+    );
+  });
+
+  it("resolves every feature description brace-free", () => {
+    const offenders: Array<string> = [];
+    for (const { key, monster } of entries) {
+      for (const kind of FEATURES) {
+        for (const feature of monster[kind]) {
+          const resolved = resolveMarkup(feature.description, monster);
+          if (resolved.includes("{") || resolved.includes("}")) {
+            offenders.push(`${key} / ${feature.name}`);
+          }
+        }
+      }
+    }
+    expect(offenders).toEqual([]);
+  });
+
+  it("emits only valid composite attack/save tags", () => {
+    const offenders: Array<string> = [];
+    for (const { key, monster } of entries) {
+      for (const kind of FEATURES) {
+        for (const feature of monster[kind]) {
+          for (const seg of parseMarkup(feature.description)) {
+            if (seg.type !== "tag") continue;
+            const problems =
+              seg.name === "attack"
+                ? validateAttackArgs(seg.args)
+                : seg.name === "save"
+                  ? validateSaveArgs(seg.args)
+                  : [];
+            if (problems.length) {
+              offenders.push(`${key} / ${feature.name}: ${problems.join("; ")}`);
+            }
+          }
+        }
+      }
+    }
+    expect(offenders).toEqual([]);
+  });
+
+  it("recomputes stat-linked values when ability scores change", () => {
+    const aboleth = srdMonster("srd-2024_aboleth");
+    const tentacle = action(aboleth, "Tentacle").description;
+    expect(resolveMarkup(tentacle, aboleth)).toContain(
+      "Melee Attack Roll: +9",
+    );
+    const stronger = {
+      ...aboleth,
+      ability_scores: { ...aboleth.ability_scores, str: 23 },
+    };
+    expect(resolveMarkup(tentacle, stronger)).toContain(
+      "Melee Attack Roll: +10",
+    );
+
+    const consume = action(aboleth, "Consume Memories").description;
+    expect(resolveMarkup(consume, aboleth)).toContain("DC 16");
+    const smarter = {
+      ...aboleth,
+      ability_scores: { ...aboleth.ability_scores, int: 20 },
+    };
+    expect(resolveMarkup(consume, smarter)).toContain("DC 17");
   });
 });
