@@ -41,10 +41,11 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# agent skills / tooling
-/.claude
-/.agents
-/skills-lock.json
+# agent skills / tooling (skills are tracked; local agent state stays ignored)
+/.claude/*
+!/.claude/skills
+/.agents/*
+!/.agents/skills
 
 # playwright
 /test-results
