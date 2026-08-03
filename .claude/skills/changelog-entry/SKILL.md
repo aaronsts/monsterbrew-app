@@ -47,10 +47,10 @@ into one card).
    - Another concrete bullet
    ```
 
-   - The frontmatter block is **optional** and both keys are optional:
-     `title` only for a notable feature worth naming; `badge: Major` only on a
-     major release. Most entries have neither — then skip the frontmatter
-     entirely.
+   - The frontmatter block is **optional** and both keys are optional: add a
+     `title` whenever the PR delivers a user-visible feature (see Voice below);
+     `badge: Major` only on a major release. For fixes, polish, and invisible
+     work, skip the frontmatter entirely.
    - Do **not** add `version` or `date` — the release pipeline stamps those.
    - Body = the 1-2 sentence summary first, then `- ` bullets for the changes
      list. Keep each bullet on a single line.
@@ -76,8 +76,11 @@ Study the existing entries and match them. The rules that produce that voice:
 - **No em dashes.** Use commas, periods, or parentheses instead.
 - **Be honest about invisible work.** For refactors/build/tooling releases, say
   so plainly: "An under-the-hood change... No visible changes." Don't oversell.
-- **`title`** only when there's a headline feature worth naming (e.g. "SRD
-  monsters", "Dynamic attack tokens"). Omit it for patches and small changes.
+- **`title`**: add one whenever the PR delivers a user-visible feature you'd
+  want to point to from the home page (e.g. "SRD monsters", "Auto-save") — the
+  home hero badge links to the newest **titled** release, so a big feature
+  without a title stays invisible there. Omit it for fixes, patches, and
+  under-the-hood work.
 - **`badge`** is reserved for major releases ("Major"). Most entries have none.
 
 ## Notes

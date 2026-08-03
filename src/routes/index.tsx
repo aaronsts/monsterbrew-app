@@ -1,9 +1,18 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
-import { ArrowRight, FileText, HardDriveDownload, Library } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { FeatureCard } from "@/components/home/feature-card";
+import {
+  ArrowRight,
+  ChevronRight,
+  FileText,
+  HardDriveDownload,
+  Library,
+} from "lucide-react";
 import { CornerBrackets } from "@/components/home/corner-brackets";
+import { FeatureCard } from "@/components/home/feature-card";
+import { Button } from "@/components/ui/button";
+import { releases } from "@/lib/releases";
 import { SITE_URL, seo } from "@/lib/seo";
+
+const latestBigUpdate = releases.find((release) => release.title);
 
 const faq = [
   {
@@ -101,6 +110,17 @@ function Home() {
           }}
         />
 
+        {latestBigUpdate ? (
+          <Link to="/changelog" hash={latestBigUpdate.version}>
+            <Button size="xs" variant="light" color="neutral" className="group">
+              <span>{latestBigUpdate.title}</span>
+              <ChevronRight
+                aria-hidden
+                className=" transition-transform group-hover:translate-x-0.5"
+              />
+            </Button>
+          </Link>
+        ) : null}
         <h1 className="text-4xl font-bold tracking-tight md:text-6xl lg:text-7xl">
           Build D&D 5e statblocks
           <br />
