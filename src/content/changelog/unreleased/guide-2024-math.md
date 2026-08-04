@@ -1,0 +1,6 @@
+The creature building guide now folds in Tom Dunn's statistical analysis of the 2024 Monster Manual (The Finished Book), which both confirms the guide's math and sharpens it at high challenge ratings.
+
+- The challenge rating chapter explains where the 2024 books drift from the community benchmarks: past CR 16, armor classes climb slower than save DCs.
+- A new section covers 2024 saving throws and initiative: two or three proficient saves is the norm, and legendary monsters add double proficiency to initiative.
+- The legendary monster advice now includes the 2024 hit point premium and the published legendary resistance counts (3/day below CR 20, 4/day from there).
+- The Finished Book joins the sources chapter, with full credit to Tom Dunn.

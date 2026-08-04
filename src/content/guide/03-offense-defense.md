@@ -39,11 +39,12 @@ For effects that force saves, the benchmark AC/DC column doubles as the save DC,
 
 ## Legendary monsters
 
-A solo boss faces the whole party's action economy alone, and standard budgets aren't build for this. Both Paul Hughes's 2024 Monster Manual analysis and the Lazy GM's material converge on the same guidance:
+A solo boss faces the whole party's action economy alone, and standard budgets aren't build for this. The 2024 Monster Manual analyses by Paul Hughes and Tom Dunn and the Lazy GM's material converge on the same guidance:
 
-- **Damage**: legendary creatures (dragons especially) deal roughly **25% more damage** than the benchmark for their CR, without a matching HP decrease.
+- **Damage and hit points**: legendary creatures (dragons especially) deal roughly **25% more damage** than the benchmark for their CR. Tom Dunn's analysis also adds that from CR 13 up legendary monsters also carry about **15% more hit points**. A proper boss is simply bigger on both axes.
 - **Legendary actions** are the delivery mechanism: typically three per round, spent at the ends of other creatures' turns, chosen from two to four options. Cheap options (move, one attack) cost one action; big ones cost two or three. This is where the +25% lives, they keep the boss present in every round of the fight.
-- **Legendary resistance** (usually 3/day) exists so your boss monster isn't deleted by a single failed save against _banishment_ or _hold monster_. Notably, the 2024 design no longer treats it as raising effective CR the way the 2014 DMG did, but it still changes how the fight plays, so mind the table experience: burning a resistance should feel like progress, and a boss who shrugs off everything stops being fun. Three is usually more than enough.
+- **Legendary resistance** (3/day through CR 19, 4/day at CR 20 and up, plus one extra in the creature's lair) exists so your boss monster isn't deleted by a single failed save against _banishment_ or _hold monster_. Notably, the 2024 design no longer treats it as raising effective CR the way the 2014 DMG did, but it still changes how the fight plays, so mind the table experience: burning a resistance should feel like progress, and a boss who shrugs off everything stops being fun. Three is enough for anything below CR 20. (in the whole 2024 Monster Manual only the tarrasque gets six.)
+- **Initiative expertise**: every legendary monster in the 2024 books adds double its proficiency bonus to initiative. A boss that acts last can lose a third of its hit points before doing anything, so give yours the same treatment with the Initiative field in the [Combat section](/editor#combat).
 - **Lair actions** (initiative 20) are a free way to add flavor-rich pressure that scales with the location rather than the statblock. If the lair action deals damage, it comes out of the same multi-target budget as everything else.
 
 Reserve the full legendary package for creatures meant to headline a fight alone. A monster that will always appear with allies doesn't need it, and is cheaper to build without it.

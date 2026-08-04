@@ -14,11 +14,11 @@ CR is _not_ a promise about how the fight feels. That comes from role, terrain, 
 
 ## The benchmark table
 
-The table below gives baseline statistics for every challenge rating, adapted from the [Lazy GM's 5e Monster Builder Resource Document](https://slyflourish.com/lazy_5e_monster_building_resource_document.html) by Teos Abadía, Scott Fitzgerald Gray, and Michael E. Shea (CC-BY 4.0). Paul Hughes's [statistical analysis of the 2024 Monster Manual](https://www.blogofholding.com/?p=8469) confirms that these baselines follow the revised books closely.
+The table below gives baseline statistics for every challenge rating, adapted from the [Lazy GM's 5e Monster Builder Resource Document](https://slyflourish.com/lazy_5e_monster_building_resource_document.html) by Teos Abadía, Scott Fitzgerald Gray, and Michael E. Shea (CC-BY 4.0). Two other statistical analyses of the 2024 Monster Manual, Paul Hughes's [on Blog of Holding](https://www.blogofholding.com/?p=8469) and Tom Dunn's [on The Finished Book](https://tomedunn.github.io/the-finished-book/monsters/monster-manual-2024/), confirm that these baselines follow the revised books closely up to about CR 16. Above that the published monsters drift away from the community numbers in a few ways, covered below.
 
 A few notes on reading it:
 
-- **AC/DC** is one number doing two jobs: the creature's typical Armor Class, and the typical save DC of its features.
+- **AC/DC** is one number doing two jobs: the creature's typical Armor Class, and the typical save DC of its features. The two track each other up to about CR 16, then part ways. Save DCs keep climbing a point every two CRs, while published ACs slow to a point every three. Past CR 16, read the column as the save DC and set the Armor Class a couple of points lower.
 - **Attack bonus** is the ability modifier and proficiency bonus _already added together_. Use it as the attack bonus and as the bonus for proficient saving throws and skills. Non-proficient abilities just get a modifier from −2 to +4 based on the creature's story.
 - **Damage per round** is the creature's whole output for one round, split across its attacks. If an effect hits two or more characters at once, like a breath weapon or a burst, budget it at _half_ this number.
 - **Equivalent level** is roughly the level of a single character for whom one such monster is a hard fight, so the table can double as an NPC builder.
@@ -29,14 +29,22 @@ A few notes on reading it:
 
 When you'd rather compute than look up, the same sources boil the table down to a handful of formulas (Lazy GM's Resource Document, CC-BY 4.0):
 
-- **Armor Class** = 12 + half the creature's CR
+- **Armor Class** = 12 + half the creature's CR, good up to about CR 16. Beyond that, ACs go up by only a point every three CRs.
 - **Hit points** = (15 × CR) + 15. Monsterbrew calculates hit points from Hit Dice: the creature's size sets the die and its Constitution adds to each one, so how many Hit Dice to give is up to you. Use this formula as the target to land near.
 - **Attack bonus / proficient checks** = 4 + half the creature's CR
 - **Save DC** = 12 + half the creature's CR
 - **Damage per round** = (7 × CR) + 5
 - Start with one attack, and add another at CR 2, 7, 11, and 15, splitting the damage budget across them.
 
-Paul Hughes's regression over the full 2024 Monster Manual lands on nearly identical curves (HP ≈ 15 + 15 per CR and damage ≈ 7.5 per CR through CR 20) and finds that 2024 monsters deal roughly **50% more damage** than their 2014 counterparts, with AC up about one point across the board. Above CR 20 both HP and damage accelerate sharply (roughly +50 HP and +12.5 damage per CR), which the table reflects.
+Paul Hughes's analysis over the full 2024 Monster Manual lands on nearly identical curves (HP ≈ 15 + 15 per CR and damage ≈ 7.5 per CR through CR 20) and finds that 2024 monsters deal roughly **50% more damage** than their 2014 counterparts, with AC up about one point across the board. This is confirmed by Tom Dunn in [The Finished Book](https://tomedunn.github.io/the-finished-book/monsters/monster-manual-2024/), and he even adds a useful split: ordinary monsters average about 6 + 6 damage per CR, while legendary ones average 7.5 + 7.5. That gap is the legendary premium covered in the [next chapter](/guide/offense-defense). Above CR 20 both HP and damage accelerate sharply (roughly +50 HP and +12 to 15 damage per CR).
+
+## Saves and initiative in 2024
+
+Two findings from the revised books are easy to miss, and they both come from the same analyses.
+
+First, saving throws, in 2024 monsters keep only **two or three proficient saves**, even at the highest CRs. Give the creature the two or three saves its concept justifies and leave the rest at plain ability modifiers.
+
+Second, initiative. From the middle CRs on, most published monsters add their proficiency bonus to initiative, and every legendary monster adds double. Monsterbrew computes initiative from Dexterity, so use the Initiative field in the [Combat section](/editor#combat) when your creature should be quicker than its DEX suggests.
 
 ## When to deviate, and how to pay for it
 
