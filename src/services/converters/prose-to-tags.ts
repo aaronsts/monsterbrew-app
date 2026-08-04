@@ -3,6 +3,7 @@ import type {
   MarkupContext,
   SaveFields,
 } from "@/lib/statblock-markup";
+import type { Monster } from "@/schema/monster-schema";
 import {
   dcValue,
   hitBonus,
@@ -12,11 +13,8 @@ import {
 } from "@/lib/statblock-markup";
 
 /**
- * Convert 2024-SRD-style plain prose into Monsterbrew's `{@…}` markup
- * (docs/design/attack-tokens.md). The SRD dataset ships tag-free text like
- * `Melee Attack Roll: +9, reach 15 ft. 12 (2d6 + 5) Bludgeoning damage.`;
- * rewriting the recognizable patterns into tags gives those statblocks live,
- * stat-linked values.
+ * Convert plain statblock prose into Monsterbrew's `{@…}` markup
+ * (docs/design/attack-tokens.md).
  *
  * Every rewrite is verified by resolution: a candidate tag replaces prose only
  * when `resolveMarkup(candidate)` reproduces the original text byte for byte.
@@ -25,7 +23,8 @@ import {
  * statblock-markup.ts) — a composite attack line gains exactly that label and
  * nothing else. Lines the composite grammar can't hold fall back to atomic
  * tags (`{@atkr} {@hit}` / `{@dc}` / `{@damage}`), and anything still
- * unverifiable passes through untouched.
+ * unverifiable passes through untouched. 2014-style lines always take the
+ * atomic route (`{@atk mw} {@hit str}` / `{@dc wis}` / `{@damage}`)
  */
 
 const ABILITIES = ["str", "dex", "con", "int", "wis", "cha"] as const;
@@ -64,28 +63,24 @@ function tagDamage(text: string, ctx: MarkupContext): string {
  * The ability whose `mod + PB` produces `bonus`, if one can be picked safely:
  * a unique match wins outright; ties fall to the conventional attack stat
  * (STR-first for melee and thrown, DEX-first for ranged) when it is among the
- * candidates. No safe pick -> null, and the bonus stays flat.
+ * candidates. Spell attacks have no such convention (the casting stat could
+ * be any mental ability), so only a unique match wins there. No safe pick ->
+ * null, and the bonus stays flat.
  */
 function inferHitAbility(
   bonus: number,
   kind: string,
   ctx: MarkupContext,
+  weapon = true,
 ): Ability | null {
   const matches = ABILITIES.filter((a) => hitBonus(a, ctx) === bonus);
   if (matches.length === 1) return matches[0];
+  if (!weapon) return null;
   const preference: ReadonlyArray<Ability> =
     kind === "r" ? ["dex", "str"] : ["str", "dex"];
   return preference.find((a) => matches.includes(a)) ?? null;
 }
 
-/**
- * The ability keyword for a printed DC. The save's own ability wins when the
- * `8 + PB + mod` formula reproduces the DC (the Aboleth's `Intelligence
- * Saving Throw: DC 16` really is INT-derived); otherwise a *different*
- * sourcing ability (a dragon's CON-derived breath DC behind a Dexterity save)
- * is used only when it is the single candidate. Ambiguous or unmatched DCs
- * stay flat.
- */
 function inferDcAbility(
   dc: number,
   saveAbility: Ability,
@@ -167,6 +162,64 @@ function convertAttackHead(
   const bonus = Number.parseInt(m[2], 10);
   const hit = inferHitAbility(bonus, kind, ctx) ?? String(bonus);
   const replacement = `{@atkr ${kind}} {@hit ${hit}}`;
+  if (resolveMarkup(replacement, ctx) !== m[0]) return null;
+  return { end: start + m[0].length, replacement };
+}
+
+const LEGACY_ATTACK_HEAD_RE =
+  /(Melee or Ranged|Melee|Ranged) (Weapon|Spell) Attack: ([+-]\d+) to hit/y;
+
+/**
+ * Head-only 2014 rewrite: `Melee Weapon Attack: +4 to hit` becomes
+ * `{@atk mw} {@hit str} to hit`. The rest of the line stays prose (there is
+ * no composite grammar for the 2014 wording) and `tagDamage` picks up its
+ * damage clauses.
+ */
+function convertLegacyAttackHead(
+  text: string,
+  start: number,
+  ctx: MarkupContext,
+): Rewrite | null {
+  LEGACY_ATTACK_HEAD_RE.lastIndex = start;
+  const m = LEGACY_ATTACK_HEAD_RE.exec(text);
+  if (!m) return null;
+  const kind = attackKind(m[1]);
+  const isWeapon = m[2] === "Weapon";
+  const atkArgs = kind
+    .split(",")
+    .map((k) => k + (isWeapon ? "w" : "s"))
+    .join(",");
+  const bonus = Number.parseInt(m[3], 10);
+  const hit = inferHitAbility(bonus, kind, ctx, isWeapon) ?? String(bonus);
+  const replacement = `{@atk ${atkArgs}} {@hit ${hit}} to hit`;
+  if (resolveMarkup(replacement, ctx) !== m[0]) return null;
+  return { end: start + m[0].length, replacement };
+}
+
+const LEGACY_DC_RE = new RegExp(
+  String.raw`DC (\d+) (${ABILITY_WORDS})(?= saving throw)`,
+  "y",
+);
+
+/**
+ * 2014-style `DC 14 Wisdom saving throw`: only the DC becomes a tag, and only
+ * when it can be stat-linked — the same policy as `convertSaveHead`.
+ */
+function convertLegacyDc(
+  text: string,
+  start: number,
+  ctx: MarkupContext,
+): Rewrite | null {
+  LEGACY_DC_RE.lastIndex = start;
+  const m = LEGACY_DC_RE.exec(text);
+  if (!m) return null;
+  const linked = inferDcAbility(
+    Number.parseInt(m[1], 10),
+    ABILITY_ABBR[m[2]],
+    ctx,
+  );
+  if (!linked) return null;
+  const replacement = `{@dc ${linked}} ${m[2]}`;
   if (resolveMarkup(replacement, ctx) !== m[0]) return null;
   return { end: start + m[0].length, replacement };
 }
@@ -278,9 +331,27 @@ function convertSaveHead(
 
 const PATTERN_HEAD_RE = new RegExp(
   String.raw`(?:Melee or Ranged|Melee|Ranged) Attack Roll: [+-]\d+` +
-    String.raw`|(?:${ABILITY_WORDS}) Saving Throw: DC \d+`,
+    String.raw`|(?:Melee or Ranged|Melee|Ranged) (?:Weapon|Spell) Attack: [+-]\d+ to hit` +
+    String.raw`|(?:${ABILITY_WORDS}) Saving Throw: DC \d+` +
+    String.raw`|DC \d+ (?:${ABILITY_WORDS})(?= saving throw)`,
   "g",
 );
+
+/** Route a pattern-head match to the converter for its wording. */
+function convertAt(
+  head: string,
+  text: string,
+  start: number,
+  ctx: MarkupContext,
+): Rewrite | null {
+  if (head.includes("Attack Roll"))
+    return (
+      convertAttack(text, start, ctx) ?? convertAttackHead(text, start, ctx)
+    );
+  if (head.includes("Attack")) return convertLegacyAttackHead(text, start, ctx);
+  if (head.startsWith("DC")) return convertLegacyDc(text, start, ctx);
+  return convertSave(text, start, ctx) ?? convertSaveHead(text, start, ctx);
+}
 
 /**
  * Rewrite recognizable attack-roll / saving-throw / damage prose in a feature
@@ -295,15 +366,38 @@ export function proseToTags(text: string, ctx: MarkupContext): string {
   PATTERN_HEAD_RE.lastIndex = 0;
   for (let m = PATTERN_HEAD_RE.exec(text); m; m = PATTERN_HEAD_RE.exec(text)) {
     if (m.index < cursor) continue;
-    const rewrite = m[0].includes("Attack Roll")
-      ? (convertAttack(text, m.index, ctx) ??
-        convertAttackHead(text, m.index, ctx))
-      : (convertSave(text, m.index, ctx) ??
-        convertSaveHead(text, m.index, ctx));
+    const rewrite = convertAt(m[0], text, m.index, ctx);
     if (!rewrite) continue;
     out += tagDamage(text.slice(cursor, m.index), ctx);
     out += rewrite.replacement;
     cursor = rewrite.end;
   }
   return out + tagDamage(text.slice(cursor), ctx);
+}
+
+const FEATURE_LISTS = [
+  "traits",
+  "actions",
+  "reactions",
+  "bonus_actions",
+  "lair_actions",
+  "legendary_actions",
+  "mythic_actions",
+] as const;
+
+/**
+ * Run every feature description of a freshly converted monster through
+ * `proseToTags`, with the monster's own stats as the resolution context.
+ * Import converters whose source formats carry plain prose (Improved
+ * Initiative, TetraCube, Open5e) wrap their result in this.
+ */
+export function tagMonsterFeatures(monster: Monster): Monster {
+  const tagged = { ...monster };
+  for (const key of FEATURE_LISTS) {
+    tagged[key] = monster[key].map((feature) => ({
+      ...feature,
+      description: proseToTags(feature.description, monster),
+    }));
+  }
+  return tagged;
 }
