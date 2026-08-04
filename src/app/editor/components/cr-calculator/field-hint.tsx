@@ -121,6 +121,11 @@ export function CrDamageHint() {
   const text = CLASSIFICATION_DISPLAY[classification].text.toLowerCase();
   const cr = comparison.benchmark.cr;
 
+  const crossCheck =
+    classification !== "on-par" && suggestedCr && suggestedCr !== cr
+      ? `; that output suits CR ${suggestedCr}`
+      : "";
+
   return (
     <HintChip
       classification={classification}
@@ -128,11 +133,8 @@ export function CrDamageHint() {
       tooltip={
         <>
           Damage per round about {actual} vs {benchmark} suggested for CR {cr}
-          {suggestedCr && suggestedCr !== cr
-            ? `; that output suits CR ${suggestedCr}`
-            : ""}
-          . Counted from the damage tags across one full round, assuming every
-          attack hits.
+          {crossCheck}. Counted from the damage tags across one full round,
+          assuming every attack hits and area effects count half.
         </>
       }
     />

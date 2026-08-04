@@ -8,15 +8,23 @@ import type { MarkupContext } from "./statblock-markup";
 import type { Monster } from "@/schema/monster-schema";
 
 /**
- * Estimates how much damage a creature deals in its best round, read straight
- * out of the `{@…}` tags in its features. This is the offensive half of the CR
- * calculator, and it only became possible once every import path normalized
- * prose into tags (see `src/services/converters/prose-to-tags.ts`).
+ * Estimates how much damage a creature deals in a round it can repeat, read
+ * straight out of the `{@…}` tags in its features. This is the offensive half
+ * of the CR calculator, and it only became possible once every import path
+ * normalized prose into tags (see `src/services/converters/prose-to-tags.ts`).
  *
- * It follows the measurement convention behind the published damage-per-round
- * baselines — every attack hits and every save fails — so a tagged die is
- * always worth its full average. Damage the tags can't express is invisible
- * here: spells cast by name carry no dice, so casters read low.
+ * Three conventions from the benchmark table shape the arithmetic, so that the
+ * number here is directly comparable to `CrBenchmark.damagePerRound`:
+ *
+ * - Every attack hits and every save fails, so a tagged die is always worth
+ *   its full average.
+ * - An effect that catches two or more characters counts half, which is the
+ *   table's own instruction for area damage.
+ * - A recharge action doesn't set the total, because the budget describes what
+ *   a creature puts out round after round.
+ *
+ * Damage the tags can't express is invisible here: spells cast by name carry
+ * no dice, so casters read low.
  */
 
 type Feature = Monster["actions"][number];
@@ -45,7 +53,6 @@ export interface DamageContribution {
   name: string;
   /** How many times it lands in the round. */
   count: number;
-  /** Average damage for one use. */
   damage: number;
 }
 
@@ -81,6 +88,24 @@ function nestedDamage(text: string, ctx: MarkupContext): number {
   return sum;
 }
 
+/**
+ * A save's target line when the effect catches the party rather than one
+ * character — "each creature in a 90-foot Cone". The benchmark budgets are
+ * per-character, so this damage is worth half of what it prints.
+ */
+const MULTI_TARGET_RE =
+  /\beach\s+(?:other\s+)?(?:creature|enemy|ally|target)\b/i;
+
+/**
+ * Wording that puts a loose {@damage} outside the round: the Mummy's Rotting
+ * Fist drains Hit Point maximum by 3d6 "every 24 hours". Only consulted for a
+ * feature that already carries a composite tag holding its real damage —
+ * without one, loose tags are all there is, which is how atomic-tagged
+ * 2014-style prose writes its damage.
+ */
+const RIDER_RE =
+  /\b(?:hit point maximum|every \d+ hours?|per (?:hour|day|week)|while (?:cursed|diseased|infected))\b/i;
+
 interface FeatureReading {
   damage: number;
   /** Carries an `{@attack}` tag, so "makes two attacks" can mean this one. */
@@ -100,25 +125,28 @@ function readFeature(description: string, ctx: MarkupContext): FeatureReading {
       isAttack = true;
       const fields = parseAttackArgs(segment.args);
       fromComposites +=
-        damageAverage(fields.dice, ctx) + damageAverage(fields.dice2, ctx);
+        damageAverage(fields.dice, ctx) +
+        damageAverage(fields.dice2, ctx) +
+        nestedDamage(fields.effect, ctx);
     } else if (segment.name === "save") {
       hasComposite = true;
       const fields = parseSaveArgs(segment.args);
-      fromComposites += damageAverage(fields.dice, ctx);
-      // Some 2024 statblocks carry the whole failure damage in the failure
-      // text rather than the dice slot (the Vampire's Bite).
-      fromComposites += nestedDamage(fields.fail, ctx);
+
+      const dealt =
+        damageAverage(fields.dice, ctx) + nestedDamage(fields.fail, ctx);
+      fromComposites += MULTI_TARGET_RE.test(fields.target)
+        ? Math.floor(dealt / 2)
+        : dealt;
     } else if (segment.name === "damage") {
       fromLooseDamage += damageAverage(segment.args.split("|")[0], ctx);
     }
   }
 
-  // A loose {@damage} next to an {@attack}/{@save} line is a rider, not part
-  // of the round: the Mummy's Rotting Fist drains Hit Point maximum by 3d6
-  // "every 24 hours". Loose tags only count when they are all there is, which
-  // is how atomic-tagged 2014-style prose writes its damage.
   return {
-    damage: hasComposite ? fromComposites : fromLooseDamage,
+    damage:
+      hasComposite && RIDER_RE.test(description)
+        ? fromComposites
+        : fromComposites + fromLooseDamage,
     // The atomic route writes {@atkr}/{@hit} instead of a composite tag, so
     // treat those as attacks too.
     isAttack:
@@ -175,7 +203,10 @@ const USES_RE =
 const BARE_ATTACKS_RE =
   /\bmakes\s+(one|two|three|four|five|six|seven|eight|nine|ten|\d+)\s+attacks?\b/;
 
-type ActionEntry = DamageContribution & { isAttack: boolean };
+type ActionEntry = DamageContribution & {
+  isAttack: boolean;
+  recharge: boolean;
+};
 
 type FeatureLookup = (name: string) => ActionEntry | null;
 
@@ -244,19 +275,47 @@ function referencedDamage(
 const MULTIATTACK_RE = /^multiattack\b/i;
 
 /**
+ * A recharge limit, which imported statblocks write into the action's name
+ * (`Fire Breath (Recharge 5-6)`) and hand-authored ones write as a tag in the
+ * description.
+ */
+const RECHARGE_RE = /\(\s*recharge|\{@recharge\b/i;
+
+/**
+ * Damage one feature is worth on its own terms: its own tags plus whatever it
+ * delegates to by name. Used for the one bonus action and one reaction a round
+ * allows, and for each legendary option.
+ */
+function readOption(
+  feature: Feature,
+  ctx: MarkupContext,
+  lookup: FeatureLookup,
+  fallback: ActionEntry | null,
+): DamageContribution {
+  return {
+    name: feature.name,
+    count: 1,
+    damage:
+      featureDamage(feature.description, ctx) +
+      total(referencedDamage(feature.description, lookup, fallback)),
+  };
+}
+
+/**
  * The hardest-hitting feature in a list, or `null` when none of them deal
- * damage. Used for the one bonus action and one reaction a round allows.
+ * damage. Reference wording counts here as much as it does in a Multiattack:
+ * plenty of bonus actions and reactions just say "makes one Bite attack".
  */
 function bestFeature(
   features: Array<Feature>,
   ctx: MarkupContext,
+  lookup: FeatureLookup,
+  fallback: ActionEntry | null,
 ): DamageContribution | null {
   let best: DamageContribution | null = null;
   for (const feature of features) {
-    const damage = featureDamage(feature.description, ctx);
-    if (damage > (best?.damage ?? 0)) {
-      best = { name: feature.name, count: 1, damage };
-    }
+    const option = readOption(feature, ctx, lookup, fallback);
+    if (option.damage > (best?.damage ?? 0)) best = option;
   }
   return best;
 }
@@ -267,48 +326,67 @@ const LEGENDARY_USES_PER_ROUND = 3;
 /** The wording 2024 statblocks use to cap an option at one use per round. */
 const ONCE_PER_ROUND_RE = /again until the start of its next turn/i;
 
+/** `Wing Attack (Costs 2 Actions)` — 2014-era imports price options in the name. */
+const LEGENDARY_COST_RE = /\(\s*costs?\s+(\d+)\s+actions?\s*\)/i;
+
+interface LegendaryOption {
+  option: DamageContribution;
+  /** Legendary uses one use of this option spends. */
+  cost: number;
+  /** Capped at one use per round by the statblock's own wording. */
+  limited: boolean;
+}
+
+function legendaryCost(name: string): number {
+  const match = LEGENDARY_COST_RE.exec(name);
+  const cost = match ? Number.parseInt(match[1], 10) : 1;
+  return cost > 0 ? cost : 1;
+}
+
 /**
- * What the legendary actions add each round: the best mix of once-per-round
- * options and repeats of the strongest unlimited one, within the three uses.
+ * The most damage `budget` legendary uses can buy. Each option is considered
+ * once, taken as many times as its cost and its per-round cap allow — a tiny
+ * knapsack rather than "three of the biggest", so a two-action option can't be
+ * spent three times in a three-use round.
  */
+function bestSpend(
+  options: Array<LegendaryOption>,
+  budget: number,
+  from = 0,
+): Array<DamageContribution> {
+  let best: Array<DamageContribution> = [];
+  for (let index = from; index < options.length; index++) {
+    const { option, cost, limited } = options[index];
+    const most = limited ? 1 : Math.floor(budget / cost);
+    for (let uses = 1; uses <= most && uses * cost <= budget; uses++) {
+      const round = [
+        { ...option, count: uses },
+        ...bestSpend(options, budget - uses * cost, index + 1),
+      ];
+      if (total(round) > total(best)) best = round;
+    }
+  }
+  return best;
+}
+
+/** What the legendary actions add each round, within the three uses. */
 function legendaryRound(
   actions: Array<Feature>,
   ctx: MarkupContext,
   lookup: FeatureLookup,
   fallback: ActionEntry | null,
 ): Array<DamageContribution> {
-  const options = actions.map((action) => ({
-    option: {
-      name: action.name,
-      count: 1,
-      damage:
-        featureDamage(action.description, ctx) +
-        total(referencedDamage(action.description, lookup, fallback)),
-    },
-    limited: ONCE_PER_ROUND_RE.test(action.description),
-  }));
+  const options: Array<LegendaryOption> = actions
+    .map((action) => ({
+      option: readOption(action, ctx, lookup, fallback),
+      cost: legendaryCost(action.name),
+      limited: ONCE_PER_ROUND_RE.test(action.description),
+    }))
+    .filter((entry) => entry.option.damage > 0);
 
-  let repeatable: DamageContribution | null = null;
-  for (const { option, limited } of options) {
-    if (!limited && option.damage > (repeatable?.damage ?? 0))
-      repeatable = option;
-  }
-  const limited = options
-    .filter((o) => o.limited)
-    .map((o) => o.option)
-    .sort((a, b) => b.damage - a.damage);
-
-  let best: Array<DamageContribution> = [];
-  const mostLimited = Math.min(LEGENDARY_USES_PER_ROUND, limited.length);
-  for (let taken = 0; taken <= mostLimited; taken++) {
-    const repeats = LEGENDARY_USES_PER_ROUND - taken;
-    const round =
-      repeatable && repeats > 0
-        ? [...limited.slice(0, taken), { ...repeatable, count: repeats }]
-        : limited.slice(0, taken);
-    if (total(round) > total(best)) best = round;
-  }
-  return best.filter((contribution) => contribution.damage > 0);
+  return bestSpend(options, LEGENDARY_USES_PER_ROUND).sort(
+    (a, b) => b.damage - a.damage,
+  );
 }
 
 /**
@@ -330,21 +408,40 @@ export function estimateDamagePerRound(
   for (const action of monster.actions) {
     if (MULTIATTACK_RE.test(action.name)) continue;
     const reading = readFeature(action.description, ctx);
-    byKey.set(featureKey(action.name), {
+    const key = featureKey(action.name);
+    const entry: ActionEntry = {
       name: action.name,
       count: 1,
       damage: reading.damage,
       isAttack: reading.isAttack,
-    });
+      recharge: RECHARGE_RE.test(`${action.name} ${action.description}`),
+    };
+    // Two actions can normalize to one key — a shapechanger's "Bite (Beast
+    // Form Only)" and "Bite (Humanoid Form Only)". Keep the harder hitter
+    // rather than whichever happened to be listed last.
+    const existing = byKey.get(key);
+    if (!existing || entry.damage > existing.damage) byKey.set(key, entry);
   }
   const lookup: FeatureLookup = (name) => byKey.get(featureKey(name)) ?? null;
 
+  // A recharge action is left out of the every-round total: the budget it is
+  // measured against describes sustained output, and a breath weapon would
+  // otherwise set the number for a round the creature can rarely repeat. It
+  // still counts when a Multiattack names it outright.
   let bestSingle: ActionEntry | null = null;
   let bestAttack: ActionEntry | null = null;
   for (const action of byKey.values()) {
+    if (action.recharge) continue;
     if (action.damage > (bestSingle?.damage ?? 0)) bestSingle = action;
     if (action.isAttack && action.damage > (bestAttack?.damage ?? 0)) {
       bestAttack = action;
+    }
+  }
+  // Unless the recharge action is the only thing the creature does. Reading
+  // its damage overstates the round; reading nothing at all is worse.
+  if (!bestSingle) {
+    for (const action of byKey.values()) {
+      if (action.damage > (bestSingle?.damage ?? 0)) bestSingle = action;
     }
   }
   // "makes two attacks" means two swings, so prefer a real attack over a big
@@ -368,8 +465,8 @@ export function estimateDamagePerRound(
       combined.push({ name: multiattack.name, count: 1, damage: own });
   }
 
-  // The best round is the Multiattack, unless one big action beats it — a
-  // dragon's breath weapon outdamages the claws it would otherwise use.
+  // The round is the Multiattack, unless one big action beats it — a Crush or
+  // a Swallow that outdamages the claws the creature would otherwise use.
   const single = bestSingle ? [contribution(bestSingle, 1)] : [];
   const turn = (total(combined) >= total(single) ? combined : single).filter(
     // A Multiattack often names a rider with no damage of its own ("and uses
@@ -382,9 +479,14 @@ export function estimateDamagePerRound(
     : [];
 
   // One bonus action and one reaction per round, each the creature's best.
-  const bonus = bestFeature(monster.bonus_actions, ctx);
+  const bonus = bestFeature(
+    monster.bonus_actions,
+    ctx,
+    lookup,
+    anonymousAttack,
+  );
   if (bonus) turn.push(bonus);
-  const reaction = bestFeature(monster.reactions, ctx);
+  const reaction = bestFeature(monster.reactions, ctx, lookup, anonymousAttack);
   const offTurn = reaction ? [reaction] : [];
 
   const damage = total(turn) + total(legendary) + total(offTurn);

@@ -45,6 +45,8 @@ export type DamagePerRoundComparison = StatComparison & {
 
 export type CrComparison = {
   benchmark: CrBenchmark;
+
+  damageTarget: number;
   ac: StatComparison;
   dc: StatComparison;
   hp: StatComparison;
@@ -220,6 +222,7 @@ export function compareToCr(
 
   return {
     benchmark,
+    damageTarget,
     ac: compare(
       Number(monster.armor_class) || 0,
       benchmark.acDc,

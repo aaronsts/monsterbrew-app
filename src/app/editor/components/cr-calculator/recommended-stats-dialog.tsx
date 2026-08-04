@@ -1,9 +1,7 @@
 "use client";
 
 import { BookOpenText } from "lucide-react";
-import { useWatch } from "react-hook-form";
 import { useCrComparison } from "./use-cr-comparison";
-import type { Monster } from "@/schema/monster-schema";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -22,17 +20,14 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { formatMod } from "@/lib/utils";
-import { damagePerRoundTarget } from "@/lib/cr-calculator";
 
 export function RecommendedStatsDialog() {
   const comparison = useCrComparison();
-  const isLegendary = useWatch<Monster, "is_legendary">({
-    name: "is_legendary",
-  });
   if (!comparison) return null;
 
-  const { benchmark, abilityModifier } = comparison;
-  const damage = damagePerRoundTarget(benchmark, Boolean(isLegendary));
+  const { benchmark, abilityModifier, damageTarget } = comparison;
+
+  const hasPremium = damageTarget !== benchmark.damagePerRound;
   const rows = [
     { stat: "Armor class / save DC", target: `${benchmark.acDc}` },
     {
@@ -46,9 +41,9 @@ export function RecommendedStatsDialog() {
     },
     {
       stat: "Damage per round",
-      target: `${damage} across ${benchmark.attacks} ${
+      target: `${damageTarget} across ${benchmark.attacks} ${
         benchmark.attacks === 1 ? "attack" : "attacks"
-      }${isLegendary ? ", legendary premium included" : ""}`,
+      }${hasPremium ? ", legendary premium included" : ""}`,
     },
   ];
 

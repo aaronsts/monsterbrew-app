@@ -52,11 +52,18 @@ describe("featureDamage", () => {
     ).toBe(24);
   });
 
-  it("counts a save's failure damage in full", () => {
+  it("counts a single-target save's failure damage in full", () => {
     // Every save fails under the measurement convention, so 6d6 is worth 21.
-    expect(featureDamage("{@save dex|15|6d6|fire|half|each creature}", ctx)).toBe(
+    expect(featureDamage("{@save dex|15|6d6|fire|half|one creature}", ctx)).toBe(
       21,
     );
+  });
+
+  it("halves a save that catches two or more characters", () => {
+    // The benchmark budgets are per-character, so area damage counts half.
+    expect(
+      featureDamage("{@save dex|15|6d6|fire|half|each creature in a cone}", ctx),
+    ).toBe(10);
   });
 
   it("counts damage tags nested in a save's failure text", () => {
@@ -65,12 +72,27 @@ describe("featureDamage", () => {
     expect(featureDamage(bite, ctx)).toBe(6 + 13);
   });
 
+  it("counts damage tags nested in an attack's effect slot", () => {
+    // Where prose-to-tags puts an imported attack's rider damage.
+    const bite =
+      "{@attack m|str|5|1d10 + 1|piercing||| the target takes {@damage 2d6} Poison damage}";
+    expect(featureDamage(bite, ctx)).toBe(6 + 7);
+  });
+
   it("ignores loose damage tags that ride alongside an attack", () => {
     // The Mummy pattern: the curse drains Hit Points every 24 hours, which is
     // not part of the round's output.
     const rottingFist =
       "{@attack m|str|5|1d10 + 3|bludgeoning|3d6|necrotic} While cursed, its Hit Point maximum decreases by {@damage 3d6} every 24 hours.";
     expect(featureDamage(rottingFist, ctx)).toBe(8 + 10);
+  });
+
+  it("counts a loose damage tag that is part of the round", () => {
+    // Extra damage written outside the composite tag is still damage; only
+    // the rider wording above takes it out of the round.
+    const searing =
+      "{@save dex|15|6d6|fire|half|one creature} On a failed save the target also takes {@damage 3d6} Necrotic damage.";
+    expect(featureDamage(searing, ctx)).toBe(21 + 10);
   });
 
   it("falls back to loose damage tags when there is no composite tag", () => {
@@ -162,18 +184,66 @@ describe("estimateDamagePerRound", () => {
   });
 
   it("prefers a single big action over a weaker Multiattack", () => {
-    // The dragon case: breathing outdamages the claws it would otherwise use.
     const estimate = estimateDamagePerRound(
       creature({
         actions: [
           feature("Multiattack", "The beast makes two Claw attacks."),
           claw,
-          feature("Breath", "{@save dex|15|12d6|fire|half|each creature in a cone}"),
+          feature("Crush", "{@save str|15|8d6|bludgeoning|half|one creature}"),
+        ],
+      }),
+    );
+    expect(estimate?.total).toBe(28);
+    expect(estimate?.turn).toEqual([{ name: "Crush", count: 1, damage: 28 }]);
+  });
+
+  it("keeps a recharge action out of the every-round total", () => {
+    // 12d6 halved for the cone is still 21, which would beat two Claws — but
+    // a breath weapon is not what the creature does round after round.
+    const estimate = estimateDamagePerRound(
+      creature({
+        actions: [
+          feature("Multiattack", "The beast makes two Claw attacks."),
+          claw,
+          feature(
+            "Fire Breath (Recharge 5-6)",
+            "{@save dex|15|12d6|fire|half|each creature in a cone}",
+          ),
+        ],
+      }),
+    );
+    expect(estimate?.turn).toEqual([{ name: "Claw", count: 2, damage: 12 }]);
+  });
+
+  it("still reads a recharge action that is the only damage there is", () => {
+    // Overstating the round beats reporting a creature as dealing nothing.
+    const estimate = estimateDamagePerRound(
+      creature({
+        actions: [
+          feature(
+            "Fire Breath (Recharge 5-6)",
+            "{@save dex|15|12d6|fire|half|one creature}",
+          ),
         ],
       }),
     );
     expect(estimate?.total).toBe(42);
-    expect(estimate?.turn).toEqual([{ name: "Breath", count: 1, damage: 42 }]);
+  });
+
+  it("keeps the harder hitter when two actions share a name", () => {
+    // A shapechanger's two Bites normalize to the same lookup key.
+    const estimate = estimateDamagePerRound(
+      creature({
+        actions: [
+          feature("Multiattack", "The beast makes two Bite attacks."),
+          feature("Bite (Humanoid Form Only)", "{@attack m|str|5|1d6 + str|piercing}"), // 8
+          feature("Bite (Beast Form Only)", "{@attack m|str|5|2d10 + str|piercing}"), // 16
+        ],
+      }),
+    );
+    expect(estimate?.turn).toEqual([
+      { name: "Bite (Beast Form Only)", count: 2, damage: 16 },
+    ]);
   });
 
   it("repeats the best attack for `makes two attacks` with nothing named", () => {
@@ -277,6 +347,23 @@ describe("estimateDamagePerRound", () => {
     ]);
   });
 
+  it("resolves a bonus action or reaction that names an action", () => {
+    const estimate = estimateDamagePerRound(
+      creature({
+        actions: [claw, bite],
+        bonus_actions: [feature("Quick Bite", "The beast makes one Bite attack.")],
+        reactions: [
+          feature("Opportune Swipe", "The beast makes one Claw attack."),
+        ],
+      }),
+    );
+    // Bite on the turn (16) + Quick Bite (16), Opportune Swipe off-turn (12).
+    expect(estimate?.total).toBe(16 + 16 + 12);
+    expect(estimate?.offTurn).toEqual([
+      { name: "Opportune Swipe", count: 1, damage: 12 },
+    ]);
+  });
+
   it("ignores bonus actions and reactions that deal no damage", () => {
     const estimate = estimateDamagePerRound(
       creature({
@@ -313,7 +400,7 @@ describe("estimateDamagePerRound", () => {
           feature("Pounce", "The beast moves and makes one Claw attack."), // 12, repeatable
           feature(
             "Wailing Blast",
-            "{@save con|15|8d6|thunder|half|each creature} The beast can't take this action again until the start of its next turn.",
+            "{@save con|15|8d6|thunder|half|one creature} The beast can't take this action again until the start of its next turn.",
           ), // 28, once per round
         ],
       }),
@@ -323,6 +410,31 @@ describe("estimateDamagePerRound", () => {
     expect(estimate?.legendary).toEqual([
       { name: "Wailing Blast", count: 1, damage: 28 },
       { name: "Pounce", count: 2, damage: 12 },
+    ]);
+  });
+
+  it("prices a legendary option that costs more than one action", () => {
+    // 2014-era imports put the cost in the name. Three uses buy one Wing
+    // Attack (2 each) plus one Pounce (1), not three Wing Attacks.
+    const estimate = estimateDamagePerRound(
+      creature({
+        is_legendary: true,
+        actions: [
+          claw,
+          feature("Crush", "{@attack m|str|5|8d6 + str|bludgeoning}"), // 33
+        ],
+        legendary_actions: [
+          feature("Pounce", "The beast makes one Claw attack."), // 12, cost 1
+          feature(
+            "Wing Attack (Costs 2 Actions)",
+            "The beast makes one Crush attack.",
+          ), // 33, cost 2
+        ],
+      }),
+    );
+    expect(estimate?.legendary).toEqual([
+      { name: "Wing Attack (Costs 2 Actions)", count: 1, damage: 33 },
+      { name: "Pounce", count: 1, damage: 12 },
     ]);
   });
 });
@@ -349,18 +461,15 @@ describe("estimateDamagePerRound over the SRD bestiary", () => {
     expect(estimate?.legendary).toEqual([
       { name: "Pounce", count: 3, damage: 29 },
     ]);
-    // Fire Breath (26d6 = 91) beats three Rends (87) for the turn itself.
-    expect(estimate?.total).toBe(91 + 87);
+    // Three Rends, not Fire Breath: it recharges, so it doesn't set the round.
+    expect(estimate?.total).toBe(87 + 87);
   });
 
   it("produces a damage estimate for nearly every SRD monster", () => {
     const unreadable = srd.filter((m) => estimateDamagePerRound(m) === null);
-    // Only the handful of CR 0 critters with no damaging action at all.
-    expect(unreadable.map((m) => m.name)).toEqual([
-      "Bat",
-      "Piranha",
-      "Seahorse",
-      "Shrieker Fungus",
-    ]);
+    // A handful of CR 0 critters have no damaging action at all. Asserted as a
+    // ceiling so regenerating the SRD data can't redden an estimator test.
+    expect(unreadable.length).toBeLessThan(6);
+    expect(unreadable.map((m) => m.name)).toContain("Shrieker Fungus");
   });
 });

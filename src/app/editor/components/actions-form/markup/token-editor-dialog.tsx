@@ -7,6 +7,7 @@ import type { MarkupContext } from "@/lib/statblock-markup";
 import { keySegments } from "@/lib/token-keys";
 import {
   abilityName,
+  damageAverage,
   dcValue,
   hitBonus,
   parseAttackArgs,
@@ -43,11 +44,6 @@ function damagePreview(dice: string, type: string, ctx: MarkupContext): string {
   return resolveMarkup(`{@damage ${dice}${type ? `|${type}` : ""}}`, ctx);
 }
 
-/** Leading number of a rendered damage clause (`7 (2d6) …` → 7). */
-function damageAverage(clause: string): number {
-  return Number.parseInt(clause, 10) || 0;
-}
-
 interface TokenSummary {
   /** Computed substrings of the preview, tinted in output order. */
   highlights: Array<string>;
@@ -66,7 +62,7 @@ function summarize(
       damagePreview(f.dice, f.type, ctx),
       damagePreview(f.dice2, f.type2, ctx),
     ].filter(Boolean);
-    const average = clauses.reduce((sum, c) => sum + damageAverage(c), 0);
+    const average = damageAverage(f.dice, ctx) + damageAverage(f.dice2, ctx);
     return {
       highlights: [hit, ...clauses].filter(Boolean),
       stats: [
@@ -93,7 +89,7 @@ function summarize(
       { label: "Save DC", value: f.dc ? `${dcValue(f.dc, ctx)}` : "—" },
       {
         label: "Average damage",
-        value: damage ? `${damageAverage(damage)}` : "—",
+        value: damage ? `${damageAverage(f.dice, ctx)}` : "—",
       },
     ],
   };
