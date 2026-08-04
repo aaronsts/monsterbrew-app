@@ -62,6 +62,11 @@ describe("findChallengeRating", () => {
     expect(findChallengeRating("5").challenge_rating).toBe("5");
   });
 
+  it("strips a TetraCube-style XP suffix", () => {
+    expect(findChallengeRating("23 (50,000 XP)").challenge_rating).toBe("23");
+    expect(findChallengeRating("1/2 (100 XP)").challenge_rating).toBe("1/2");
+  });
+
   it("falls back to CR 0 for unknown values", () => {
     expect(findChallengeRating("nonsense").challenge_rating).toBe("0");
   });

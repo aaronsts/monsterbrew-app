@@ -8,6 +8,7 @@ import {
   toSavingThrows,
   toSkills
 } from "./monster-mappers";
+import { tagMonsterFeatures } from "./prose-to-tags";
 import type {
   SkillEntry} from "./monster-mappers";
 import type { Monster } from "@/schema/monster-schema";
@@ -69,7 +70,7 @@ export function fromImprovedInitiative(raw: unknown): Monster {
   const passivePerception =
     parsePassivePerception(source.Senses) ?? 10 + source.Abilities.Wis;
 
-  return {
+  return tagMonsterFeatures({
     // Identity
     name: source.Description || "Imported creature",
     type: type.toLowerCase(),
@@ -126,5 +127,5 @@ export function fromImprovedInitiative(raw: unknown): Monster {
     is_mythic: source.MythicActions.length > 0,
     mythic_description: "",
     mythic_actions: toFeatures(source.MythicActions),
-  };
+  });
 }
