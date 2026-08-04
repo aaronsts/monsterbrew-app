@@ -412,6 +412,17 @@ function attackDistance(kind: string, reach: string): string {
   return ranged ? `range ${reach} ft.` : `reach ${reach} ft.`;
 }
 
+/**
+ * The numeric average of a damage expression with ability keywords resolved —
+ * the same number `damageClause` prints, exposed on its own so the CR
+ * calculator can total a creature's damage without re-parsing display text.
+ * `0` for an empty expression (`averageDice` itself has a floor of 1).
+ */
+export function damageAverage(dice: string, ctx: MarkupContext): number {
+  if (!dice.trim()) return 0;
+  return averageDice(normalizeSigns(resolveDiceAbilities(dice, ctx)));
+}
+
 /** `13 (2d8 + 4)` with abilities resolved, or `""` for no dice. */
 function damageClause(dice: string, ctx: MarkupContext): string {
   if (!dice) return "";

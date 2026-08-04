@@ -1,6 +1,7 @@
 "use client";
 import { Controller, useFormContext, useWatch } from "react-hook-form";
 import { CollapsibleSection } from "../collapsible-section";
+import { CrDamageHint } from "../cr-calculator/field-hint";
 import { FeatureList } from "./feature-list";
 import type { MarkupContext } from "@/lib/statblock-markup";
 import type { Monster } from "@/schema/monster-schema";
@@ -51,6 +52,7 @@ export const ActionsForm = () => {
         control={form.control}
         name="actions"
         title="Actions"
+        titleHint={<CrDamageHint />}
         itemLabel="Action"
         addLabel="Add action"
         namePlaceholder="ex. Multiattack"

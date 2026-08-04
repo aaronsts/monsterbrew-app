@@ -18,6 +18,11 @@ export function useCrComparison(): CrComparison | null {
     size,
     custom_hp,
     ability_scores,
+    name,
+    traits,
+    actions,
+    is_legendary,
+    legendary_actions,
   ] = useWatch({
     control,
     name: [
@@ -28,6 +33,11 @@ export function useCrComparison(): CrComparison | null {
       "size",
       "custom_hp",
       "ability_scores",
+      "name",
+      "traits",
+      "actions",
+      "is_legendary",
+      "legendary_actions",
     ],
   });
 
@@ -40,5 +50,10 @@ export function useCrComparison(): CrComparison | null {
     size,
     custom_hp,
     ability_scores,
+    name,
+    traits: traits ?? [],
+    actions: actions ?? [],
+    is_legendary,
+    legendary_actions: legendary_actions ?? [],
   });
 }

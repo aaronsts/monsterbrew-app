@@ -2,6 +2,7 @@ import { Controller, useFieldArray } from "react-hook-form";
 import { ArrowDown, ArrowUp, Plus, Trash2 } from "lucide-react";
 import { MarkupField } from "./markup/markup-field";
 import { PresetPicker } from "./preset-picker";
+import type { ReactNode } from "react";
 import type { Control } from "react-hook-form";
 import type { Monster } from "@/schema/monster-schema";
 import type { MarkupContext } from "@/lib/statblock-markup";
@@ -34,6 +35,8 @@ interface FeatureListProps {
   namePlaceholder: string;
   descriptionPlaceholder: string;
   title?: string;
+  /** Rendered beside the title, for the CR damage hint. */
+  titleHint?: ReactNode;
   descriptionName?: DescriptionName;
   descriptionLabel?: string;
   ctx: MarkupContext;
@@ -49,6 +52,7 @@ export function FeatureList({
   namePlaceholder,
   descriptionPlaceholder,
   title,
+  titleHint,
   descriptionName,
   descriptionLabel,
   ctx,
@@ -60,7 +64,14 @@ export function FeatureList({
   return (
     <FieldGroup className="gap-3">
       <div className="flex flex-col items-start lg:flex-row lg:items-center justify-between gap-2">
-        {title ? <FieldLabel className="mb-0">{title}</FieldLabel> : <span />}
+        {title ? (
+          <div className="flex items-center gap-2">
+            <FieldLabel className="mb-0">{title}</FieldLabel>
+            {titleHint}
+          </div>
+        ) : (
+          <span />
+        )}
         <div className="flex items-center gap-2">
           {presets && presets.length > 0 && (
             <PresetPicker

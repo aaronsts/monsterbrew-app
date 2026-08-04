@@ -3,7 +3,9 @@ import {
   benchmarkForCr,
   classify,
   compareToCr,
+  crForDamagePerRound,
   crToNumber,
+  damagePerRoundTarget,
   extractCombatStats,
 } from "./cr-calculator";
 import { CR_BENCHMARKS } from "./constants/cr-benchmarks";
@@ -123,7 +125,8 @@ describe("classify", () => {
 });
 
 describe("compareToCr", () => {
-  // Real CR 5: PB +3, benchmark AC/DC 15, HP 95 (71–119), attack +7.
+  // Real CR 5: PB +3, benchmark AC/DC 15, HP 95 (71–119), attack +7,
+  // damage 35 per round.
   const monster = {
     cr: makeCr("5", 3),
     armor_class: 15,
@@ -132,7 +135,15 @@ describe("compareToCr", () => {
     size: "medium",
     custom_hp: false,
     ability_scores: ABILITY_SCORES,
+    name: "Test Beast",
+    traits: [],
+    actions: [],
+    is_legendary: false,
+    legendary_actions: [],
   };
+
+  /** 2d6 + 5 STR = 12 average. */
+  const claw = { name: "Claw", description: "{@attack m|str|5|2d6 + str|slashing}" };
 
   it("returns null when the CR has no benchmark row", () => {
     expect(compareToCr({ ...monster, cr: makeCr("", 2) })).toBeNull();
@@ -204,6 +215,87 @@ describe("compareToCr", () => {
     }
   });
 
+  it("leaves damage unjudged when no feature carries a damage tag", () => {
+    expect(compareToCr(monster)?.damagePerRound).toBeNull();
+    expect(
+      compareToCr({
+        ...monster,
+        actions: [{ name: "Howl", description: "It howls, and all hear it." }],
+      })?.damagePerRound,
+    ).toBeNull();
+  });
+
+  it("compares estimated damage against the row, tolerating a quarter of it", () => {
+    // Three claws: 36 vs the CR 5 budget of 35 ± 9.
+    const result = compareToCr({
+      ...monster,
+      actions: [
+        { name: "Multiattack", description: "It makes three Claw attacks." },
+        claw,
+      ],
+    });
+    expect(result?.damagePerRound).toMatchObject({
+      actual: 36,
+      benchmark: 35,
+      tolerance: 9,
+      classification: "on-par",
+      suggestedCr: "5",
+    });
+  });
+
+  it("flags damage past the tolerance and names the CR it suits", () => {
+    // Six claws: 72, which is CR 11 output (71) on a CR 5 statblock.
+    const result = compareToCr({
+      ...monster,
+      actions: [
+        { name: "Multiattack", description: "It makes six Claw attacks." },
+        claw,
+      ],
+    });
+    expect(result?.damagePerRound).toMatchObject({
+      actual: 72,
+      classification: "high",
+      suggestedCr: "11",
+    });
+  });
+
+  it("raises the damage budget by the legendary premium", () => {
+    const legendary = compareToCr({ ...monster, is_legendary: true, actions: [claw] });
+    // CR 5's 35 becomes 44, so the same 12 damage is judged against a bigger
+    // budget — and the estimate itself now counts legendary actions.
+    expect(legendary?.damagePerRound?.benchmark).toBe(44);
+    expect(legendary?.damagePerRound?.actual).toBe(12);
+  });
+});
+
+describe("crForDamagePerRound", () => {
+  it("names the CR whose damage budget the output lands closest to", () => {
+    expect(crForDamagePerRound(35, false)).toBe("5"); // exactly the CR 5 row
+    expect(crForDamagePerRound(12, false)).toBe("1");
+    expect(crForDamagePerRound(300, false)).toBe("29");
+  });
+
+  it("reads the same damage as a lower CR for a legendary creature", () => {
+    // 44 is the CR 5 budget once the legendary premium is applied, but it is
+    // CR 6 output for an ordinary creature.
+    expect(crForDamagePerRound(44, true)).toBe("5");
+    expect(crForDamagePerRound(44, false)).toBe("6");
+  });
+
+  it("has no answer for a creature dealing no damage", () => {
+    expect(crForDamagePerRound(0, false)).toBeNull();
+  });
+});
+
+describe("damagePerRoundTarget", () => {
+  it("returns the row's own budget for an ordinary creature", () => {
+    const row = benchmarkForCr("10")!;
+    expect(damagePerRoundTarget(row, false)).toBe(row.damagePerRound);
+  });
+
+  it("adds 25% for a legendary one", () => {
+    expect(damagePerRoundTarget(benchmarkForCr("10")!, true)).toBe(81); // 65 × 1.25
+  });
 });
 
 describe("CR_BENCHMARKS vs the quick-reference formulas", () => {

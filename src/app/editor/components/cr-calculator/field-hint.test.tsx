@@ -3,7 +3,7 @@ import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it } from "vitest";
 import { renderWithForm } from "../test-utils";
 import { setCrSuggestionsEnabled } from "./use-cr-suggestions-enabled";
-import { CrAbilityHint, CrStatHint } from "./field-hint";
+import { CrAbilityHint, CrDamageHint, CrStatHint } from "./field-hint";
 import { CrSuggestionsToggle } from "./cr-suggestions-toggle";
 import { CrCalculator } from ".";
 import type { Monster } from "@/schema/monster-schema";
@@ -90,6 +90,55 @@ describe("CrAbilityHint", () => {
     renderWithForm(<CrAbilityHint ability="str" />, {
       cr: cr5,
       ability_scores: abilityScores,
+    });
+    expect(screen.queryByText(/High|On par|Low/)).toBeNull();
+  });
+});
+
+describe("CrDamageHint", () => {
+  /** 2d6 + 2 = 9 average. */
+  const claw = {
+    name: "Claw",
+    description: "{@attack m|str|5|2d6 + 2|slashing}",
+  };
+  const multiattack = (text: string) => ({
+    name: "Multiattack",
+    description: text,
+  });
+
+  it("renders nothing until an action carries a damage tag", () => {
+    renderWithForm(<CrDamageHint />, {
+      cr: cr5,
+      actions: [{ name: "Howl", description: "It howls, and all hear it." }],
+    });
+    expect(screen.queryByText(/High|On par|Low/)).toBeNull();
+  });
+
+  it("classifies the round's damage against the benchmark", () => {
+    // Four claws: 36, against the CR 5 budget of 35 ± 9.
+    renderWithForm(<CrDamageHint />, {
+      cr: cr5,
+      actions: [multiattack("It makes four Claw attacks."), claw],
+    });
+    expect(screen.getByText("On par")).toBeTruthy();
+  });
+
+  it("flags a creature that hits far above its CR", () => {
+    renderWithForm(<CrDamageHint />, {
+      cr: cr5,
+      actions: [multiattack("It makes ten Claw attacks."), claw],
+    });
+    expect(screen.getByText("High")).toBeTruthy();
+    expect(
+      screen.getByText("Damage per round high for this challenge rating"),
+    ).toBeTruthy();
+  });
+
+  it("renders nothing while suggestions are disabled", () => {
+    setCrSuggestionsEnabled(false);
+    renderWithForm(<CrDamageHint />, {
+      cr: cr5,
+      actions: [multiattack("It makes four Claw attacks."), claw],
     });
     expect(screen.queryByText(/High|On par|Low/)).toBeNull();
   });

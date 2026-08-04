@@ -1,7 +1,9 @@
 "use client";
 
 import { BookOpenText } from "lucide-react";
+import { useWatch } from "react-hook-form";
 import { useCrComparison } from "./use-cr-comparison";
+import type { Monster } from "@/schema/monster-schema";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -20,12 +22,17 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { formatMod } from "@/lib/utils";
+import { damagePerRoundTarget } from "@/lib/cr-calculator";
 
 export function RecommendedStatsDialog() {
   const comparison = useCrComparison();
+  const isLegendary = useWatch<Monster, "is_legendary">({
+    name: "is_legendary",
+  });
   if (!comparison) return null;
 
   const { benchmark, abilityModifier } = comparison;
+  const damage = damagePerRoundTarget(benchmark, Boolean(isLegendary));
   const rows = [
     { stat: "Armor class / save DC", target: `${benchmark.acDc}` },
     {
@@ -36,6 +43,12 @@ export function RecommendedStatsDialog() {
     {
       stat: "Main ability modifier",
       target: formatMod(abilityModifier.benchmark),
+    },
+    {
+      stat: "Damage per round",
+      target: `${damage} across ${benchmark.attacks} ${
+        benchmark.attacks === 1 ? "attack" : "attacks"
+      }${isLegendary ? ", legendary premium included" : ""}`,
     },
   ];
 
@@ -61,7 +74,9 @@ export function RecommendedStatsDialog() {
           <DialogDescription>
             Attack bonus and save DC are projected from the best ability score
             and the proficiency bonus. Hit points are read from the number at
-            the start of the Hit Points field.
+            the start of the Hit Points field. Damage per round assumes every
+            attack hits and every save fails; halve it for effects that catch
+            two or more characters at once.
           </DialogDescription>
         </DialogHeader>
         <Table className="text-xs">
