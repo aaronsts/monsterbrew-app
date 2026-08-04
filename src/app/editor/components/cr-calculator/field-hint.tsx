@@ -131,8 +131,8 @@ export function CrDamageHint() {
           {suggestedCr && suggestedCr !== cr
             ? `; that output suits CR ${suggestedCr}`
             : ""}
-          . Counted from the damage tags on this creature&apos;s actions,
-          assuming every attack hits.
+          . Counted from the damage tags across one full round, assuming every
+          attack hits.
         </>
       }
     />

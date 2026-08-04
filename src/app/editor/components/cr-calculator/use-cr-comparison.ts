@@ -21,6 +21,8 @@ export function useCrComparison(): CrComparison | null {
     name,
     traits,
     actions,
+    bonus_actions,
+    reactions,
     is_legendary,
     legendary_actions,
   ] = useWatch({
@@ -36,6 +38,8 @@ export function useCrComparison(): CrComparison | null {
       "name",
       "traits",
       "actions",
+      "bonus_actions",
+      "reactions",
       "is_legendary",
       "legendary_actions",
     ],
@@ -53,6 +57,8 @@ export function useCrComparison(): CrComparison | null {
     name,
     traits: traits ?? [],
     actions: actions ?? [],
+    bonus_actions: bonus_actions ?? [],
+    reactions: reactions ?? [],
     is_legendary,
     legendary_actions: legendary_actions ?? [],
   });

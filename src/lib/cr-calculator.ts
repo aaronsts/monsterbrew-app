@@ -191,6 +191,8 @@ export function compareToCr(
     | "name"
     | "traits"
     | "actions"
+    | "bonus_actions"
+    | "reactions"
     | "is_legendary"
     | "legendary_actions"
   >,

@@ -28,6 +28,8 @@ function comparisonFor(overrides: Partial<Monster>) {
     name: "Test Beast",
     traits: [],
     actions: [],
+    bonus_actions: [],
+    reactions: [],
     is_legendary: false,
     legendary_actions: [],
     ...overrides,

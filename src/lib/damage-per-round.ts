@@ -34,6 +34,8 @@ export type DamageSource = Pick<
   | "name"
   | "traits"
   | "actions"
+  | "bonus_actions"
+  | "reactions"
   | "is_legendary"
   | "legendary_actions"
 >;
@@ -50,10 +52,16 @@ export interface DamageContribution {
 export interface DamagePerRoundEstimate {
   /** Total average damage across the round. */
   total: number;
-  /** The creature's own turn: its Multiattack, or its single best action. */
   turn: Array<DamageContribution>;
   /** Legendary actions. Empty unless the creature is legendary. */
   legendary: Array<DamageContribution>;
+  /**
+   * Damage dealt outside the creature's turn — its best damaging reaction, one
+   * per round. The guide is explicit that off-turn damage counts in the budget,
+   * and one reaction per round is the same optimistic convention as "every
+   * attack hits".
+   */
+  offTurn: Array<DamageContribution>;
 }
 
 /** Total damage of a set of contributions, counting repeats. */
@@ -79,10 +87,7 @@ interface FeatureReading {
   isAttack: boolean;
 }
 
-function readFeature(
-  description: string,
-  ctx: MarkupContext,
-): FeatureReading {
+function readFeature(description: string, ctx: MarkupContext): FeatureReading {
   let fromComposites = 0;
   let fromLooseDamage = 0;
   let hasComposite = false;
@@ -116,15 +121,13 @@ function readFeature(
     damage: hasComposite ? fromComposites : fromLooseDamage,
     // The atomic route writes {@atkr}/{@hit} instead of a composite tag, so
     // treat those as attacks too.
-    isAttack: isAttack || (!hasComposite && /\{@(atkr|atk|hit)\b/.test(description)),
+    isAttack:
+      isAttack || (!hasComposite && /\{@(atkr|atk|hit)\b/.test(description)),
   };
 }
 
 /** Average damage one feature deals, read from its `{@…}` tags. */
-export function featureDamage(
-  description: string,
-  ctx: MarkupContext,
-): number {
+export function featureDamage(description: string, ctx: MarkupContext): number {
   return readFeature(description, ctx).damage;
 }
 
@@ -240,6 +243,24 @@ function referencedDamage(
 
 const MULTIATTACK_RE = /^multiattack\b/i;
 
+/**
+ * The hardest-hitting feature in a list, or `null` when none of them deal
+ * damage. Used for the one bonus action and one reaction a round allows.
+ */
+function bestFeature(
+  features: Array<Feature>,
+  ctx: MarkupContext,
+): DamageContribution | null {
+  let best: DamageContribution | null = null;
+  for (const feature of features) {
+    const damage = featureDamage(feature.description, ctx);
+    if (damage > (best?.damage ?? 0)) {
+      best = { name: feature.name, count: 1, damage };
+    }
+  }
+  return best;
+}
+
 /** 2024 statblocks grant three legendary action uses per round. */
 const LEGENDARY_USES_PER_ROUND = 3;
 
@@ -269,7 +290,8 @@ function legendaryRound(
 
   let repeatable: DamageContribution | null = null;
   for (const { option, limited } of options) {
-    if (!limited && option.damage > (repeatable?.damage ?? 0)) repeatable = option;
+    if (!limited && option.damage > (repeatable?.damage ?? 0))
+      repeatable = option;
   }
   const limited = options
     .filter((o) => o.limited)
@@ -342,7 +364,8 @@ export function estimateDamagePerRound(
     );
     // Rare, but a hand-written Multiattack may hold an attack tag of its own.
     const own = featureDamage(multiattack.description, ctx);
-    if (own > 0) combined.push({ name: multiattack.name, count: 1, damage: own });
+    if (own > 0)
+      combined.push({ name: multiattack.name, count: 1, damage: own });
   }
 
   // The best round is the Multiattack, unless one big action beats it — a
@@ -351,13 +374,19 @@ export function estimateDamagePerRound(
   const turn = (total(combined) >= total(single) ? combined : single).filter(
     // A Multiattack often names a rider with no damage of its own ("and uses
     // Dreadful Glare"); it belongs in the round but not in a damage breakdown.
-    (contribution) => contribution.damage > 0,
+    (entry) => entry.damage > 0,
   );
 
   const legendary = monster.is_legendary
     ? legendaryRound(monster.legendary_actions, ctx, lookup, anonymousAttack)
     : [];
 
-  const damage = total(turn) + total(legendary);
-  return damage > 0 ? { total: damage, turn, legendary } : null;
+  // One bonus action and one reaction per round, each the creature's best.
+  const bonus = bestFeature(monster.bonus_actions, ctx);
+  if (bonus) turn.push(bonus);
+  const reaction = bestFeature(monster.reactions, ctx);
+  const offTurn = reaction ? [reaction] : [];
+
+  const damage = total(turn) + total(legendary) + total(offTurn);
+  return damage > 0 ? { total: damage, turn, legendary, offTurn } : null;
 }

@@ -27,6 +27,8 @@ function creature(overrides: Partial<DamageSource> = {}): DamageSource {
     name: "Test Beast",
     traits: [],
     actions: [],
+    bonus_actions: [],
+    reactions: [],
     is_legendary: false,
     legendary_actions: [],
     ...overrides,
@@ -241,6 +243,50 @@ describe("estimateDamagePerRound", () => {
       }),
     );
     expect(estimate?.total).toBe(16);
+  });
+
+  it("adds the best bonus action to the turn", () => {
+    const estimate = estimateDamagePerRound(
+      creature({
+        actions: [claw],
+        bonus_actions: [
+          feature("Nimble Escape", "It takes the Disengage action."), // 0
+          feature("Tail Sting", "{@attack m|str|5|1d6 + str|piercing}"), // 8
+        ],
+      }),
+    );
+    expect(estimate?.total).toBe(12 + 8);
+    expect(estimate?.turn).toEqual([
+      { name: "Claw", count: 1, damage: 12 },
+      { name: "Tail Sting", count: 1, damage: 8 },
+    ]);
+  });
+
+  it("counts one reaction per round as off-turn damage", () => {
+    const estimate = estimateDamagePerRound(
+      creature({
+        actions: [claw],
+        reactions: [
+          feature("Spiked Hide", "{@damage 2d6} Piercing damage to the attacker."),
+        ],
+      }),
+    );
+    expect(estimate?.total).toBe(12 + 7);
+    expect(estimate?.offTurn).toEqual([
+      { name: "Spiked Hide", count: 1, damage: 7 },
+    ]);
+  });
+
+  it("ignores bonus actions and reactions that deal no damage", () => {
+    const estimate = estimateDamagePerRound(
+      creature({
+        actions: [claw],
+        bonus_actions: [feature("Shift", "It moves half its Speed.")],
+        reactions: [feature("Parry", "It adds 2 to its AC against one attack.")],
+      }),
+    );
+    expect(estimate?.total).toBe(12);
+    expect(estimate?.offTurn).toEqual([]);
   });
 
   it("ignores legendary actions unless the creature is legendary", () => {

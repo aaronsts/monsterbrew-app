@@ -138,6 +138,8 @@ describe("compareToCr", () => {
     name: "Test Beast",
     traits: [],
     actions: [],
+    bonus_actions: [],
+    reactions: [],
     is_legendary: false,
     legendary_actions: [],
   };
