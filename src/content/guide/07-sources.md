@@ -1,7 +1,7 @@
 ---
 title: Sources and attribution
 shortTitle: Sources
-description: The creators and openly licensed works this guide draws on are the Lazy GM's Resource Document, Blog of Holding, Alphastream, and the SRD 5.2.
+description: The creators and openly licensed works this guide draws on are the Lazy GM's Resource Document, Blog of Holding, The Finished Book, Alphastream, and the SRD 5.2.
 ---
 
 At last, we made it to the end. This guide would not have been possible without the amazing people listed below. It consolidates monster-design knowledge the D&D community developed over many years, and the thinking belongs to its creators. I've just organized it, connected it to Monsterbrew's editor and kept it 2024-focused. If this guide was useful, their full works go deeper than I do here, and the paid ones are worth every penny (or copper).
@@ -17,6 +17,10 @@ The same material appears, expanded, in their book [Forge of Foes](https://slyfl
 ## Blog of Holding: the 2024 monster math
 
 The 2024-specific numbers come from Paul Hughes's statistical analysis of every monster in the 2024 Monster Manual, published as ["The 2024 Monster Manual on a business card"](https://www.blogofholding.com/?p=8469) on Blog of Holding: hit points ≈ 15 + 15 per CR, damage ≈ 7.5 per CR, the sharp scaling break above CR 20, the ~25% legendary damage premium, and the finding that 2024 monsters hit about 50% harder than 2014's. The business-card guidelines are released under [CC-BY 4.0](https://creativecommons.org/licenses/by/4.0/). His 2014 predecessor card is a community classic, and the full post is the best available look at how the revised Monster Manual is actually built.
+
+## The Finished Book: checking the math
+
+Tom Dunn's ["Monster Manual 2024"](https://tomedunn.github.io/the-finished-book/monsters/monster-manual-2024/) on [The Finished Book](https://tomedunn.github.io/the-finished-book/) goes over every monster in the revised Monster Manual against its 2014 counterpart. It also confirms the numbers above and adds the 2024-specific findings that this guide leans on. Its findings are cited with attribution, and the statistics were double-checked against the SRD bestiary that ships with Monsterbrew. If the math side of monster design interests you, his archive is the deepest dive there is.
 
 ## Alphastream: the 2024 creation process
 

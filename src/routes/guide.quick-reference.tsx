@@ -15,7 +15,11 @@ import { Section } from "@/app/guide/components/section";
 import { Card } from "@/components/ui/card";
 
 const QUICK_FORMULAS: Array<{ stat: string; formula: string }> = [
-  { stat: "AC and save DC", formula: "12 + half the creature's CR" },
+  {
+    stat: "AC and save DC",
+    formula:
+      "12 + half the creature's CR (past CR 16, ACs slow to +1 per 3 CRs)",
+  },
   { stat: "Hit points", formula: "(15 x CR) + 15" },
   { stat: "Attack bonus", formula: "4 + half the creature's CR" },
   { stat: "Damage per round", formula: "(7 x CR) + 5" },
@@ -165,6 +169,10 @@ function QuickReferencePage() {
             Cross-check: average the defensive CR with the offensive CR. It
             should match the CR you wrote down.
           </li>
+          <li>
+            Around two or three proficient saving throws is most common in 2024,
+            even for bosses.
+          </li>
         </ul>
       </Section>
 
@@ -188,7 +196,8 @@ function QuickReferencePage() {
           </li>
           <li>
             A solo boss needs about 25% more damage, three legendary actions per
-            round, legendary resistance 3/day, and ideally a few allies.
+            round, legendary resistance 3/day (four at CR 20+), expertise in
+            initiative, and ideally a few allies.
           </li>
         </ul>
       </Section>
@@ -275,8 +284,8 @@ function QuickReferencePage() {
       <div className="mt-12 flex flex-col gap-6 border-t border-border pt-6">
         <p className="text-xs text-muted-foreground">
           The formulas and roles are adapted from the Lazy GM's 5e Monster
-          Builder Resource Document (CC-BY 4.0) and Paul Hughes's 2024 Monster
-          Manual analysis. Full credits in{" "}
+          Builder Resource Document (CC-BY 4.0) and the 2024 Monster Manual
+          analyses by Paul Hughes and Tom Dunn. Full credits in{" "}
           <Link
             to="/guide/$slug"
             params={{ slug: "sources" }}
