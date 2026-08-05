@@ -2,7 +2,8 @@ import type { z } from "zod";
 import type { createCreatureSchema } from "@/schema/createCreatureSchema";
 import type { Monster, StoredMonster } from "@/schema/monster-schema";
 import { abilityScoresSchema } from "@/schema/monster-schema";
-import { generateId, partitionLanguages } from "@/lib/utils";
+import { partitionLanguages } from "@/lib/languages";
+import { generateId } from "@/lib/utils";
 
 type LegacyCreature = z.infer<typeof createCreatureSchema>;
 

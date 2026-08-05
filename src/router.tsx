@@ -1,6 +1,6 @@
 import { createRouter } from "@tanstack/react-router";
-import { captureException } from "@sentry/react";
 import { routeTree } from "./routeTree.gen";
+import { captureError } from "@/lib/sentry";
 import { RouterErrorFallback } from "@/components/error-fallback";
 
 export function getRouter() {
@@ -9,7 +9,7 @@ export function getRouter() {
     scrollRestoration: true,
     defaultPreload: "intent",
 
-    defaultOnCatch: (error) => captureException(error),
+    defaultOnCatch: (error) => captureError(error),
     defaultErrorComponent: RouterErrorFallback,
   });
 

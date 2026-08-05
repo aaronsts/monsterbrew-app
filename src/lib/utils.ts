@@ -1,10 +1,9 @@
 import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { CREATURE_SIZES } from "./constants";
+import { CREATURE_SIZES } from "./creature-sizes";
 import type { ClassValue } from "clsx";
 import type { KeyboardEvent } from "react";
 import type { defaultCreature } from "@/schema/createCreatureSchema";
-import { Languages } from "@/schema/createCreatureSchema";
 
 interface Option {
   label: string;
@@ -121,26 +120,4 @@ export function debounce<TArgs extends Array<unknown>>(
     timer = undefined;
   };
   return debounced;
-}
-
-const KNOWN_LANGUAGES = new Set<string>(Object.values(Languages));
-
-/**
- * Splits a flat list of language strings into the known `Languages` enum
- * members and everything else.
- */
-export function partitionLanguages(values: Array<string>): {
-  languages: Array<Languages>;
-  custom_languages: Array<string>;
-} {
-  const languages: Array<Languages> = [];
-  const custom_languages: Array<string> = [];
-  for (const value of values) {
-    if (KNOWN_LANGUAGES.has(value)) {
-      languages.push(value as Languages);
-    } else {
-      custom_languages.push(value);
-    }
-  }
-  return { languages, custom_languages };
 }
