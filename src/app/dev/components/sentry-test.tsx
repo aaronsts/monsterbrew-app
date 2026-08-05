@@ -1,5 +1,8 @@
 import { useState } from "react";
-import * as Sentry from "@sentry/react";
+// Named imports, not `import * as Sentry`: a namespace import here forces the
+// whole SDK into the chunk that `lib/sentry.ts` lazily loads, defeating its
+// tree-shaking and turning the idle load into a ~150 KB download (#155).
+import { captureException, isInitialized } from "@sentry/react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -10,7 +13,7 @@ function RenderCrash(): never {
 
 export function SentryTest() {
   const [crashRender, setCrashRender] = useState(false);
-  const initialized = Sentry.isInitialized();
+  const initialized = isInitialized();
 
   if (crashRender) {
     return <RenderCrash />;
@@ -96,7 +99,7 @@ export function SentryTest() {
             color="neutral"
             variant="outline"
             onClick={() => {
-              const eventId = Sentry.captureException(
+              const eventId = captureException(
                 new Error("Sentry test: manual capture"),
               );
               if (initialized) {

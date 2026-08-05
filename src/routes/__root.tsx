@@ -9,8 +9,8 @@ import type { ReactNode } from "react";
 import "@/app/globals.css";
 import "@fontsource-variable/oxanium";
 import "@fontsource-variable/jetbrains-mono";
-import "@/lib/sentry";
 
+import { initSentryWhenIdle } from "@/lib/sentry";
 import { Providers } from "@/components/providers/providers";
 import { SiteHeader } from "@/components/ui/site-header";
 import { SiteFooter } from "@/components/ui/site-footer";
@@ -51,6 +51,8 @@ export const Route = createRootRoute({
   }),
   component: RootComponent,
 });
+
+initSentryWhenIdle();
 
 // eslint-disable-next-line react-refresh/only-export-components
 function RootComponent() {

@@ -3,7 +3,7 @@ import type { Monster } from "@/schema/monster-schema";
 import { abilityScoresSchema } from "@/schema/monster-schema";
 import { CHALLENGE_RATINGS } from "@/lib/constants";
 import { SKILLS } from "@/lib/skills";
-import { partitionLanguages } from "@/lib/utils";
+import { partitionLanguages } from "@/lib/languages";
 
 /**
  * Validate `raw` against a source-format schema, returning the parsed value or
