@@ -1,0 +1,14 @@
+---
+title: Damage per round suggestions
+---
+
+The CR suggestions in the editor now cover damage as well as defenses. Monsterbrew reads the damage out of your creature's attacks and tells you whether its output matches the challenge rating you picked.
+
+- A high, on par, or low badge sits next to the Actions list, and hovering it shows your damage against the target for that CR
+- When the numbers disagree, it names the challenge rating your damage actually suits
+- Multiattack is followed through to the attacks it repeats, and legendary actions, bonus actions, and reactions all count toward the round, including the ones that just say "makes one Bite attack"
+- An effect that catches two or more characters counts half, the way the damage budget is meant to be read
+- A breath weapon or other recharge action does not set the total, since the budget describes what a creature does round after round
+- Legendary creatures are held to a 25% higher damage budget, matching published monsters
+- Damage per round joins the benchmark delta chart and the recommended stats table
+- Creatures whose actions are written as plain prose get no verdict, since there is nothing to read

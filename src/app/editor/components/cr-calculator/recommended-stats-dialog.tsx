@@ -25,7 +25,9 @@ export function RecommendedStatsDialog() {
   const comparison = useCrComparison();
   if (!comparison) return null;
 
-  const { benchmark, abilityModifier } = comparison;
+  const { benchmark, abilityModifier, damageTarget } = comparison;
+
+  const hasPremium = damageTarget !== benchmark.damagePerRound;
   const rows = [
     { stat: "Armor class / save DC", target: `${benchmark.acDc}` },
     {
@@ -36,6 +38,12 @@ export function RecommendedStatsDialog() {
     {
       stat: "Main ability modifier",
       target: formatMod(abilityModifier.benchmark),
+    },
+    {
+      stat: "Damage per round",
+      target: `${damageTarget} across ${benchmark.attacks} ${
+        benchmark.attacks === 1 ? "attack" : "attacks"
+      }${hasPremium ? ", legendary premium included" : ""}`,
     },
   ];
 
@@ -61,7 +69,9 @@ export function RecommendedStatsDialog() {
           <DialogDescription>
             Attack bonus and save DC are projected from the best ability score
             and the proficiency bonus. Hit points are read from the number at
-            the start of the Hit Points field.
+            the start of the Hit Points field. Damage per round assumes every
+            attack hits and every save fails; halve it for effects that catch
+            two or more characters at once.
           </DialogDescription>
         </DialogHeader>
         <Table className="text-xs">

@@ -29,10 +29,23 @@ describe("RecommendedStatsDialog", () => {
     expect(screen.getByText("95 (71–119)")).toBeTruthy(); // HP with range
     expect(screen.getByText("+7")).toBeTruthy(); // attack bonus
     expect(screen.getByText("+4")).toBeTruthy(); // +7 minus the +3 PB
+    expect(screen.getByText("35 across 3 attacks")).toBeTruthy(); // damage
     expect(screen.getByText(/vampire spawn/)).toBeTruthy(); // examples
     // The fine print explaining what the comparisons rely on.
     expect(
       screen.getByText(/projected from the best ability score/),
+    ).toBeTruthy();
+  });
+
+  it("raises the damage budget for a legendary creature", async () => {
+    const user = userEvent.setup();
+    renderWithForm(<RecommendedStatsDialog />, { cr: cr5, is_legendary: true });
+
+    await user.click(screen.getByRole("button", { name: /Recommended stats/ }));
+
+    // CR 5's 35 plus the 25% legendary premium.
+    expect(
+      screen.getByText("44 across 3 attacks, legendary premium included"),
     ).toBeTruthy();
   });
 

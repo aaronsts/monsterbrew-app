@@ -106,6 +106,42 @@ export function CrStatHint({ stat }: Readonly<{ stat: "ac" | "hp" }>) {
 }
 
 /**
+ * Badge for the Actions list. Renders only once the creature's features carry
+ * damage tags the estimator can read — a prose-only statblock gets no verdict
+ * rather than a wrong one. The tooltip doubles as the offensive-CR
+ * cross-check: it names the CR this much damage would actually suit.
+ */
+export function CrDamageHint() {
+  const enabled = useCrSuggestionsEnabled();
+  const comparison = useCrComparison();
+  if (!enabled || !comparison?.damagePerRound) return null;
+
+  const { actual, benchmark, classification, suggestedCr } =
+    comparison.damagePerRound;
+  const text = CLASSIFICATION_DISPLAY[classification].text.toLowerCase();
+  const cr = comparison.benchmark.cr;
+
+  const crossCheck =
+    classification !== "on-par" && suggestedCr && suggestedCr !== cr
+      ? `; that output suits CR ${suggestedCr}`
+      : "";
+
+  return (
+    <HintChip
+      classification={classification}
+      srText={`Damage per round ${text} for this challenge rating`}
+      tooltip={
+        <>
+          Damage per round about {actual} vs {benchmark} suggested for CR {cr}
+          {crossCheck}. Counted from the damage tags across one full round,
+          assuming every attack hits and area effects count half.
+        </>
+      }
+    />
+  );
+}
+
+/**
  * Badge for an ability-score field. Renders only on the creature's highest
  * ability — the one whose modifier projects the attack bonus and save DC —
  * comparing that modifier against what the CR benchmark implies.

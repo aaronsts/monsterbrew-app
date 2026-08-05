@@ -1,5 +1,7 @@
 import { CR_BENCHMARKS } from "./constants/cr-benchmarks";
 import { calculateHitPoints, calculateStatBonus } from "./utils";
+import { estimateDamagePerRound } from "./damage-per-round";
+import type { DamagePerRoundEstimate } from "./damage-per-round";
 import type { CrBenchmark } from "./constants/cr-benchmarks";
 import type { Monster } from "@/schema/monster-schema";
 import { abilityScoresSchema } from "@/schema/monster-schema";
@@ -34,8 +36,17 @@ export type StatComparison = {
   classification: Classification;
 };
 
+export type DamagePerRoundComparison = StatComparison & {
+  /** Where the damage came from, for explaining the number. */
+  estimate: DamagePerRoundEstimate;
+  /** The CR this much damage suits — the offensive half of the CR cross-check. */
+  suggestedCr: string | null;
+};
+
 export type CrComparison = {
   benchmark: CrBenchmark;
+
+  damageTarget: number;
   ac: StatComparison;
   dc: StatComparison;
   hp: StatComparison;
@@ -46,6 +57,8 @@ export type CrComparison = {
    * is taken out.
    */
   abilityModifier: StatComparison & { ability: AbilityKey };
+  /** `null` when the features carry no readable damage tag — see `estimateDamagePerRound`. */
+  damagePerRound: DamagePerRoundComparison | null;
 };
 
 /** `"1/8"` → 0.125, `"5"` → 5. `NaN` for labels that aren't CRs. */
@@ -104,6 +117,56 @@ export function classify(
 /** AC, save DC, and attack bonus move at ~half a point per CR: ±1 ≈ ±2 CRs. */
 const POINT_TOLERANCE = 1;
 
+/**
+ * Legendary creatures are budgeted about 25% above their row. The guide's
+ * offense chapter states it, and Tom Dunn's fit of the 2024 Monster Manual
+ * puts ordinary monsters at 6 + 6 damage per CR against 7.5 + 7.5 for
+ * legendary ones — the same 25% gap.
+ */
+export const LEGENDARY_DAMAGE_PREMIUM = 1.25;
+
+/**
+ * Damage swings far harder than a point-scale stat, so its tolerance is
+ * proportional rather than flat: 25% mirrors the table's own average-to-min HP
+ * spread and works out to roughly two and a half CR steps of damage at any CR.
+ */
+const DAMAGE_TOLERANCE_RATIO = 0.25;
+
+/** The row's damage budget, plus the legendary premium where it applies. */
+export function damagePerRoundTarget(
+  benchmark: CrBenchmark,
+  isLegendary: boolean,
+): number {
+  return Math.round(
+    benchmark.damagePerRound * (isLegendary ? LEGENDARY_DAMAGE_PREMIUM : 1),
+  );
+}
+
+/**
+ * The CR whose damage budget `damage` lands closest to. This is the offensive
+ * half of the cross-check the guide recommends: read an offensive and a
+ * defensive CR off the statblock, and if they disagree with the label, retune.
+ */
+export function crForDamagePerRound(
+  damage: number,
+  isLegendary: boolean,
+): string | null {
+  if (damage <= 0) return null;
+  let closest: CrBenchmark | null = null;
+  let nearest = Number.POSITIVE_INFINITY;
+  for (const benchmark of CR_BENCHMARKS) {
+    const distance = Math.abs(
+      damagePerRoundTarget(benchmark, isLegendary) - damage,
+    );
+    // Strictly nearer, so a tie keeps the lower CR the table reached first.
+    if (distance < nearest) {
+      nearest = distance;
+      closest = benchmark;
+    }
+  }
+  return closest?.cr ?? null;
+}
+
 function compare(
   actual: number,
   benchmark: number,
@@ -127,6 +190,13 @@ export function compareToCr(
     | "size"
     | "custom_hp"
     | "ability_scores"
+    | "name"
+    | "traits"
+    | "actions"
+    | "bonus_actions"
+    | "reactions"
+    | "is_legendary"
+    | "legendary_actions"
   >,
 ): CrComparison | null {
   const benchmark = benchmarkForCr(monster.cr.challenge_rating);
@@ -147,8 +217,12 @@ export function compareToCr(
     : medianHP || monster.hit_points;
   const hp = Number.parseInt(hpText, 10) || 0;
 
+  const estimate = estimateDamagePerRound(monster);
+  const damageTarget = damagePerRoundTarget(benchmark, monster.is_legendary);
+
   return {
     benchmark,
+    damageTarget,
     ac: compare(
       Number(monster.armor_class) || 0,
       benchmark.acDc,
@@ -168,6 +242,15 @@ export function compareToCr(
         POINT_TOLERANCE,
       ),
       ability: stats.bestAbility,
+    },
+    damagePerRound: estimate && {
+      ...compare(
+        estimate.total,
+        damageTarget,
+        Math.round(damageTarget * DAMAGE_TOLERANCE_RATIO),
+      ),
+      estimate,
+      suggestedCr: crForDamagePerRound(estimate.total, monster.is_legendary),
     },
   };
 }

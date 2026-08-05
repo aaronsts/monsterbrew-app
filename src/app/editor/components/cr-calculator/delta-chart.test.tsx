@@ -25,6 +25,13 @@ function comparisonFor(overrides: Partial<Monster>) {
     size: "medium",
     custom_hp: true,
     ability_scores: defaultMonster.ability_scores,
+    name: "Test Beast",
+    traits: [],
+    actions: [],
+    bonus_actions: [],
+    reactions: [],
+    is_legendary: false,
+    legendary_actions: [],
     ...overrides,
   });
   expect(comparison).not.toBeNull();
@@ -52,7 +59,7 @@ describe("deltaChartData", () => {
     expect(byStat["Hit points"].delta).toBe(-3);
   });
 
-  it("charts exactly the four v1 stats", () => {
+  it("charts the four always-readable stats", () => {
     const data = deltaChartData(comparisonFor({}));
     expect(data.map((d) => d.stat)).toEqual([
       "Atk. bonus",
@@ -60,6 +67,19 @@ describe("deltaChartData", () => {
       "Save DC",
       "Hit points",
     ]);
+  });
+
+  it("adds damage per round once the actions carry damage tags", () => {
+    const data = deltaChartData(
+      comparisonFor({
+        actions: [
+          { name: "Claw", description: "{@attack m|str|5|2d6 + 2|slashing}" },
+        ],
+      }),
+    );
+    // 9 damage against the CR 5 budget of 35 ± 9 -> -26/9 tolerance units.
+    expect(data.at(-1)?.stat).toBe("Dmg/round");
+    expect(data.at(-1)?.delta).toBeCloseTo(-26 / 9);
   });
 });
 
