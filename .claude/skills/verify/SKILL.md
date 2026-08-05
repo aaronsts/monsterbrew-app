@@ -36,6 +36,26 @@ For things the suite doesn't cover:
 - Drive it with a standalone Playwright script (chromium is already installed for e2e). Scripts living outside the repo can't resolve bare imports; import via
   `import { chromium } from "file:///<repo>/node_modules/@playwright/test/index.mjs";`
 
+## Exploratory looks: the Playwright MCP
+
+When the question is "what does this actually do in the browser" rather than
+"does this assertion hold", the `mcp__playwright__browser_*` tools are less
+ceremony than authoring a script — you navigate and look, one step at a time.
+
+- It does **not** boot a server or honour `E2E_PORT`. Start the isolated dev
+  server first (above), then `browser_navigate` to `http://localhost:3123/...`.
+  Skipping that step points the browser at whatever is on 3000 — the user's own
+  checkout, the failure this whole skill exists to prevent.
+- `browser_snapshot` (accessibility tree) for reading state and finding
+  elements; `browser_take_screenshot` only when the question is genuinely
+  visual. Snapshots of the editor are large, so take them at the moment you need
+  them rather than after every click.
+- `browser_close` when you're done — a live browser outlasts the check.
+
+It leaves no artifact. The moment a check is worth repeating, write it as a spec
+in `e2e/` instead; a finding that only exists in this conversation cannot fail in
+CI when someone breaks it later.
+
 ## Handles and quirks
 
 - Useful handles on `/editor`: form inputs have stable ids (`#form-rhf-input-name`, `#form-rhf-input-con`, …); section triggers are `getByRole("button", { name: "Identity" | "Combat" | "Defense" | "Actions", exact: true })`; toasts are `[data-sonner-toast]`; the live statblock preview reflects form state immediately.
