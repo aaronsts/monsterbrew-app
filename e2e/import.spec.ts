@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { expect, test } from "./fixtures";
+import { gotoBlankEditor } from "./helpers";
 import type { Page } from "@playwright/test";
 import type {
   ImportFormat} from "@/services/converters/detect-import-format";
@@ -95,7 +96,7 @@ test.describe("Import fixtures", () => {
         `${fixture.name} should be detected as ${fixture.format}`,
       ).toBe(fixture.format);
 
-      await page.goto("/editor");
+      await gotoBlankEditor(page);
 
       // Open the import dialog from the editor toolbar.
       await page.getByRole("button", { name: "Import" }).click();

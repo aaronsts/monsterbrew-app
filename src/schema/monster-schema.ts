@@ -108,6 +108,8 @@ export const monsterSchema = z.object({
   is_mythic: z.boolean(),
   mythic_description: z.string(),
   mythic_actions: z.array(featureSchema),
+
+  updated_at: z.number().optional(),
 });
 
 export type Monster = z.infer<typeof monsterSchema>;

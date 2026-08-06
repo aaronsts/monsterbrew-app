@@ -5,6 +5,7 @@ import {
   creatureIdFromUrl,
   cycleDamage,
   cycleSkill,
+  gotoBlankEditor,
   selectCombo,
   statblock,
   toggleCondition,
@@ -23,7 +24,7 @@ test.describe("Monster editor — full round-trip", () => {
   test("a richly-filled creature survives save → reload intact", async ({
     page,
   }) => {
-    await page.goto("/editor");
+    await gotoBlankEditor(page);
     await expect(statblock(page)).toBeVisible();
 
     // --- Identity ---

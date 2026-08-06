@@ -14,6 +14,7 @@ import { CrSuggestionsToggle } from "./cr-calculator/cr-suggestions-toggle";
 import { DefenseForm } from "./defense-form";
 import { IdentityForm } from "./identity-form";
 import { ImportDialog } from "./import-dialog";
+import { NewCreatureDialog } from "./new-creature";
 import type { Monster, StoredMonster } from "@/schema/monster-schema";
 import { defaultMonster, monsterSchema } from "@/schema/monster-schema";
 import { generateId } from "@/lib/utils";
@@ -41,11 +42,33 @@ export const MonsterForm = () => {
   const { data: loadedCreature } = useCreature(idParam);
   const saveCreature = useSaveCreature();
 
-  // Every auto-save echoes its own write back into the detail cache (see
-  // useAutoSaveCreature). Feeding that echo into RHF's `values:` resets the
-  // form, which regenerates useFieldArray keys and remounts the trait/action
-  // rows — stealing focus mid-typing (#137). The editor is the only writer,
-  // so hydrate from the store only when the edited id changes.
+  const [launcher, setLauncher] = useState<{
+    id: string | undefined;
+    hadHandoff: boolean;
+    dismissed: boolean;
+    starter: Monster | null;
+  }>(() => ({
+    id: idParam,
+    hadHandoff:
+      typeof window !== "undefined" &&
+      Boolean(localStorage.getItem("editCreature")),
+    dismissed: false,
+    starter: null,
+  }));
+  if (launcher.id !== idParam) {
+    setLauncher({
+      id: idParam,
+      hadHandoff: false,
+      dismissed: false,
+      starter: null,
+    });
+  }
+
+  const dismissLauncher = () =>
+    setLauncher((current) => ({ ...current, dismissed: true }));
+
+  const showLauncher = !idParam && !launcher.hadHandoff && !launcher.dismissed;
+
   const [hydration, setHydration] = useState<{
     id: string | undefined;
     creature: StoredMonster | null;
@@ -56,7 +79,7 @@ export const MonsterForm = () => {
 
   const form = useForm({
     resolver: zodResolver(monsterSchema),
-    values: hydration.creature ?? defaultMonster,
+    values: hydration.creature ?? launcher.starter ?? defaultMonster,
     resetOptions: { keepDirtyValues: true },
   });
 
@@ -68,7 +91,7 @@ export const MonsterForm = () => {
   const { status: autoSaveStatus } = useAutoSave(form, {
     id: effectiveId,
     // When loading via ?id=, wait until the stored creature has hydrated the
-    // form — otherwise a slow load could let auto-save persist the blank
+    // form, otherwise a slow load could let auto-save persist the blank
     // default form over the stored creature.
     enabled: Boolean(effectiveId) && (!idParam || hydration.creature != null),
   });
@@ -110,8 +133,26 @@ export const MonsterForm = () => {
 
   const showSaveNudge = useSaveNudge(form, { enabled: !effectiveId });
 
+  function startFromCreature(monster: Monster) {
+    setLauncher((current) => ({
+      ...current,
+      starter: monster,
+      dismissed: true,
+    }));
+    toast.success(`Started from ${monster.name}`);
+  }
+
   return (
     <Form {...form}>
+      <NewCreatureDialog
+        open={showLauncher && !showImport}
+        onStartBlank={dismissLauncher}
+        onImport={() => setShowImport(true)}
+        onPickCreature={startFromCreature}
+        onPickRecent={(id: string) =>
+          navigate({ to: "/editor", search: { id } })
+        }
+      />
       <div className="space-y-4">
         <div className="flex fixed bg-background py-2 bottom-2 z-50 inset-x-4 lg:sticky lg:top-14 items-center justify-end gap-2">
           {showSaveNudge && (
@@ -164,7 +205,11 @@ export const MonsterForm = () => {
           </div>
         </div>
       </div>
-      <ImportDialog open={showImport} onOpenChange={setShowImport} />
+      <ImportDialog
+        open={showImport}
+        onOpenChange={setShowImport}
+        onImported={dismissLauncher}
+      />
     </Form>
   );
 };

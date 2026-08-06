@@ -1,5 +1,5 @@
 import { expect, test } from "./fixtures";
-import { saveCreature, statblock } from "./helpers";
+import { gotoBlankEditor, saveCreature, statblock } from "./helpers";
 
 test.describe("Monster editor — auto-save", () => {
   test("auto-saves edits to a saved creature without clicking Update", async ({
@@ -43,7 +43,7 @@ test.describe("Monster editor — auto-save", () => {
   test("nudges a new unsaved creature to save after several edits", async ({
     page,
   }) => {
-    await page.goto("/editor");
+    await gotoBlankEditor(page);
     // The nudge fires after 10 user edits (or 30s); each keystroke counts as
     // one edit, so typing an 11-character name trips it.
     await page.getByLabel("Name").pressSequentially("Nudged Newt");

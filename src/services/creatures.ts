@@ -35,9 +35,10 @@ export async function saveCreature(
   creature: StoredMonster,
 ): Promise<StoredMonster> {
   const db = await monsterbrewDB();
+  const stamped = { ...creature, updated_at: Date.now() };
   try {
-    await db.put("creatures", creature);
-    return creature;
+    await db.put("creatures", stamped);
+    return stamped;
   } finally {
     db.close();
   }

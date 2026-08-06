@@ -1,9 +1,9 @@
 import { expect, test } from "./fixtures";
-import { editorForm, selectCombo, statblock } from "./helpers";
+import { editorForm, gotoBlankEditor, selectCombo, statblock } from "./helpers";
 
 test.describe("Monster editor — live preview", () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto("/editor");
+    await gotoBlankEditor(page);
     await expect(statblock(page)).toBeVisible();
   });
 

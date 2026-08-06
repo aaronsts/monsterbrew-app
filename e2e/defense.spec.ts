@@ -3,6 +3,7 @@ import {
   abilitySave,
   cycleDamage,
   cycleSkill,
+  gotoBlankEditor,
   statblock,
   toggleCondition,
   toggleSave,
@@ -13,7 +14,7 @@ import {
  */
 test.describe("Monster editor — defense form", () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto("/editor");
+    await gotoBlankEditor(page);
     await expect(statblock(page)).toBeVisible();
   });
 
