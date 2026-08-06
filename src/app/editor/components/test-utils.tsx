@@ -1,46 +1,13 @@
-import { cleanup, render } from "@testing-library/react";
+import { render } from "@testing-library/react";
 import { FormProvider, useForm } from "react-hook-form";
-import { afterEach } from "vitest";
 import type { ReactNode } from "react";
 import type { UseFormReturn } from "react-hook-form";
 import type { Monster } from "@/schema/monster-schema";
 import { defaultMonster } from "@/schema/monster-schema";
 
-// Vitest isn't configured with `globals: true`, so testing-library's automatic
-// afterEach cleanup never registers. Register it here since every form test
-// renders through this helper.
-afterEach(cleanup);
-
-// jsdom doesn't implement PointerEvent / pointer capture, which Base UI's
-// Checkbox and Switch rely on when handling clicks. Provide minimal shims so
-// those controls can be exercised with user-event.
-if (typeof window !== "undefined" && !window.PointerEvent) {
-  class PointerEventShim extends MouseEvent {
-    constructor(type: string, params: PointerEventInit = {}) {
-      super(type, params);
-    }
-  }
-  window.PointerEvent = PointerEventShim as typeof PointerEvent;
-}
-if (typeof Element !== "undefined") {
-  Element.prototype.hasPointerCapture ??= () => false;
-  Element.prototype.setPointerCapture ??= () => {};
-  Element.prototype.releasePointerCapture ??= () => {};
-}
-
-if (typeof window !== "undefined" && !window.matchMedia) {
-  window.matchMedia = (query: string) =>
-    ({
-      matches: false,
-      media: query,
-      onchange: null,
-      addEventListener: () => {},
-      removeEventListener: () => {},
-      addListener: () => {},
-      removeListener: () => {},
-      dispatchEvent: () => false,
-    }) as MediaQueryList;
-}
+// jsdom cleanup and the PointerEvent / matchMedia shims live in
+// `vitest.setup.ts` — they are needed by tests that have nothing to do with
+// forms, so they don't belong on this helper.
 
 /**
  * Renders a section form inside a react-hook-form provider, mirroring how the

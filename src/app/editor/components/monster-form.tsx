@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate, useSearch } from "@tanstack/react-router";
 import { TriangleAlert, Upload } from "lucide-react";
 import { useState } from "react";
-import { useForm, useWatch } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { ActionsForm } from "./actions-form";
 import { AutoSaveIndicator } from "./auto-save-indicator";
@@ -12,14 +12,15 @@ import { CombatForm } from "./combat-form";
 import { CrCalculator } from "./cr-calculator";
 import { CrSuggestionsToggle } from "./cr-calculator/cr-suggestions-toggle";
 import { DefenseForm } from "./defense-form";
+import { DerivedValues } from "./derived-values";
 import { IdentityForm } from "./identity-form";
 import { ImportDialog } from "./import-dialog";
 import { NewCreatureDialog } from "./new-creature";
+import { StatblockPreview } from "./statblock-preview";
 import type { Monster, StoredMonster } from "@/schema/monster-schema";
 import { defaultMonster, monsterSchema } from "@/schema/monster-schema";
 import { generateId } from "@/lib/utils";
 import { useSaveNudge } from "@/hooks/use-save-nudge";
-import { usePassivePerception } from "@/hooks/use-passive-perception";
 import { useEditCreatureHandoff } from "@/hooks/use-edit-creature-handoff";
 import { useCreature, useSaveCreature } from "@/hooks/use-creatures";
 import { useAutoSave } from "@/hooks/use-auto-save";
@@ -31,8 +32,6 @@ import {
   AlertDescription,
   AlertTitle,
 } from "@/components/ui/alert";
-import { MonsterStatblock } from "@/components/monster-statblock";
-import { MonsterDescription } from "@/components/statblock/monster-description";
 
 export const MonsterForm = () => {
   const { id: idParam } = useSearch({ from: "/editor" });
@@ -86,8 +85,6 @@ export const MonsterForm = () => {
   const handoffId = useEditCreatureHandoff(form, { enabled: !idParam });
   const effectiveId = idParam ?? savedId ?? handoffId;
 
-  usePassivePerception(form);
-
   const { status: autoSaveStatus } = useAutoSave(form, {
     id: effectiveId,
     // When loading via ?id=, wait until the stored creature has hydrated the
@@ -95,8 +92,6 @@ export const MonsterForm = () => {
     // default form over the stored creature.
     enabled: Boolean(effectiveId) && (!idParam || hydration.creature != null),
   });
-
-  const preview = useWatch({ control: form.control }) as Monster;
 
   async function save({ stayInEditor = false } = {}) {
     const values = form.getValues();
@@ -144,6 +139,7 @@ export const MonsterForm = () => {
 
   return (
     <Form {...form}>
+      <DerivedValues />
       <NewCreatureDialog
         open={showLauncher && !showImport}
         onStartBlank={dismissLauncher}
@@ -197,11 +193,7 @@ export const MonsterForm = () => {
             <ActionsForm />
           </form>
           <div className="lg:sticky lg:top-30 lg:h-fit lg:max-h-[calc(100dvh-8.5rem)] lg:overflow-y-auto">
-            <MonsterStatblock creature={preview} />
-            <MonsterDescription
-              description={preview.description}
-              className="mt-4"
-            />
+            <StatblockPreview />
           </div>
         </div>
       </div>

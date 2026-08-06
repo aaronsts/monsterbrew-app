@@ -46,4 +46,29 @@ export default defineConfig(
       "react-refresh/only-export-components": "off",
     },
   },
+  {
+    // `MonsterForm` renders `<Form {...form}>` — react-hook-form's
+    // `FormProvider` — which builds a new context value on every render, so
+    // anything that re-renders it re-renders every `useFormContext()` consumer
+    // beneath it, `React.memo` included. Subscribing to form values here put a
+    // full editor re-render on every keystroke (#158). The unit tests can't
+    // catch a regression in this file (it needs a router and a query client to
+    // render), so the guard lives here instead.
+    files: ["src/app/editor/components/monster-form.tsx"],
+    rules: {
+      "no-restricted-syntax": [
+        "error",
+        {
+          selector: "CallExpression[callee.name='useWatch']",
+          message:
+            "Don't subscribe to form values in MonsterForm — it re-renders every section through FormProvider. Put the useWatch in a leaf (see StatblockPreview / DerivedValues, and #158).",
+        },
+        {
+          selector: "CallExpression[callee.property.name='watch']",
+          message:
+            "Don't subscribe to form values in MonsterForm — it re-renders every section through FormProvider. Use `form.subscribe` for side effects, or watch from a leaf (see #158).",
+        },
+      ],
+    },
+  },
 );

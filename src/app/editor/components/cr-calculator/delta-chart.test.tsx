@@ -89,10 +89,18 @@ describe("DeltaChart", () => {
     renderWithForm(<DeltaChart />, { cr: cr5 });
 
     const trigger = screen.getByText("Benchmark deltas");
-    expect(screen.queryByText(/within ±1 counts as on par/)).toBeNull();
+    // Anchored on the trigger's state, not on the legend's absence: since the
+    // chart went behind a lazy boundary the legend is missing before the chunk
+    // resolves whether the panel is open or not, so asserting on it would pass
+    // for an already-open panel too.
+    expect(trigger.getAttribute("aria-expanded")).toBe("false");
 
     await user.click(trigger);
-    expect(screen.getByText(/within ±1 counts as on par/)).toBeTruthy();
+    // The chart and its legend arrive with the lazy recharts chunk (#158), so
+    // they land a tick after the panel opens.
+    expect(
+      await screen.findByText(/within ±1 counts as on par/),
+    ).toBeTruthy();
   });
 
   it("renders nothing when the CR has no benchmark row", () => {
