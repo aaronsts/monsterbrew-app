@@ -20,6 +20,8 @@ if (typeof Element !== "undefined") {
   Element.prototype.hasPointerCapture ??= () => false;
   Element.prototype.setPointerCapture ??= () => {};
   Element.prototype.releasePointerCapture ??= () => {};
+  // Base UI's Combobox scrolls the active option into view on typeahead.
+  Element.prototype.scrollIntoView ??= () => {};
 }
 
 // jsdom has no matchMedia; `useIsMobile` calls it on mount.

@@ -1,6 +1,6 @@
-import { cleanup, render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { CreaturePicker } from "./creature-picker";
 import type { StoredMonster } from "@/schema/monster-schema";
 import type * as srdService from "@/services/srd";
@@ -51,8 +51,6 @@ function mockSaved(saved: Array<StoredMonster> = []) {
 function savedCreature(id: string, name: string): StoredMonster {
   return { ...defaultMonster, id, name, updated_at: 9_000 };
 }
-
-afterEach(cleanup);
 
 /** Render the picker and wait for the lazily-imported bestiary to arrive. */
 async function renderPicker(

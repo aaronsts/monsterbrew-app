@@ -1,14 +1,12 @@
-import { cleanup, render, screen } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { RecentCreatures } from "./recent-creatures";
 import type { StoredMonster } from "@/schema/monster-schema";
 import { defaultMonster } from "@/schema/monster-schema";
 import { useCreatures } from "@/hooks/use-creatures";
 
 vi.mock("@/hooks/use-creatures", () => ({ useCreatures: vi.fn() }));
-
-afterEach(cleanup);
 
 function stored(
   id: string,
