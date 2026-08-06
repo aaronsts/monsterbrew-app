@@ -1,15 +1,37 @@
 "use client";
 
 import { ChevronDownIcon } from "lucide-react";
+import { Suspense, lazy } from "react";
 import { useCrComparison } from "./use-cr-comparison";
 import type { CrComparison, StatComparison } from "@/lib/cr-calculator";
 import type { DeltaBarDatum } from "@/components/delta-bar-chart";
-import { DeltaBarChart, DeltaBarLegend } from "@/components/delta-bar-chart";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
+import { Skeleton } from "@/components/ui/skeleton";
+
+/**
+ * Shown when the chart's chunk can't be fetched — most likely a deploy having
+ * rotated the hashed assets under a long-lived editor tab.
+ *
+ * This has to be handled here rather than left to throw: there is no error
+ * boundary between this component and the router's, so a rejected `import()`
+ * would unmount `MonsterForm` and take an unsaved creature with it. The
+ * screen-reader summary below the panel still carries the same numbers.
+ */
+function ChartUnavailable() {
+  return (
+    <p className="py-2 text-xs text-muted-foreground">
+      The benchmark chart couldn&apos;t be loaded. Reload the page to try again.
+    </p>
+  );
+}
+
+const DeltaChartBody = lazy(() =>
+  import("./delta-chart-body").catch(() => ({ default: ChartUnavailable })),
+);
 
 const DELTA_STATS = [
   { key: "attackBonus", label: "Atk. bonus" },
@@ -69,13 +91,21 @@ export function DeltaChart() {
         <ChevronDownIcon className="size-4 shrink-0 text-muted-foreground transition-transform duration-200 group-aria-expanded/delta-trigger:rotate-180" />
       </CollapsibleTrigger>
       <CollapsibleContent className="h-(--collapsible-panel-height) overflow-hidden transition-[height] duration-200 ease-out data-ending-style:h-0 data-starting-style:h-0">
-        <DeltaBarChart
-          data={deltaChartData(comparison)}
-          max={3}
-          showBand
-          className="lg:aspect-4/1"
-        />
-        <DeltaBarLegend baselineLabel="CR benchmark; within ±1 counts as on par" />
+        {/* The collapsible measures its panel exactly once as it opens, with no
+            ResizeObserver, so whatever the fallback stands at is the height the
+            animation targets — and with `overflow-hidden` above, anything the
+            real content adds beyond it is clipped until the transition ends.
+            So reserve the legend's line as well as the chart's box. */}
+        <Suspense
+          fallback={
+            <div aria-hidden>
+              <Skeleton className="aspect-square w-full sm:aspect-5/2 lg:aspect-4/1" />
+              <Skeleton className="mt-1 h-3 w-2/3" />
+            </div>
+          }
+        >
+          <DeltaChartBody data={deltaChartData(comparison)} />
+        </Suspense>
         <p className="sr-only">{describeDeltas(comparison)}</p>
       </CollapsibleContent>
     </Collapsible>

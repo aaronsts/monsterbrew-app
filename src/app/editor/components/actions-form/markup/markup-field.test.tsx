@@ -1,6 +1,5 @@
 import {
   act,
-  cleanup,
   fireEvent,
   render,
   screen,
@@ -8,13 +7,11 @@ import {
 } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { useState } from "react";
-import { afterEach, describe, expect, it } from "vitest";
+import { describe, expect, it } from "vitest";
 import { EditorView } from "@codemirror/view";
 import { acceptCompletion } from "@codemirror/autocomplete";
 import { MarkupField } from "./markup-field";
 import type { MarkupContext } from "@/lib/statblock-markup";
-
-afterEach(cleanup);
 
 if (typeof window !== "undefined") {
   window.ResizeObserver ??= class {

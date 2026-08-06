@@ -1,8 +1,6 @@
-import { cleanup, render, screen } from "@testing-library/react";
-import { afterEach, describe, expect, it } from "vitest";
+import { render, screen } from "@testing-library/react";
+import { describe, expect, it } from "vitest";
 import { CreatureDetailSkeleton } from "./creature-detail-skeleton";
-
-afterEach(cleanup);
 
 describe("CreatureDetailSkeleton", () => {
   it("announces itself as a busy region", () => {

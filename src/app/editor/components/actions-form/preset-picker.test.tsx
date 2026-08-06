@@ -1,27 +1,13 @@
-import { cleanup, render, screen } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { PresetPicker } from "./preset-picker";
 import type { FeaturePreset } from "@/lib/constants/actionPresets";
 
-afterEach(cleanup);
-
-// jsdom doesn't implement PointerEvent / pointer capture, which Base UI's
-// Combobox relies on when handling clicks and typeahead.
-if (typeof window !== "undefined" && !window.PointerEvent) {
-  class PointerEventShim extends MouseEvent {
-    constructor(type: string, params: PointerEventInit = {}) {
-      super(type, params);
-    }
-  }
-  window.PointerEvent = PointerEventShim as typeof PointerEvent;
-}
-if (typeof Element !== "undefined") {
-  Element.prototype.hasPointerCapture ??= () => false;
-  Element.prototype.setPointerCapture ??= () => {};
-  Element.prototype.releasePointerCapture ??= () => {};
-  Element.prototype.scrollIntoView ??= () => {};
-}
+// Base UI measures this popup's anchor with a ResizeObserver, which jsdom
+// lacks. It stays local rather than moving to `vitest.setup.ts`: recharts'
+// ResponsiveContainer only uses its fallback dimensions while ResizeObserver is
+// absent, so a global stub that never fires would blank out the chart tests.
 if (typeof window !== "undefined" && !window.ResizeObserver) {
   class ResizeObserverShim {
     observe() {}

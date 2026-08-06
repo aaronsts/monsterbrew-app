@@ -1,0 +1,6 @@
+Typing in the editor is quicker now, especially on phones. Only the statblock preview redraws as you type, instead of the whole editor, and the editor page starts up with about 90 KB less JavaScript.
+
+- Typing no longer redraws the entire form on every keystroke
+- The preview updates just behind your typing, so the field you are in stays responsive
+- Editing ability scores and skills got the same treatment
+- The benchmark deltas chart now loads only when you open it

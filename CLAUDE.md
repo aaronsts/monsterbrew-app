@@ -49,11 +49,13 @@ Action/trait `description` strings use 5eTools' `{@…}` tag syntax as Monsterbr
 `src/app/editor/components/monster-form.tsx` (`MonsterForm`) is the hub. It creates a single `react-hook-form` form (`zodResolver(monsterSchema)`, `values: loadedCreature ?? defaultMonster`) and renders two live-synced halves inside one `<Form>` provider:
 
 - The editing UI: four section components — `IdentityForm`, `CombatForm`, `DefenseForm`, `ActionsForm` (`identity-form.tsx`, `combat-form.tsx`, `defense-form/`, `actions-form.tsx`). Each reaches the shared form via `useFormContext()` — they take no props. `ImportDialog` (`editor/components/import-dialog.tsx`) is mounted here too.
-- `src/components/monster-statblock.tsx` (`MonsterStatblock`) — the live preview, fed the watched form value.
+- `src/app/editor/components/statblock-preview.tsx` (`StatblockPreview`) — the live preview, wrapping `MonsterStatblock` and `MonsterDescription`.
+
+**Keep form-value subscriptions out of `MonsterForm`.** It renders `<Form {...form}>` — react-hook-form's `FormProvider` — which builds a new context value on every render, so anything that re-renders `MonsterForm` re-renders every `useFormContext()` consumer beneath it; `React.memo` on the sections cannot stop that. A whole-form `useWatch` there put a full editor re-render on every keystroke (#158). `StatblockPreview` therefore owns its own `useWatch` and defers it (`useDeferredValue` + memoized children), and `DerivedValues` (`derived-values.tsx`) is a headless leaf that renders nothing and owns the passive-perception derivation for the same reason. `statblock-preview.test.tsx` guards this with a render count.
 
 Loading an existing creature: `/editor?id=<id>` loads it via the `useCreature(id)` TanStack Query hook, which the form consumes reactively through RHF's `values:` prop (no manual `form.reset`). As a fallback (no `id`), it hydrates once from a `localStorage.editCreature` handoff key (set when navigating "edit"/"copy"/"duplicate" from elsewhere), normalizing any legacy-shaped payload through `creatureToMonster`, then clears the key. Saving goes through `useSaveCreature()` and navigates to `/library/$id`; IDs are generated with `generateId()` (`src/lib/utils.ts`).
 
-Derived values are computed with `useEffect` + `form.setValue` rather than stored as input — e.g. passive perception recomputes from WIS + perception proficiency unless `custom_passive_perception` is set. Game-rule math (ability modifiers, saving throws, HP dice) lives in `src/lib/utils.ts`; reference tables (challenge ratings, sizes, creature types) live in `src/lib/constants.ts`.
+Derived values are computed with `useEffect` + `form.setValue` rather than stored as input — e.g. passive perception recomputes from WIS + perception proficiency unless `custom_passive_perception` is set (mounted via `DerivedValues`, not `MonsterForm` — see above). Game-rule math (ability modifiers, saving throws, HP dice) lives in `src/lib/utils.ts`; reference tables (challenge ratings, sizes, creature types) live in `src/lib/constants.ts`.
 
 ### Persistence
 

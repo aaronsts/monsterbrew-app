@@ -1,10 +1,8 @@
-import { cleanup, render } from "@testing-library/react";
-import { afterEach, describe, expect, it } from "vitest";
+import { render } from "@testing-library/react";
+import { describe, expect, it } from "vitest";
 import { MonsterStatblock } from "./monster-statblock";
 import type { Monster } from "@/schema/monster-schema";
 import { defaultMonster } from "@/schema/monster-schema";
-
-afterEach(cleanup);
 
 function makeMonster(overrides: Partial<Monster>): Monster {
   return { ...defaultMonster, ...overrides };
