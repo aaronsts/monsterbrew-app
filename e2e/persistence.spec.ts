@@ -1,9 +1,9 @@
 import { expect, test } from "./fixtures";
-import { creatureIdFromUrl, selectCombo, statblock } from "./helpers";
+import { creatureIdFromUrl, gotoBlankEditor, selectCombo, statblock } from "./helpers";
 
 test.describe("Monster editor — persistence", () => {
   test("warns and does not save when the name is empty", async ({ page }) => {
-    await page.goto("/editor");
+    await gotoBlankEditor(page);
     await page.getByRole("button", { name: "Save", exact: true }).click();
 
     await expect(
@@ -15,7 +15,7 @@ test.describe("Monster editor — persistence", () => {
   test("saves a creature and opens its library detail page", async ({
     page,
   }) => {
-    await page.goto("/editor");
+    await gotoBlankEditor(page);
     await page.getByLabel("Name").fill("Test Owlbear");
     await selectCombo(page, "form-rhf-input-size", "Large");
     await selectCombo(page, "form-rhf-input-type", "Monstrosity");
@@ -32,7 +32,7 @@ test.describe("Monster editor — persistence", () => {
   test("reloads a saved creature back into the editor via ?id=", async ({
     page,
   }) => {
-    await page.goto("/editor");
+    await gotoBlankEditor(page);
     await page.getByLabel("Name").fill("Reloadable Wyrm");
     await page.getByRole("button", { name: "Save", exact: true }).click();
 

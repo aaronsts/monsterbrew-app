@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import LibraryGrid from "@/app/library/components/library-grid";
+import { LibraryGridSkeleton } from "@/app/library/components/library-grid-skeleton";
 import { seo } from "@/lib/seo";
 
 type LibrarySource = "mine" | "srd";
@@ -18,10 +19,11 @@ export const Route = createFileRoute("/library/")({
     search: Record<string, unknown>,
   ): { source?: LibrarySource } =>
     search.source === "srd" ? { source: "srd" } : {},
+  pendingComponent: LibraryGridSkeleton,
+  pendingMinMs: 0,
   component: LibraryPage,
 });
 
-// eslint-disable-next-line react-refresh/only-export-components
 function LibraryPage() {
   const { source } = Route.useSearch();
   return <LibraryGrid source={source} />;

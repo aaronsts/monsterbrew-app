@@ -1,5 +1,5 @@
 import { expect, test } from "./fixtures";
-import { statblock } from "./helpers";
+import { gotoBlankEditor, statblock } from "./helpers";
 import type { Locator, Page } from "@playwright/test";
 
 /** Mirrors the constants in src/components/feedback-cta.tsx. */
@@ -20,7 +20,7 @@ function ctaToast(page: Page): Locator {
  * navigating; it survives navigations) and fast-forwards through the delay.
  */
 async function gotoEditor(page: Page) {
-  await page.goto("/editor");
+  await gotoBlankEditor(page);
   await expect(statblock(page)).toBeVisible();
 }
 

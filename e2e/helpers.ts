@@ -16,6 +16,20 @@ export function editorForm(page: Page): Locator {
   return page.locator("form");
 }
 
+export async function gotoBlankEditor(page: Page) {
+  await page.goto("/editor");
+  await page.getByRole("button", { name: /Blank creature/ }).click();
+  // Base UI keeps the popup mounted through its exit animation, so for a beat
+  // after the click the options are still in the DOM *and* visible. Wait for the
+  // dialog to actually leave before handing back: otherwise the next action can
+  // match a control inside the closing launcher — e.g. the toolbar's "Import"
+  // button also matches the "Import or paste" option, since Playwright's
+  // accessible-name matching is substring by default.
+  await expect(
+    page.getByRole("dialog").filter({ hasText: "Create a new creature" }),
+  ).toHaveCount(0);
+}
+
 /**
  * Fill the editor with a minimal creature and save it. Returns the new id
  * (parsed from the `/library/<id>` URL the Save button navigates to).
@@ -24,7 +38,7 @@ export async function saveCreature(
   page: Page,
   opts: { name: string; size?: string; type?: string },
 ): Promise<string> {
-  await page.goto("/editor");
+  await gotoBlankEditor(page);
   await page.getByLabel("Name").fill(opts.name);
   if (opts.size) await selectCombo(page, "form-rhf-input-size", opts.size);
   if (opts.type) await selectCombo(page, "form-rhf-input-type", opts.type);

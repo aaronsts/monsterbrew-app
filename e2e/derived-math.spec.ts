@@ -3,6 +3,7 @@ import {
   abilityMod,
   abilitySave,
   editorForm,
+  gotoBlankEditor,
   selectCombo,
   statblock,
   toggleSave,
@@ -10,7 +11,7 @@ import {
 
 test.describe("Monster editor — derived math", () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto("/editor");
+    await gotoBlankEditor(page);
     await expect(statblock(page)).toBeVisible();
   });
 

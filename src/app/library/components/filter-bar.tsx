@@ -1,7 +1,6 @@
 "use client";
 import { Search } from "lucide-react";
 
-import { CR_FILTER_ITEMS, TYPE_OPTIONS, crFilterLabel } from "./filters";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -23,6 +22,11 @@ import {
   ComboboxValue,
   useComboboxAnchor,
 } from "@/components/ui/combobox";
+import {
+  CR_VALUES,
+  TYPE_OPTIONS,
+  crFilterLabel,
+} from "@/lib/constants/filter-options";
 
 interface FilterBarProps {
   search: string;
@@ -86,7 +90,7 @@ export function FilterBar({
           <Label>Challenge rating</Label>
           <Combobox
             multiple
-            items={CR_FILTER_ITEMS}
+            items={CR_VALUES}
             value={cr}
             onValueChange={(value) => onCrChange(value)}
             itemToStringLabel={crFilterLabel}

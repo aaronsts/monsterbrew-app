@@ -3,11 +3,10 @@
 import { useMemo, useState } from "react";
 import { useFormContext } from "react-hook-form";
 import { toast } from "sonner";
-import type { ChangeEvent} from "react";
+import type { ChangeEvent } from "react";
 
 import type { Monster } from "@/schema/monster-schema";
-import type {
-  ImportFormat} from "@/services/converters/detect-import-format";
+import type { ImportFormat } from "@/services/converters/detect-import-format";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -29,6 +28,7 @@ import { convertImport } from "@/services/converters/import-to-monster";
 interface ImportDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onImported?: () => void;
 }
 
 type ParseState =
@@ -49,6 +49,7 @@ function parseInput(raw: string): ParseState {
 export function ImportDialog({
   open,
   onOpenChange,
+  onImported,
 }: Readonly<ImportDialogProps>) {
   const form = useFormContext<Monster>();
   const [raw, setRaw] = useState("");
@@ -90,6 +91,7 @@ export function ImportDialog({
       toast.success(`Imported ${monster.name || "creature"}`);
       reset();
       onOpenChange(false);
+      onImported?.();
     } catch (err) {
       toast.error(
         `Import failed: ${err instanceof Error ? err.message : String(err)}`,
@@ -139,7 +141,9 @@ export function ImportDialog({
         <ImportStatus parsed={parsed} format={format} onPick={setOverride} />
 
         <DialogFooter>
-          <DialogClose render={<Button type="button" color="neutral" variant="outline" />}>
+          <DialogClose
+            render={<Button type="button" color="neutral" variant="outline" />}
+          >
             Cancel
           </DialogClose>
           <Button type="button" disabled={!format} onClick={handleImport}>
@@ -194,7 +198,8 @@ function ImportStatus({
             key={option}
             type="button"
             size="sm"
-            color="neutral" variant="outline"
+            color="neutral"
+            variant="outline"
             onClick={() => onPick(option)}
           >
             {IMPORT_FORMAT_LABELS[option]}

@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { MonsterForm } from "@/app/editor/components/monster-form";
+import { EditorSkeleton } from "@/app/editor/components/editor-skeleton";
 import { FeedbackCta } from "@/components/feedback-cta";
 import { seo } from "@/lib/seo";
 
@@ -21,6 +22,8 @@ export const Route = createFileRoute("/editor")({
   validateSearch: (search: Record<string, unknown>): EditorSearch => ({
     id: typeof search.id === "string" ? search.id : undefined,
   }),
+  pendingComponent: EditorSkeleton,
+  pendingMinMs: 0,
   component: CreatureEditor,
 });
 
