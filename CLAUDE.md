@@ -26,7 +26,7 @@ Commit messages must follow **Conventional Commits** — enforced locally by a H
 
 The user-facing changelog at `/changelog` is built from markdown files in `src/content/changelog/` (loaded via `import.meta.glob` in `src/lib/releases.ts`). Each PR adds its own file to `unreleased/` (use the `changelog-entry` skill — no version number, one file per PR, so parallel PRs never conflict). On release, `scripts/promote-changelog.mjs` (run by `@semantic-release/exec`) stamps the released version + date and moves the entry to `releases/`; `@semantic-release/git` commits that back to `main` with `[skip ci]`, and the deploy job builds from the release tag so the live site includes it. The raw conventional-commit changelog (`docs/CHANGELOG.md`) is generated in CI and attached to the GitHub release only — it is not tracked in git.
 
-CI deploys PR previews and production to Vercel. There is no test-run step in CI, so run tests locally before pushing.
+CI deploys PR previews and production to Vercel. It also runs the unit suite (`pnpm test:coverage`) and the e2e suite (`pnpm test:e2e:coverage`) — both **with coverage**, and both on a runner noticeably slower than a dev machine. A test that takes ~1.5s locally under coverage can exceed vitest's default 5s `testTimeout` there, so reproduce with `pnpm test:coverage` (not plain `vitest run`) before pushing, and treat a test that only just fits as a failure waiting to happen.
 
 ## Architecture
 

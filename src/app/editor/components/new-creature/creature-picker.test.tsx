@@ -3,11 +3,42 @@ import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { CreaturePicker } from "./creature-picker";
 import type { StoredMonster } from "@/schema/monster-schema";
+import type * as srdService from "@/services/srd";
 import { getSrdMonster } from "@/services/srd";
 import { defaultMonster } from "@/schema/monster-schema";
 import { useCreatures } from "@/hooks/use-creatures";
 
 vi.mock("@/hooks/use-creatures", () => ({ useCreatures: vi.fn() }));
+
+/**
+ * Render five *real* converted SRD entries rather than all 329.
+ *
+ * Every test in this file mounts the list, and 329 rows under V8 coverage
+ * instrumentation pushed the slowest cases past vitest's 5 s timeout on CI —
+ * they passed locally only because this machine is faster. The subset keeps the
+ * data real (same converter, same shapes) while costing ~1% of the DOM; the
+ * true 329 / 45 / 11 counts are asserted in `e2e/new-creature.spec.ts`, against
+ * a real browser where rendering them is cheap.
+ *
+ * Aboleth (large, aberration, CR 10), Adult Red Dragon (huge, dragon, CR 17),
+ * Archmage (small, humanoid, CR 12), Giant Owl (large, celestial, CR 1/4),
+ * Owlbear (large, monstrosity, CR 3) — one per filter axis the tests exercise.
+ */
+vi.mock("@/services/srd", async (importActual) => {
+  const actual = await importActual<typeof srdService>();
+  const subset = new Set([
+    "srd-2024_aboleth",
+    "srd-2024_adult-red-dragon",
+    "srd-2024_archmage",
+    "srd-2024_giant-owl",
+    "srd-2024_owlbear",
+  ]);
+  return {
+    ...actual,
+    getSrdMonsters: () =>
+      actual.getSrdMonsters().filter((entry) => subset.has(entry.key)),
+  };
+});
 
 /** Stub the saved-creature store; the bestiary itself stays real. */
 function mockSaved(saved: Array<StoredMonster> = []) {
@@ -44,7 +75,7 @@ describe("CreaturePicker", () => {
     await renderPicker();
 
     expect(screen.getByRole("button", { name: /Aboleth/ })).toBeTruthy();
-    expect(screen.getByText("329 creatures")).toBeTruthy();
+    expect(screen.getByText("5 creatures")).toBeTruthy();
   });
 
   it("narrows the list to name matches as you type", async () => {
@@ -53,7 +84,7 @@ describe("CreaturePicker", () => {
     await userEvent.type(screen.getByRole("searchbox"), "owlbear");
 
     await waitFor(() =>
-      expect(screen.getByText("1 of 329 creatures")).toBeTruthy(),
+      expect(screen.getByText("1 of 5 creatures")).toBeTruthy(),
     );
     expect(screen.queryByRole("button", { name: /Aboleth/ })).toBeNull();
   });
@@ -64,7 +95,7 @@ describe("CreaturePicker", () => {
     await userEvent.type(screen.getByRole("searchbox"), "  OWLBEAR ");
 
     await waitFor(() =>
-      expect(screen.getByText("1 of 329 creatures")).toBeTruthy(),
+      expect(screen.getByText("1 of 5 creatures")).toBeTruthy(),
     );
   });
 
@@ -98,7 +129,7 @@ describe("CreaturePicker", () => {
     await waitFor(() =>
       expect(screen.queryByRole("button", { name: /Owlbear/ })).toBeNull(),
     );
-    expect(screen.getByText(/of 329 creatures/)).toBeTruthy();
+    expect(screen.getByText(/of 5 creatures/)).toBeTruthy();
   });
 
   it("narrows the list with the creature type filter", async () => {
@@ -145,7 +176,7 @@ describe("CreaturePicker", () => {
     );
 
     expect(await screen.findByRole("button", { name: /Owlbear/ })).toBeTruthy();
-    expect(screen.getByText("329 creatures")).toBeTruthy();
+    expect(screen.getByText("5 creatures")).toBeTruthy();
     expect(onPick).not.toHaveBeenCalled();
   });
 
@@ -157,7 +188,7 @@ describe("CreaturePicker", () => {
     const rows = screen.getAllByRole("button", { name: /CR/ });
     expect(rows[0].textContent).toContain("Fen Hag");
     // 329 SRD monsters plus the one saved creature.
-    expect(screen.getByText("330 creatures")).toBeTruthy();
+    expect(screen.getByText("6 creatures")).toBeTruthy();
   });
 
   it("marks your own creatures apart from bestiary entries", async () => {
@@ -182,7 +213,7 @@ describe("CreaturePicker", () => {
       expect(screen.queryByRole("button", { name: /Owlbear/ })).toBeNull(),
     );
     expect(screen.getByRole("button", { name: /Fen Hag/ })).toBeTruthy();
-    expect(screen.getByText("1 of 330 creatures")).toBeTruthy();
+    expect(screen.getByText("1 of 6 creatures")).toBeTruthy();
   });
 
   it("narrows to just the bestiary with the source filter", async () => {
@@ -194,7 +225,7 @@ describe("CreaturePicker", () => {
     await waitFor(() =>
       expect(screen.queryByRole("button", { name: /Fen Hag/ })).toBeNull(),
     );
-    expect(screen.getByText("329 of 330 creatures")).toBeTruthy();
+    expect(screen.getByText("5 of 6 creatures")).toBeTruthy();
   });
 
   it("hands over one of your creatures without its stored id", async () => {
