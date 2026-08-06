@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { PageSkeleton } from "@/components/page-skeleton";
 import { ComponentLibrary } from "@/app/dev/components/component-library";
 import { isLocalhost, redirectUnlessLocalhost } from "@/lib/dev-route";
 
@@ -10,10 +11,13 @@ export const Route = createFileRoute("/dev/components")({
   head: () => ({
     meta: [{ name: "robots", content: "noindex, nofollow" }],
   }),
+  pendingComponent: () => (
+    <PageSkeleton label="Loading the component library…" />
+  ),
+  pendingMinMs: 0,
   component: DevComponents,
 });
 
-// eslint-disable-next-line react-refresh/only-export-components
 function DevComponents() {
   if (!isLocalhost()) return null;
   return <ComponentLibrary />;

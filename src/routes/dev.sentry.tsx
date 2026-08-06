@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { PageSkeleton } from "@/components/page-skeleton";
 import { SentryTest } from "@/app/dev/components/sentry-test";
 import { isLocalhost, redirectUnlessLocalhost } from "@/lib/dev-route";
 
@@ -10,6 +11,8 @@ export const Route = createFileRoute("/dev/sentry")({
   head: () => ({
     meta: [{ name: "robots", content: "noindex, nofollow" }],
   }),
+  pendingComponent: () => <PageSkeleton label="Loading the Sentry test page…" />,
+  pendingMinMs: 0,
   component: DevSentry,
 });
 
