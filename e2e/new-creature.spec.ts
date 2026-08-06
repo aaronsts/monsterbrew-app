@@ -208,7 +208,7 @@ test.describe("New creature dialog", () => {
     await expect(page.getByText("330 creatures", { exact: true })).toBeVisible();
     const first = page.getByRole("button", { name: /CR/ }).first();
     await expect(first).toContainText("Fen Hag");
-    await expect(first).toContainText("Mine");
+    await expect(first).toContainText("Personal");
 
     // The source filter narrows to one side or the other.
     await page.getByRole("combobox", { name: "Source" }).click();

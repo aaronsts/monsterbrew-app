@@ -194,11 +194,11 @@ describe("CreaturePicker", () => {
   it("marks your own creatures apart from bestiary entries", async () => {
     await renderPicker({ saved: [savedCreature("fen-hag", "Fen Hag")] });
 
-    const mine = screen.getByRole("button", { name: /Fen Hag/ });
+    const personal = screen.getByRole("button", { name: /Fen Hag/ });
     const srd = screen.getByRole("button", { name: /Owlbear/ });
 
-    expect(mine.textContent).toContain("Mine");
-    expect(srd.textContent).not.toContain("Mine");
+    expect(personal.textContent).toContain("Personal");
+    expect(srd.textContent).not.toContain("Personal");
   });
 
   it("narrows to just your creatures with the source filter", async () => {
@@ -246,7 +246,7 @@ describe("CreaturePicker", () => {
   });
 
   it("searches across both sources at once", async () => {
-    await renderPicker({ saved: [savedCreature("mine-owl", "My Owlbear")] });
+    await renderPicker({ saved: [savedCreature("personal-owl", "My Owlbear")] });
 
     await userEvent.type(screen.getByRole("searchbox"), "owlbear");
 

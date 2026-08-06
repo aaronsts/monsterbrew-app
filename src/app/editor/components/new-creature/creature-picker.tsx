@@ -228,7 +228,7 @@ function CreatureList({ filtered, onPick }: CreatureListProps) {
               <span className="truncate">{entry.monster.name}</span>
               {entry.source === "personal" && (
                 <span className="shrink-0 text-[10px] tracking-wide text-muted-foreground uppercase">
-                  Mine
+                  Personal
                 </span>
               )}
             </span>
