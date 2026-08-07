@@ -1,0 +1,511 @@
+{
+  "name": "Adult Red Dragon",
+  "type": "npc",
+  "system": {
+    "abilities": {
+      "str": {
+        "value": 27,
+        "proficient": 0
+      },
+      "dex": {
+        "value": 10,
+        "proficient": 1
+      },
+      "con": {
+        "value": 25,
+        "proficient": 0
+      },
+      "int": {
+        "value": 16,
+        "proficient": 0
+      },
+      "wis": {
+        "value": 13,
+        "proficient": 1
+      },
+      "cha": {
+        "value": 23,
+        "proficient": 0
+      }
+    },
+    "attributes": {
+      "ac": {
+        "flat": 19,
+        "calc": "flat"
+      },
+      "hp": {
+        "value": 256,
+        "max": 256,
+        "formula": "19d12 + 133"
+      },
+      "init": {
+        "bonus": ""
+      },
+      "movement": {
+        "walk": 40,
+        "swim": null,
+        "burrow": null,
+        "climb": 40,
+        "fly": 80,
+        "hover": false,
+        "units": "ft"
+      },
+      "senses": {
+        "darkvision": 120,
+        "blindsight": 60,
+        "tremorsense": null,
+        "truesight": null,
+        "units": "ft",
+        "special": ""
+      }
+    },
+    "details": {
+      "type": {
+        "value": "dragon",
+        "subtype": "",
+        "custom": "",
+        "swarm": ""
+      },
+      "alignment": "chaotic evil",
+      "cr": 17,
+      "biography": {
+        "value": "",
+        "public": ""
+      }
+    },
+    "traits": {
+      "size": "huge",
+      "di": {
+        "value": [
+          "fire"
+        ],
+        "custom": ""
+      },
+      "dr": {
+        "value": [],
+        "custom": ""
+      },
+      "dv": {
+        "value": [],
+        "custom": ""
+      },
+      "ci": {
+        "value": [],
+        "custom": ""
+      },
+      "languages": {
+        "value": [
+          "common",
+          "draconic"
+        ],
+        "custom": ""
+      }
+    },
+    "skills": {
+      "acr": {
+        "value": 0
+      },
+      "ani": {
+        "value": 0
+      },
+      "arc": {
+        "value": 0
+      },
+      "ath": {
+        "value": 0
+      },
+      "dec": {
+        "value": 0
+      },
+      "his": {
+        "value": 0
+      },
+      "ins": {
+        "value": 0
+      },
+      "itm": {
+        "value": 0
+      },
+      "inv": {
+        "value": 0
+      },
+      "med": {
+        "value": 0
+      },
+      "nat": {
+        "value": 0
+      },
+      "prc": {
+        "value": 2
+      },
+      "prf": {
+        "value": 0
+      },
+      "per": {
+        "value": 0
+      },
+      "rel": {
+        "value": 0
+      },
+      "slt": {
+        "value": 0
+      },
+      "ste": {
+        "value": 1
+      },
+      "sur": {
+        "value": 0
+      }
+    },
+    "resources": {
+      "legact": {
+        "value": 3,
+        "max": 3
+      },
+      "legres": {
+        "value": 0,
+        "max": 0
+      },
+      "lair": {
+        "value": false,
+        "initiative": null
+      }
+    },
+    "source": {
+      "custom": "Monsterbrew",
+      "rules": "2024"
+    }
+  },
+  "items": [
+    {
+      "_id": "zfUtkXoRJNXs6u8Y",
+      "name": "Legendary Resistance (3/Day, or 4/Day in Lair)",
+      "system": {
+        "description": {
+          "value": "<p>If the dragon fails a saving throw, it can choose to succeed instead.</p>",
+          "chat": ""
+        },
+        "identifier": "legendary-resistance-3-day-or-4-day-in-lair",
+        "source": {
+          "custom": "Monsterbrew",
+          "rules": "2024"
+        },
+        "type": {
+          "value": "monster",
+          "subtype": ""
+        },
+        "activities": {}
+      },
+      "type": "feat"
+    },
+    {
+      "_id": "h61laNRavqWR0SUs",
+      "name": "Fire Breath (Recharge 5-6)",
+      "system": {
+        "description": {
+          "value": "<p>Dexterity Saving Throw: DC 21, each creature in a 60-foot Cone. Failure: 59 (17d6) Fire damage. Success: Half damage.</p>",
+          "chat": ""
+        },
+        "identifier": "fire-breath-recharge-5-6",
+        "source": {
+          "custom": "Monsterbrew",
+          "rules": "2024"
+        },
+        "type": {
+          "value": "monster",
+          "subtype": ""
+        },
+        "activities": {
+          "mtY6RLOuioAbjFf7": {
+            "type": "save",
+            "_id": "mtY6RLOuioAbjFf7",
+            "sort": 0,
+            "activation": {
+              "type": "action",
+              "value": null,
+              "override": false
+            },
+            "save": {
+              "ability": [
+                "dex"
+              ],
+              "dc": {
+                "calculation": "con",
+                "formula": ""
+              }
+            },
+            "damage": {
+              "parts": [
+                {
+                  "number": 17,
+                  "denomination": 6,
+                  "bonus": "",
+                  "types": [
+                    "fire"
+                  ],
+                  "custom": {
+                    "enabled": false
+                  },
+                  "scaling": {
+                    "number": 1
+                  }
+                }
+              ],
+              "onSave": "half"
+            }
+          }
+        }
+      },
+      "type": "feat"
+    },
+    {
+      "_id": "wtDdVpgjKNxJLvjB",
+      "name": "Multiattack",
+      "system": {
+        "description": {
+          "value": "<p>The dragon makes three Rend attacks. It can replace one attack with a use of Spellcasting to cast Scorching Ray.</p>",
+          "chat": ""
+        },
+        "identifier": "multiattack",
+        "source": {
+          "custom": "Monsterbrew",
+          "rules": "2024"
+        },
+        "type": {
+          "value": "monster",
+          "subtype": ""
+        },
+        "activities": {
+          "fPzvspTTnsXi8tKW": {
+            "type": "utility",
+            "_id": "fPzvspTTnsXi8tKW",
+            "sort": 0,
+            "activation": {
+              "type": "action",
+              "value": null,
+              "override": false
+            }
+          }
+        }
+      },
+      "type": "feat"
+    },
+    {
+      "_id": "NlPCEx4TZa9Aw8HJ",
+      "name": "Rend",
+      "system": {
+        "description": {
+          "value": "<p>Melee Attack Roll: +14, reach 10 ft. Hit: 13 (1d10 + 8) Slashing damage plus 5 (2d4) Fire damage.</p>",
+          "chat": ""
+        },
+        "identifier": "rend",
+        "source": {
+          "custom": "Monsterbrew",
+          "rules": "2024"
+        },
+        "type": {
+          "value": "natural",
+          "baseItem": ""
+        },
+        "activities": {
+          "U5IMnTudguih9asl": {
+            "type": "attack",
+            "_id": "U5IMnTudguih9asl",
+            "sort": 0,
+            "activation": {
+              "type": "action",
+              "value": null,
+              "override": false
+            },
+            "attack": {
+              "ability": "str",
+              "flat": false,
+              "bonus": "",
+              "type": {
+                "value": "melee",
+                "classification": "weapon"
+              },
+              "critical": {
+                "threshold": null
+              }
+            },
+            "damage": {
+              "includeBase": false,
+              "parts": [
+                {
+                  "number": 1,
+                  "denomination": 10,
+                  "bonus": "8",
+                  "types": [
+                    "slashing"
+                  ],
+                  "custom": {
+                    "enabled": false
+                  },
+                  "scaling": {
+                    "number": 1
+                  }
+                },
+                {
+                  "number": 2,
+                  "denomination": 4,
+                  "bonus": "",
+                  "types": [
+                    "fire"
+                  ],
+                  "custom": {
+                    "enabled": false
+                  },
+                  "scaling": {
+                    "number": 1
+                  }
+                }
+              ]
+            },
+            "range": {
+              "units": "ft",
+              "value": null,
+              "long": null,
+              "reach": "10",
+              "override": false
+            }
+          }
+        },
+        "proficient": 1,
+        "equipped": true
+      },
+      "type": "weapon"
+    },
+    {
+      "_id": "2Iqupat2eyKshL6R",
+      "name": "Spellcasting",
+      "system": {
+        "description": {
+          "value": "<p>The dragon casts one of the following spells, requiring no Material components and using Charisma as the spellcasting ability (spell save DC 20, +12 to hit with spell attacks): - At Will: Command, Detect Magic, Scorching Ray - 1/Day Each: Fireball</p>",
+          "chat": ""
+        },
+        "identifier": "spellcasting",
+        "source": {
+          "custom": "Monsterbrew",
+          "rules": "2024"
+        },
+        "type": {
+          "value": "monster",
+          "subtype": ""
+        },
+        "activities": {
+          "ZNSUShNCty3RQR8X": {
+            "type": "utility",
+            "_id": "ZNSUShNCty3RQR8X",
+            "sort": 0,
+            "activation": {
+              "type": "action",
+              "value": null,
+              "override": false
+            }
+          }
+        }
+      },
+      "type": "feat"
+    },
+    {
+      "_id": "KP5J5o3OSgmWLNfb",
+      "name": "Commanding Presence",
+      "system": {
+        "description": {
+          "value": "<p>The dragon uses Spellcasting to cast Command (level 2 version). The dragon can't take this action again until the start of its next turn.</p>",
+          "chat": ""
+        },
+        "identifier": "commanding-presence",
+        "source": {
+          "custom": "Monsterbrew",
+          "rules": "2024"
+        },
+        "type": {
+          "value": "monster",
+          "subtype": ""
+        },
+        "activities": {
+          "5uiK25PwhgEO8thg": {
+            "type": "utility",
+            "_id": "5uiK25PwhgEO8thg",
+            "sort": 0,
+            "activation": {
+              "type": "legendary",
+              "value": null,
+              "override": false
+            }
+          }
+        }
+      },
+      "type": "feat"
+    },
+    {
+      "_id": "vsuSkMEGDTK40aR2",
+      "name": "Fiery Rays",
+      "system": {
+        "description": {
+          "value": "<p>The dragon uses Spellcasting to cast Scorching Ray. The dragon can't take this action again until the start of its next turn.</p>",
+          "chat": ""
+        },
+        "identifier": "fiery-rays",
+        "source": {
+          "custom": "Monsterbrew",
+          "rules": "2024"
+        },
+        "type": {
+          "value": "monster",
+          "subtype": ""
+        },
+        "activities": {
+          "0u549IAJyHvNB4mP": {
+            "type": "utility",
+            "_id": "0u549IAJyHvNB4mP",
+            "sort": 0,
+            "activation": {
+              "type": "legendary",
+              "value": null,
+              "override": false
+            }
+          }
+        }
+      },
+      "type": "feat"
+    },
+    {
+      "_id": "eAitz9fyow9ch32r",
+      "name": "Pounce",
+      "system": {
+        "description": {
+          "value": "<p>The dragon moves up to half its Speed, and it makes one Rend attack.</p>",
+          "chat": ""
+        },
+        "identifier": "pounce",
+        "source": {
+          "custom": "Monsterbrew",
+          "rules": "2024"
+        },
+        "type": {
+          "value": "monster",
+          "subtype": ""
+        },
+        "activities": {
+          "Z6ls0tdLjEbTGYZM": {
+            "type": "utility",
+            "_id": "Z6ls0tdLjEbTGYZM",
+            "sort": 0,
+            "activation": {
+              "type": "legendary",
+              "value": null,
+              "override": false
+            }
+          }
+        }
+      },
+      "type": "feat"
+    }
+  ],
+  "effects": [],
+  "folder": null,
+  "flags": {}
+}

@@ -56,6 +56,18 @@ export function capitalizeWords(value: string): string {
   return value.replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
+export function creatureFileSlug(name: string): string {
+  return (
+    name
+      .trim()
+      .toLowerCase()
+      // Anything that isn't a letter, digit or dash becomes a dash, so quotes
+      // and slashes in a creature name can't leak into the download filename.
+      .replaceAll(/[^a-z0-9]+/g, "-")
+      .replaceAll(/^-+|-+$/g, "") || "creature"
+  );
+}
+
 const MOVEMENT_KEYS = ["walk", "swim", "burrow", "climb", "fly"] as const;
 
 /**

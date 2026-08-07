@@ -423,6 +423,14 @@ export function damageAverage(dice: string, ctx: MarkupContext): number {
   return averageDice(normalizeSigns(resolveDiceAbilities(dice, ctx)));
 }
 
+export function resolveDiceExpression(
+  dice: string,
+  ctx: MarkupContext,
+): string {
+  if (!dice.trim()) return "";
+  return normalizeSigns(resolveDiceAbilities(dice, ctx));
+}
+
 /** `13 (2d8 + 4)` with abilities resolved, or `""` for no dice. */
 function damageClause(dice: string, ctx: MarkupContext): string {
   if (!dice) return "";

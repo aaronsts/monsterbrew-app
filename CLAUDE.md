@@ -11,9 +11,10 @@ This project uses **pnpm** (pinned via the `packageManager` field; run `corepack
 - `pnpm build` — production build (Vite 8/Rolldown → Nitro emits `.output/`, a Vercel Build Output)
 - `pnpm start` — run the built production server (`node .output/server/index.mjs`)
 - `pnpm lint` — ESLint (flat config, `eslint.config.js`); `no-unused-vars` is an **error**, so unused imports/vars fail lint
+- `pnpm typecheck` — `tsc --noEmit`. Vite and Vitest both transpile *without* typechecking, so nothing else catches a type error locally; run it alongside `pnpm lint` before pushing. Note the two disagree occasionally — ESLint's `no-unnecessary-type-assertion` has called an assertion redundant that `tsc` then required (`screen.getByRole` returning `HTMLElement`); prefer a typed generic over a cast so both are satisfied
 - `pnpm test` — run Vitest in watch mode
 - `pnpm exec vitest run` — run tests once (CI-style)
-- `pnpm exec vitest run src/tests/converters/fiveETools.test.ts` — run a single test file
+- `pnpm exec vitest run src/tests/converters/from-5e-tools.test.ts` — run a single test file
 - `pnpm exec vitest run -t "some name"` — run tests matching a name
 
 Path alias: `@/*` → `src/*` (defined in `tsconfig.json`; Vite 8 resolves it natively via `resolve.tsconfigPaths: true` in `vite.config.ts` and `vitest.config.mts`).
@@ -26,7 +27,7 @@ Commit messages must follow **Conventional Commits** — enforced locally by a H
 
 The user-facing changelog at `/changelog` is built from markdown files in `src/content/changelog/` (loaded via `import.meta.glob` in `src/lib/releases.ts`). Each PR adds its own file to `unreleased/` (use the `changelog-entry` skill — no version number, one file per PR, so parallel PRs never conflict). On release, `scripts/promote-changelog.mjs` (run by `@semantic-release/exec`) stamps the released version + date and moves the entry to `releases/`; `@semantic-release/git` commits that back to `main` with `[skip ci]`, and the deploy job builds from the release tag so the live site includes it. The raw conventional-commit changelog (`docs/CHANGELOG.md`) is generated in CI and attached to the GitHub release only — it is not tracked in git.
 
-CI deploys PR previews and production to Vercel. It also runs the unit suite (`pnpm test:coverage`) and the e2e suite (`pnpm test:e2e:coverage`) — both **with coverage**, and both on a runner noticeably slower than a dev machine. A test that takes ~1.5s locally under coverage can exceed vitest's default 5s `testTimeout` there, so reproduce with `pnpm test:coverage` (not plain `vitest run`) before pushing, and treat a test that only just fits as a failure waiting to happen.
+CI deploys PR previews and production to Vercel. It also runs `pnpm lint` and `pnpm typecheck` (fast, ahead of the suite in the same job so they fail first), the unit suite (`pnpm test:coverage`) and the e2e suite (`pnpm test:e2e:coverage`) — both suites **with coverage**, and both on a runner noticeably slower than a dev machine. A test that takes ~1.5s locally under coverage can exceed vitest's default 5s `testTimeout` there, so reproduce with `pnpm test:coverage` (not plain `vitest run`) before pushing, and treat a test that only just fits as a failure waiting to happen.
 
 ## Architecture
 
@@ -67,15 +68,19 @@ The D&D 2024 SRD bestiary ships as static data in `src/data/srd-monsters.json` (
 
 ### Import / export converters
 
-`src/services/converters/*` translate between the internal creature shape and external tools; each external format has a matching type file in `src/types/*`:
+`src/services/converters/*` translate between the internal creature shape and external tools; each import format has a matching type file in `src/types/*` (a Zod schema, since imports need runtime validation). Imports are `from-*.ts`, exports are `to-*.ts`:
 
-- `improvedInitiative.ts` — `fromImprovedInitiative` / `toImprovedInitiative` (round-trips both ways)
-- `tetraCube.ts` — `fromTetacube` (import)
-- `open5e.ts` — `fromOpen5e` (import)
-- `fiveETools.ts` — `from5ETools` (import)
-- `markdown.ts` — `createMarkdownPage` exports Homebrewery V3 markdown, opening it in a `window.open()` popup
+- `from-improved-initiative.ts` / `to-improved-initiative.ts` — `fromImprovedInitiative` / `toImprovedInitiative`, the one format that round-trips both ways (guarded by a round-trip test). Two traps: the format has no `Name` field, so the creature's name lives in `Description`; and speeds must keep their keyword (`walk 30 ft.`), because the importer matches on it — `formatMovements` emits a bare `30 ft.` for walk and would be silently dropped.
+- `from-tetra-cube.ts` — `fromTetacube` (import)
+- `from-open-5e.ts` — `fromOpen5e` (import)
+- `from-5e-tools.ts` — `from5ETools` (import)
+- `from-srd.ts` — `fromSrd` (import; see the SRD section above)
+- `to-markdown.ts` — `monsterToHomebrewery` returns Homebrewery V3 markdown
+- `to-foundry.ts` — `monsterToFoundryActor` returns a FoundryVTT `dnd5e` NPC actor (`src/types/foundry.ts` holds the shape as plain interfaces, not Zod — it is export-only, so nothing needs parsing). `{@attack}` / `{@save}` features become *rollable* Foundry attack/save activities; anything else becomes a descriptive `feat`. Item ids are derived deterministically so re-exporting a creature is byte-identical.
 
-Import wiring is in `src/components/import-dialog.tsx`, switching on `ImportTypes` from `src/lib/constants.ts`; export wiring (Homebrewery, Improved Initiative JSON, PDF) is in the dropdown in `creature-form.tsx`. Converters are the most test-covered area (`src/tests/converters/`) — add/adjust tests there when touching them.
+Shared import helpers live in `monster-mappers.ts` (`parseOrThrow`, ability/skill/damage/language mappers, CR lookup) and `prose-to-tags.ts` (turning imported prose into `{@…}` markup).
+
+Import wiring is in `src/app/editor/components/import-dialog.tsx`, switching on `ImportTypes` from `src/lib/constants.ts`. **Export is library-only** — it is not offered in the editor. The `/library/$id` detail page's action bar (`creature-actions-menu.tsx`) has a single **Export** button opening `export-dialog.tsx`, which tabs between Homebrewery markdown, FoundryVTT JSON, Improved Initiative JSON and PDF; the three text formats share one preview/copy/download shape, while PDF prints the on-page statblock via `useReactToPrint` (the hook and `PDF_PAGE_STYLE` stay in `creature-actions-menu.tsx`, since printing needs the statblock ref). One dialog rather than one button per format keeps the action bar from growing with every new target — and note #137 deliberately replaced a dropdown *menu* with separate buttons, so don't reintroduce one. Converters are the most test-covered area (`src/tests/converters/`) — add/adjust tests there when touching them.
 
 ### UI conventions
 

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { useReactToPrint } from "react-to-print";
-import { Copy, Edit, FileText, Printer, Trash } from "lucide-react";
+import { Copy, Download, Edit, Trash } from "lucide-react";
 import type { RefObject } from "react";
 
 import type { StoredMonster } from "@/schema/monster-schema";
@@ -24,7 +24,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { ExportMarkdownDialog } from "@/app/library/components/export-markdown-dialog";
+import { ExportDialog } from "@/app/library/components/export-dialog";
 import { useDeleteCreature } from "@/hooks/use-creatures";
 
 const PDF_PAGE_STYLE = `
@@ -65,11 +65,6 @@ interface CreatureActionsMenuProps {
   statblockRef: RefObject<HTMLDivElement | null>;
 }
 
-/**
- * Action buttons for a library creature: edit, duplicate, export
- * (Homebrewery markdown / PDF), and delete with confirmation. Separate
- * icon buttons with tooltips, not a dropdown (see #137).
- */
 export function CreatureActionsMenu({
   creature,
   statblockRef,
@@ -77,7 +72,7 @@ export function CreatureActionsMenu({
   const navigate = useNavigate();
   const deleteCreature = useDeleteCreature();
 
-  const [markdownOpen, setMarkdownOpen] = useState(false);
+  const [exportOpen, setExportOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
 
   const printStatblock = useReactToPrint({
@@ -174,30 +169,14 @@ export function CreatureActionsMenu({
                   color="neutral"
                   variant="outline"
                   size="icon-sm"
-                  aria-label="Export Markdown (Homebrewery)"
-                  onClick={() => setMarkdownOpen(true)}
+                  aria-label="Export"
+                  onClick={() => setExportOpen(true)}
                 />
               }
             >
-              <FileText />
+              <Download />
             </TooltipTrigger>
-            <TooltipContent>Export Markdown (Homebrewery)</TooltipContent>
-          </Tooltip>
-          <Tooltip>
-            <TooltipTrigger
-              render={
-                <Button
-                  color="neutral"
-                  variant="outline"
-                  size="icon-sm"
-                  aria-label="Export PDF"
-                  onClick={() => printStatblock()}
-                />
-              }
-            >
-              <Printer />
-            </TooltipTrigger>
-            <TooltipContent>Export PDF</TooltipContent>
+            <TooltipContent>Export</TooltipContent>
           </Tooltip>
           <Tooltip>
             <TooltipTrigger
@@ -218,10 +197,11 @@ export function CreatureActionsMenu({
         </div>
       </TooltipProvider>
 
-      <ExportMarkdownDialog
+      <ExportDialog
         creature={creature}
-        open={markdownOpen}
-        onOpenChange={setMarkdownOpen}
+        onPrint={printStatblock}
+        open={exportOpen}
+        onOpenChange={setExportOpen}
       />
 
       <Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>

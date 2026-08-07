@@ -3,6 +3,7 @@ import {
   parseAttackArgs,
   parseMarkup,
   parseSaveArgs,
+  resolveDiceExpression,
   resolveMarkup,
   serializeAttackArgs,
   serializeSaveArgs,
@@ -536,5 +537,38 @@ describe("composite validation (editor diagnostics)", () => {
     expect(validateSaveArgs("dex|banana").join()).toContain(
       'DC "banana" is neither an ability nor a number',
     );
+  });
+});
+
+describe("resolveDiceExpression", () => {
+  it("leaves a plain expression alone", () => {
+    expect(resolveDiceExpression("2d8 + 3", ctx)).toBe("2d8 + 3");
+  });
+
+  it("replaces ability keywords with the creature's modifier", () => {
+    // STR 20 -> +5
+    expect(resolveDiceExpression("2d8 + str", ctx)).toBe("2d8 + 5");
+  });
+
+  it("normalises a negative modifier into a minus term", () => {
+    // CHA 8 -> -1, so "+ -1" must become "- 1"
+    expect(resolveDiceExpression("1d6 + cha", ctx)).toBe("1d6 - 1");
+  });
+
+  it("drops a zero modifier entirely", () => {
+    // INT 10 -> +0
+    expect(resolveDiceExpression("1d6 + int", ctx)).toBe("1d6");
+  });
+
+  it("handles an expression with no dice term", () => {
+    expect(resolveDiceExpression("dex", ctx)).toBe("2");
+  });
+
+  it("returns an empty string for empty input", () => {
+    expect(resolveDiceExpression("", ctx)).toBe("");
+  });
+
+  it("leaves non-ability three-letter words alone", () => {
+    expect(resolveDiceExpression("2d6 + hit", ctx)).toBe("2d6 + hit");
   });
 });
