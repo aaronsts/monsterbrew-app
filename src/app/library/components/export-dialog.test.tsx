@@ -9,10 +9,7 @@ function makeMonster(overrides: Partial<Monster> = {}): Monster {
   return { ...structuredClone(defaultMonster), ...overrides };
 }
 
-function renderDialog(
-  overrides: Partial<Monster> = {},
-  onPrint = vi.fn(),
-) {
+function renderDialog(overrides: Partial<Monster> = {}, onPrint = vi.fn()) {
   render(
     <ExportDialog
       creature={makeMonster({ name: "Goblin", ...overrides })}
@@ -120,11 +117,22 @@ describe("ExportDialog", () => {
   });
 
   it("explains each format as you switch", async () => {
+    // Read the description element directly rather than searching the whole
+    // dialog: every format name also appears on its tab. Matched loosely on
+    // purpose, so this guards that the blurb *tracks the tab* rather than
+    // pinning copy that gets edited.
+    const blurb = () =>
+      document.querySelector('[data-slot="dialog-description"]')?.textContent ??
+      "";
+
     renderDialog();
-    expect(screen.getByText(/homebrewery\.naturalcrit\.com/)).toBeDefined();
+    expect(blurb()).toMatch(/homebrewery/i);
 
     await userEvent.click(tab("FoundryVTT"));
-    expect(screen.getByText(/Actors sidebar/)).toBeDefined();
+    expect(blurb()).toMatch(/foundry/i);
+
+    await userEvent.click(tab("Improved Initiative"));
+    expect(blurb()).toMatch(/improved initiative/i);
   });
 
   it("falls back to a generic title and filename when unnamed", () => {

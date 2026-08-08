@@ -1,13 +1,13 @@
 /**
  * The subset of FoundryVTT's `dnd5e` NPC actor shape that Monsterbrew exports.
  *
- * The shape is taken from real actor exports (dnd5e system 4.3.7, core 12.331,
- * `source.rules: "2024"`) attached to
- * https://github.com/ebshimizu/5e-monster-maker/issues/157 — ghoul, troll,
- * commoner and ancient white dragon. Foundry merges an imported actor against
- * its system template, so emitting a partial `system` is legal and every field
- * below is one we actually fill; fields the samples carry but Monsterbrew has no
- * source for are deliberately absent rather than guessed.
+ * The shape is taken from four real actor exports (dnd5e system 4.3.7, core
+ * 12.331, `source.rules: "2024"`): a ghoul, a troll, a commoner and an ancient
+ * white dragon, covering the simple case plus legendary actions, lair flags and
+ * save activities. Foundry merges an imported actor against its system template,
+ * so emitting a partial `system` is legal and every field below is one we
+ * actually fill; fields the samples carry but Monsterbrew has no source for are
+ * deliberately absent rather than guessed.
  */
 
 /** Foundry size ids. Note `sm`/`med`/`lg` are abbreviated but `tiny`/`huge` are not. */

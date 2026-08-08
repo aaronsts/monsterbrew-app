@@ -60,8 +60,7 @@ Copied verbatim from the issue; everything below inherits these.
 - Converters are the most test-covered area; new tests go under `src/tests/converters/`.
 - "Foundry has no importer, so assert against a fixture."
 - No schema change, no IndexedDB migration.
-- Foundry target shape is the sample actor JSON attached to
-  [5emm #157](https://github.com/ebshimizu/5e-monster-maker/issues/157) — dnd5e system
+- Foundry target shape is the sample actor JSON referenced by the issue — dnd5e system
   **4.3.7**, core **12.331**, `system.source.rules: "2024"`.
 
 Out of scope (from the issue): Roll20/VTTES, multi-creature export, export from the SRD
@@ -69,9 +68,9 @@ detail page, single-creature print changes.
 
 ## Reference: the Foundry actor shape
 
-Downloaded from 5emm #157 and inspected: ghoul (simple), troll, commoner, ancient white
-dragon (legendary + lair + save activities). The observed shapes drive the mapping below
-— **match the sample field-for-field rather than inventing fields.** Foundry merges an
+Four real actor exports were downloaded and inspected: ghoul (simple), troll, commoner,
+ancient white dragon (legendary + lair + save activities). The observed shapes drive the
+mapping below — **match the sample field-for-field rather than inventing fields.** Foundry merges an
 imported actor against its system template, so a partial `system` is legal; emit what we
 have and omit the rest.
 
