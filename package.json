@@ -9,6 +9,7 @@
     "build": "node scripts/generate-sitemap.mjs && vite build",
     "start": "node .output/server/index.mjs",
     "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
     "prepare": "husky",
     "release": "semantic-release",
     "test": "vitest",

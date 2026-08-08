@@ -11,6 +11,7 @@ This project uses **pnpm** (pinned via the `packageManager` field; run `corepack
 - `pnpm build` — regenerates `public/sitemap.xml`, then a production build (Vite 8/Rolldown → Nitro emits `.output/`, a Vercel Build Output)
 - `pnpm start` — run the built production server (`node .output/server/index.mjs`)
 - `pnpm lint` — ESLint (flat config, `eslint.config.ts`); `@typescript-eslint/no-unused-vars` is an **error** (with an `^_` ignore pattern), so unused imports/vars fail lint
+- `pnpm typecheck` — `tsc --noEmit`. Vite and Vitest both transpile *without* typechecking, so nothing else catches a type error locally; run it alongside `pnpm lint` before pushing. Note the two disagree occasionally — ESLint's `no-unnecessary-type-assertion` has called an assertion redundant that `tsc` then required (`screen.getByRole` returning `HTMLElement`); prefer a typed generic over a cast so both are satisfied
 - `pnpm test` — Vitest in watch mode; `pnpm exec vitest run` runs once, `pnpm test:coverage` runs once with coverage
 - `pnpm exec vitest run src/tests/converters/from-5e-tools.test.ts` — run a single test file
 - `pnpm exec vitest run -t "some name"` — run tests matching a name
@@ -24,7 +25,7 @@ Path alias: `@/*` → `src/*` (defined in `tsconfig.json`; Vite 8 resolves it na
 
 pnpm blocks dependency build scripts by default; the ones this project needs are allowlisted in `pnpm-workspace.yaml` under `allowBuilds`. If a build-time tool misbehaves after a dependency change, check whether it needs adding there.
 
-CI runs the unit suite (`pnpm test:coverage`) and the e2e suite (`pnpm test:e2e:coverage`) — both **with coverage**, and both on a runner noticeably slower than a dev machine. A test that takes ~1.5s locally under coverage can exceed vitest's default 5s `testTimeout` there, so reproduce with `pnpm test:coverage` (not plain `vitest run`) before pushing, and treat a test that only just fits as a failure waiting to happen. CI also deploys PR previews and production to Vercel.
+CI runs `pnpm lint` and `pnpm typecheck` first (both seconds-long, in the same job as the unit suite so they fail fast), then the unit suite (`pnpm test:coverage`) and the e2e suite (`pnpm test:e2e:coverage`) — both suites **with coverage**, and both on a runner noticeably slower than a dev machine. A test that takes ~1.5s locally under coverage can exceed vitest's default 5s `testTimeout` there, so reproduce with `pnpm test:coverage` (not plain `vitest run`) before pushing, and treat a test that only just fits as a failure waiting to happen. CI also deploys PR previews and production to Vercel.
 
 ## Commits & releases
 
@@ -117,7 +118,9 @@ The D&D 2024 SRD bestiary ships as static data in `src/data/srd-monsters.json` (
 
 Each external format has a matching type file in `src/types/*`, and `monster-mappers.ts` holds the shared field mappers (abilities, saves, skills, damage modifiers, languages, senses, CR lookup). `prose-to-tags.ts` (`proseToTags` / `tagMonsterFeatures`) parses plain attack/damage/save prose into `{@…}` tags on import, so imported creatures get stat-linked markup rather than frozen numbers. The dialog is `src/app/editor/components/import-dialog.tsx`; the user can override the detected format. (`ImportTypes` in `src/lib/constants.ts` predates auto-detection and is now unused — `ImportFormat` is the live type.)
 
-**Export** hangs off the library detail page, in `src/app/library/components/creature-actions-menu.tsx`: Homebrewery V3 markdown via `to-markdown.ts` (`monsterToHomebrewery`, shown in `export-markdown-dialog.tsx`) and PDF via `react-to-print` with a print stylesheet that forces the two-column statblock layout. There is no Improved Initiative *export* — that direction was dropped; only the importer remains.
+**Export** hangs off the library detail page. `creature-actions-menu.tsx` has a single **Export** button opening `export-dialog.tsx`, which tabs between four targets: Homebrewery V3 markdown (`to-markdown.ts`, `monsterToHomebrewery`), a FoundryVTT `dnd5e` NPC actor (`to-foundry.ts`, `monsterToFoundryActor`), an Improved Initiative statblock (`to-improved-initiative.ts`, `toImprovedInitiative`), and PDF via `react-to-print` with a print stylesheet that forces the two-column statblock layout. The three text formats share one preview/copy/download shape; PDF keeps `useReactToPrint` and `PDF_PAGE_STYLE` in `creature-actions-menu.tsx`, since printing needs a ref to the on-page statblock, and receives the trigger as an `onPrint` prop. One dialog rather than a button per format keeps the action bar from growing with every new target — and don't reintroduce a dropdown *menu*, since #137 deliberately replaced one with separate buttons. Export is **library-only**; #162 tracks offering it in the editor too.
+
+Improved Initiative is the one format that round-trips both ways, guarded by a round-trip test. Two traps: it has no `Name` field, so the creature's name lives in `Description`; and speeds must keep their keyword (`walk 30 ft.`), because the importer matches on it — `formatMovements` emits a bare `30 ft.` for walk, which would be silently dropped. Foundry is export-only, so `src/types/foundry.ts` holds the actor shape as plain interfaces rather than Zod: nothing parses it back. `{@attack}` / `{@save}` features become *rollable* Foundry attack/save activities (the atomic `{@atkr}` / `{@hit}` form too, which `prose-to-tags.ts` falls back to); anything else becomes a descriptive `feat`. Item ids are derived deterministically, so re-exporting a creature is byte-identical. Shared export helpers live in `export-helpers.ts` (hit points, initiative, skill and save modifiers) — the mirror of `monster-mappers.ts` on the import side.
 
 Converters are the most test-covered area. Unit tests live in `src/tests/converters/` (one `.test.ts` per converter plus a `-markup.test.ts` covering the prose→tag pass), and `e2e/import.spec.ts` is **fixture-driven**: dropping a real export into `e2e/fixtures/<format>/` automatically generates an end-to-end import test, with optional exact-output snapshots via `UPDATE_EXPECTED=1` (see `e2e/fixtures/README.md`).
 
@@ -132,6 +135,7 @@ Both are markdown under `src/content/`, loaded with `import.meta.glob` and parse
 `scripts/site-pages.mjs` exports `staticPages`, `guideChapterPages` (from the guide filenames), and `srdPages` (from the SRD JSON). Both `vite.config.ts`'s prerender list and `scripts/generate-sitemap.mjs` import it, so the sitemap and the prerendered routes can't drift. Nearly everything is prerendered to static HTML at build time — marketing pages, guide chapters, all `/library/srd/$key` pages, plus the static shells of the client-only `ssr: false` routes (`/editor`, `/library`). Only `/library/$id` (unenumerable per-user ids) and the `/dev/*` routes render at request time. `/error` is prerendered but `noindex`, which is why it sits in the vite list rather than the shared sitemap list.
 
 `src/lib/seo.ts` (`seo({ title, description, path, noindex })`) builds the head meta for each route's `head()`. `/my-creatures` is a redirect stub to `/library`.
+
 
 ### UI conventions
 

@@ -1,23 +1,20 @@
+import {
+  ABILITY_KEYS,
+  hitPoints,
+  initiativeModifier,
+  savingThrowModifier,
+  skillLabel,
+  skillModifier,
+} from "./export-helpers";
 import type { Monster } from "@/schema/monster-schema";
-import { abilityScoresSchema } from "@/schema/monster-schema";
-import { SKILLS } from "@/lib/skills";
 import { resolveMarkup } from "@/lib/statblock-markup";
 import {
-  calculateHitPoints,
   calculateStatBonus,
   capitalizeWords,
   formatMod,
   formatMovements,
   titleCase,
 } from "@/lib/utils";
-
-const ABILITY_KEYS = abilityScoresSchema.keyof().options;
-const SKILL_ABILITY = new Map<string, string>(
-  SKILLS.map((s) => [s.skill_name, s.skill_modifier]),
-);
-const SKILL_LABEL = new Map<string, string>(
-  SKILLS.map((s) => [s.skill_name, s.label]),
-);
 
 type Feature = Monster["traits"][number];
 
@@ -49,18 +46,8 @@ export function monsterToHomebrewery(creature: Monster): string {
 
   const movements = formatMovements(creature.movements);
 
-  const medianHP = calculateHitPoints(
-    creature.hit_dice,
-    creature.size,
-    creature.ability_scores.con,
-  );
-  const hp = creature.custom_hp
-    ? creature.hit_points
-    : medianHP || creature.hit_points;
-
-  const initMod = creature.custom_initiative
-    ? Number(creature.initiative_bonus) || 0
-    : calculateStatBonus(creature.ability_scores.dex);
+  const hp = hitPoints(creature).text;
+  const initMod = initiativeModifier(creature);
 
   lines.push("{{monster,frame,wide");
   lines.push(
@@ -90,23 +77,15 @@ export function monsterToHomebrewery(creature: Monster): string {
 
   const savingThrows = ABILITY_KEYS.filter(
     (key) => creature.saving_throws[key],
-  ).map(
-    (key) =>
-      `${titleCase(key)} ${formatMod(
-        calculateStatBonus(creature.ability_scores[key]) + pb,
-      )}`,
-  );
+  ).map((key) => `${titleCase(key)} ${formatMod(savingThrowModifier(creature, key))}`);
   if (savingThrows.length > 0) {
     lines.push(`**Saving Throws** :: ${savingThrows.join(", ")}`);
   }
 
-  const skills = Object.entries(creature.skills ?? {}).map(([name, level]) => {
-    const abilityKey = (SKILL_ABILITY.get(name) ??
-      "dex") as (typeof ABILITY_KEYS)[number];
-    const mod = calculateStatBonus(creature.ability_scores[abilityKey]);
-    const bonus = mod + (level === "expert" ? pb * 2 : pb);
-    return `${SKILL_LABEL.get(name) ?? capitalizeWords(name)} ${formatMod(bonus)}`;
-  });
+  const skills = Object.entries(creature.skills ?? {}).map(
+    ([name, level]) =>
+      `${skillLabel(name)} ${formatMod(skillModifier(creature, name, level))}`,
+  );
   if (skills.length > 0) {
     lines.push(`**Skills** :: ${skills.join(", ")}`);
   }
